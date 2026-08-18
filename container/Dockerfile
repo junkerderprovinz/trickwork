@@ -6,6 +6,7 @@ FROM node:${NODE_VERSION}-slim AS client
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
+COPY tsconfig.base.json ./
 COPY core/package.json core/
 COPY ui/package.json ui/
 RUN npm ci
