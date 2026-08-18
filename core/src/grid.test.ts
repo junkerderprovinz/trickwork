@@ -86,4 +86,31 @@ describe('assembleGrid', () => {
     expect(darkResult[0]?.[0]?.char).toBe('@')
     expect(brightResult[0]?.[0]?.char).toBe(' ')
   })
+
+  it('samples every source pixel even when width does not divide evenly by columns (7px wide, 3 columns)', () => {
+    // 7 / 3 = 2.333.., so a naive per-block round(blockW) gives 2px blocks
+    // for every column, including the last one. That leaves the last
+    // column covering only x=[4,6) -- pixel x=6 (the true right edge) is
+    // never sampled by any block. The fix derives each block's width from
+    // where the NEXT block starts (clamped to the image edge for the last
+    // column), so the last column must cover x=[4,7).
+    //
+    // Columns 0-1 (source pixels 0-3) are filler. Column 2 (source pixels
+    // 4-6) is engineered so that including the edge pixel (index 6, pure
+    // black, luminance 0) flips the mapped glyph:
+    //   - dropped edge pixel: avg of {255, 10} -> luminance ~0.520 -> ' '
+    //   - edge pixel included: avg of {255, 10, 0} -> luminance ~0.346 -> '@'
+    const img = makeImageData([[128, 128, 128, 128, 255, 10, 0]])
+    const options: MappingOptions = {
+      columns: 3,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+    }
+    const grid = assembleGrid(img, table, options)
+    expect(grid).toHaveLength(1)
+    expect(grid[0]).toHaveLength(3)
+    expect(grid[0]?.[2]?.char).toBe('@')
+  })
 })

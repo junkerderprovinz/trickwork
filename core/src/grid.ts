@@ -26,8 +26,10 @@ export function assembleGrid(
     for (let col = 0; col < columns; col++) {
       const x = Math.floor(col * blockW)
       const y = Math.floor(row * blockH)
-      const w = Math.max(1, Math.round(blockW))
-      const h = Math.max(1, Math.round(blockH))
+      const nextX = col === columns - 1 ? width : Math.floor((col + 1) * blockW)
+      const nextY = row === rows - 1 ? height : Math.floor((row + 1) * blockH)
+      const w = Math.max(1, nextX - x)
+      const h = Math.max(1, nextY - y)
       const rawLuminance = computeBlockLuminance(imageData, x, y, w, h)
       const luminance = applyBrightnessContrast(
         rawLuminance,
