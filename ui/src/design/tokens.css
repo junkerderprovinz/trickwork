@@ -1,0 +1,363 @@
+/* ===========================================================================
+   GlimStone — reference tokens and utility classes
+   ---------------------------------------------------------------------------
+   Framework-free: no Tailwind, no build step required. Copy the parts an
+   adopting app needs — see docs/design-language.md, "Adopting GlimStone in
+   another app". If the app uses Tailwind v4, pair this with
+   tailwind-theme.css for the @theme utility mapping.
+
+   Clean-by-rule (what keeps it calm):
+     · one raised surface level; never a card inside a card
+     · one hero per page — everything else is quiet
+     · the accent marks activity only: active nav, primary action, progress
+     · four state hues total (accent / green / red / neutral), never more
+     · hierarchy comes from type size and colour step, not from borders
+   =========================================================================== */
+
+/* Shape is one knob for the whole app. Every rounded corner reads one of
+   these three tokens and nothing hard-codes a radius, so switching the shape
+   changes cards, buttons, tabs, inputs, pills, badges and toggles together.
+   A single exception is the thing that ends up looking broken.
+
+   On a very short element (a compact badge), border-radius: var(--radius-pill)
+   applied literally over-rounds past half the element's own height and reads
+   as a pointed lozenge instead of a pill. Cap it against the element instead
+   of using the raw token: border-radius: min(var(--radius-pill), 50%). */
+:root {
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --radius-pill: 9999px;
+
+  /* The type scale: a fixed reference table, not an engine — nobody sets
+     their own type scale. --text-caption covers three treatments of the
+     same size (plain caption, .glim-eyebrow's uppercase label, the info
+     bubble's text) — the treatment carries the distinction, not the size.
+     A page's one hero figure and any brand-wordmark instance are
+     deliberately NOT part of this scale — see docs/design-language.md,
+     "The type scale". */
+  --text-heading: 1.25rem;  /* 20px */
+  --text-body: 0.875rem;    /* 14px */
+  --text-dense: 0.75rem;    /* 12px */
+  --text-caption: 0.6875rem; /* 11px */
+}
+
+:root[data-shape="soft"] {
+  --radius-card: 0.5rem;
+  --radius-control: 0.3125rem;
+  --radius-pill: 0.3125rem;
+}
+
+:root[data-shape="square"] {
+  --radius-card: 0;
+  --radius-control: 0;
+  --radius-pill: 0;
+}
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Ground and surfaces — IBM Carbon's neutral greys. Not a warm near-black:
+     that reads as brown next to any sibling app that already agreed on this
+     palette. A design language shared across apps has to share its ground
+     first. */
+  --carbon-bg:         #161616;
+  --carbon-sidebar:    #262626;
+  --carbon-surface:    #262626;
+  --carbon-surface2:   #393939;
+  --carbon-surface3:   #525252;
+  --carbon-hover:      #353535;
+  --carbon-border:     #393939;
+
+  /* Text ramp — three steps, the last still legible at 11px. */
+  --carbon-text:       #f4f4f4;
+  --carbon-text-sub:   #c6c6c6;
+  --carbon-text-muted: #8d8d8d;
+  --sidebar-text:      #e0e0e0;
+
+  /* Activity, and nothing else. The default is every sibling app's own
+     default accent, so a fresh install of any of them looks like the same
+     product; it is a setting, and the picker is one page away. */
+  --accent:            #FCC419;
+  --accent-contrast:   #161616;
+  --accent-soft:       rgba(252, 196, 25, 0.14);
+
+  /* Four state hues, Carbon's dark support tones. Paused reuses neutral
+     on purpose — its label and its resume control carry the difference. */
+  --status-info-text:    #FCC419;
+  --status-info-bg:      rgba(252, 196, 25, 0.13);
+  --status-info-solid:   #FCC419;
+
+  --status-ok-text:      #6fdc8c;
+  --status-ok-bg:        rgba(111, 220, 140, 0.13);
+  --status-ok-solid:     #6fdc8c;
+
+  --status-fail-text:    #ff8389;
+  --status-fail-bg:      rgba(255, 131, 137, 0.14);
+  --status-fail-solid:   #ff8389;
+
+  --status-warn-text:    #f1c21b;
+  --status-warn-bg:      rgba(241, 194, 27, 0.12);
+  --status-warn-solid:   #f1c21b;
+
+  --status-neutral-text: #a8a8a8;
+  --status-neutral-bg:   rgba(255, 255, 255, 0.05);
+  --status-neutral-solid: #8d8d8d;
+
+  /* One elevation, one hairline. Neutral black, not a warm one: a brown
+     shadow under a grey card is visible and reads as a colour cast. */
+  --elevation: 0 1px 2px rgba(0, 0, 0, .40), 0 18px 40px -24px rgba(0, 0, 0, .85);
+  --hairline: inset 0 1px 0 rgba(255, 255, 255, .045);
+  --focus-ring: rgba(252, 196, 25, .55);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Carbon's light greys, mirroring the dark ramp step for step. */
+  --carbon-bg:         #f4f4f4;
+  --carbon-sidebar:    #ffffff;
+  --carbon-surface:    #ffffff;
+  --carbon-surface2:   #e8e8e8;
+  --carbon-surface3:   #d1d1d1;
+  --carbon-hover:      #e0e0e0;
+  --carbon-border:     #d1d1d1;
+
+  --carbon-text:       #161616;
+  --carbon-text-sub:   #525252;
+  --carbon-text-muted: #6f6f6f;
+  --sidebar-text:      #393939;
+
+  /* The dark accent is a yellow, and yellow on white is unreadable at 11px.
+     Carbon's own answer is to darken the hue rather than pick another one,
+     so the accent stays recognisably the same colour across both themes. */
+  --accent:            #8E6A00;
+  --accent-contrast:   #ffffff;
+  --accent-soft:       rgba(142, 106, 0, 0.12);
+
+  --status-info-text:    #8E6A00;
+  --status-info-bg:      rgba(142, 106, 0, 0.12);
+  --status-info-solid:   #A87D00;
+
+  --status-ok-text:      #0e6027;
+  --status-ok-bg:        rgba(14, 96, 39, 0.11);
+  --status-ok-solid:     #198038;
+
+  --status-fail-text:    #da1e28;
+  --status-fail-bg:      rgba(218, 30, 40, 0.10);
+  --status-fail-solid:   #da1e28;
+
+  --status-warn-text:    #8E6A00;
+  --status-warn-bg:      rgba(142, 106, 0, 0.10);
+  --status-warn-solid:   #b28600;
+
+  --status-neutral-text: #6f6f6f;
+  --status-neutral-bg:   rgba(0, 0, 0, 0.045);
+  --status-neutral-solid: #8d8d8d;
+
+  --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
+  --hairline: inset 0 0 0 1px rgba(0, 0, 0, .05);
+  --focus-ring: rgba(142, 106, 0, .5);
+}
+
+/* Base document styling. The font stack ends in system-ui/sans-serif rather
+   than a fixed list of named fonts on purpose: a browser missing a glyph in
+   the first-choice font falls back per character to whatever the OS already
+   has installed for that script, so this list does not need every script's
+   font named to render correctly (see docs/design-language.md, "Non-Latin
+   scripts"). The base letter-spacing is a Latin-kerning assumption and reads
+   as crowding on CJK, which is set in full-width cells that don't kern the
+   same way — scoped back to normal for it below. */
+body {
+  margin: 0;
+  background-color: var(--carbon-bg);
+  color: var(--carbon-text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.008em;
+}
+:lang(ja), :lang(zh), :lang(ko) {
+  letter-spacing: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The one raised surface. Never nest it (rule 1). */
+.glim-card {
+  background-color: var(--carbon-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation), var(--hairline);
+}
+
+/* An inset well for tracks, drop zones and quiet groupings. */
+.glim-well {
+  background-color: var(--carbon-surface2);
+  border-radius: var(--radius-control);
+}
+
+/* Eyebrow label: small, uppercase, quiet. It labels, it never announces. */
+.glim-eyebrow {
+  font-size: var(--text-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--carbon-text-muted);
+}
+
+/* Digits that stack in columns line up and never jitter while counting. */
+.glim-num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* The info bubble (rule 8). Render at body level (position measured from the
+   trigger icon in JS) so no scroll container, card or table can clip it.
+   Translated back by half its own width to centre it under the icon without
+   measuring the text first. */
+.glim-bubble {
+  position: fixed;
+  z-index: 60;
+  transform: translateX(-50%);
+  max-width: 280px;
+  pointer-events: none;
+  background-color: var(--carbon-surface);
+  color: var(--carbon-text);
+  border-radius: var(--radius-control);
+  box-shadow: var(--elevation), var(--hairline);
+  padding: 7px 10px;
+  font-size: var(--text-caption);
+  line-height: 1.45;
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+  text-align: start;
+  white-space: normal;
+}
+
+/* ---------------------------------------------------------------------------
+   Rainbow — the accent in its plural form. See docs/design-language.md for
+   the full explanation and the three traps. Pair with reference/appearance.ts
+   for the JS side (hueVars, applyRainbow).
+
+   An element that owns a palette position sets --item-hue on itself and
+   carries .glim-hue. These rules redefine --accent for that subtree, which is
+   all it takes: every component already paints activity with var(--accent),
+   so nothing below has to know the mode exists.
+
+   WHAT MAY OWN A POSITION: anything that is one member of a SET whose members
+   are all equal — a nav item, a list row, a tab, a filter chip, a segment of
+   a segmented control. Anything that is the only one of its kind on the page
+   keeps the single accent. The four state hues are never rainbowed — green
+   still means finished.
+   --------------------------------------------------------------------------- */
+[data-rainbow] .glim-hue {
+  --accent: var(--item-hue);
+  --accent-contrast: var(--item-hue-ink);
+  --accent-soft: var(--item-hue-soft);
+  /* The focus ring is part of the position, not the theme: drawn directly
+     around the element that owns the colour. Reactive mode deliberately does
+     not reset this — the ring only ever paints while the element has focus,
+     and focus already brings the hue back via :focus-within below. */
+  --focus-ring: var(--item-hue-ring);
+}
+
+/* Opt-in: the element's glyph takes the hue too. A download row owns a
+   colour but its action icons must stay quiet, hence the second class. The
+   active item is excluded: it's FILLED with the hue already, so an icon
+   painted the same colour would vanish into its own background. */
+[data-rainbow] .glim-hue-icon:not(.glim-active) svg {
+  color: var(--accent);
+}
+
+/* Opt-in: the row is WASHED with its hue rather than ruled with an edge line.
+   Without this, a list row only shows colour through its progress fill,
+   which turns green on completion (rule 4) — on a list of finished items the
+   palette would show nothing. The wash is an inset shadow, not a background,
+   so the row's own hover tint still reads through it at 7% alpha. */
+[data-rainbow] .glim-tint {
+  box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+[data-rainbow='reactive'] .glim-tint {
+  box-shadow: none;
+}
+[data-rainbow='reactive'] .glim-tint:hover,
+[data-rainbow='reactive'] .glim-tint.glim-active {
+  box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+
+/* Reactive: the palette rests. Everything stays quiet until hovered or
+   active — the reading that still obeys "colour marks activity" when a
+   whole list would otherwise light up at once. */
+[data-rainbow='reactive'] .glim-hue {
+  --accent: var(--carbon-text-muted);
+  --accent-contrast: var(--carbon-bg);
+  --accent-soft: transparent;
+}
+[data-rainbow='reactive'] .glim-hue:hover,
+[data-rainbow='reactive'] .glim-hue:focus-within,
+[data-rainbow='reactive'] .glim-hue.glim-active {
+  --accent: var(--item-hue);
+  --accent-contrast: var(--item-hue-ink);
+  --accent-soft: var(--item-hue-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--carbon-surface3) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--carbon-surface3);
+  border-radius: var(--radius-pill);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+@keyframes glim-indeterminate {
+  0%   { left: -35%; }
+  100% { left: 100%; }
+}
+@keyframes glim-page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes glim-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes glim-toast-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes glim-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .45; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glim-page-enter { animation: glim-page-in 280ms cubic-bezier(.2, .6, .2, 1) both; }
+  .glim-toast { animation: glim-toast-in 220ms cubic-bezier(.2, .6, .2, 1) both; }
+  .glim-live { animation: glim-pulse 2s ease-in-out infinite; }
+  /* Short on purpose: a bubble that fades in slowly reads as lag, because the
+     pointer is already there waiting for it. */
+  .glim-fade { animation: glim-fade-in 110ms ease both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glim-page-enter { animation: glim-fade-in 180ms ease both; }
+  .glim-toast { animation: glim-fade-in 160ms ease both; }
+  /* An infinite animation gets a true stop here, not a slower version: a
+     one-shot 110-280ms entrance is a poor match for what reduced-motion
+     exists to prevent, but a 2s-forever pulse is exactly it. Still fully
+     opaque, not hidden -- "this is live" has to keep reading from colour and
+     position alone once the motion is gone. */
+  .glim-live { animation: none; opacity: 1; }
+}
