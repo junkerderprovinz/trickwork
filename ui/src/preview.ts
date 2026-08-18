@@ -11,9 +11,22 @@ import {
 import type { Store } from './state'
 
 export function mountPreview(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  eyebrow.textContent = 'Preview'
+  container.appendChild(eyebrow)
+
+  const empty = document.createElement('div')
+  empty.className = 'preview-empty glim-well'
+  empty.textContent = 'Drop an image above to see it here as ASCII art.'
+  container.appendChild(empty)
+
+  const canvasWrap = document.createElement('div')
+  canvasWrap.className = 'preview-canvas-wrap'
   const canvas = document.createElement('canvas')
   canvas.className = 'preview-canvas'
-  container.appendChild(canvas)
+  canvasWrap.appendChild(canvas)
+  container.appendChild(canvasWrap)
 
   const ctx = canvas.getContext('2d')
   if (!ctx) {
@@ -38,8 +51,12 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     if (!activeItem?.imageData) {
       canvas.width = 0
       canvas.height = 0
+      empty.style.display = ''
+      canvasWrap.style.display = 'none'
       return
     }
+    empty.style.display = 'none'
+    canvasWrap.style.display = ''
 
     const { charset, font } = state.options
     const tableKey = `${charset.join('')}|${font.family}|${font.sizePx}`

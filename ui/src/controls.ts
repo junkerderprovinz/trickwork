@@ -9,6 +9,11 @@ const FONT_CHOICES = [
 ] as const
 
 export function mountControls(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  eyebrow.textContent = 'Controls'
+  container.appendChild(eyebrow)
+
   const panel = document.createElement('div')
   panel.className = 'controls'
 
@@ -24,6 +29,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
     store.setState({ options: { ...store.getState().options, contrast: value } })
   }, 0.05)
 
+  const charsetLabel = document.createElement('label')
+  charsetLabel.className = 'control-slider'
+  charsetLabel.textContent = 'Character set'
   const charsetSelect = document.createElement('select')
   for (const key of Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]) {
     const opt = document.createElement('option')
@@ -35,6 +43,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
   customOpt.value = 'custom'
   customOpt.textContent = 'custom'
   charsetSelect.appendChild(customOpt)
+  charsetLabel.appendChild(charsetSelect)
 
   const customInput = document.createElement('input')
   customInput.type = 'text'
@@ -61,6 +70,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
     })
   })
 
+  const fontLabel = document.createElement('label')
+  fontLabel.className = 'control-slider'
+  fontLabel.textContent = 'Font'
   const fontSelect = document.createElement('select')
   for (const choice of FONT_CHOICES) {
     const opt = document.createElement('option')
@@ -72,13 +84,14 @@ export function mountControls(container: HTMLElement, store: Store): void {
     const options = store.getState().options
     store.setState({ options: { ...options, font: { ...options.font, family: fontSelect.value } } })
   })
+  fontLabel.appendChild(fontSelect)
 
   const rtfNote = document.createElement('p')
   rtfNote.className = 'controls-note'
   rtfNote.textContent =
     'Note: RTF export always renders in a fixed monospace font, regardless of the font selected above — most RTF readers cannot reliably honor an arbitrary proportional font.'
 
-  panel.append(columns, brightness, contrast, charsetSelect, customInput, fontSelect, rtfNote)
+  panel.append(columns, brightness, contrast, charsetLabel, customInput, fontLabel, rtfNote)
   container.appendChild(panel)
 }
 
@@ -92,7 +105,15 @@ function numberSlider(
 ): HTMLElement {
   const wrapper = document.createElement('label')
   wrapper.className = 'control-slider'
-  wrapper.textContent = label
+
+  const row = document.createElement('div')
+  row.className = 'control-slider-row'
+  const labelText = document.createElement('span')
+  labelText.textContent = label
+  const valueText = document.createElement('span')
+  valueText.className = 'control-slider-value glim-num'
+  valueText.textContent = String(initial)
+  row.append(labelText, valueText)
 
   const input = document.createElement('input')
   input.type = 'range'
@@ -100,8 +121,11 @@ function numberSlider(
   input.max = String(max)
   input.step = String(step)
   input.value = String(initial)
-  input.addEventListener('input', () => onChange(Number(input.value)))
+  input.addEventListener('input', () => {
+    valueText.textContent = input.value
+    onChange(Number(input.value))
+  })
 
-  wrapper.appendChild(input)
+  wrapper.append(row, input)
   return wrapper
 }

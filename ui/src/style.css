@@ -5,7 +5,8 @@ html, body {
   height: 100%;
   background: var(--carbon-bg);
   color: var(--carbon-text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: var(--text-body);
 }
 
 #app {
@@ -14,10 +15,392 @@ html, body {
   min-height: 100%;
 }
 
+/* ---------------------------------------------------------------------
+   Header
+   --------------------------------------------------------------------- */
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: var(--text-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app-header .app-tagline {
+  font-size: var(--text-dense);
+  color: var(--carbon-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Layout: a wide primary column (import + preview) beside a narrower
+   sidebar (controls, queue, export) — the classic image-tool shape.
+   --------------------------------------------------------------------- */
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-primary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* One card per section (rule 1: never nest cards). */
+.glim-section {
+  padding: 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.glim-section > .glim-eyebrow {
+  margin-bottom: -0.25rem;
+}
+
+/* ---------------------------------------------------------------------
+   Drop zone — a compact well that expands into the full empty-state
+   invitation when the queue has nothing in it yet.
+   --------------------------------------------------------------------- */
+.dropzone {
+  cursor: pointer;
+  border-radius: var(--radius-control);
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--carbon-text-sub);
+  font-size: var(--text-body);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.dropzone::before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--carbon-surface3);
+  color: var(--carbon-text);
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dropzone:hover {
+  color: var(--carbon-text);
+}
+
+.dropzone--active {
+  background-color: var(--accent-soft);
+  color: var(--carbon-text);
+}
+
+.dropzone--active::before {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* ---------------------------------------------------------------------
+   Preview
+   --------------------------------------------------------------------- */
+.preview-empty {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--carbon-text-muted);
+  font-size: var(--text-body);
+  border-radius: var(--radius-control);
+}
+
+.preview-canvas-wrap {
+  overflow: auto;
+  border-radius: var(--radius-control);
+  background-color: #000;
+  max-height: 60vh;
+}
+
+canvas.preview-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+canvas.preview-canvas[width="0"] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------
+   Controls
+   --------------------------------------------------------------------- */
+.control-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: var(--text-dense);
+  color: var(--carbon-text-sub);
+}
+
+.control-slider .control-slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-slider .control-slider-value {
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+}
+
+/* Range: neutral filled track, accent thumb — activity lives in the thumb. */
+input[type="range"] {
+  appearance: none;
+  width: 100%;
+  height: 1.1rem;
+  background: transparent;
+  margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--carbon-surface3);
+}
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--carbon-surface3);
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--carbon-bg);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--carbon-bg);
+  cursor: pointer;
+}
+
+/* Form fields: borderless and filled (rule 14), focus is a brightness
+   step rather than a ring. */
+select,
+input[type="text"] {
+  appearance: none;
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text);
+  font: inherit;
+  font-size: var(--text-dense);
+  padding: 0.5rem 2rem 0.5rem 0.65rem;
+}
+
+select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--carbon-text-muted) 50%),
+    linear-gradient(135deg, var(--carbon-text-muted) 50%, transparent 50%);
+  background-position: calc(100% - 1.1rem) center, calc(100% - 0.75rem) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+input[type="text"] {
+  padding: 0.5rem 0.65rem;
+}
+
+select:focus-visible,
+input[type="text"]:focus-visible {
+  outline: none;
+  background-color: var(--carbon-hover);
+}
+
+.controls-note {
+  margin: 0;
+  padding-top: 0.25rem;
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--carbon-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Queue
+   --------------------------------------------------------------------- */
+.queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.queue-empty {
+  font-size: var(--text-dense);
+  color: var(--carbon-text-muted);
+  padding: 0.4rem 0;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  font-size: var(--text-dense);
+  transition: background-color 120ms ease;
+}
+
+.queue-item--converted,
+.queue-item--exported {
+  cursor: pointer;
+}
+
+.queue-item--converted:hover,
+.queue-item--exported:hover {
+  background-color: var(--carbon-hover);
+}
+
+.queue-item--active {
+  box-shadow: inset 0 0 0 999px var(--accent-soft);
+}
+
+.queue-item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-item-status {
+  flex-shrink: 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  text-transform: capitalize;
+}
+
+.queue-item--pending .queue-item-status,
+.queue-item--converting .queue-item-status {
+  color: var(--status-info-text);
+  background-color: var(--status-info-bg);
+}
+.queue-item--converted .queue-item-status,
+.queue-item--exported .queue-item-status {
+  color: var(--status-ok-text);
+  background-color: var(--status-ok-bg);
+}
+.queue-item--error .queue-item-status {
+  color: var(--status-fail-text);
+  background-color: var(--status-fail-bg);
+}
+
+.queue-item-downscaled {
+  flex-shrink: 0;
+  font-size: var(--text-caption);
+  color: var(--status-warn-text);
+}
+
+/* ---------------------------------------------------------------------
+   Export
+   --------------------------------------------------------------------- */
+.export-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.export-format-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-dense);
+  color: var(--carbon-text);
+  background-color: var(--carbon-surface2);
+  border-radius: var(--radius-control);
+  padding: 0.45rem 0.75rem;
+  transition: background-color 120ms ease;
+}
+
+button:hover {
+  background-color: var(--carbon-hover);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.export-format-row button {
+  flex: 1;
+  min-width: 4.5rem;
+}
+
+.export-batch-button {
+  width: 100%;
+}
+
+.export-summary {
+  margin: 0;
+  min-height: 1em;
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Footer
+   --------------------------------------------------------------------- */
 .app-footer {
   margin-top: auto;
-  padding: 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.5rem 1.5rem 0.75rem;
+  font-size: var(--text-caption);
   color: var(--carbon-text-muted);
   text-align: right;
 }

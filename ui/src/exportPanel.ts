@@ -14,20 +14,34 @@ import type { BatchItem, Store } from './state'
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
 
 export function mountExportPanel(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  eyebrow.textContent = 'Export'
+  container.appendChild(eyebrow)
+
   const panel = document.createElement('div')
   panel.className = 'export-panel'
 
   const summary = document.createElement('p')
   summary.className = 'export-summary'
 
+  const formatRow = document.createElement('div')
+  formatRow.className = 'export-format-row'
   for (const format of ['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]) {
     const button = document.createElement('button')
-    button.textContent = `Export active image as ${format.toUpperCase()}`
+    button.textContent = format.toUpperCase()
+    // aria-label carries the full sentence as the accessible name (what
+    // screen readers and Playwright's getByRole both read), while the
+    // visible label stays a compact format code.
+    button.setAttribute('aria-label', `Export active image as ${format.toUpperCase()}`)
+    button.title = `Export active image as ${format.toUpperCase()}`
     button.addEventListener('click', () => void exportActive(store, format, summary))
-    panel.appendChild(button)
+    formatRow.appendChild(button)
   }
+  panel.appendChild(formatRow)
 
   const batchButton = document.createElement('button')
+  batchButton.className = 'export-batch-button'
   batchButton.textContent = 'Export all queued images as TXT'
   batchButton.addEventListener('click', () => void exportAllAsText(store, summary))
   panel.appendChild(batchButton)

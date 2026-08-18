@@ -18,14 +18,41 @@ applyCachedAppearance()
 
 const store = createStore()
 
+function section(): HTMLDivElement {
+  const el = document.createElement('div')
+  el.className = 'glim-card glim-section'
+  return el
+}
+
+const header = document.createElement('header')
+header.className = 'app-header'
+header.innerHTML = '<h1>TrickWork</h1><span class="app-tagline">Image to ASCII art</span>'
+app.appendChild(header)
+
 const main = document.createElement('main')
 main.className = 'app-main'
-mountDropzone(main, store)
-mountPreview(main, store)
-mountControls(main, store)
-mountQueue(main, store)
-mountExportPanel(main, store)
+
+const primary = document.createElement('section')
+primary.className = 'app-primary'
+const dropzoneCard = section()
+const previewCard = section()
+primary.append(dropzoneCard, previewCard)
+
+const sidebar = document.createElement('aside')
+sidebar.className = 'app-sidebar'
+const controlsCard = section()
+const queueCard = section()
+const exportCard = section()
+sidebar.append(controlsCard, queueCard, exportCard)
+
+main.append(primary, sidebar)
 app.appendChild(main)
+
+mountDropzone(dropzoneCard, store)
+mountPreview(previewCard, store)
+mountControls(controlsCard, store)
+mountQueue(queueCard, store)
+mountExportPanel(exportCard, store)
 
 const footer = document.createElement('footer')
 footer.className = 'app-footer'

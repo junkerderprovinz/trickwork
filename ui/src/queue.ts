@@ -1,12 +1,23 @@
 import type { BatchItem, Store } from './state'
 
 export function mountQueue(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  eyebrow.textContent = 'Queue'
+  container.appendChild(eyebrow)
+
+  const empty = document.createElement('p')
+  empty.className = 'queue-empty'
+  empty.textContent = 'No images yet.'
+  container.appendChild(empty)
+
   const list = document.createElement('ul')
   list.className = 'queue-list'
   container.appendChild(list)
 
   function render() {
     const state = store.getState()
+    empty.style.display = state.items.length === 0 ? '' : 'none'
     list.innerHTML = ''
     for (const item of state.items) {
       list.appendChild(renderItem(item, item.id === state.activeItemId, store))

@@ -1,8 +1,13 @@
 import type { Store } from './state'
 
 export function mountDropzone(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  eyebrow.textContent = 'Import'
+  container.appendChild(eyebrow)
+
   const zone = document.createElement('div')
-  zone.className = 'dropzone'
+  zone.className = 'dropzone glim-well'
   zone.textContent = 'Drop images here, or click to choose files'
   zone.tabIndex = 0
 
