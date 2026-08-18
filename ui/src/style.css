@@ -142,6 +142,11 @@ html, body {
 }
 
 .preview-canvas-wrap {
+  /* Hug the canvas's own size (max-content) rather than stretching to the
+     full card width — a smaller-than-card canvas would otherwise leave a
+     block of this wrap's own black background sitting empty beside it. */
+  width: max-content;
+  max-width: 100%;
   overflow: auto;
   border-radius: var(--radius-control);
   background-color: #000;
