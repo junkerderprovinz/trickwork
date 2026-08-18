@@ -53,6 +53,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     })
   })
   customInput.addEventListener('input', () => {
+    if (customInput.value.length === 0) return
     store.setState({
       options: { ...store.getState().options, charset: customInput.value.split('') },
     })
