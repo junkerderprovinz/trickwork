@@ -1,0 +1,61 @@
+name: Desktop build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows/amd64
+            slug: windows-amd64
+            extra: ""
+          - os: macos-latest
+            platform: darwin/universal
+            slug: macos-universal
+            extra: ""
+          - os: ubuntu-latest
+            platform: linux/amd64
+            slug: linux-amd64
+            extra: "-tags webkit2_41"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Linux system deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
+
+      - name: Build ui/ and populate webembed/dist
+        run: |
+          npm install
+          npm run build --workspace ui
+          rm -rf webembed/dist
+          cp -r ui/dist webembed/dist
+
+      - name: Build
+        working-directory: desktop
+        run: |
+          go mod tidy
+          wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ascii-supergenerator-${{ matrix.slug }}
+          path: desktop/build/bin/*
