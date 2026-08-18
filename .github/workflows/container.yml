@@ -3,6 +3,7 @@ name: Container build
 on:
   push:
     branches: [main]
+    tags: ["v*.*.*"]
     paths-ignore:
       - "**.md"
       - "LICENSE"
@@ -64,6 +65,9 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=sha-,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Build and push
         if: github.event_name != 'pull_request'

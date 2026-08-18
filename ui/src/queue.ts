@@ -50,9 +50,21 @@ function renderItem(item: BatchItem, isActive: boolean, store: Store): HTMLLIEle
     li.append(downscaledNote)
   }
 
-  li.addEventListener('click', () => {
-    if (item.status === 'converted' || item.status === 'exported') {
-      store.setState({ activeItemId: item.id })
+  const selectable = item.status === 'converted' || item.status === 'exported'
+  if (selectable) {
+    li.tabIndex = 0
+    li.setAttribute('role', 'button')
+    li.setAttribute('aria-label', `Preview ${item.file.name}`)
+  }
+
+  const select = () => {
+    if (selectable) store.setState({ activeItemId: item.id })
+  }
+  li.addEventListener('click', select)
+  li.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      select()
     }
   })
   return li
