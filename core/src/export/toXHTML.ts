@@ -25,8 +25,8 @@ export function toXHTML(grid: Grid, options: XHTMLOptions): string {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>ASCII SuperGenerator export</title>
 </head>
-<body style="background-color: ${options.background}; margin: 0;">
-<pre style="background-color: ${options.background}; color: ${options.foreground}; margin: 0; padding: 1em; white-space: pre; font-family: monospace;">
+<body style="background-color: ${escapeXml(options.background)}; margin: 0;">
+<pre style="background-color: ${escapeXml(options.background)}; color: ${escapeXml(options.foreground)}; margin: 0; padding: 1em; white-space: pre; font-family: monospace;">
 ${escaped}
 </pre>
 </body>

@@ -25,4 +25,14 @@ describe('toXHTML', () => {
     const html = toXHTML(grid, { background: '#000', foreground: '#fff' })
     expect(html).toContain('&amp;')
   })
+
+  it('escapes quotes in background/foreground so they cannot break out of the style attribute', () => {
+    const grid: Grid = [[{ char: 'A', font: { family: 'monospace', sizePx: 10 } }]]
+    const html = toXHTML(grid, {
+      background: '#000" onload="evil()',
+      foreground: '#fff" onload="evil()',
+    })
+    expect(html).not.toContain('" onload=')
+    expect(html).toContain('&quot; onload=&quot;evil()')
+  })
 })
