@@ -6,9 +6,13 @@ on:
     tags:
       - "v*.*.*"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
@@ -24,6 +28,7 @@ jobs:
             slug: linux-amd64
             extra: "-tags webkit2_41"
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -42,7 +47,12 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
 
+      # GitHub Actions runs `run:` steps under pwsh by default on windows-latest,
+      # not bash - `rm -rf` is a bash-ism with no pwsh equivalent flag, so this
+      # step needs an explicit shell. Git Bash ships on windows-latest runners
+      # specifically so cross-platform build steps like this one work unchanged.
       - name: Build ui/ and populate webembed/dist
+        shell: bash
         run: |
           npm install
           npm run build --workspace core
@@ -60,3 +70,55 @@ jobs:
         with:
           name: ascii-supergenerator-${{ matrix.slug }}
           path: desktop/build/bin/*
+          if-no-files-found: error
+
+  # Without this job the bundles are built on every tag and then thrown away
+  # when the artifact expires: green CI, and nobody outside Actions can download
+  # the desktop app at all. This attaches them to the release the tag creates.
+  attach:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: bundles
+
+      # One archive per platform, named for the tag, so a download sitting in
+      # somebody's folder still says which version it is.
+      - name: Package
+        run: |
+          set -eu
+          mkdir -p dist
+          for d in bundles/ascii-supergenerator-*; do
+            [ -d "$d" ] || continue
+            slug="${d#bundles/ascii-supergenerator-}"
+            (cd "$d" && zip -qr "../../dist/ascii-supergenerator-${GITHUB_REF_NAME}-${slug}.zip" .)
+          done
+          ls -lh dist
+
+      # The release is expected to exist for this tag by the time the bundles are
+      # ready, but these builds can easily take longer than release creation - and
+      # a runner queue can invert that further. So wait for it rather than racing it.
+      - name: Wait for the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          for i in $(seq 1 30); do
+            if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              echo "release $GITHUB_REF_NAME is there"
+              exit 0
+            fi
+            echo "waiting for release $GITHUB_REF_NAME ($i/30)"
+            sleep 20
+          done
+          echo "release $GITHUB_REF_NAME never appeared; was it created for this tag?" >&2
+          exit 1
+
+      - name: Attach the bundles
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber --repo "$GITHUB_REPOSITORY"

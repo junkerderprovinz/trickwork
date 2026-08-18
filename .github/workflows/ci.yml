@@ -1,0 +1,72 @@
+name: CI
+
+# Gates pull requests and pushes to main: core unit tests, the ui/ Playwright
+# E2E suite, and the root typecheck (core + ui). Kept separate from
+# container.yml (image build/push) and desktop.yml (release packaging), which
+# only trigger on push-to-main / tags respectively and never run on a PR.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The only workspace with automated (Vitest) unit tests - ui/'s tests are
+      # E2E/Playwright, covered by the separate e2e job below.
+      - name: Unit tests (core)
+        run: npm run test --workspace core
+
+      - name: Typecheck (core + ui)
+        run: npm run typecheck
+
+  e2e:
+    name: E2E (ui, Playwright)
+    runs-on: ubuntu-latest
+    # Separate job so a flaky/slow browser run never blocks the fast unit-test
+    # signal above.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ui/'s Playwright config drives `vite preview` against the already-built
+      # dist/, it does not build it - core must build first since ui imports
+      # ascii-supergenerator-core as a workspace dependency.
+      - name: Build core + ui
+        run: npm run build
+
+      - name: Install Playwright browsers
+        working-directory: ui
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run e2e --workspace ui

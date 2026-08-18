@@ -5,9 +5,10 @@ ARG GO_VERSION=1.26
 FROM node:${NODE_VERSION}-slim AS client
 WORKDIR /app
 COPY package.json ./
+COPY package-lock.json ./
 COPY core/package.json core/
 COPY ui/package.json ui/
-RUN npm install
+RUN npm ci
 COPY core ./core
 COPY ui ./ui
 RUN npm run build --workspace core
@@ -30,4 +31,5 @@ LABEL org.opencontainers.image.title="ASCII SuperGenerator" \
 COPY --from=gobuild /out/ascii-supergenerator /ascii-supergenerator
 ENV PORT=3210
 EXPOSE 3210
+USER nonroot:nonroot
 ENTRYPOINT ["/ascii-supergenerator"]

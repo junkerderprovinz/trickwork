@@ -1,0 +1,11 @@
+.git
+.github
+.superpowers
+docs
+node_modules
+**/node_modules
+dist
+**/dist
+desktop/build
+*.md
+LICENSE
