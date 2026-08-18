@@ -20,6 +20,13 @@ export interface FontWidthTable {
 /** Measures one glyph's ink coverage at the given font. Injected so core/ stays DOM-free. */
 export type GlyphMeasurer = (char: string, font: FontSpec) => GlyphMetrics
 
+/**
+ * Measures a representative advance width (in CSS pixels) for the given font,
+ * used to derive the render grid's cell pitch. Injected for the same reason as
+ * GlyphMeasurer: the real implementation needs a canvas, the tests do not.
+ */
+export type FontWidthMeasurer = (font: FontSpec) => number
+
 export interface CharCell {
   char: string
   font: FontSpec

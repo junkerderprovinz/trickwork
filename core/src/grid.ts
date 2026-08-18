@@ -6,8 +6,13 @@ import type { FontWidthTable, Grid, MappingOptions } from './types'
  * Character cells are roughly twice as tall as they are wide on screen, so
  * sampling square pixel blocks would visibly stretch the output vertically.
  * This compensates by sampling taller blocks than the column width implies.
+ *
+ * Exported because the render side has to agree with the sampling side: a grid
+ * sampled at this aspect ratio must be drawn back out at the same one, or the
+ * output is stretched. `measureCellSize` in cellSize.ts is the render-side
+ * consumer.
  */
-const CELL_ASPECT_COMPENSATION = 2
+export const CELL_ASPECT_COMPENSATION = 2
 
 export function assembleGrid(
   imageData: ImageData,

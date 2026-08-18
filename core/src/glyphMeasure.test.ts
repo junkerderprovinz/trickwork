@@ -1,6 +1,9 @@
 // core/src/glyphMeasure.test.ts
 import { describe, expect, it } from 'vitest'
-import { createCanvasGlyphMeasurer } from './glyphMeasure'
+import {
+  createCanvasGlyphMeasurer,
+  createCanvasWidthMeasurer,
+} from './glyphMeasure'
 
 function makeFakeCanvasFactory(coverageByChar: Record<string, number>) {
   // A fake 2D context that reports a deterministic "ink coverage" per char
@@ -59,5 +62,46 @@ describe('createCanvasGlyphMeasurer', () => {
     const dot = measure('.', { family: 'monospace', sizePx: 16 })
     const hash = measure('#', { family: 'monospace', sizePx: 16 })
     expect(dot.inkCoverage).toBeLessThan(hash.inkCoverage)
+  })
+})
+
+/** A fake canvas whose measureText reports a scripted advance width per char. */
+function makeFakeWidthCanvasFactory(
+  widthByChar: Record<string, number>,
+  seenFonts: string[] = [],
+) {
+  return (sizePx: number) => {
+    const ctx = {
+      font: '',
+      measureText: (char: string) => {
+        seenFonts.push(ctx.font)
+        return { width: widthByChar[char] ?? 0 } as TextMetrics
+      },
+    }
+    const canvas = { width: sizePx * 2, height: sizePx * 2, getContext: () => ctx }
+    return canvas as unknown as HTMLCanvasElement
+  }
+}
+
+describe('createCanvasWidthMeasurer', () => {
+  it('reports the widest advance among the sampled characters', () => {
+    const measure = createCanvasWidthMeasurer(
+      makeFakeWidthCanvasFactory({ M: 11.2, W: 13.66, '@': 12.4 }),
+    )
+    expect(measure({ family: 'Georgia, serif', sizePx: 14 })).toBeCloseTo(13.66, 2)
+  })
+
+  it('applies the requested font to the context before measuring', () => {
+    const seenFonts: string[] = []
+    const measure = createCanvasWidthMeasurer(
+      makeFakeWidthCanvasFactory({ M: 8 }, seenFonts),
+    )
+    measure({ family: 'monospace', sizePx: 14 })
+    expect(seenFonts.every((font) => font === '14px monospace')).toBe(true)
+  })
+
+  it('returns 0 when the canvas reports no width for any sampled character', () => {
+    const measure = createCanvasWidthMeasurer(makeFakeWidthCanvasFactory({}))
+    expect(measure({ family: 'monospace', sizePx: 14 })).toBe(0)
   })
 })
