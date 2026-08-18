@@ -7,3 +7,5 @@ desktop/build/
 webembed/dist/
 test-results/
 playwright-report/
+ui/wailsjs/
+ui/package.json.md5
