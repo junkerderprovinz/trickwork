@@ -1,0 +1,15 @@
+{
+  "name": "ascii-supergenerator",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "core",
+    "ui"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace core && npm run build --workspace ui",
+    "test": "npm run test --workspace core",
+    "typecheck": "npm run typecheck --workspace core && npm run typecheck --workspace ui",
+    "e2e": "npm run e2e --workspace ui"
+  }
+}
