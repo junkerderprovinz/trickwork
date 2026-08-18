@@ -154,7 +154,13 @@ export function rainbowAt(i: number): string {
   const p = state.palette;
   const off = state.rotate ? state.seed : 0;
   const n = ((Math.trunc(i) % p.length) + p.length) % p.length;
-  return p[(n + off) % p.length];
+  const color = p[(n + off) % p.length];
+  if (color === undefined) {
+    // Unreachable in practice: usablePalette() never lets state.palette go
+    // empty, but the index is computed via modulo, which TS can't verify.
+    throw new Error('rainbowAt: palette is empty');
+  }
+  return color;
 }
 
 /**
@@ -273,7 +279,11 @@ interface Cached {
 
 export function cacheAppearance(shape: string, accent: string, rainbow?: RainbowState): void {
   try {
-    localStorage.setItem(CACHE, JSON.stringify({ shape, accent, rainbow } satisfies Cached));
+    // Built with a conditional spread, not `{ shape, accent, rainbow }`, so
+    // that under exactOptionalPropertyTypes the key is omitted entirely
+    // when there's no rainbow state rather than present-but-undefined.
+    const payload: Cached = { shape, accent, ...(rainbow !== undefined ? { rainbow } : {}) };
+    localStorage.setItem(CACHE, JSON.stringify(payload));
   } catch {
     // A browser with storage disabled simply pays one flash per load.
   }
