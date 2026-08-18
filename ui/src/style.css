@@ -400,6 +400,93 @@ button:focus-visible {
 }
 
 /* ---------------------------------------------------------------------
+   Appearance settings — Shape / Theme / Accent, the axes GlimStone reserves
+   for the user (rule: applied once at the app root, never by the page that
+   edits them).
+   --------------------------------------------------------------------- */
+.appearance-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.segmented-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.segmented-button {
+  flex: 1;
+  text-align: center;
+}
+
+.segmented-button--active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.segmented-button--active:hover {
+  background-color: var(--accent);
+}
+
+.accent-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.accent-swatch {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.accent-swatch--active {
+  box-shadow: 0 0 0 2px var(--carbon-surface), 0 0 0 4px var(--carbon-text);
+}
+
+.accent-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.accent-custom-input {
+  appearance: none;
+  width: 2.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  cursor: pointer;
+}
+.accent-custom-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.accent-custom-input::-webkit-color-swatch {
+  border: none;
+  border-radius: inherit;
+}
+.accent-custom-input::-moz-color-swatch {
+  border: none;
+  border-radius: inherit;
+}
+
+.accent-reset-button {
+  background: none;
+  color: var(--carbon-text-muted);
+  padding: 0.3rem 0;
+}
+
+.accent-reset-button:hover {
+  background: none;
+  color: var(--carbon-text);
+}
+
+/* ---------------------------------------------------------------------
    Footer
    --------------------------------------------------------------------- */
 .app-footer {

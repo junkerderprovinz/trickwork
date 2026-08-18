@@ -1,11 +1,13 @@
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 import { applyCachedAppearance } from './design/appearance'
+import { applyCachedTheme } from './design/theme'
 import { createStore } from './state'
 import { mountDropzone } from './dropzone'
 import { mountPreview } from './preview'
 import { mountControls } from './controls'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
+import { mountAppearanceSettings } from './appearanceSettings'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -13,8 +15,10 @@ if (!app) {
 }
 
 // GlimStone's boot-time entry point (its actual current export - not
-// applyAppearance(), which doesn't exist upstream).
+// applyAppearance(), which doesn't exist upstream). Theme has no GlimStone
+// export at all (see design/theme.ts) so it's applied separately.
 applyCachedAppearance()
+applyCachedTheme()
 
 const store = createStore()
 
@@ -43,7 +47,8 @@ sidebar.className = 'app-sidebar'
 const controlsCard = section()
 const queueCard = section()
 const exportCard = section()
-sidebar.append(controlsCard, queueCard, exportCard)
+const appearanceCard = section()
+sidebar.append(controlsCard, queueCard, exportCard, appearanceCard)
 
 main.append(primary, sidebar)
 app.appendChild(main)
@@ -53,6 +58,7 @@ mountPreview(previewCard, store)
 mountControls(controlsCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
+mountAppearanceSettings(appearanceCard)
 
 const footer = document.createElement('footer')
 footer.className = 'app-footer'

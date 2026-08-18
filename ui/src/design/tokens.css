@@ -111,6 +111,66 @@
   --focus-ring: rgba(252, 196, 25, .55);
 }
 
+/* System default (rule: theme defaults to system, not a hard-coded dark) —
+   applies the light ramp when the OS prefers light AND no explicit
+   data-theme override is set. Without this block, an app that never sets
+   data-theme is unconditionally dark regardless of the OS, which is exactly
+   the "opens dark on a light-mode OS nobody asked for" mistake the design
+   language warns against. Values are intentionally identical to
+   [data-theme="light"] below — same tier structure as the explicit
+   override, just gated on the media query instead of the attribute. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --carbon-bg:         #f4f4f4;
+    --carbon-sidebar:    #ffffff;
+    --carbon-surface:    #ffffff;
+    --carbon-surface2:   #e8e8e8;
+    --carbon-surface3:   #d1d1d1;
+    --carbon-hover:      #e0e0e0;
+    --carbon-border:     #d1d1d1;
+
+    --carbon-text:       #161616;
+    --carbon-text-sub:   #525252;
+    --carbon-text-muted: #6f6f6f;
+    --sidebar-text:      #393939;
+
+    --accent:            #8E6A00;
+    --accent-contrast:   #ffffff;
+    --accent-soft:       rgba(142, 106, 0, 0.12);
+
+    --status-info-text:    #8E6A00;
+    --status-info-bg:      rgba(142, 106, 0, 0.12);
+    --status-info-solid:   #A87D00;
+
+    --status-ok-text:      #0e6027;
+    --status-ok-bg:        rgba(14, 96, 39, 0.11);
+    --status-ok-solid:     #198038;
+
+    --status-fail-text:    #da1e28;
+    --status-fail-bg:      rgba(218, 30, 40, 0.10);
+    --status-fail-solid:   #da1e28;
+
+    --status-warn-text:    #8E6A00;
+    --status-warn-bg:      rgba(142, 106, 0, 0.10);
+    --status-warn-solid:   #b28600;
+
+    --status-neutral-text: #6f6f6f;
+    --status-neutral-bg:   rgba(0, 0, 0, 0.045);
+    --status-neutral-solid: #8d8d8d;
+
+    --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
+    --hairline: inset 0 0 0 1px rgba(0, 0, 0, .05);
+    --focus-ring: rgba(142, 106, 0, .5);
+  }
+}
+
+/* :root[data-theme="dark"] wins over the media query in both directions
+   (rule already covered by the ":root, [data-theme=dark]" selector above),
+   so an explicit dark override stays dark even under a light-preferring OS.
+   [data-theme="light"] below is the mirror: explicit light even under a
+   dark-preferring OS. */
 [data-theme="light"] {
   color-scheme: light;
 
