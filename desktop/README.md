@@ -6,6 +6,7 @@ container serves, via the root module's `webembed` package.
 ## Build locally
 
 ```
+npm run build --workspace core
 npm run build --workspace ui
 rm -rf ../webembed/dist && cp -r ../ui/dist ../webembed/dist
 cd desktop

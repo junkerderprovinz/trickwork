@@ -45,6 +45,7 @@ jobs:
       - name: Build ui/ and populate webembed/dist
         run: |
           npm install
+          npm run build --workspace core
           npm run build --workspace ui
           rm -rf webembed/dist
           cp -r ui/dist webembed/dist
