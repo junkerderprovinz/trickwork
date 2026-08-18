@@ -1,0 +1,81 @@
+import { describe, expect, it } from 'vitest'
+import { computeBlockLuminance, mapLuminanceToChar } from './mapping'
+import type { FontWidthTable } from './types'
+
+function makeImageData(pixels: number[][]): ImageData {
+  const height = pixels.length
+  const width = pixels[0]?.length ?? 0
+  const data = new Uint8ClampedArray(width * height * 4)
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const gray = pixels[y]?.[x] ?? 0
+      const i = (y * width + x) * 4
+      data[i] = gray
+      data[i + 1] = gray
+      data[i + 2] = gray
+      data[i + 3] = 255
+    }
+  }
+  return { data, width, height, colorSpace: 'srgb' } as ImageData
+}
+
+describe('computeBlockLuminance', () => {
+  it('returns 0 for an all-black block', () => {
+    const img = makeImageData([
+      [0, 0],
+      [0, 0],
+    ])
+    expect(computeBlockLuminance(img, 0, 0, 2, 2)).toBeCloseTo(0, 2)
+  })
+
+  it('returns 1 for an all-white block', () => {
+    const img = makeImageData([
+      [255, 255],
+      [255, 255],
+    ])
+    expect(computeBlockLuminance(img, 0, 0, 2, 2)).toBeCloseTo(1, 2)
+  })
+
+  it('averages a mixed block to mid-gray', () => {
+    const img = makeImageData([
+      [0, 255],
+      [255, 0],
+    ])
+    expect(computeBlockLuminance(img, 0, 0, 2, 2)).toBeCloseTo(0.5, 2)
+  })
+
+  it('reads only the requested sub-region, not the whole image', () => {
+    const img = makeImageData([
+      [0, 0, 255, 255],
+      [0, 0, 255, 255],
+    ])
+    expect(computeBlockLuminance(img, 2, 0, 2, 2)).toBeCloseTo(1, 2)
+    expect(computeBlockLuminance(img, 0, 0, 2, 2)).toBeCloseTo(0, 2)
+  })
+})
+
+describe('mapLuminanceToChar', () => {
+  const table: FontWidthTable = {
+    font: { family: 'monospace', sizePx: 16 },
+    entries: [
+      { char: '@', inkCoverage: 0.9 }, // darkest ink = should map to darkest luminance
+      { char: '#', inkCoverage: 0.6 },
+      { char: '*', inkCoverage: 0.4 },
+      { char: '.', inkCoverage: 0.1 },
+      { char: ' ', inkCoverage: 0 }, // no ink = should map to brightest luminance
+    ],
+  }
+
+  it('maps low luminance (dark source pixel) to the highest-ink-coverage glyph', () => {
+    expect(mapLuminanceToChar(0, table)).toBe('@')
+  })
+
+  it('maps high luminance (bright source pixel) to the lowest-ink-coverage glyph', () => {
+    expect(mapLuminanceToChar(1, table)).toBe(' ')
+  })
+
+  it('maps mid luminance to a mid-coverage glyph', () => {
+    // luminance 0.5 -> target ink coverage (1 - 0.5) = 0.5 -> nearest is '#' (0.6) or '*' (0.4), '#' is closer
+    expect(mapLuminanceToChar(0.5, table)).toBe('#')
+  })
+})
