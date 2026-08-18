@@ -6,6 +6,8 @@ if (!app) {
   throw new Error('main.ts: #app root element missing from index.html')
 }
 
+// GlimStone's boot-time entry point (its actual current export - not
+// applyAppearance(), which doesn't exist upstream).
 applyCachedAppearance()
 
 const footer = document.createElement('footer')
