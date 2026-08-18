@@ -10,6 +10,7 @@ COPY ui/package.json ui/
 RUN npm install
 COPY core ./core
 COPY ui ./ui
+RUN npm run build --workspace core
 RUN npm run build --workspace ui
 
 FROM golang:${GO_VERSION} AS gobuild
