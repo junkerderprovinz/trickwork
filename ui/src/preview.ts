@@ -7,7 +7,7 @@ import {
   renderGridToCanvas,
   type CellSize,
   type FontWidthTable,
-} from 'ascii-supergenerator-core'
+} from 'trickwork-core'
 import type { Store } from './state'
 
 export function mountPreview(container: HTMLElement, store: Store): void {

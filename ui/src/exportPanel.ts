@@ -8,7 +8,7 @@ import {
   toRTF,
   toText,
   toXHTML,
-} from 'ascii-supergenerator-core'
+} from 'trickwork-core'
 import type { BatchItem, Store } from './state'
 
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'

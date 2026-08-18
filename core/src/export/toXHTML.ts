@@ -23,7 +23,7 @@ export function toXHTML(grid: Grid, options: XHTMLOptions): string {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>ASCII SuperGenerator export</title>
+<title>TrickWork export</title>
 </head>
 <body style="background-color: ${escapeXml(options.background)}; margin: 0;">
 <pre style="background-color: ${escapeXml(options.background)}; color: ${escapeXml(options.foreground)}; margin: 0; padding: 1em; white-space: pre; font-family: monospace;">

@@ -1,4 +1,4 @@
-import { CHARSET_PRESETS, type CharsetPresetKey } from 'ascii-supergenerator-core'
+import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
 import type { Store } from './state'
 
 const FONT_CHOICES = [

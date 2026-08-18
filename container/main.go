@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/junkerderprovinz/ascii-supergenerator/webembed"
+	"github.com/junkerderprovinz/trickwork/webembed"
 )
 
 const readyBanner = `
@@ -26,9 +26,9 @@ func main() {
 	mux.Handle("/", http.FileServer(http.FS(webembed.Dist)))
 
 	fmt.Println(readyBanner)
-	fmt.Println("  ASCII SuperGenerator - image to ASCII art, self-hosted")
+	fmt.Println("  TrickWork - image to ASCII art, self-hosted")
 	fmt.Println()
-	fmt.Printf("  \033[0;32m✓ ASCII SUPERGENERATOR IS READY\033[0m - listening on http://0.0.0.0:%s\n", port)
+	fmt.Printf("  \033[0;32m✓ TRICKWORK IS READY\033[0m - listening on http://0.0.0.0:%s\n", port)
 	fmt.Println()
 
 	if err := http.ListenAndServe(":"+port, mux); err != nil {

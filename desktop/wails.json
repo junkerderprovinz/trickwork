@@ -1,9 +1,9 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "ASCII SuperGenerator",
-  "outputfilename": "ASCIISuperGenerator",
+  "name": "TrickWork",
+  "outputfilename": "TrickWork",
   "info": {
-    "productName": "ASCII SuperGenerator",
+    "productName": "TrickWork",
     "comments": "Turns images into proportional-font-aware ASCII art"
   },
   "frontend:dir": "../ui",

@@ -1,4 +1,4 @@
-module github.com/junkerderprovinz/ascii-supergenerator
+module github.com/junkerderprovinz/trickwork
 
 go 1.26
 

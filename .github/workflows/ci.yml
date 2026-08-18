@@ -60,7 +60,7 @@ jobs:
 
       # ui/'s Playwright config drives `vite preview` against the already-built
       # dist/, it does not build it - core must build first since ui imports
-      # ascii-supergenerator-core as a workspace dependency.
+      # trickwork-core as a workspace dependency.
       - name: Build core + ui
         run: npm run build
 

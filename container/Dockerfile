@@ -21,15 +21,15 @@ RUN go mod download
 COPY webembed ./webembed
 COPY container ./container
 COPY --from=client /app/ui/dist ./webembed/dist
-RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/ascii-supergenerator ./container
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/trickwork ./container
 
 FROM gcr.io/distroless/static-debian12:latest@sha256:a9fcaedd4c9b59e12dd65d954f0b5044f19b0647a8a3712e77205df9e7b102cd AS runtime
-LABEL org.opencontainers.image.title="ASCII SuperGenerator" \
+LABEL org.opencontainers.image.title="TrickWork" \
       org.opencontainers.image.description="Turns images into proportional-font-aware ASCII art, self-hosted" \
-      org.opencontainers.image.source="https://github.com/junkerderprovinz/ascii-supergenerator" \
+      org.opencontainers.image.source="https://github.com/junkerderprovinz/trickwork" \
       org.opencontainers.image.licenses="AGPL-3.0"
-COPY --from=gobuild /out/ascii-supergenerator /ascii-supergenerator
+COPY --from=gobuild /out/trickwork /trickwork
 ENV PORT=3210
 EXPOSE 3210
 USER nonroot:nonroot
-ENTRYPOINT ["/ascii-supergenerator"]
+ENTRYPOINT ["/trickwork"]

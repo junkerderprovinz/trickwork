@@ -1,4 +1,4 @@
-import { decodeAndPrepareImage, CHARSET_PRESETS, type MappingOptions } from 'ascii-supergenerator-core'
+import { decodeAndPrepareImage, CHARSET_PRESETS, type MappingOptions } from 'trickwork-core'
 
 export type BatchItemStatus = 'pending' | 'converting' | 'converted' | 'exported' | 'error'
 

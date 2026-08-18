@@ -68,7 +68,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ascii-supergenerator-${{ matrix.slug }}
+          name: trickwork-${{ matrix.slug }}
           path: desktop/build/bin/*
           if-no-files-found: error
 
@@ -92,10 +92,10 @@ jobs:
         run: |
           set -eu
           mkdir -p dist
-          for d in bundles/ascii-supergenerator-*; do
+          for d in bundles/trickwork-*; do
             [ -d "$d" ] || continue
-            slug="${d#bundles/ascii-supergenerator-}"
-            (cd "$d" && zip -qr "../../dist/ascii-supergenerator-${GITHUB_REF_NAME}-${slug}.zip" .)
+            slug="${d#bundles/trickwork-}"
+            (cd "$d" && zip -qr "../../dist/trickwork-${GITHUB_REF_NAME}-${slug}.zip" .)
           done
           ls -lh dist
 

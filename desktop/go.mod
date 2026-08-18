@@ -1,11 +1,11 @@
-module github.com/junkerderprovinz/ascii-supergenerator/desktop
+module github.com/junkerderprovinz/trickwork/desktop
 
 go 1.26
 
 toolchain go1.26.6
 
 require (
-	github.com/junkerderprovinz/ascii-supergenerator v0.0.0-00010101000000-000000000000
+	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v2 v2.13.0
 )
 
@@ -40,4 +40,4 @@ require (
 	golang.org/x/text v0.37.0 // indirect
 )
 
-replace github.com/junkerderprovinz/ascii-supergenerator => ../
+replace github.com/junkerderprovinz/trickwork => ../

@@ -1,5 +1,5 @@
 {
-  "name": "ascii-supergenerator-ui",
+  "name": "trickwork-ui",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "dependencies": {
-    "ascii-supergenerator-core": "*"
+    "trickwork-core": "*"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",

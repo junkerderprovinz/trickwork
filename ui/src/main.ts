@@ -29,5 +29,5 @@ app.appendChild(main)
 
 const footer = document.createElement('footer')
 footer.className = 'app-footer'
-footer.textContent = `ASCII SuperGenerator v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
+footer.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
 app.appendChild(footer)
