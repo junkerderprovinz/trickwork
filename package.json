@@ -11,5 +11,8 @@
     "test": "npm run test --workspace core",
     "typecheck": "npm run typecheck --workspace core && npm run typecheck --workspace ui",
     "e2e": "npm run e2e --workspace ui"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2"
   }
 }

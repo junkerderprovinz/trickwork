@@ -37,6 +37,12 @@ jobs:
       - name: Unit tests (core)
         run: npm run test --workspace core
 
+      # core must build before ui can typecheck: ui imports trickwork-core as a
+      # workspace dependency, resolved via core/dist (core/package.json's
+      # "main"), which only exists after a build.
+      - name: Build core
+        run: npm run build --workspace core
+
       - name: Typecheck (core + ui)
         run: npm run typecheck
 
