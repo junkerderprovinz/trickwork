@@ -55,7 +55,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
   customInput.addEventListener('input', () => {
     if (customInput.value.length === 0) return
     store.setState({
-      options: { ...store.getState().options, charset: customInput.value.split('') },
+      // Array.from iterates by code point, so an astral character (emoji) stays
+      // one charset entry instead of splitting into two lone surrogates.
+      options: { ...store.getState().options, charset: Array.from(customInput.value) },
     })
   })
 

@@ -29,17 +29,34 @@ export function computeBlockLuminance(
 /**
  * Picks the glyph whose ink coverage best matches the block's darkness.
  * Luminance 0 (black) wants the highest-ink glyph; luminance 1 (white)
- * wants the lowest-ink glyph — so target coverage is (1 - luminance).
+ * wants the lowest-ink glyph.
+ *
+ * The target is interpolated into the table's OWN coverage range instead of
+ * being treated as an absolute 0..1 coverage. Measured ink coverage is the
+ * fraction of a 2x-font-size cell that a glyph actually inks, which for real
+ * fonts and charsets lands in roughly 0..0.12 — nowhere near 1. Using
+ * (1 - luminance) directly as the target made everything below luminance ~0.9
+ * snap to the single densest glyph, so images came out as one solid block.
  */
 export function mapLuminanceToChar(
   luminance: number,
   table: FontWidthTable,
 ): string {
-  const targetCoverage = 1 - luminance
   let best = table.entries[0]
   if (!best) {
     throw new Error('mapLuminanceToChar: font width table has no entries')
   }
+
+  // buildFontWidthTable sorts ascending, but scan for the extremes anyway so
+  // a hand-built table in any order still spreads across its full range.
+  let lo = best.inkCoverage
+  let hi = best.inkCoverage
+  for (const entry of table.entries) {
+    if (entry.inkCoverage < lo) lo = entry.inkCoverage
+    if (entry.inkCoverage > hi) hi = entry.inkCoverage
+  }
+  const targetCoverage = hi === lo ? lo : lo + (1 - luminance) * (hi - lo)
+
   let bestDistance = Math.abs(best.inkCoverage - targetCoverage)
   for (const entry of table.entries) {
     const distance = Math.abs(entry.inkCoverage - targetCoverage)

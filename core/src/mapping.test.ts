@@ -75,7 +75,64 @@ describe('mapLuminanceToChar', () => {
   })
 
   it('maps mid luminance to a mid-coverage glyph', () => {
-    // luminance 0.5 -> target ink coverage (1 - 0.5) = 0.5 -> nearest is '#' (0.6) or '*' (0.4), '#' is closer
-    expect(mapLuminanceToChar(0.5, table)).toBe('#')
+    // The target is interpolated into the table's own range (0 .. 0.9), so
+    // luminance 0.5 -> 0 + 0.5 * 0.9 = 0.45 -> nearest is '*' (0.4).
+    expect(mapLuminanceToChar(0.5, table)).toBe('*')
+  })
+
+  // Regression guard for the ink-coverage scale mismatch: a real, canvas-measured
+  // table's coverage values are a small fraction of the glyph cell (~0 .. 0.12),
+  // not a 0..1 spread. Treating (1 - luminance) as an absolute coverage target
+  // collapsed every mid-tone onto the densest glyph, so whole images rendered as
+  // a solid block of '@'. Every previous test used a synthetic full-range table,
+  // which is exactly why the bug stayed invisible.
+  describe('with a realistically compressed coverage range', () => {
+    const realistic: FontWidthTable = {
+      font: { family: 'monospace', sizePx: 16 },
+      // Ascending, as buildFontWidthTable produces. Values approximate what
+      // createCanvasGlyphMeasurer actually reports for the "standard" preset.
+      entries: [
+        { char: ' ', inkCoverage: 0 },
+        { char: '.', inkCoverage: 0.01 },
+        { char: ':', inkCoverage: 0.018 },
+        { char: '*', inkCoverage: 0.027 },
+        { char: '+', inkCoverage: 0.033 },
+        { char: '=', inkCoverage: 0.041 },
+        { char: '%', inkCoverage: 0.052 },
+        { char: '#', inkCoverage: 0.056 },
+        { char: '@', inkCoverage: 0.063 },
+      ],
+    }
+
+    it('still puts the darkest glyph at luminance 0 and the blank at luminance 1', () => {
+      expect(mapLuminanceToChar(0, realistic)).toBe('@')
+      expect(mapLuminanceToChar(1, realistic)).toBe(' ')
+    })
+
+    it('selects distinct glyphs across a spread of luminances instead of collapsing to one', () => {
+      const picked = [0, 0.3, 0.5, 0.7, 1].map((luminance) =>
+        mapLuminanceToChar(luminance, realistic),
+      )
+      expect(picked).toEqual(['@', '=', '+', ':', ' '])
+      expect(new Set(picked).size).toBe(5)
+    })
+
+    it('uses most of the charset across the full luminance sweep', () => {
+      const used = new Set<string>()
+      for (let i = 0; i <= 100; i++) used.add(mapLuminanceToChar(i / 100, realistic))
+      expect(used.size).toBeGreaterThanOrEqual(realistic.entries.length - 1)
+    })
+  })
+
+  it('falls back to a single glyph when every entry has the same coverage', () => {
+    const flat: FontWidthTable = {
+      font: { family: 'monospace', sizePx: 16 },
+      entries: [
+        { char: 'a', inkCoverage: 0.03 },
+        { char: 'b', inkCoverage: 0.03 },
+      ],
+    }
+    expect(mapLuminanceToChar(0, flat)).toBe('a')
+    expect(mapLuminanceToChar(1, flat)).toBe('a')
   })
 })

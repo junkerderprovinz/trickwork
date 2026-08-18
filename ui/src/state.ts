@@ -19,6 +19,15 @@ export interface AppState {
 
 export type Listener = (state: AppState) => void
 
+// crypto.randomUUID() is secure-context only, and the container is served over
+// plain http:// on a LAN host (http://tower:3210), where it is undefined — the
+// first dropped file would throw. Queue ids only need to be unique per page
+// load, so generate them locally.
+let idCounter = 0
+function nextId(): string {
+  return `item-${Date.now()}-${idCounter++}`
+}
+
 export function createStore() {
   let state: AppState = {
     items: [],
@@ -50,7 +59,7 @@ export function createStore() {
 
   async function addFiles(files: File[]) {
     const newItems: BatchItem[] = files.map((file) => ({
-      id: crypto.randomUUID(),
+      id: nextId(),
       file,
       status: 'pending',
     }))
