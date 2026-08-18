@@ -5,3 +5,5 @@ build/
 .DS_Store
 desktop/build/
 webembed/dist/
+test-results/
+playwright-report/
