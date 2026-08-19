@@ -4,6 +4,7 @@ import { enableSelectScrollForAll } from './design/selectScroll'
 import { applyCachedLocale, subscribeLocale, t } from './i18n'
 import { createStore } from './state'
 import { mountDropzone } from './dropzone'
+import { mountCropPanel } from './cropPanel'
 import { mountPreview } from './preview'
 import { mountControls } from './controls'
 import { mountTransformPanel } from './transformPanel'
@@ -92,8 +93,9 @@ convertView.className = 'convert-view'
 const primary = document.createElement('section')
 primary.className = 'app-primary'
 const dropzoneCard = section()
+const cropCard = section()
 const previewCard = section()
-primary.append(dropzoneCard, previewCard)
+primary.append(dropzoneCard, cropCard, previewCard)
 
 const secondary = document.createElement('section')
 secondary.className = 'app-secondary'
@@ -183,6 +185,7 @@ window.addEventListener('keydown', (event) => {
 })
 
 mountDropzone(dropzoneCard, store)
+mountCropPanel(cropCard, store)
 mountPreview(previewCard, store)
 mountControls(adjustCard, store)
 mountTransformPanel(transformCard, store)

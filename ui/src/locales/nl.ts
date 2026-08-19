@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Sleep afbeeldingen hierheen, of klik om bestanden te kiezen',
   'import.ariaLabel': 'Kies afbeeldingsbestanden om te converteren',
 
+  'crop.eyebrow': 'Bijsnijden',
+  'crop.hint': 'Sleep over de afbeelding hierboven om alleen dat gebied te converteren.',
+  'crop.clearButton': 'Selectie wissen',
+
   'preview.eyebrow': 'Voorbeeld',
   'preview.empty': 'Sleep hierboven een afbeelding om deze hier als ASCII-kunst te zien.',
   'preview.zoomOut': 'Uitzoomen',

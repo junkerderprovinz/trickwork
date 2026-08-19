@@ -9,7 +9,7 @@
 // not pixel error, so it lives inside grid.ts's own raster loop instead (see
 // docs/superpowers/specs/2026-08-19-trickwork-v1.1-design.md, section 3.3).
 
-import type { LevelsSpec, Rotation, SharpenMethod } from './types'
+import type { CropSpec, LevelsSpec, Rotation, SharpenMethod } from './types'
 
 function cloneImageData(imageData: ImageData): ImageData {
   return {
@@ -18,6 +18,30 @@ function cloneImageData(imageData: ImageData): ImageData {
     height: imageData.height,
     colorSpace: imageData.colorSpace,
   } as ImageData
+}
+
+/**
+ * Extracts the sub-region `crop` describes (fractions of the source image,
+ * see CropSpec) as a new, standalone ImageData - runs FIRST in the pipeline
+ * (pipeline.ts), before rotate/flip/invert/levels/sharpen, since every one
+ * of those should act on "the region the user actually wants," not on the
+ * full original frame.
+ */
+export function cropImage(imageData: ImageData, crop: CropSpec): ImageData {
+  const { width: srcW, height: srcH, data: srcData } = imageData
+  const x = Math.round(Math.min(1, Math.max(0, crop.x)) * srcW)
+  const y = Math.round(Math.min(1, Math.max(0, crop.y)) * srcH)
+  const requestedW = Math.max(1, Math.round(Math.min(1, Math.max(0, crop.width)) * srcW))
+  const requestedH = Math.max(1, Math.round(Math.min(1, Math.max(0, crop.height)) * srcH))
+  const w = Math.max(1, Math.min(requestedW, srcW - x))
+  const h = Math.max(1, Math.min(requestedH, srcH - y))
+
+  const dstData = new Uint8ClampedArray(w * h * 4)
+  for (let row = 0; row < h; row++) {
+    const srcRowStart = ((y + row) * srcW + x) * 4
+    dstData.set(srcData.subarray(srcRowStart, srcRowStart + w * 4), row * w * 4)
+  }
+  return { data: dstData, width: w, height: h, colorSpace: imageData.colorSpace } as ImageData
 }
 
 export function invertImage(imageData: ImageData): ImageData {

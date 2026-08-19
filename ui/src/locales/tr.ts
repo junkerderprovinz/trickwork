@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",
   'import.ariaLabel': "Dönüştürülecek resim dosyalarını seçin",
 
+  'crop.eyebrow': 'Kırpma',
+  'crop.hint': 'Sadece o bölgeyi dönüştürmek için yukarıdaki resmin üzerine sürükleyin.',
+  'crop.clearButton': 'Seçimi temizle',
+
   'preview.eyebrow': 'Önizleme',
   'preview.empty': "ASCII sanatı olarak burada görmek için yukarıya bir resim bırakın.",
   'preview.zoomOut': 'Uzaklaştır',

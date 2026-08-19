@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'ลากภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์',
   'import.ariaLabel': 'เลือกไฟล์ภาพที่ต้องการแปลง',
 
+  'crop.eyebrow': 'ครอบตัด',
+  'crop.hint': 'ลากบนรูปภาพด้านบนเพื่อแปลงเฉพาะบริเวณนั้น',
+  'crop.clearButton': 'ล้างการเลือก',
+
   'preview.eyebrow': 'ตัวอย่าง',
   'preview.empty': 'ลากภาพมาวางด้านบนเพื่อดูเป็นภาพศิลป์ ASCII ที่นี่',
   'preview.zoomOut': 'ซูมออก',

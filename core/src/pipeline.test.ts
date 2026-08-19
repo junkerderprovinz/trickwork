@@ -92,4 +92,27 @@ describe('applyImageFilters', () => {
     })
     expect(pixel0(out)).toBe(10)
   })
+
+  it('applies crop first, before rotate - cropping then rotating a region is not the same as the reverse', () => {
+    // 4x1 source: [10, 20, 30, 40]. Crop the right half -> [30, 40], THEN
+    // rotate 90 -> a 1x2 column with 30 on top (proves crop ran first: if
+    // rotate ran first, cropping the "right half" of a rotated 1x4 column
+    // wouldn't even be expressible as the same crop rectangle).
+    const img = makeImageData([[10, 20, 30, 40]])
+    const out = applyImageFilters(img, {
+      ...baseOptions,
+      crop: { x: 0.5, y: 0, width: 0.5, height: 1 },
+      rotate: 90,
+    })
+    expect(out.width).toBe(1)
+    expect(out.height).toBe(2)
+    expect(pixel0(out)).toBe(30)
+  })
+
+  it('an absent crop is a no-op', () => {
+    const img = makeImageData([[10, 20]])
+    const out = applyImageFilters(img, baseOptions)
+    expect(out.width).toBe(2)
+    expect(pixel0(out)).toBe(10)
+  })
 })

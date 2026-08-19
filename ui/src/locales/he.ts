@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'גררו תמונות לכאן, או לחצו לבחירת קבצים',
   'import.ariaLabel': 'בחירת קובצי תמונה להמרה',
 
+  'crop.eyebrow': 'חיתוך',
+  'crop.hint': 'גרור מעל התמונה למעלה כדי להמיר רק את האזור הזה.',
+  'crop.clearButton': 'נקה בחירה',
+
   'preview.eyebrow': 'תצוגה מקדימה',
   'preview.empty': 'גררו תמונה למעלה כדי לראות אותה כאן כאמנות ASCII.',
   'preview.zoomOut': 'התרחקות',

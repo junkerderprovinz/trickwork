@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Trascina qui le immagini, oppure clicca per scegliere i file',
   'import.ariaLabel': 'Scegli i file immagine da convertire',
 
+  'crop.eyebrow': 'Ritaglio',
+  'crop.hint': 'Trascina sull\'immagine sopra per convertire solo quella regione.',
+  'crop.clearButton': 'Cancella selezione',
+
   'preview.eyebrow': 'Anteprima',
   'preview.empty': "Trascina un'immagine qui sopra per vederla qui come arte ASCII.",
   'preview.zoomOut': 'Rimpicciolisci',

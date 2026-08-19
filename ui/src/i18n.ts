@@ -27,6 +27,10 @@ export const en = {
   'import.dropzoneText': 'Drop images here, or click to choose files',
   'import.ariaLabel': 'Choose image files to convert',
 
+  'crop.eyebrow': 'Crop',
+  'crop.hint': 'Drag on the image above to convert just that region.',
+  'crop.clearButton': 'Clear selection',
+
   'preview.eyebrow': 'Preview',
   'preview.empty': 'Drop an image above to see it here as ASCII art.',
   'preview.zoomOut': 'Zoom out',
@@ -152,6 +156,10 @@ export const de: Translations = {
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',
   'import.ariaLabel': 'Bilddateien zum Konvertieren auswählen',
+
+  'crop.eyebrow': 'Zuschnitt',
+  'crop.hint': 'Ziehe im Bild oben, um nur diesen Bereich zu konvertieren.',
+  'crop.clearButton': 'Auswahl entfernen',
 
   'preview.eyebrow': 'Vorschau',
   'preview.empty': 'Ziehe oben ein Bild hinein, um es hier als ASCII-Kunst zu sehen.',

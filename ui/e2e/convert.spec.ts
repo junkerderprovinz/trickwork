@@ -288,3 +288,46 @@ test('preview zoom: buttons change the displayed canvas size and the label reset
   await page.getByRole('button', { name: 'Preview small.png' }).last().click()
   await expect(zoomLabel).toHaveText('100%')
 })
+
+test('crop: dragging on the source image sets a selection that survives undo and Clear selection removes it', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+
+  const cropCanvas = page.locator('canvas.crop-source-canvas')
+  await expect(cropCanvas).toBeVisible()
+  const overlay = page.locator('.crop-overlay')
+  await expect(overlay).toBeHidden()
+  const clearButton = page.getByRole('button', { name: 'Clear selection' })
+  await expect(clearButton).toBeHidden()
+
+  const box = await cropCanvas.boundingBox()
+  if (!box) throw new Error('crop canvas has no bounding box')
+  // A real drag, well past the panel's own minimum-drag threshold, so this
+  // reads as a deliberate selection rather than a stray click.
+  await page.mouse.move(box.x + 5, box.y + 5)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.6, { steps: 8 })
+  await page.mouse.up()
+
+  await expect(overlay).toBeVisible()
+  await expect(clearButton).toBeVisible()
+
+  // columns is a fixed option independent of crop, and a roughly
+  // proportional crop leaves the sampled aspect ratio (and so the grid's
+  // row count too) essentially unchanged - the reliable, meaningful check
+  // here is the overlay's own visibility surviving undo/redo correctly,
+  // not the preview canvas's pixel dimensions.
+  await page.keyboard.press('Control+z')
+  await expect(overlay).toBeHidden()
+
+  await page.keyboard.press('Control+y')
+  await expect(overlay).toBeVisible()
+
+  await clearButton.click()
+  await expect(overlay).toBeHidden()
+  await expect(clearButton).toBeHidden()
+})

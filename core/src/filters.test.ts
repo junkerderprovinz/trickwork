@@ -1,6 +1,6 @@
 // core/src/filters.test.ts
 import { describe, expect, it } from 'vitest'
-import { applyLevels, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
+import { applyLevels, cropImage, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
 
 function makeImageData(pixels: number[][]): ImageData {
   const height = pixels.length
@@ -231,5 +231,65 @@ describe('applyLevels', () => {
     const img = makeImageData([[128]])
     applyLevels(img, { black: 50, gamma: 1, white: 150 })
     expect(pixelAt(img, 0, 0)[0]).toBe(128)
+  })
+})
+
+describe('cropImage', () => {
+  // 4x4, row-major values 0..15 so every pixel is uniquely identifiable.
+  const img = makeImageData([
+    [0, 1, 2, 3],
+    [4, 5, 6, 7],
+    [8, 9, 10, 11],
+    [12, 13, 14, 15],
+  ])
+
+  it('extracts the top-left quadrant', () => {
+    const out = cropImage(img, { x: 0, y: 0, width: 0.5, height: 0.5 })
+    expect(out.width).toBe(2)
+    expect(out.height).toBe(2)
+    expect(pixelAt(out, 0, 0)[0]).toBe(0)
+    expect(pixelAt(out, 1, 0)[0]).toBe(1)
+    expect(pixelAt(out, 0, 1)[0]).toBe(4)
+    expect(pixelAt(out, 1, 1)[0]).toBe(5)
+  })
+
+  it('extracts the bottom-right quadrant', () => {
+    const out = cropImage(img, { x: 0.5, y: 0.5, width: 0.5, height: 0.5 })
+    expect(pixelAt(out, 0, 0)[0]).toBe(10)
+    expect(pixelAt(out, 1, 0)[0]).toBe(11)
+    expect(pixelAt(out, 0, 1)[0]).toBe(14)
+    expect(pixelAt(out, 1, 1)[0]).toBe(15)
+  })
+
+  it('the full-image crop (0,0,1,1) reproduces the original', () => {
+    const out = cropImage(img, { x: 0, y: 0, width: 1, height: 1 })
+    expect(out.width).toBe(4)
+    expect(out.height).toBe(4)
+    expect(pixelAt(out, 3, 3)[0]).toBe(15)
+  })
+
+  it('clamps a requested width/height that would run past the source bounds', () => {
+    const out = cropImage(img, { x: 0.75, y: 0, width: 0.75, height: 0.25 })
+    // x=3 on a 4-wide image leaves only 1 column, however wide was asked for.
+    expect(out.width).toBe(1)
+    expect(pixelAt(out, 0, 0)[0]).toBe(3)
+  })
+
+  it('clamps out-of-range x/y/width/height (e.g. negative or > 1) instead of throwing', () => {
+    const out = cropImage(img, { x: -0.5, y: -0.5, width: 2, height: 2 })
+    expect(out.width).toBe(4)
+    expect(out.height).toBe(4)
+    expect(pixelAt(out, 0, 0)[0]).toBe(0)
+  })
+
+  it('never produces a zero-size result even for a degenerate 0-width/height request', () => {
+    const out = cropImage(img, { x: 0.5, y: 0.5, width: 0, height: 0 })
+    expect(out.width).toBeGreaterThanOrEqual(1)
+    expect(out.height).toBeGreaterThanOrEqual(1)
+  })
+
+  it('does not mutate the input', () => {
+    cropImage(img, { x: 0, y: 0, width: 0.5, height: 0.5 })
+    expect(pixelAt(img, 3, 3)[0]).toBe(15)
   })
 })

@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Thả ảnh vào đây, hoặc nhấp để chọn tệp',
   'import.ariaLabel': 'Chọn tệp ảnh cần chuyển đổi',
 
+  'crop.eyebrow': 'Cắt xén',
+  'crop.hint': 'Kéo trên hình ảnh ở trên để chỉ chuyển đổi vùng đó.',
+  'crop.clearButton': 'Xóa lựa chọn',
+
   'preview.eyebrow': 'Xem trước',
   'preview.empty': 'Thả một ảnh ở trên để xem dưới dạng nghệ thuật ASCII tại đây.',
   'preview.zoomOut': 'Thu nhỏ',

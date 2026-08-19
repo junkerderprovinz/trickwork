@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Přetáhněte sem obrázky, nebo klikněte pro výběr souborů',
   'import.ariaLabel': 'Vyberte obrázkové soubory ke konverzi',
 
+  'crop.eyebrow': 'Oříznutí',
+  'crop.hint': 'Táhněte myší po obrázku výše a převeďte pouze tuto oblast.',
+  'crop.clearButton': 'Zrušit výběr',
+
   'preview.eyebrow': 'Náhled',
   'preview.empty': 'Přetáhněte sem nahoru obrázek, abyste ho zde viděli jako ASCII art.',
   'preview.zoomOut': 'Oddálit',

@@ -183,6 +183,54 @@ html, body {
 }
 
 /* ---------------------------------------------------------------------
+   Crop — ASCGen2's WidgetImage selection tool: drag a rectangle on the
+   source image to restrict conversion to that region. The selection reads
+   entirely through SHADE (rule: never a border/ring to delineate an area -
+   see design-language.md's "no border lines" convention), not an outline:
+   a single oversized box-shadow spread dims everything OUTSIDE the small
+   transparent selection box, the same "spotlight" technique Photoshop's own
+   crop tool uses, so the boundary is a shade transition, never a stroke.
+   --------------------------------------------------------------------- */
+.crop-canvas-wrap {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  border-radius: var(--radius-control);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.crop-source-canvas {
+  display: block;
+  cursor: crosshair;
+}
+
+.crop-overlay {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+}
+
+.crop-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.crop-footer .controls-note {
+  padding-top: 0;
+}
+
+.crop-clear-button {
+  flex-shrink: 0;
+  padding: 0.3rem 0.6rem;
+  font-size: var(--text-caption);
+  background-color: var(--carbon-surface2);
+}
+
+/* ---------------------------------------------------------------------
    Drop zone — a compact well that expands into the full empty-state
    invitation when the queue has nothing in it yet.
    --------------------------------------------------------------------- */

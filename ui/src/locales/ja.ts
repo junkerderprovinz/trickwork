@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': '画像をここにドロップするか、クリックしてファイルを選択',
   'import.ariaLabel': '変換する画像ファイルを選択',
 
+  'crop.eyebrow': '切り抜き',
+  'crop.hint': '上の画像をドラッグして、その領域だけを変換します。',
+  'crop.clearButton': '選択を解除',
+
   'preview.eyebrow': 'プレビュー',
   'preview.empty': '上に画像をドロップすると、ここにASCIIアートとして表示されます。',
   'preview.zoomOut': 'ズームアウト',

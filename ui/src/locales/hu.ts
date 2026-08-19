@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',
   'import.ariaLabel': 'Válassza ki az átalakítandó képfájlokat',
 
+  'crop.eyebrow': 'Kivágás',
+  'crop.hint': 'Húzza a fenti képen, hogy csak azt a területet alakítsa át.',
+  'crop.clearButton': 'Kijelölés törlése',
+
   'preview.eyebrow': 'Előnézet',
   'preview.empty': 'Húzzon ide egy képet fentről, hogy itt ASCII-művészetként lássa.',
   'preview.zoomOut': 'Kicsinyítés',

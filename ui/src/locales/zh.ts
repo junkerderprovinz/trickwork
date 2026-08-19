@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',
   'import.ariaLabel': '选择要转换的图片文件',
 
+  'crop.eyebrow': '裁剪',
+  'crop.hint': '在上方图片上拖动，仅转换该区域。',
+  'crop.clearButton': '清除选区',
+
   'preview.eyebrow': '预览',
   'preview.empty': '将图片拖到上方，即可在此处以 ASCII 艺术形式查看。',
   'preview.zoomOut': '缩小',

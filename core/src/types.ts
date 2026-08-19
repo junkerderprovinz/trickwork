@@ -57,6 +57,20 @@ export interface LevelsSpec {
   white: number
 }
 
+/**
+ * A crop rectangle expressed as fractions (0..1) of the SOURCE image's own
+ * width/height, not absolute pixels - normalized coordinates stay correct
+ * across a downscale, a rotate, or simply a different image being loaded
+ * later at a different native resolution, none of which absolute pixel
+ * bounds would survive unchanged.
+ */
+export interface CropSpec {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 export interface MappingOptions {
   columns: number
   brightness: number // -1..1, additive
@@ -75,4 +89,6 @@ export interface MappingOptions {
   sharpen?: SharpenMethod
   /** Default {black: 0, gamma: 1, white: 255} (no-op) when omitted. */
   levels?: LevelsSpec
+  /** Restricts sampling to this region of the source image. Omitted = full image. */
+  crop?: CropSpec
 }

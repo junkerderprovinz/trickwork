@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',
   'import.ariaLabel': 'Valitse muunnettavat kuvatiedostot',
 
+  'crop.eyebrow': 'Rajaus',
+  'crop.hint': 'Vedä yllä olevan kuvan päällä muuntaaksesi vain sen alueen.',
+  'crop.clearButton': 'Tyhjennä valinta',
+
   'preview.eyebrow': 'Esikatselu',
   'preview.empty': 'Pudota kuva yllä nähdäksesi sen tässä ASCII-taiteena.',
   'preview.zoomOut': 'Loitonna',

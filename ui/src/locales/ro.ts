@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Trage imagini aici sau dă clic pentru a alege fișiere',
   'import.ariaLabel': 'Alege fișierele imagine de convertit',
 
+  'crop.eyebrow': 'Decupare',
+  'crop.hint': 'Trage peste imaginea de mai sus pentru a converti doar acea regiune.',
+  'crop.clearButton': 'Șterge selecția',
+
   'preview.eyebrow': 'Previzualizare',
   'preview.empty': 'Trage o imagine mai sus pentru a o vedea aici ca artă ASCII.',
   'preview.zoomOut': 'Micșorează',

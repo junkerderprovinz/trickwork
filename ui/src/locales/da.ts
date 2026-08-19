@@ -17,6 +17,10 @@ const dict: Translations = {
   'import.dropzoneText': 'Slip billeder her, eller klik for at vælge filer',
   'import.ariaLabel': 'Vælg billedfiler der skal konverteres',
 
+  'crop.eyebrow': 'Beskæring',
+  'crop.hint': 'Træk hen over billedet ovenfor for kun at konvertere det område.',
+  'crop.clearButton': 'Ryd markering',
+
   'preview.eyebrow': 'Forhåndsvisning',
   'preview.empty': 'Slip et billede ovenfor for at se det her som ASCII-kunst.',
   'preview.zoomOut': 'Zoom ud',
