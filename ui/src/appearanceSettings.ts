@@ -1,5 +1,6 @@
 import { SHAPES, ACCENTS, DEFAULT_ACCENT, applyShape, applyAccent, cacheAppearance, type Shape } from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
+import { enableSelectScroll } from './design/selectScroll'
 import { segmentedRow } from './controlWidgets'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
@@ -164,6 +165,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       void setLocale(languageSelect.value)
     })
     languageWrap.append(languageLabel, languageSelect)
+    enableSelectScroll(languageSelect)
 
     panel.append(shapeRow, themeRow, accentWrap, languageWrap)
   }

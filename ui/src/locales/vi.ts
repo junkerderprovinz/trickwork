@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Điều chỉnh',
   'tabs.transform': 'Biến đổi',
   'tabs.filters': 'Bộ lọc',
+  'nav.convert': 'Chuyển đổi',
+  'nav.settings': 'Cài đặt',
 
   'import.eyebrow': 'Nhập',
   'import.dropzoneText': 'Thả ảnh vào đây, hoặc nhấp để chọn tệp',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Độ tương phản',
   'controls.charset': 'Bộ ký tự',
   'controls.charsetCustomPlaceholder': 'ký tự từ tối nhất đến sáng nhất',
+  'controls.charsetAddPlaceholder': 'Thêm ký tự…',
+  'controls.charsetRemoveAriaLabel': 'Xóa "{char}" khỏi bộ ký tự',
   'controls.font': 'Phông chữ',
   'controls.fontMonoSystem': 'Đơn cách (hệ thống)',
   'controls.fontMonoAlt': 'Đơn cách (thay thế)',

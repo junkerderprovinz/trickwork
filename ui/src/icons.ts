@@ -8,6 +8,16 @@ function svg(inner: string, viewBox = '0 0 20 20'): string {
   return `<svg width="22" height="22" viewBox="${viewBox}" fill="none" class="nav-icon" aria-hidden="true">${inner}</svg>`
 }
 
+// Picture frame - the Convert nav item (the working page: preview + every
+// generation-affecting card).
+export function iconConvert(): string {
+  return svg(
+    `<rect x="2.5" y="3.5" width="15" height="13" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+     <circle cx="7" cy="8" r="1.5" stroke="currentColor" stroke-width="1.5" />
+     <path d="M4 14.5 8.5 10l2.5 2.5 2-2L16.5 14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />`,
+  )
+}
+
 // Sliders/tuner glyph - the Adjust panel (width/brightness/contrast/charset/font).
 export function iconAdjust(): string {
   return svg(

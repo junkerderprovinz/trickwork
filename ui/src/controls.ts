@@ -1,4 +1,5 @@
 import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
+import { enableSelectScroll } from './design/selectScroll'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
@@ -9,13 +10,18 @@ const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontSans', family: 'ui-sans-serif, system-ui, "Segoe UI", sans-serif' },
 ]
 
-/** The Adjust tab: the core rendering parameters (not transform/filter/colour - see transformPanel.ts/filtersPanel.ts). */
+/** The Adjust card: the core rendering parameters (not transform/filter/colour - see transformPanel.ts/filtersPanel.ts). */
 export function mountControls(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  container.appendChild(eyebrow)
+
   const panel = document.createElement('div')
   panel.className = 'controls'
   container.appendChild(panel)
 
   function build(): void {
+    eyebrow.textContent = t('controls.eyebrow')
     panel.innerHTML = ''
     const options = store.getState().options
 
@@ -45,11 +51,12 @@ export function mountControls(container: HTMLElement, store: Store): void {
       0.05,
     )
 
-    const charsetLabel = document.createElement('label')
-    charsetLabel.className = 'control-slider'
+    const charsetWrap = document.createElement('div')
+    charsetWrap.className = 'control-slider'
     const charsetLabelText = document.createElement('span')
     charsetLabelText.textContent = t('controls.charset')
-    charsetLabel.appendChild(charsetLabelText)
+    charsetWrap.appendChild(charsetLabelText)
+
     const charsetSelect = document.createElement('select')
     for (const key of Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]) {
       const opt = document.createElement('option')
@@ -61,38 +68,99 @@ export function mountControls(container: HTMLElement, store: Store): void {
     customOpt.value = 'custom'
     customOpt.textContent = 'custom'
     charsetSelect.appendChild(customOpt)
-    charsetLabel.appendChild(charsetSelect)
+    // charsetWrap is a plain <div>, not a <label> - it also holds the ramp's
+    // tile buttons and the add-characters field, and a <label> wrapping
+    // multiple interactive controls forwards every click to the first one
+    // (the exact trap GlimStone's design-language.md calls out for Field).
+    // An explicit aria-label keeps the select's accessible name without it.
+    charsetSelect.setAttribute('aria-label', t('controls.charset'))
+    charsetWrap.appendChild(charsetSelect)
+    enableSelectScroll(charsetSelect)
 
-    const matchingPreset = (Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]).find((key) =>
-      arraysEqual(CHARSET_PRESETS[key], options.charset),
-    )
-    charsetSelect.value = matchingPreset ?? 'custom'
+    // The live, editable ramp preview ASCGen2 had (its "Valid Ramp Chars"
+    // dialog) and TrickWork didn't: every character actually in play, each
+    // rendered at real size in the currently selected font - some presets
+    // (the 70-character "detailed" one) are otherwise impossible to judge
+    // from a plain option name. Order doesn't matter here: assembleGrid's
+    // font-width table re-sorts by measured ink coverage regardless of the
+    // order characters arrive in, so this is a set (click a tile to remove
+    // it, type to add more), not a sequence to rearrange.
+    const ramp = document.createElement('div')
+    ramp.className = 'charset-ramp'
+    charsetWrap.appendChild(ramp)
 
-    const customInput = document.createElement('input')
-    customInput.type = 'text'
-    customInput.placeholder = t('controls.charsetCustomPlaceholder')
-    customInput.style.display = matchingPreset ? 'none' : ''
-    if (!matchingPreset) customInput.value = options.charset.join('')
+    const addInput = document.createElement('input')
+    addInput.type = 'text'
+    addInput.className = 'charset-add-input'
+    addInput.placeholder = t('controls.charsetAddPlaceholder')
+    charsetWrap.appendChild(addInput)
+
+    function syncCharsetSelect(): void {
+      const current = store.getState().options
+      const preset = (Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]).find((key) =>
+        arraysEqual(CHARSET_PRESETS[key], current.charset),
+      )
+      charsetSelect.value = preset ?? 'custom'
+    }
+    syncCharsetSelect()
+
+    function renderRamp(): void {
+      const current = store.getState().options
+      ramp.innerHTML = ''
+      ramp.style.fontFamily = current.font.family
+      current.charset.forEach((ch, index) => {
+        const tile = document.createElement('button')
+        tile.type = 'button'
+        tile.className = 'charset-tile'
+        // A literal space renders as an invisible button; U+2423 OPEN BOX is
+        // the conventional stand-in so the tile still shows something - the
+        // actual stored character stays the real space either way.
+        tile.textContent = ch === ' ' ? '␣' : ch
+        const label = t('controls.charsetRemoveAriaLabel', { char: ch })
+        tile.setAttribute('aria-label', label)
+        tile.title = label
+        tile.addEventListener('click', () => {
+          const cur = store.getState().options
+          store.setState({ options: { ...cur, charset: cur.charset.filter((_, i) => i !== index) } })
+          syncCharsetSelect()
+          renderRamp()
+        })
+        ramp.appendChild(tile)
+      })
+    }
+    renderRamp()
 
     charsetSelect.addEventListener('change', () => {
       const key = charsetSelect.value
-      if (key === 'custom') {
-        customInput.style.display = ''
-        return
-      }
-      customInput.style.display = 'none'
+      if (key === 'custom') return // nothing to apply yet - edited via the tiles/add field below
       store.setState({
         options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key as CharsetPresetKey]] },
       })
+      renderRamp()
     })
-    customInput.addEventListener('input', () => {
-      if (customInput.value.length === 0) return
-      store.setState({
-        // Array.from iterates by code point, so an astral character (emoji) stays
-        // one charset entry instead of splitting into two lone surrogates.
-        options: { ...store.getState().options, charset: Array.from(customInput.value) },
-      })
+
+    function commitAddInput(): void {
+      if (addInput.value.length === 0) return
+      const cur = store.getState().options
+      // Array.from iterates by code point, so an astral character (emoji)
+      // stays one charset entry instead of splitting into two lone
+      // surrogates. Only genuinely new characters are appended - a tile
+      // already covers "this one is in the ramp", clicking it is how it
+      // comes back out.
+      const additions = Array.from(addInput.value).filter((ch) => !cur.charset.includes(ch))
+      if (additions.length > 0) {
+        store.setState({ options: { ...cur, charset: [...cur.charset, ...additions] } })
+      }
+      addInput.value = ''
+      syncCharsetSelect()
+      renderRamp()
+    }
+    addInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return
+      event.preventDefault()
+      commitAddInput()
     })
+    addInput.addEventListener('blur', commitAddInput)
 
     const fontLabel = document.createElement('label')
     fontLabel.className = 'control-slider'
@@ -110,14 +178,16 @@ export function mountControls(container: HTMLElement, store: Store): void {
     fontSelect.addEventListener('change', () => {
       const current = store.getState().options
       store.setState({ options: { ...current, font: { ...current.font, family: fontSelect.value } } })
+      renderRamp()
     })
     fontLabel.appendChild(fontSelect)
+    enableSelectScroll(fontSelect)
 
     const rtfNote = document.createElement('p')
     rtfNote.className = 'controls-note'
     rtfNote.textContent = t('controls.rtfNote')
 
-    panel.append(columns, brightness, contrast, charsetLabel, customInput, fontLabel, rtfNote)
+    panel.append(columns, brightness, contrast, charsetWrap, fontLabel, rtfNote)
   }
 
   build()

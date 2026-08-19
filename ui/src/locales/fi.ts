@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Säädä',
   'tabs.transform': 'Muunnos',
   'tabs.filters': 'Suodattimet',
+  'nav.convert': 'Muunna',
+  'nav.settings': 'Asetukset',
 
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Kontrasti',
   'controls.charset': 'Merkistö',
   'controls.charsetCustomPlaceholder': 'merkit tummimmasta vaaleimpaan',
+  'controls.charsetAddPlaceholder': 'Lisää merkkejä…',
+  'controls.charsetRemoveAriaLabel': 'Poista "{char}" merkistöstä',
   'controls.font': 'Fontti',
   'controls.fontMonoSystem': 'Tasavälinen (järjestelmä)',
   'controls.fontMonoAlt': 'Tasavälinen (vaihtoehtoinen)',

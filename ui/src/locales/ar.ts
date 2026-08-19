@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'ضبط',
   'tabs.transform': 'تحويل',
   'tabs.filters': 'المرشحات',
+  'nav.convert': 'تحويل',
+  'nav.settings': 'الإعدادات',
 
   'import.eyebrow': 'استيراد',
   'import.dropzoneText': 'أفلت الصور هنا، أو انقر لاختيار الملفات',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'التباين',
   'controls.charset': 'مجموعة الأحرف',
   'controls.charsetCustomPlaceholder': 'الأحرف من الأغمق إلى الأفتح',
+  'controls.charsetAddPlaceholder': 'أضف أحرفًا…',
+  'controls.charsetRemoveAriaLabel': 'إزالة "{char}" من مجموعة الأحرف',
   'controls.font': 'الخط',
   'controls.fontMonoSystem': 'أحادي التباعد (النظام)',
   'controls.fontMonoAlt': 'أحادي التباعد (بديل)',

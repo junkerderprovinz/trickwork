@@ -1,6 +1,7 @@
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 import { applyCachedAppearance } from './design/appearance'
 import { applyCachedTheme } from './design/theme'
+import { enableSelectScrollForAll } from './design/selectScroll'
 import { applyCachedLocale, subscribeLocale, t } from './i18n'
 import { createStore } from './state'
 import { mountDropzone } from './dropzone'
@@ -12,7 +13,7 @@ import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
 import { mountSidebarNav } from './sidebarNav'
-import { iconAdjust, iconAppearance, iconExport, iconFilters, iconQueue, iconTransform } from './icons'
+import { iconAppearance, iconConvert } from './icons'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -36,10 +37,13 @@ function section(): HTMLDivElement {
 }
 
 // Left-rail navigation + main content, matching BombVault's/KnightLoader's
-// own Sidebar.tsx structure exactly (not a top header + tabbed side panel,
-// which was jdp's direct correction): a fixed-width sidebar carrying the
-// brand mark, a vertical icon+label nav list, and Appearance pinned at the
-// bottom - no separate top app-bar at all.
+// own Sidebar.tsx structure. Exactly two real destinations, per jdp's own
+// scoping: Convert (the working page - preview plus every card that
+// directly affects generation, all live and visible together, never gated
+// behind a nav click) and Settings (theming/language/global preferences -
+// its own separate "window", no preview or working cards at all, matching
+// how BombVault's Settings page fully replaces the main content instead of
+// sitting beside it).
 const shell = document.createElement('div')
 shell.className = 'app-shell'
 app.appendChild(shell)
@@ -74,64 +78,65 @@ const body = document.createElement('div')
 body.className = 'app-body'
 shell.appendChild(body)
 
+// --- Convert view: preview + every generation-affecting card, all live. ---
+const convertView = document.createElement('div')
+convertView.className = 'convert-view'
+
 const primary = document.createElement('section')
 primary.className = 'app-primary'
 const dropzoneCard = section()
 const previewCard = section()
 primary.append(dropzoneCard, previewCard)
 
-const panelCard = document.createElement('div')
-panelCard.className = 'glim-card glim-section nav-panel-host'
+const secondary = document.createElement('section')
+secondary.className = 'app-secondary'
+const adjustCard = section()
+const transformCard = section()
+const filtersCard = section()
+const queueCard = section()
+const exportCard = section()
+secondary.append(adjustCard, transformCard, filtersCard, queueCard, exportCard)
 
-body.append(primary, panelCard)
+convertView.append(primary, secondary)
 
-const adjustPanel = document.createElement('div')
-const transformPanelEl = document.createElement('div')
-const filtersPanelEl = document.createElement('div')
-const queuePanel = document.createElement('div')
-const exportPanelEl = document.createElement('div')
-const appearancePanelEl = document.createElement('div')
+// --- Settings view: theming/language/global only, no preview at all. ---
+const settingsView = document.createElement('div')
+settingsView.className = 'settings-view'
+const settingsCard = document.createElement('div')
+settingsCard.className = 'glim-card glim-section settings-card'
+settingsView.appendChild(settingsCard)
 
 const nav = mountSidebarNav(
-  panelCard,
+  body,
   [
-    {
-      container: navMain,
-      items: [
-        { id: 'adjust', label: t('tabs.adjust'), icon: iconAdjust(), panel: adjustPanel },
-        { id: 'transform', label: t('tabs.transform'), icon: iconTransform(), panel: transformPanelEl },
-        { id: 'filters', label: t('tabs.filters'), icon: iconFilters(), panel: filtersPanelEl },
-        { id: 'queue', label: t('queue.eyebrow'), icon: iconQueue(), panel: queuePanel },
-        { id: 'export', label: t('export.eyebrow'), icon: iconExport(), panel: exportPanelEl },
-      ],
-    },
+    { container: navMain, items: [{ id: 'convert', label: t('nav.convert'), icon: iconConvert(), panel: convertView }] },
     {
       container: navBottom,
-      items: [{ id: 'appearance', label: t('appearance.eyebrow'), icon: iconAppearance(), panel: appearancePanelEl }],
+      items: [{ id: 'settings', label: t('nav.settings'), icon: iconAppearance(), panel: settingsView }],
     },
   ],
-  'adjust',
+  'convert',
 )
 
 subscribeLocale(() => {
-  nav.setLabels({
-    adjust: t('tabs.adjust'),
-    transform: t('tabs.transform'),
-    filters: t('tabs.filters'),
-    queue: t('queue.eyebrow'),
-    export: t('export.eyebrow'),
-    appearance: t('appearance.eyebrow'),
-  })
+  nav.setLabels({ convert: t('nav.convert'), settings: t('nav.settings') })
 })
 
 mountDropzone(dropzoneCard, store)
 mountPreview(previewCard, store)
-mountControls(adjustPanel, store)
-mountTransformPanel(transformPanelEl, store)
-mountFiltersPanel(filtersPanelEl, store)
-mountQueue(queuePanel, store)
-mountExportPanel(exportPanelEl, store)
-mountAppearanceSettings(appearancePanelEl)
+mountControls(adjustCard, store)
+mountTransformPanel(transformCard, store)
+mountFiltersPanel(filtersCard, store)
+mountQueue(queueCard, store)
+mountExportPanel(exportCard, store)
+mountAppearanceSettings(settingsCard)
+
+// Boot-time pass, then re-run after any locale-driven rebuild (every
+// mountXxx module above rebuilds its own <select> elements on a language
+// switch, and enableSelectScroll is idempotent, so scanning the whole body
+// again costs nothing and never double-attaches).
+enableSelectScrollForAll(body)
+subscribeLocale(() => enableSelectScrollForAll(body))
 
 const footer = document.createElement('footer')
 footer.className = 'app-footer'

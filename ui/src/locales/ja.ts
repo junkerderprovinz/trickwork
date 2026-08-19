@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': '調整',
   'tabs.transform': '変形',
   'tabs.filters': 'フィルター',
+  'nav.convert': '変換',
+  'nav.settings': '設定',
 
   'import.eyebrow': 'インポート',
   'import.dropzoneText': '画像をここにドロップするか、クリックしてファイルを選択',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'コントラスト',
   'controls.charset': '文字セット',
   'controls.charsetCustomPlaceholder': '最も暗い文字から最も明るい文字まで',
+  'controls.charsetAddPlaceholder': '文字を追加…',
+  'controls.charsetRemoveAriaLabel': '文字セットから"{char}"を削除',
   'controls.font': 'フォント',
   'controls.fontMonoSystem': '等幅(システム)',
   'controls.fontMonoAlt': '等幅(代替)',

@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Beállítás',
   'tabs.transform': 'Átalakítás',
   'tabs.filters': 'Szűrők',
+  'nav.convert': 'Konvertálás',
+  'nav.settings': 'Beállítások',
 
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Kontraszt',
   'controls.charset': 'Karakterkészlet',
   'controls.charsetCustomPlaceholder': 'karakterek a legsötétebbtől a legvilágosabbig',
+  'controls.charsetAddPlaceholder': 'Karakterek hozzáadása…',
+  'controls.charsetRemoveAriaLabel': '"{char}" eltávolítása a karakterkészletből',
   'controls.font': 'Betűtípus',
   'controls.fontMonoSystem': 'Fix szélességű (rendszer)',
   'controls.fontMonoAlt': 'Fix szélességű (alt)',

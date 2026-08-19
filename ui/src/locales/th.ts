@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'ปรับแต่ง',
   'tabs.transform': 'แปลงรูป',
   'tabs.filters': 'ฟิลเตอร์',
+  'nav.convert': 'แปลง',
+  'nav.settings': 'การตั้งค่า',
 
   'import.eyebrow': 'นำเข้า',
   'import.dropzoneText': 'ลากภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'ความคมชัด',
   'controls.charset': 'ชุดอักขระ',
   'controls.charsetCustomPlaceholder': 'อักขระจากเข้มที่สุดไปสว่างที่สุด',
+  'controls.charsetAddPlaceholder': 'เพิ่มอักขระ…',
+  'controls.charsetRemoveAriaLabel': 'ลบ "{char}" ออกจากชุดอักขระ',
   'controls.font': 'แบบอักษร',
   'controls.fontMonoSystem': 'ความกว้างคงที่ (ระบบ)',
   'controls.fontMonoAlt': 'ความกว้างคงที่ (สำรอง)',

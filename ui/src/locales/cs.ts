@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Upravit',
   'tabs.transform': 'Transformace',
   'tabs.filters': 'Filtry',
+  'nav.convert': 'Převést',
+  'nav.settings': 'Nastavení',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Přetáhněte sem obrázky, nebo klikněte pro výběr souborů',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Znaková sada',
   'controls.charsetCustomPlaceholder': 'znaky od nejtmavšího po nejsvětlejší',
+  'controls.charsetAddPlaceholder': 'Znaky přidat…',
+  'controls.charsetRemoveAriaLabel': 'Odebrat "{char}" ze znakové sady',
   'controls.font': 'Písmo',
   'controls.fontMonoSystem': 'Neproporcionální (systémové)',
   'controls.fontMonoAlt': 'Neproporcionální (alt)',

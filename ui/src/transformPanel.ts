@@ -10,13 +10,18 @@ const ROTATIONS: { value: Rotation; key: TranslationKey }[] = [
   { value: 270, key: 'controls.rotate270' },
 ]
 
-/** The Transform tab: geometric operations on the source image (rotate/flip), matching ASCGen2's Edit > Input submenu. */
+/** The Transform card: geometric operations on the source image (rotate/flip), matching ASCGen2's Edit > Input submenu. */
 export function mountTransformPanel(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  container.appendChild(eyebrow)
+
   const panel = document.createElement('div')
   panel.className = 'controls'
   container.appendChild(panel)
 
   function build(): void {
+    eyebrow.textContent = t('tabs.transform')
     panel.innerHTML = ''
     const options = store.getState().options
 

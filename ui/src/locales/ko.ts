@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': '조정',
   'tabs.transform': '변형',
   'tabs.filters': '필터',
+  'nav.convert': '변환',
+  'nav.settings': '설정',
 
   'import.eyebrow': '가져오기',
   'import.dropzoneText': '이미지를 여기에 놓거나 클릭하여 파일을 선택하세요',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': '대비',
   'controls.charset': '문자 세트',
   'controls.charsetCustomPlaceholder': '가장 어두운 문자부터 가장 밝은 문자까지',
+  'controls.charsetAddPlaceholder': '문자 추가…',
+  'controls.charsetRemoveAriaLabel': '문자 세트에서 "{char}" 제거',
   'controls.font': '글꼴',
   'controls.fontMonoSystem': '고정폭(시스템)',
   'controls.fontMonoAlt': '고정폭(대체)',

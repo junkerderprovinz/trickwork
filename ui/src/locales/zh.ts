@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': '调整',
   'tabs.transform': '变换',
   'tabs.filters': '滤镜',
+  'nav.convert': '转换',
+  'nav.settings': '设置',
 
   'import.eyebrow': '导入',
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': '对比度',
   'controls.charset': '字符集',
   'controls.charsetCustomPlaceholder': '从最暗到最亮的字符',
+  'controls.charsetAddPlaceholder': '添加字符…',
+  'controls.charsetRemoveAriaLabel': '从字符集中移除"{char}"',
   'controls.font': '字体',
   'controls.fontMonoSystem': '等宽(系统)',
   'controls.fontMonoAlt': '等宽(备用)',

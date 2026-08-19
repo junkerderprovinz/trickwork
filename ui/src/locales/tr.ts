@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Ayarla',
   'tabs.transform': 'Dönüştür',
   'tabs.filters': 'Filtreler',
+  'nav.convert': 'Dönüştür',
+  'nav.settings': 'Ayarlar',
 
   'import.eyebrow': 'İçe Aktar',
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Karakter kümesi',
   'controls.charsetCustomPlaceholder': 'en koyudan en açığa karakterler',
+  'controls.charsetAddPlaceholder': 'Karakter ekle…',
+  'controls.charsetRemoveAriaLabel': '"{char}" karakterini karakter kümesinden kaldır',
   'controls.font': 'Yazı tipi',
   'controls.fontMonoSystem': 'Sabit genişlikli (sistem)',
   'controls.fontMonoAlt': 'Sabit genişlikli (alt)',

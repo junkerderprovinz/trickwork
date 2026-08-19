@@ -7,6 +7,8 @@ const dict: Translations = {
   'tabs.adjust': 'Προσαρμογή',
   'tabs.transform': 'Μετασχηματισμός',
   'tabs.filters': 'Φίλτρα',
+  'nav.convert': 'Μετατροπή',
+  'nav.settings': 'Ρυθμίσεις',
 
   'import.eyebrow': 'Εισαγωγή',
   'import.dropzoneText': 'Αφήστε εικόνες εδώ, ή κάντε κλικ για να επιλέξετε αρχεία',
@@ -21,6 +23,8 @@ const dict: Translations = {
   'controls.contrast': 'Αντίθεση',
   'controls.charset': 'Σύνολο χαρακτήρων',
   'controls.charsetCustomPlaceholder': 'χαρακτήρες από το πιο σκούρο στο πιο ανοιχτό',
+  'controls.charsetAddPlaceholder': 'Προσθήκη χαρακτήρων…',
+  'controls.charsetRemoveAriaLabel': 'Αφαίρεση "{char}" από το σύνολο χαρακτήρων',
   'controls.font': 'Γραμματοσειρά',
   'controls.fontMonoSystem': 'Σταθερού πλάτους (σύστημα)',
   'controls.fontMonoAlt': 'Σταθερού πλάτους (εναλλακτική)',

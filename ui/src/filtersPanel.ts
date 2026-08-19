@@ -9,13 +9,18 @@ const SHARPEN_METHODS: { value: SharpenMethod; key: TranslationKey }[] = [
   { value: 'unsharp', key: 'controls.sharpenUnsharp' },
 ]
 
-/** The Filters tab: tonal operations (invert/dither/sharpen) plus colour output, matching ASCGen2's Edit > Output submenu. */
+/** The Filters card: tonal operations (invert/dither/sharpen) plus colour output, matching ASCGen2's Edit > Output submenu. */
 export function mountFiltersPanel(container: HTMLElement, store: Store): void {
+  const eyebrow = document.createElement('div')
+  eyebrow.className = 'glim-eyebrow'
+  container.appendChild(eyebrow)
+
   const panel = document.createElement('div')
   panel.className = 'controls'
   container.appendChild(panel)
 
   function build(): void {
+    eyebrow.textContent = t('tabs.filters')
     panel.innerHTML = ''
     const options = store.getState().options
 
