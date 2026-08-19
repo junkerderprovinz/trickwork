@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Lila',
   'appearance.resetToDefault': 'Visszaállítás alapértelmezettre',
   'appearance.language': 'Nyelv',
+  'presets.eyebrow': 'Előbeállítások',
+  'presets.exportButton': 'Beállítások exportálása',
+  'presets.importButton': 'Beállítások importálása',
+  'presets.exported': 'Beállítások exportálva.',
+  'presets.exportCancelled': 'Exportálás megszakítva.',
+  'presets.imported': 'Beállítások importálva.',
+  'presets.importInvalid': 'Ez a fájl nem érvényes TrickWork-előbeállítás.',
 }
 
 export default dict

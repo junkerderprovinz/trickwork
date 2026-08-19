@@ -121,6 +121,14 @@ export const en = {
   'appearance.accentPurple': 'Purple',
   'appearance.resetToDefault': 'Reset to default',
   'appearance.language': 'Language',
+
+  'presets.eyebrow': 'Presets',
+  'presets.exportButton': 'Export settings',
+  'presets.importButton': 'Import settings',
+  'presets.exported': 'Settings exported.',
+  'presets.exportCancelled': 'Export cancelled.',
+  'presets.imported': 'Settings imported.',
+  'presets.importInvalid': 'That file is not a valid TrickWork preset.',
 }
 
 export type TranslationKey = keyof typeof en
@@ -236,6 +244,14 @@ export const de: Translations = {
   'appearance.accentPurple': 'Lila',
   'appearance.resetToDefault': 'Auf Standard zurücksetzen',
   'appearance.language': 'Sprache',
+
+  'presets.eyebrow': 'Vorlagen',
+  'presets.exportButton': 'Einstellungen exportieren',
+  'presets.importButton': 'Einstellungen importieren',
+  'presets.exported': 'Einstellungen exportiert.',
+  'presets.exportCancelled': 'Export abgebrochen.',
+  'presets.imported': 'Einstellungen importiert.',
+  'presets.importInvalid': 'Diese Datei ist keine gültige TrickWork-Vorlage.',
 }
 
 export interface LocaleInfo {

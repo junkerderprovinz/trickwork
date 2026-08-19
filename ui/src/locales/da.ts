@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Lilla',
   'appearance.resetToDefault': 'Nulstil til standard',
   'appearance.language': 'Sprog',
+  'presets.eyebrow': 'Forudindstillinger',
+  'presets.exportButton': 'Eksportér indstillinger',
+  'presets.importButton': 'Importér indstillinger',
+  'presets.exported': 'Indstillinger eksporteret.',
+  'presets.exportCancelled': 'Eksport annulleret.',
+  'presets.imported': 'Indstillinger importeret.',
+  'presets.importInvalid': 'Denne fil er ikke en gyldig TrickWork-forudindstilling.',
 }
 
 export default dict

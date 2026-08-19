@@ -110,6 +110,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'סגול',
   'appearance.resetToDefault': 'איפוס לברירת המחדל',
   'appearance.language': 'שפה',
+  'presets.eyebrow': 'הגדרות קבועות מראש',
+  'presets.exportButton': 'ייצוא הגדרות',
+  'presets.importButton': 'ייבוא הגדרות',
+  'presets.exported': 'ההגדרות יוצאו.',
+  'presets.exportCancelled': 'הייצוא בוטל.',
+  'presets.imported': 'ההגדרות יובאו.',
+  'presets.importInvalid': 'קובץ זה אינו הגדרה קבועה מראש תקפה של TrickWork.',
 }
 
 export default dict

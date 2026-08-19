@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Fialová',
   'appearance.resetToDefault': 'Obnovit výchozí',
   'appearance.language': 'Jazyk',
+  'presets.eyebrow': 'Předvolby',
+  'presets.exportButton': 'Exportovat nastavení',
+  'presets.importButton': 'Importovat nastavení',
+  'presets.exported': 'Nastavení exportováno.',
+  'presets.exportCancelled': 'Export zrušen.',
+  'presets.imported': 'Nastavení importováno.',
+  'presets.importInvalid': 'Tento soubor není platná předvolba TrickWork.',
 }
 
 export default dict

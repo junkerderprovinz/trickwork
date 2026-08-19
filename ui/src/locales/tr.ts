@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Mor',
   'appearance.resetToDefault': 'Varsayılana sıfırla',
   'appearance.language': 'Dil',
+  'presets.eyebrow': 'Ön ayarlar',
+  'presets.exportButton': 'Ayarları dışa aktar',
+  'presets.importButton': 'Ayarları içe aktar',
+  'presets.exported': 'Ayarlar dışa aktarıldı.',
+  'presets.exportCancelled': 'Dışa aktarma iptal edildi.',
+  'presets.imported': 'Ayarlar içe aktarıldı.',
+  'presets.importInvalid': 'Bu dosya geçerli bir TrickWork ön ayarı değil.',
 }
 
 export default dict

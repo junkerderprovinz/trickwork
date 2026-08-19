@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Violetti',
   'appearance.resetToDefault': 'Palauta oletusasetukset',
   'appearance.language': 'Kieli',
+  'presets.eyebrow': 'Esiasetukset',
+  'presets.exportButton': 'Vie asetukset',
+  'presets.importButton': 'Tuo asetukset',
+  'presets.exported': 'Asetukset viety.',
+  'presets.exportCancelled': 'Vienti peruutettu.',
+  'presets.imported': 'Asetukset tuotu.',
+  'presets.importInvalid': 'Tämä tiedosto ei ole kelvollinen TrickWork-esiasetus.',
 }
 
 export default dict

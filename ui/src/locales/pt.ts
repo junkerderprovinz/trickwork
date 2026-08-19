@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Roxo',
   'appearance.resetToDefault': 'Restaurar padrão',
   'appearance.language': 'Idioma',
+  'presets.eyebrow': 'Predefinições',
+  'presets.exportButton': 'Exportar configurações',
+  'presets.importButton': 'Importar configurações',
+  'presets.exported': 'Configurações exportadas.',
+  'presets.exportCancelled': 'Exportação cancelada.',
+  'presets.imported': 'Configurações importadas.',
+  'presets.importInvalid': 'Este arquivo não é uma predefinição válida do TrickWork.',
 }
 
 export default dict

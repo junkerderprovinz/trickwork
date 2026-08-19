@@ -85,6 +85,18 @@ export function createStore() {
     notify()
   }
 
+  // For a whole-options replacement from OUTSIDE any single widget's own
+  // editing (presetsPanel.ts's import) - same "undoable + resync every
+  // widget's displayed value" contract as undo()/redo() below, since a
+  // preset swap is exactly as external to e.g. the rotate segmented row as
+  // an undo jump is.
+  function replaceOptions(next: MappingOptions) {
+    commitOptionsSnapshot()
+    state = { ...state, options: next }
+    notify()
+    notifyHistory()
+  }
+
   function undo() {
     const previous = past[past.length - 1]
     if (!previous) return
@@ -150,6 +162,7 @@ export function createStore() {
     updateItem,
     addFiles,
     commitOptionsSnapshot,
+    replaceOptions,
     undo,
     redo,
     canUndo: () => past.length > 0,

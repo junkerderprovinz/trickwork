@@ -110,6 +110,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'ม่วง',
   'appearance.resetToDefault': 'รีเซ็ตเป็นค่าเริ่มต้น',
   'appearance.language': 'ภาษา',
+  'presets.eyebrow': 'พรีเซ็ต',
+  'presets.exportButton': 'ส่งออกการตั้งค่า',
+  'presets.importButton': 'นำเข้าการตั้งค่า',
+  'presets.exported': 'ส่งออกการตั้งค่าแล้ว',
+  'presets.exportCancelled': 'ยกเลิกการส่งออกแล้ว',
+  'presets.imported': 'นำเข้าการตั้งค่าแล้ว',
+  'presets.importInvalid': 'ไฟล์นี้ไม่ใช่พรีเซ็ต TrickWork ที่ถูกต้อง',
 }
 
 export default dict

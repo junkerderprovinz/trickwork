@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Morado',
   'appearance.resetToDefault': 'Restablecer valores predeterminados',
   'appearance.language': 'Idioma',
+  'presets.eyebrow': 'Preajustes',
+  'presets.exportButton': 'Exportar ajustes',
+  'presets.importButton': 'Importar ajustes',
+  'presets.exported': 'Ajustes exportados.',
+  'presets.exportCancelled': 'Exportación cancelada.',
+  'presets.imported': 'Ajustes importados.',
+  'presets.importInvalid': 'Ese archivo no es un preajuste válido de TrickWork.',
 }
 
 export default dict

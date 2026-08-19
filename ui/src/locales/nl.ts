@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Paars',
   'appearance.resetToDefault': 'Terugzetten naar standaard',
   'appearance.language': 'Taal',
+  'presets.eyebrow': 'Voorinstellingen',
+  'presets.exportButton': 'Instellingen exporteren',
+  'presets.importButton': 'Instellingen importeren',
+  'presets.exported': 'Instellingen geëxporteerd.',
+  'presets.exportCancelled': 'Export geannuleerd.',
+  'presets.imported': 'Instellingen geïmporteerd.',
+  'presets.importInvalid': 'Dit bestand is geen geldige TrickWork-voorinstelling.',
 }
 
 export default dict

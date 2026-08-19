@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Фіолетовий',
   'appearance.resetToDefault': 'Скинути до типових',
   'appearance.language': 'Мова',
+  'presets.eyebrow': 'Пресети',
+  'presets.exportButton': 'Експортувати налаштування',
+  'presets.importButton': 'Імпортувати налаштування',
+  'presets.exported': 'Налаштування експортовано.',
+  'presets.exportCancelled': 'Експорт скасовано.',
+  'presets.imported': 'Налаштування імпортовано.',
+  'presets.importInvalid': 'Цей файл не є дійсним пресетом TrickWork.',
 }
 
 export default dict

@@ -147,11 +147,14 @@ html, body {
 
 /* Settings is its own page, not a column beside the canvas - centred and
    width-capped, since Shape/Theme/Accent/Language never need the full
-   viewport the working canvas does. */
+   viewport the working canvas does. Two cards stack here now (appearance,
+   presets) - one card per section still holds, this is two sections. */
 .settings-view {
   padding: 1.5rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .settings-card {
@@ -694,6 +697,25 @@ button:focus-visible {
   min-height: 1em;
   font-size: var(--text-caption);
   color: var(--carbon-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Presets — save/load the whole options object as a JSON file, in Settings
+   next to Appearance (a global action, not tied to any one working card).
+   --------------------------------------------------------------------- */
+.presets-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.presets-button-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.presets-button-row button {
+  flex: 1;
 }
 
 /* ---------------------------------------------------------------------

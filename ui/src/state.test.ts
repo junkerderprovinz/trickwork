@@ -80,6 +80,24 @@ describe('undo/redo', () => {
     expect(store.getState().activeItemId).toBe('some-item')
   })
 
+  it('replaceOptions is undoable and notifies the history channel (unlike a plain setState)', () => {
+    const store = createStore()
+    let historyFired = 0
+    store.subscribeHistory(() => {
+      historyFired++
+    })
+
+    store.replaceOptions({ ...store.getState().options, columns: 300 })
+    expect(store.getState().options.columns).toBe(300)
+    expect(historyFired).toBe(1)
+    expect(store.canUndo()).toBe(true)
+
+    store.undo()
+    expect(store.getState().options.columns).toBe(120)
+    // undo() itself also fires the history channel.
+    expect(historyFired).toBe(2)
+  })
+
   it('caps history depth so an unbounded editing session cannot grow it forever', () => {
     const store = createStore()
     for (let i = 0; i < 60; i++) {

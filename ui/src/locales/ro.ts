@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Mov',
   'appearance.resetToDefault': 'Resetează la valorile implicite',
   'appearance.language': 'Limbă',
+  'presets.eyebrow': 'Presetări',
+  'presets.exportButton': 'Exportă setările',
+  'presets.importButton': 'Importă setările',
+  'presets.exported': 'Setări exportate.',
+  'presets.exportCancelled': 'Export anulat.',
+  'presets.imported': 'Setări importate.',
+  'presets.importInvalid': 'Acest fișier nu este o presetare TrickWork validă.',
 }
 
 export default dict

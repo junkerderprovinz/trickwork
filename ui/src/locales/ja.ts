@@ -110,6 +110,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'パープル',
   'appearance.resetToDefault': '既定値にリセット',
   'appearance.language': '言語',
+  'presets.eyebrow': 'プリセット',
+  'presets.exportButton': '設定をエクスポート',
+  'presets.importButton': '設定をインポート',
+  'presets.exported': '設定をエクスポートしました。',
+  'presets.exportCancelled': 'エクスポートをキャンセルしました。',
+  'presets.imported': '設定をインポートしました。',
+  'presets.importInvalid': 'このファイルは有効なTrickWorkプリセットではありません。',
 }
 
 export default dict

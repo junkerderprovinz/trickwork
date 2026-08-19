@@ -109,6 +109,13 @@ const dict: Translations = {
   'appearance.accentPurple': '紫色',
   'appearance.resetToDefault': '恢复默认设置',
   'appearance.language': '语言',
+  'presets.eyebrow': '预设',
+  'presets.exportButton': '导出设置',
+  'presets.importButton': '导入设置',
+  'presets.exported': '设置已导出。',
+  'presets.exportCancelled': '导出已取消。',
+  'presets.imported': '设置已导入。',
+  'presets.importInvalid': '该文件不是有效的 TrickWork 预设。',
 }
 
 export default dict

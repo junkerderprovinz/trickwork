@@ -11,6 +11,7 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
+import { mountPresetsPanel } from './presetsPanel'
 import { iconAppearance, iconBack, iconRedo, iconUndo } from './icons'
 
 const app = document.getElementById('app')
@@ -111,7 +112,9 @@ const settingsView = document.createElement('div')
 settingsView.className = 'settings-view'
 const settingsCard = document.createElement('div')
 settingsCard.className = 'glim-card glim-section settings-card'
-settingsView.appendChild(settingsCard)
+const presetsCard = document.createElement('div')
+presetsCard.className = 'glim-card glim-section settings-card'
+settingsView.append(settingsCard, presetsCard)
 body.appendChild(settingsView)
 
 let onSettings = false
@@ -187,6 +190,7 @@ mountFiltersPanel(filtersCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
 mountAppearanceSettings(settingsCard)
+mountPresetsPanel(presetsCard, store)
 
 // Boot-time pass, then re-run after any locale-driven rebuild (every
 // mountXxx module above rebuilds its own <select> elements on a language

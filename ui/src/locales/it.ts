@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Viola',
   'appearance.resetToDefault': 'Ripristina predefiniti',
   'appearance.language': 'Lingua',
+  'presets.eyebrow': 'Preimpostazioni',
+  'presets.exportButton': 'Esporta impostazioni',
+  'presets.importButton': 'Importa impostazioni',
+  'presets.exported': 'Impostazioni esportate.',
+  'presets.exportCancelled': 'Esportazione annullata.',
+  'presets.imported': 'Impostazioni importate.',
+  'presets.importInvalid': 'Questo file non è un preset TrickWork valido.',
 }
 
 export default dict

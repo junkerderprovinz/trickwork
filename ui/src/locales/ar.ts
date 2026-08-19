@@ -110,6 +110,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'بنفسجي',
   'appearance.resetToDefault': 'إعادة التعيين إلى الافتراضي',
   'appearance.language': 'اللغة',
+  'presets.eyebrow': 'إعدادات مسبقة',
+  'presets.exportButton': 'تصدير الإعدادات',
+  'presets.importButton': 'استيراد الإعدادات',
+  'presets.exported': 'تم تصدير الإعدادات.',
+  'presets.exportCancelled': 'تم إلغاء التصدير.',
+  'presets.imported': 'تم استيراد الإعدادات.',
+  'presets.importInvalid': 'هذا الملف ليس قالب TrickWork صالحًا.',
 }
 
 export default dict

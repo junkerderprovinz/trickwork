@@ -110,6 +110,13 @@ const dict: Translations = {
   'appearance.accentPurple': '보라',
   'appearance.resetToDefault': '기본값으로 재설정',
   'appearance.language': '언어',
+  'presets.eyebrow': '프리셋',
+  'presets.exportButton': '설정 내보내기',
+  'presets.importButton': '설정 가져오기',
+  'presets.exported': '설정을 내보냈습니다.',
+  'presets.exportCancelled': '내보내기가 취소되었습니다.',
+  'presets.imported': '설정을 가져왔습니다.',
+  'presets.importInvalid': '이 파일은 유효한 TrickWork 프리셋이 아닙니다.',
 }
 
 export default dict

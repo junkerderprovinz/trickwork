@@ -24,7 +24,10 @@ function settingsBadge(page: import('@playwright/test').Page) {
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
   await page.goto('/')
 
-  const fileInput = page.locator('input[type="file"]')
+  // Scoped to the image dropzone's own accept attribute - the Settings
+  // page's presets-import file input also matches a bare input[type="file"]
+  // now, even while hidden behind display:none (both views stay mounted).
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
 
   const canvas = page.locator('canvas.preview-canvas')
@@ -49,7 +52,10 @@ test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
 test('rotate, invert, and color output all still produce a non-empty preview and export', async ({ page }) => {
   await page.goto('/')
 
-  const fileInput = page.locator('input[type="file"]')
+  // Scoped to the image dropzone's own accept attribute - the Settings
+  // page's presets-import file input also matches a bare input[type="file"]
+  // now, even while hidden behind display:none (both views stay mounted).
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
 
   const canvas = page.locator('canvas.preview-canvas')
@@ -204,4 +210,45 @@ test('switching language updates the badge label and every card, including ones 
   await badge.click()
   await expect(page.getByText('Breite (Spalten)', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Einstellungen')
+})
+
+test('exporting then importing settings round-trips a change through a real JSON file', async ({ page }) => {
+  await page.goto('/')
+
+  const rotate90 = page.getByRole('button', { name: '90°', exact: true })
+  const rotate0 = page.getByRole('button', { name: '0°', exact: true })
+  await rotate90.click()
+  await expect(rotate90).toHaveClass(/segmented-button--active/)
+
+  await settingsBadge(page).click()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export settings' }).click()
+  const download = await downloadPromise
+  const exportedPath = await download.path()
+  expect(exportedPath).not.toBeNull()
+
+  // Change the setting again so the import below has something real to undo.
+  await settingsBadge(page).click()
+  await rotate0.click()
+  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await settingsBadge(page).click()
+
+  await page.locator('input[type="file"][accept*="json"]').setInputFiles(exportedPath as string)
+  await expect(page.getByText('Settings imported.')).toBeVisible()
+
+  await settingsBadge(page).click()
+  await expect(rotate90).toHaveClass(/segmented-button--active/)
+})
+
+test('a malformed settings file is rejected with an error, not a silent crash', async ({ page }) => {
+  await page.goto('/')
+
+  await settingsBadge(page).click()
+  const badFile = {
+    name: 'bad-preset.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ trickworkPreset: 1, options: { columns: -5 } })),
+  }
+  await page.locator('input[type="file"][accept*="json"]').setInputFiles(badFile)
+  await expect(page.getByText('That file is not a valid TrickWork preset.')).toBeVisible()
 })

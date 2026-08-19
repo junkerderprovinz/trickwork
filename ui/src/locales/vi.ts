@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Tím',
   'appearance.resetToDefault': 'Đặt lại về mặc định',
   'appearance.language': 'Ngôn ngữ',
+  'presets.eyebrow': 'Cài đặt sẵn',
+  'presets.exportButton': 'Xuất cài đặt',
+  'presets.importButton': 'Nhập cài đặt',
+  'presets.exported': 'Đã xuất cài đặt.',
+  'presets.exportCancelled': 'Đã hủy xuất.',
+  'presets.imported': 'Đã nhập cài đặt.',
+  'presets.importInvalid': 'Tệp này không phải là cài đặt sẵn TrickWork hợp lệ.',
 }
 
 export default dict

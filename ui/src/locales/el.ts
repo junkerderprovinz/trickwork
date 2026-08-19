@@ -111,6 +111,13 @@ const dict: Translations = {
   'appearance.accentPurple': 'Μοβ',
   'appearance.resetToDefault': 'Επαναφορά προεπιλογής',
   'appearance.language': 'Γλώσσα',
+  'presets.eyebrow': 'Προεπιλογές',
+  'presets.exportButton': 'Εξαγωγή ρυθμίσεων',
+  'presets.importButton': 'Εισαγωγή ρυθμίσεων',
+  'presets.exported': 'Οι ρυθμίσεις εξήχθησαν.',
+  'presets.exportCancelled': 'Η εξαγωγή ακυρώθηκε.',
+  'presets.imported': 'Οι ρυθμίσεις εισήχθησαν.',
+  'presets.importInvalid': 'Αυτό το αρχείο δεν είναι έγκυρη προεπιλογή TrickWork.',
 }
 
 export default dict
