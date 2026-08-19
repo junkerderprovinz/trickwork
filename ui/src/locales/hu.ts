@@ -9,6 +9,7 @@ const dict: Translations = {
   'tabs.filters': 'Szűrők',
   'nav.convert': 'Konvertálás',
   'nav.settings': 'Beállítások',
+  'nav.backToConvert': 'Vissza',
 
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',

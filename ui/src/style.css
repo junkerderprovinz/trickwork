@@ -16,97 +16,65 @@ html, body {
 }
 
 /* ---------------------------------------------------------------------
-   Shell — a persistent left-rail nav beside the main content, matching
-   BombVault's and KnightLoader's own Sidebar.tsx exactly: no separate top
-   app-bar at all, the brand mark lives inside the rail itself.
+   Header — brand top-left, the Settings badge top-right. A deliberate
+   exception to GlimStone's own sidebar pattern (design-language.md, "The
+   sidebar"): TrickWork has exactly two destinations, not a multi-page
+   dashboard, so the documented lightweight alternative (a small square
+   badge instead of a full left rail) is the right call here, not the rail
+   itself. Recorded as an exception in the vault project note too.
    --------------------------------------------------------------------- */
-.app-shell {
-  flex: 1;
+.app-header {
   display: flex;
-  align-items: stretch;
-  min-height: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0;
 }
 
-.nav-sidebar {
-  flex-shrink: 0;
-  width: 14rem;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--carbon-sidebar);
-}
-
-.nav-brand {
+.app-brand {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  padding: 1.25rem 1.25rem 1rem;
 }
 
-.nav-brand-name {
+.app-brand-name {
   font-size: var(--text-heading);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--carbon-text);
 }
 
-.nav-brand-tagline {
+.app-brand-tagline {
   font-size: var(--text-caption);
   color: var(--carbon-text-muted);
 }
 
-.nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.75rem;
-}
-
-.nav-list:first-of-type {
-  flex: 1;
-}
-
-/* GlimStone's own component ("Der eine waagerechte Wähler") groups tabs,
-   filter bars and this kind of navigation list as one family - filled when
-   active, no extra box around the group, since the fill already carries the
-   selection state. */
-.nav-item {
+/* Square, not the pill (GlimStone's own distinction: pill implies text
+   content, a square/circle badge implies "just a glyph") - opens Settings
+   as its own full page, no preview or working cards behind it. */
+.settings-badge {
   appearance: none;
   border: none;
   cursor: pointer;
-  font: inherit;
-  display: flex;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.625rem 0.875rem;
+  justify-content: center;
   border-radius: var(--radius-control);
-  background: none;
-  color: var(--sidebar-text);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  text-align: start;
-  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text-sub);
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
-.nav-item:hover {
+.settings-badge:hover {
   background-color: var(--carbon-hover);
   color: var(--carbon-text);
-  transform: translateX(2px);
-}
-
-.nav-item--active,
-.nav-item--active:hover {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-  transform: none;
-}
-
-.nav-icon {
-  flex-shrink: 0;
 }
 
 /* ---------------------------------------------------------------------
-   app-body hosts exactly one of two views at a time (sidebarNav.ts toggles
+   app-body hosts exactly one of two views at a time (main.ts toggles
    which): the Convert workspace (preview + every card that affects
    generation, all live) or the Settings page (theming/language only, no
    preview at all - its own separate "window", not a panel beside the
@@ -646,13 +614,10 @@ button:focus-visible {
   color: var(--carbon-text);
 }
 
-/* ---------------------------------------------------------------------
-   Footer
-   --------------------------------------------------------------------- */
-.app-footer {
-  margin-top: auto;
-  padding: 0.5rem 1.5rem 0.75rem;
+/* GlimStone rule: version numbers live in Settings, never a persistent
+   footer - see appearanceSettings.ts. */
+.settings-version {
+  margin: 0.25rem 0 0;
   font-size: var(--text-caption);
   color: var(--carbon-text-muted);
-  text-align: right;
 }

@@ -9,6 +9,7 @@ const dict: Translations = {
   'tabs.filters': 'Filtry',
   'nav.convert': 'Převést',
   'nav.settings': 'Nastavení',
+  'nav.backToConvert': 'Zpět',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Přetáhněte sem obrázky, nebo klikněte pro výběr souborů',

@@ -9,6 +9,7 @@ const dict: Translations = {
   'tabs.filters': '滤镜',
   'nav.convert': '转换',
   'nav.settings': '设置',
+  'nav.backToConvert': '返回',
 
   'import.eyebrow': '导入',
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',

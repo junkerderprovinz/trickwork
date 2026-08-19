@@ -3,6 +3,7 @@ import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './desig
 import { enableSelectScroll } from './design/selectScroll'
 import { segmentedRow } from './controlWidgets'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
+import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
 const HEX_RE = /^#[0-9a-fA-F]{6}$/
@@ -167,7 +168,14 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     languageWrap.append(languageLabel, languageSelect)
     enableSelectScroll(languageSelect)
 
-    panel.append(shapeRow, themeRow, accentWrap, languageWrap)
+    // GlimStone rule: version numbers live in Settings, never a persistent
+    // footer - a version string in permanent page chrome is read once and
+    // then costs a line forever, everywhere, for everyone.
+    const versionLine = document.createElement('p')
+    versionLine.className = 'settings-version'
+    versionLine.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
+
+    panel.append(shapeRow, themeRow, accentWrap, languageWrap, versionLine)
   }
 
   build()

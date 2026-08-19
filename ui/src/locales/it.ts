@@ -9,6 +9,7 @@ const dict: Translations = {
   'tabs.filters': 'Filtri',
   'nav.convert': 'Converti',
   'nav.settings': 'Impostazioni',
+  'nav.backToConvert': 'Indietro',
 
   'import.eyebrow': 'Importa',
   'import.dropzoneText': 'Trascina qui le immagini, oppure clicca per scegliere i file',

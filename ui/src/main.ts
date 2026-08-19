@@ -1,4 +1,3 @@
-import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 import { applyCachedAppearance } from './design/appearance'
 import { applyCachedTheme } from './design/theme'
 import { enableSelectScrollForAll } from './design/selectScroll'
@@ -12,8 +11,7 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
-import { mountSidebarNav } from './sidebarNav'
-import { iconAppearance, iconConvert } from './icons'
+import { iconAppearance, iconBack } from './icons'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -36,47 +34,38 @@ function section(): HTMLDivElement {
   return el
 }
 
-// Left-rail navigation + main content, matching BombVault's/KnightLoader's
-// own Sidebar.tsx structure. Exactly two real destinations, per jdp's own
-// scoping: Convert (the working page - preview plus every card that
-// directly affects generation, all live and visible together, never gated
-// behind a nav click) and Settings (theming/language/global preferences -
-// its own separate "window", no preview or working cards at all, matching
-// how BombVault's Settings page fully replaces the main content instead of
-// sitting beside it).
-const shell = document.createElement('div')
-shell.className = 'app-shell'
-app.appendChild(shell)
-
-const sidebar = document.createElement('aside')
-sidebar.className = 'nav-sidebar'
-shell.appendChild(sidebar)
+// A deliberate exception to GlimStone's own sidebar pattern (design-
+// language.md, "The sidebar"): TrickWork is a single-workspace tool with
+// exactly two destinations, not a multi-page dashboard, so a full left rail
+// is overkill - the corner Settings badge is GlimStone's own documented
+// lightweight alternative for exactly this case. Recorded in the vault
+// project note per jdp's "note every exception" instruction, not just here.
+const header = document.createElement('header')
+header.className = 'app-header'
+app.appendChild(header)
 
 const brand = document.createElement('div')
-brand.className = 'nav-brand'
+brand.className = 'app-brand'
 const brandName = document.createElement('span')
-brandName.className = 'nav-brand-name'
+brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
 const brandTagline = document.createElement('span')
-brandTagline.className = 'nav-brand-tagline'
+brandTagline.className = 'app-brand-tagline'
 brand.append(brandName, brandTagline)
-sidebar.appendChild(brand)
+header.appendChild(brand)
 subscribeLocale(() => {
   brandTagline.textContent = t('app.tagline')
 })
 brandTagline.textContent = t('app.tagline')
 
-const navMain = document.createElement('nav')
-navMain.className = 'nav-list'
-sidebar.appendChild(navMain)
-
-const navBottom = document.createElement('div')
-navBottom.className = 'nav-list nav-list--bottom'
-sidebar.appendChild(navBottom)
+const settingsBadge = document.createElement('button')
+settingsBadge.type = 'button'
+settingsBadge.className = 'settings-badge'
+header.appendChild(settingsBadge)
 
 const body = document.createElement('div')
 body.className = 'app-body'
-shell.appendChild(body)
+app.appendChild(body)
 
 // --- Convert view: preview + every generation-affecting card, all live. ---
 const convertView = document.createElement('div')
@@ -98,6 +87,7 @@ const exportCard = section()
 secondary.append(adjustCard, transformCard, filtersCard, queueCard, exportCard)
 
 convertView.append(primary, secondary)
+body.appendChild(convertView)
 
 // --- Settings view: theming/language/global only, no preview at all. ---
 const settingsView = document.createElement('div')
@@ -105,22 +95,29 @@ settingsView.className = 'settings-view'
 const settingsCard = document.createElement('div')
 settingsCard.className = 'glim-card glim-section settings-card'
 settingsView.appendChild(settingsCard)
+body.appendChild(settingsView)
 
-const nav = mountSidebarNav(
-  body,
-  [
-    { container: navMain, items: [{ id: 'convert', label: t('nav.convert'), icon: iconConvert(), panel: convertView }] },
-    {
-      container: navBottom,
-      items: [{ id: 'settings', label: t('nav.settings'), icon: iconAppearance(), panel: settingsView }],
-    },
-  ],
-  'convert',
-)
+let onSettings = false
 
-subscribeLocale(() => {
-  nav.setLabels({ convert: t('nav.convert'), settings: t('nav.settings') })
+function applyBadgeLabel(): void {
+  const label = onSettings ? t('nav.backToConvert') : t('nav.settings')
+  settingsBadge.setAttribute('aria-label', label)
+  settingsBadge.title = label
+  settingsBadge.innerHTML = onSettings ? iconBack() : iconAppearance()
+}
+
+function render(): void {
+  convertView.style.display = onSettings ? 'none' : ''
+  settingsView.style.display = onSettings ? '' : 'none'
+  applyBadgeLabel()
+}
+
+settingsBadge.addEventListener('click', () => {
+  onSettings = !onSettings
+  render()
 })
+subscribeLocale(applyBadgeLabel)
+render()
 
 mountDropzone(dropzoneCard, store)
 mountPreview(previewCard, store)
@@ -137,8 +134,3 @@ mountAppearanceSettings(settingsCard)
 // again costs nothing and never double-attaches).
 enableSelectScrollForAll(body)
 subscribeLocale(() => enableSelectScrollForAll(body))
-
-const footer = document.createElement('footer')
-footer.className = 'app-footer'
-footer.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
-app.appendChild(footer)

@@ -9,6 +9,7 @@ const dict: Translations = {
   'tabs.filters': 'Suodattimet',
   'nav.convert': 'Muunna',
   'nav.settings': 'Asetukset',
+  'nav.backToConvert': 'Takaisin',
 
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',

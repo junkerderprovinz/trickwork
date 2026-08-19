@@ -8,13 +8,17 @@ import { fileURLToPath } from 'node:url'
 // import.meta.url instead.
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// Nav items are plain buttons (real page-navigation semantics via
-// aria-current, not the ARIA tabs pattern - see sidebarNav.ts). Only two
-// exist now (Convert/Settings) - every generation-affecting card (Adjust/
-// Transform/Filters/Queue/Export) lives on the Convert page simultaneously,
-// never gated behind a nav click.
-function nav(page: import('@playwright/test').Page, name: string) {
-  return page.getByRole('button', { name, exact: true })
+// TrickWork deliberately skips GlimStone's own sidebar pattern (design-
+// language.md, "The sidebar") - a single square corner badge toggles between
+// Convert (every generation-affecting card visible together, never gated
+// behind a click) and Settings instead, per the lightweight-alternative
+// GlimStone documents for a genuinely simple, single-workspace app. The
+// badge's accessible name flips between "Settings" and "Back" (translated)
+// depending on which view is showing - located by its stable class instead
+// of a name regex, since a regex written for the English strings stops
+// matching the instant a locale switch changes the label underneath it.
+function settingsBadge(page: import('@playwright/test').Page) {
+  return page.locator('.settings-badge')
 }
 
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
@@ -106,43 +110,46 @@ test('a closed select answers the mouse wheel without opening', async ({ page })
 test('Settings replaces the whole page: no preview, no working cards', async ({ page }) => {
   await page.goto('/')
 
-  await expect(nav(page, 'Convert')).toBeVisible()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
+  const badge = settingsBadge(page)
+  await expect(badge).toHaveAccessibleName('Settings')
 
-  await nav(page, 'Settings').click()
+  await badge.click()
 
   // The entire Convert workspace - preview, Import, every generation card -
-  // is hidden while Settings is active (sidebarNav.ts toggles display:none,
-  // it doesn't remove the DOM, so toBeHidden() is the correct check here,
-  // not toHaveCount(0) - the nodes still exist, just aren't rendered).
+  // is hidden while Settings is active (main.ts toggles display:none, it
+  // doesn't remove the DOM, so toBeHidden() is the correct check here, not
+  // toHaveCount(0) - the nodes still exist, just aren't rendered).
   await expect(page.getByText('Width (columns)', { exact: true })).toBeHidden()
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
   await expect(page.getByText('Shape', { exact: true })).toBeVisible()
+  await expect(badge).toHaveAccessibleName('Back')
+  // Version numbers live in Settings, never a persistent footer.
+  await expect(page.getByText(/TrickWork v.* · GlimStone v/)).toBeVisible()
 
-  await nav(page, 'Convert').click()
+  await badge.click()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
+  await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('switching language updates nav labels and every card, including ones on the other page', async ({ page }) => {
+test('switching language updates the badge label and every card, including ones on the other page', async ({ page }) => {
   await page.goto('/')
 
-  await expect(nav(page, 'Convert')).toBeVisible()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
 
-  await nav(page, 'Settings').click()
+  const badge = settingsBadge(page)
+  await badge.click()
   await page.getByLabel('Language').selectOption('de')
 
-  // "Convert" -> "Konvertieren" and "Settings" -> "Einstellungen" are
-  // genuinely distinct strings between the two languages - real positive
-  // proof the switch propagated to the nav rail itself.
-  await expect(nav(page, 'Convert')).toHaveCount(0)
-  await expect(nav(page, 'Konvertieren')).toBeVisible()
-  await expect(nav(page, 'Einstellungen')).toBeVisible()
+  // "Settings" -> "Einstellungen" is a genuinely distinct string between the
+  // two languages - real positive proof the switch propagated to the badge.
+  await expect(badge).toHaveAccessibleName('Zurück')
 
   // The Convert page's cards were not showing during the switch - proves an
   // already-mounted but hidden (display:none) view's DOM updates too, not
   // just the currently visible one.
-  await nav(page, 'Konvertieren').click()
+  await badge.click()
   await expect(page.getByText('Breite (Spalten)', { exact: true })).toBeVisible()
+  await expect(badge).toHaveAccessibleName('Einstellungen')
 })

@@ -19,6 +19,7 @@ export const en = {
   'tabs.filters': 'Filters',
   'nav.convert': 'Convert',
   'nav.settings': 'Settings',
+  'nav.backToConvert': 'Back',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Drop images here, or click to choose files',
@@ -115,6 +116,7 @@ export const de: Translations = {
   'tabs.filters': 'Filter',
   'nav.convert': 'Konvertieren',
   'nav.settings': 'Einstellungen',
+  'nav.backToConvert': 'Zurück',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',
