@@ -15,6 +15,7 @@ import { mountAppearanceSettings } from './appearanceSettings'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { iconAppearance, iconBack } from './icons'
+import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -108,7 +109,14 @@ const settingsCard = document.createElement('div')
 settingsCard.className = 'glim-card glim-section settings-card'
 const presetsCard = document.createElement('div')
 presetsCard.className = 'glim-card glim-section settings-card'
-settingsView.append(settingsCard, presetsCard)
+// Outside both cards, at the very bottom of the Settings destination itself
+// - GlimStone's own refined rule (design-language.md, "The sidebar"):
+// version numbers belong to the whole app, not to whichever card happens
+// to be last, so they don't live inside one.
+const versionLine = document.createElement('p')
+versionLine.className = 'settings-version'
+versionLine.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
+settingsView.append(settingsCard, presetsCard, versionLine)
 body.appendChild(settingsView)
 
 let onSettings = false

@@ -392,3 +392,34 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
   expect(Math.abs(resized.x - moved.x)).toBeLessThan(2)
   expect(Math.abs(resized.y - moved.y)).toBeLessThan(2)
 })
+
+test('rainbow mode gives each queue row its own hue, and the language picker shows flags', async ({ page }) => {
+  await page.goto('/')
+
+  // The language <select>'s own OPTIONS carry a flag-emoji prefix (a native
+  // <option> can't hold an image/CSS background, see GlimStone's
+  // design-language.md) - the closed select shows the selected option's own
+  // text, flag included, with no extra wiring needed.
+  await settingsBadge(page).click()
+  const languageSelect = page.getByLabel('Language')
+  const firstOptionText = await languageSelect.locator('option').first().textContent()
+  // A flag emoji is two "regional indicator symbol" codepoints, both well
+  // outside the Basic Multilingual Plane (> 0xFFFF) - a plain label
+  // wouldn't have any character in that range at all.
+  expect(Array.from(firstOptionText ?? '').some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(true)
+
+  await page.getByRole('button', { name: 'On', exact: true }).click()
+  await settingsBadge(page).click()
+
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+
+  const rows = page.locator('.queue-item')
+  await expect(rows).toHaveCount(2)
+  const hue0 = await rows.nth(0).evaluate((el) => (el as HTMLElement).style.getPropertyValue('--item-hue'))
+  const hue1 = await rows.nth(1).evaluate((el) => (el as HTMLElement).style.getPropertyValue('--item-hue'))
+  expect(hue0).not.toBe('')
+  expect(hue1).not.toBe('')
+  expect(hue0).not.toBe(hue1)
+})

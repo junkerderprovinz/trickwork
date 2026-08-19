@@ -126,6 +126,9 @@ export const en = {
   'appearance.accentGreen': 'Green',
   'appearance.accentRed': 'Red',
   'appearance.accentPurple': 'Purple',
+  'appearance.rainbow': 'Rainbow',
+  'appearance.rainbowOff': 'Off',
+  'appearance.rainbowOn': 'On',
   'appearance.resetToDefault': 'Reset to default',
   'appearance.language': 'Language',
 
@@ -256,6 +259,9 @@ export const de: Translations = {
   'appearance.accentGreen': 'Grün',
   'appearance.accentRed': 'Rot',
   'appearance.accentPurple': 'Lila',
+  'appearance.rainbow': 'Regenbogen',
+  'appearance.rainbowOff': 'Aus',
+  'appearance.rainbowOn': 'An',
   'appearance.resetToDefault': 'Auf Standard zurücksetzen',
   'appearance.language': 'Sprache',
 

@@ -1,3 +1,4 @@
+import { hueVars, rainbowColor, subscribeRainbow } from './design/appearance'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { BatchItem, BatchItemStatus, Store } from './state'
 
@@ -28,19 +29,39 @@ export function mountQueue(container: HTMLElement, store: Store): void {
     const state = store.getState()
     empty.style.display = state.items.length === 0 ? '' : 'none'
     list.innerHTML = ''
-    for (const item of state.items) {
-      list.appendChild(renderItem(item, item.id === state.activeItemId, store))
-    }
+    state.items.forEach((item, index) => {
+      list.appendChild(renderItem(item, item.id === state.activeItemId, index, store))
+    })
   }
 
   store.subscribe(render)
   subscribeLocale(render)
+  // Rainbow is a document-level setting living outside `store` (see
+  // design/appearance.ts) - toggling it on/off in Settings has to re-render
+  // this list too, or the queue would only pick up the palette on its next
+  // unrelated re-render.
+  subscribeRainbow(render)
   render()
 }
 
-function renderItem(item: BatchItem, isActive: boolean, store: Store): HTMLLIElement {
+function renderItem(item: BatchItem, isActive: boolean, index: number, store: Store): HTMLLIElement {
   const li = document.createElement('li')
   li.className = `queue-item queue-item--${item.status}${isActive ? ' queue-item--active' : ''}`
+
+  // Each row owns one palette position - the canonical rainbow use case
+  // (design-language.md: "a download row owns a colour"). rainbowColor()
+  // already returns undefined when the mode is off, so the row falls back
+  // to the single accent with no extra branching here. The active item's
+  // OWN highlight (queue-item--active, below) already reads var(--accent-
+  // soft) - .glim-hue redefining that token is what makes it pick up this
+  // row's own hue automatically, no separate rule needed.
+  const hue = rainbowColor(index)
+  if (hue) {
+    li.classList.add('glim-hue', 'glim-tint')
+    for (const [prop, value] of Object.entries(hueVars(hue))) {
+      li.style.setProperty(prop, value)
+    }
+  }
 
   const name = document.createElement('span')
   name.className = 'queue-item-name'

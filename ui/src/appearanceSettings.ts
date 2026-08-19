@@ -1,9 +1,19 @@
-import { SHAPES, ACCENTS, DEFAULT_ACCENT, applyShape, applyAccent, cacheAppearance, type Shape } from './design/appearance'
+import {
+  SHAPES,
+  ACCENTS,
+  DEFAULT_ACCENT,
+  applyShape,
+  applyAccent,
+  applyRainbow,
+  cacheAppearance,
+  rainbowState,
+  type Shape,
+} from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
 import { enableSelectScroll } from './design/selectScroll'
+import { flagEmoji } from './design/flagEmoji'
 import { segmentedRow } from './controlWidgets'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
-import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
 const HEX_RE = /^#[0-9a-fA-F]{6}$/
@@ -55,9 +65,10 @@ export function mountAppearanceSettings(container: HTMLElement): void {
   // '' clears the override (see design/appearance.ts's valid()).
   let accent = cached.accent && HEX_RE.test(cached.accent) ? cached.accent : ''
   let theme: ThemePref = cachedThemePref()
+  let rainbowOn = rainbowState().on
 
   function persist(): void {
-    cacheAppearance(shape, accent)
+    cacheAppearance(shape, accent, rainbowState())
     cacheTheme(theme)
   }
 
@@ -150,6 +161,24 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     accentWrap.append(accentLabel, swatchRow, accentControlsRow)
 
+    // Off/on, the same segmented-row shape as Shape/Theme above - the Queue
+    // is where it actually shows (design-language.md: "a download row owns
+    // a colour"), each item getting its own palette position instead of
+    // sharing the single accent.
+    const rainbowRow = segmentedRow(
+      t('appearance.rainbow'),
+      [
+        { value: 'off', label: t('appearance.rainbowOff') },
+        { value: 'on', label: t('appearance.rainbowOn') },
+      ],
+      rainbowOn ? 'on' : 'off',
+      (value) => {
+        rainbowOn = value === 'on'
+        applyRainbow({ on: rainbowOn })
+        persist()
+      },
+    )
+
     const languageWrap = document.createElement('label')
     languageWrap.className = 'control-slider'
     const languageLabel = document.createElement('span')
@@ -158,7 +187,11 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     for (const locale of LOCALES) {
       const opt = document.createElement('option')
       opt.value = locale.code
-      opt.textContent = locale.label
+      // Flag-emoji-prefixed, per GlimStone's own documented answer for a
+      // native <select> (design-language.md, "The user-owned axes" >
+      // Language) - an <option> can only ever hold plain text, so this is
+      // the flag without a custom-built dropdown.
+      opt.textContent = `${flagEmoji(locale.flag)} ${locale.label}`
       languageSelect.appendChild(opt)
     }
     languageSelect.value = currentLocale()
@@ -168,14 +201,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     languageWrap.append(languageLabel, languageSelect)
     enableSelectScroll(languageSelect)
 
-    // GlimStone rule: version numbers live in Settings, never a persistent
-    // footer - a version string in permanent page chrome is read once and
-    // then costs a line forever, everywhere, for everyone.
-    const versionLine = document.createElement('p')
-    versionLine.className = 'settings-version'
-    versionLine.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
-
-    panel.append(shapeRow, themeRow, accentWrap, languageWrap, versionLine)
+    panel.append(shapeRow, themeRow, accentWrap, rainbowRow, languageWrap)
   }
 
   build()

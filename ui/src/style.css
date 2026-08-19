@@ -995,8 +995,10 @@ button:focus-visible {
 
 /* GlimStone rule: version numbers live in Settings, never a persistent
    footer - see appearanceSettings.ts. */
+/* Sits directly in .settings-view now (main.ts), not inside a card - its
+   own flex gap already provides the spacing above, so no extra margin here. */
 .settings-version {
-  margin: 0.25rem 0 0;
+  margin: 0;
   font-size: var(--text-caption);
   color: var(--carbon-text-muted);
 }
