@@ -1,13 +1,7 @@
-import {
-  SHAPES,
-  ACCENTS,
-  DEFAULT_ACCENT,
-  applyShape,
-  applyAccent,
-  cacheAppearance,
-  type Shape,
-} from './design/appearance'
+import { SHAPES, ACCENTS, DEFAULT_ACCENT, applyShape, applyAccent, cacheAppearance, type Shape } from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
+import { segmentedRow } from './controlWidgets'
+import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
 const HEX_RE = /^#[0-9a-fA-F]{6}$/
@@ -27,20 +21,34 @@ function readCachedAppearance(): CachedAppearance {
   }
 }
 
-const THEME_CHOICES: { value: ThemePref; label: string }[] = [
-  { value: 'dark', label: 'Dark' },
-  { value: 'light', label: 'Light' },
-  { value: 'system', label: 'System' },
+const SHAPE_KEYS: Record<Shape, TranslationKey> = {
+  round: 'appearance.round',
+  soft: 'appearance.soft',
+  square: 'appearance.square',
+}
+
+const THEME_CHOICES: { value: ThemePref; key: TranslationKey }[] = [
+  { value: 'dark', key: 'appearance.dark' },
+  { value: 'light', key: 'appearance.light' },
+  { value: 'system', key: 'appearance.system' },
 ]
+
+const ACCENT_KEYS: Record<string, TranslationKey> = {
+  Sunflower: 'appearance.accentSunflower',
+  Blue: 'appearance.accentBlue',
+  Green: 'appearance.accentGreen',
+  Red: 'appearance.accentRed',
+  Purple: 'appearance.accentPurple',
+}
 
 export function mountAppearanceSettings(container: HTMLElement): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
-  eyebrow.textContent = 'Appearance'
   container.appendChild(eyebrow)
 
   const panel = document.createElement('div')
   panel.className = 'appearance-settings'
+  container.appendChild(panel)
 
   const cached = readCachedAppearance()
   let shape: Shape = SHAPES.includes(cached.shape as Shape) ? (cached.shape as Shape) : 'round'
@@ -55,127 +63,116 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     cacheTheme(theme)
   }
 
-  const shapeRow = segmentedRow(
-    'Shape',
-    SHAPES.map((s) => ({ value: s, label: capitalize(s) })),
-    shape,
-    (value) => {
-      shape = value
-      applyShape(shape)
-      persist()
-    },
-  )
+  // Rebuilding the whole panel on a locale switch is simpler and more robust
+  // than patching five different label sites in place (same reasoning as
+  // controls.ts) - it's a rare, deliberate action, not a hot path.
+  function build(): void {
+    eyebrow.textContent = t('appearance.eyebrow')
+    panel.innerHTML = ''
 
-  const themeRow = segmentedRow('Theme', THEME_CHOICES, theme, (value) => {
-    theme = value
-    applyTheme(theme)
-    persist()
-  })
-
-  const accentWrap = document.createElement('div')
-  accentWrap.className = 'control-slider'
-  const accentLabel = document.createElement('span')
-  accentLabel.textContent = 'Accent'
-
-  const swatchRow = document.createElement('div')
-  swatchRow.className = 'accent-swatch-row'
-
-  const customInput = document.createElement('input')
-  customInput.type = 'color'
-  customInput.className = 'accent-custom-input'
-  customInput.setAttribute('aria-label', 'Custom accent colour')
-  customInput.value = accent || DEFAULT_ACCENT
-
-  function renderSwatches(): void {
-    swatchRow.innerHTML = ''
-    for (const preset of ACCENTS) {
-      const btn = document.createElement('button')
-      btn.type = 'button'
-      btn.className = 'accent-swatch' + (accent === preset.hex ? ' accent-swatch--active' : '')
-      btn.style.backgroundColor = preset.hex
-      btn.title = preset.name
-      btn.setAttribute('aria-label', `Accent: ${preset.name}`)
-      btn.addEventListener('click', () => {
-        accent = preset.hex
-        applyAccent(accent)
+    const shapeRow = segmentedRow(
+      t('appearance.shape'),
+      SHAPES.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
+      shape,
+      (value) => {
+        shape = value
+        applyShape(shape)
         persist()
-        customInput.value = accent
-        renderSwatches()
-      })
-      swatchRow.appendChild(btn)
+      },
+    )
+
+    const themeRow = segmentedRow(
+      t('appearance.theme'),
+      THEME_CHOICES.map((c) => ({ value: c.value, label: t(c.key) })),
+      theme,
+      (value) => {
+        theme = value
+        applyTheme(theme)
+        persist()
+      },
+    )
+
+    const accentWrap = document.createElement('div')
+    accentWrap.className = 'control-slider'
+    const accentLabel = document.createElement('span')
+    accentLabel.textContent = t('appearance.accent')
+
+    const swatchRow = document.createElement('div')
+    swatchRow.className = 'accent-swatch-row'
+
+    const customInput = document.createElement('input')
+    customInput.type = 'color'
+    customInput.className = 'accent-custom-input'
+    customInput.setAttribute('aria-label', t('appearance.accent'))
+    customInput.value = accent || DEFAULT_ACCENT
+
+    function renderSwatches(): void {
+      swatchRow.innerHTML = ''
+      for (const preset of ACCENTS) {
+        const presetLabel = ACCENT_KEYS[preset.name] ? t(ACCENT_KEYS[preset.name] as TranslationKey) : preset.name
+        const btn = document.createElement('button')
+        btn.type = 'button'
+        btn.className = 'accent-swatch' + (accent === preset.hex ? ' accent-swatch--active' : '')
+        btn.style.backgroundColor = preset.hex
+        btn.title = presetLabel
+        btn.setAttribute('aria-label', presetLabel)
+        btn.addEventListener('click', () => {
+          accent = preset.hex
+          applyAccent(accent)
+          persist()
+          customInput.value = accent
+          renderSwatches()
+        })
+        swatchRow.appendChild(btn)
+      }
     }
-  }
-  renderSwatches()
-
-  customInput.addEventListener('input', () => {
-    accent = customInput.value
-    applyAccent(accent)
-    persist()
     renderSwatches()
-  })
 
-  const resetBtn = document.createElement('button')
-  resetBtn.type = 'button'
-  resetBtn.className = 'accent-reset-button'
-  resetBtn.textContent = 'Reset to default'
-  resetBtn.addEventListener('click', () => {
-    accent = ''
-    applyAccent(undefined)
-    persist()
-    customInput.value = DEFAULT_ACCENT
-    renderSwatches()
-  })
+    customInput.addEventListener('input', () => {
+      accent = customInput.value
+      applyAccent(accent)
+      persist()
+      renderSwatches()
+    })
 
-  const accentControlsRow = document.createElement('div')
-  accentControlsRow.className = 'accent-controls-row'
-  accentControlsRow.append(customInput, resetBtn)
+    const resetBtn = document.createElement('button')
+    resetBtn.type = 'button'
+    resetBtn.className = 'accent-reset-button'
+    resetBtn.textContent = t('appearance.resetToDefault')
+    resetBtn.addEventListener('click', () => {
+      accent = ''
+      applyAccent(undefined)
+      persist()
+      customInput.value = DEFAULT_ACCENT
+      renderSwatches()
+    })
 
-  accentWrap.append(accentLabel, swatchRow, accentControlsRow)
+    const accentControlsRow = document.createElement('div')
+    accentControlsRow.className = 'accent-controls-row'
+    accentControlsRow.append(customInput, resetBtn)
 
-  panel.append(shapeRow, themeRow, accentWrap)
-  container.appendChild(panel)
-}
+    accentWrap.append(accentLabel, swatchRow, accentControlsRow)
 
-function segmentedRow<T extends string>(
-  label: string,
-  choices: { value: T; label: string }[],
-  initial: T,
-  onChange: (value: T) => void,
-): HTMLElement {
-  const wrap = document.createElement('div')
-  wrap.className = 'control-slider'
-
-  const labelEl = document.createElement('span')
-  labelEl.textContent = label
-  wrap.appendChild(labelEl)
-
-  const row = document.createElement('div')
-  row.className = 'segmented-row'
-  wrap.appendChild(row)
-
-  let active = initial
-
-  function render(): void {
-    row.innerHTML = ''
-    for (const choice of choices) {
-      const btn = document.createElement('button')
-      btn.type = 'button'
-      btn.className = 'segmented-button' + (choice.value === active ? ' segmented-button--active' : '')
-      btn.textContent = choice.label
-      btn.addEventListener('click', () => {
-        if (choice.value === active) return
-        active = choice.value
-        onChange(active)
-        render()
-      })
-      row.appendChild(btn)
+    const languageWrap = document.createElement('label')
+    languageWrap.className = 'control-slider'
+    const languageLabel = document.createElement('span')
+    languageLabel.textContent = t('appearance.language')
+    const languageSelect = document.createElement('select')
+    for (const locale of LOCALES) {
+      const opt = document.createElement('option')
+      opt.value = locale.code
+      opt.textContent = locale.label
+      languageSelect.appendChild(opt)
     }
+    languageSelect.value = currentLocale()
+    languageSelect.addEventListener('change', () => {
+      void setLocale(languageSelect.value)
+    })
+    languageWrap.append(languageLabel, languageSelect)
+
+    panel.append(shapeRow, themeRow, accentWrap, languageWrap)
   }
-  render()
 
-  return wrap
-}
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
+  build()
+  subscribeLocale(build)
 }

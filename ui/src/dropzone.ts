@@ -1,17 +1,23 @@
+import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
 export function mountDropzone(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
-  eyebrow.textContent = 'Import'
   container.appendChild(eyebrow)
 
   const zone = document.createElement('div')
   zone.className = 'dropzone glim-well'
-  zone.textContent = 'Drop images here, or click to choose files'
   zone.tabIndex = 0
   zone.setAttribute('role', 'button')
-  zone.setAttribute('aria-label', 'Choose image files to convert')
+
+  function applyLabels(): void {
+    eyebrow.textContent = t('import.eyebrow')
+    zone.textContent = t('import.dropzoneText')
+    zone.setAttribute('aria-label', t('import.ariaLabel'))
+  }
+  applyLabels()
+  subscribeLocale(applyLabels)
 
   const input = document.createElement('input')
   input.type = 'file'

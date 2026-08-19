@@ -1,14 +1,21 @@
-import type { BatchItem, Store } from './state'
+import { subscribeLocale, t, type TranslationKey } from './i18n'
+import type { BatchItem, BatchItemStatus, Store } from './state'
+
+const STATUS_KEYS: Record<BatchItemStatus, TranslationKey> = {
+  pending: 'queue.statusPending',
+  converting: 'queue.statusConverting',
+  converted: 'queue.statusConverted',
+  exported: 'queue.statusExported',
+  error: 'queue.statusError',
+}
 
 export function mountQueue(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
-  eyebrow.textContent = 'Queue'
   container.appendChild(eyebrow)
 
   const empty = document.createElement('p')
   empty.className = 'queue-empty'
-  empty.textContent = 'No images yet.'
   container.appendChild(empty)
 
   const list = document.createElement('ul')
@@ -16,6 +23,8 @@ export function mountQueue(container: HTMLElement, store: Store): void {
   container.appendChild(list)
 
   function render() {
+    eyebrow.textContent = t('queue.eyebrow')
+    empty.textContent = t('queue.empty')
     const state = store.getState()
     empty.style.display = state.items.length === 0 ? '' : 'none'
     list.innerHTML = ''
@@ -25,6 +34,7 @@ export function mountQueue(container: HTMLElement, store: Store): void {
   }
 
   store.subscribe(render)
+  subscribeLocale(render)
   render()
 }
 
@@ -38,15 +48,18 @@ function renderItem(item: BatchItem, isActive: boolean, store: Store): HTMLLIEle
 
   const status = document.createElement('span')
   status.className = 'queue-item-status'
-  status.textContent = item.status === 'error' ? `error: ${item.errorMessage ?? 'unknown'}` : item.status
+  status.textContent =
+    item.status === 'error'
+      ? t('queue.errorPrefix', { message: item.errorMessage ?? t('queue.errorUnknown') })
+      : t(STATUS_KEYS[item.status])
 
   li.append(name, status)
 
   if (item.wasDownscaled) {
     const downscaledNote = document.createElement('span')
     downscaledNote.className = 'queue-item-downscaled'
-    downscaledNote.title = 'This image exceeded the maximum working dimension and was automatically downscaled before conversion.'
-    downscaledNote.textContent = 'downscaled'
+    downscaledNote.title = t('queue.downscaledTitle')
+    downscaledNote.textContent = t('queue.downscaledLabel')
     li.append(downscaledNote)
   }
 
@@ -54,7 +67,7 @@ function renderItem(item: BatchItem, isActive: boolean, store: Store): HTMLLIEle
   if (selectable) {
     li.tabIndex = 0
     li.setAttribute('role', 'button')
-    li.setAttribute('aria-label', `Preview ${item.file.name}`)
+    li.setAttribute('aria-label', t('queue.previewAriaLabel', { name: item.file.name }))
   }
 
   const select = () => {

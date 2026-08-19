@@ -1,4 +1,5 @@
 import {
+  applyImageFilters,
   assembleGrid,
   buildFontWidthTable,
   createCanvasGlyphMeasurer,
@@ -9,6 +10,7 @@ import {
   toText,
   toXHTML,
 } from 'trickwork-core'
+import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
 
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
@@ -16,7 +18,6 @@ type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
 export function mountExportPanel(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
-  eyebrow.textContent = 'Export'
   container.appendChild(eyebrow)
 
   const panel = document.createElement('div')
@@ -27,27 +28,43 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
 
   const formatRow = document.createElement('div')
   formatRow.className = 'export-format-row'
+  const formatButtons: { format: ExportFormat; button: HTMLButtonElement }[] = []
   for (const format of ['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]) {
     const button = document.createElement('button')
     button.textContent = format.toUpperCase()
-    // aria-label carries the full sentence as the accessible name (what
-    // screen readers and Playwright's getByRole both read), while the
-    // visible label stays a compact format code.
-    button.setAttribute('aria-label', `Export active image as ${format.toUpperCase()}`)
-    button.title = `Export active image as ${format.toUpperCase()}`
     button.addEventListener('click', () => void exportActive(store, format, summary))
     formatRow.appendChild(button)
+    formatButtons.push({ format, button })
   }
   panel.appendChild(formatRow)
 
   const batchButton = document.createElement('button')
   batchButton.className = 'export-batch-button'
-  batchButton.textContent = 'Export all queued images as TXT'
   batchButton.addEventListener('click', () => void exportAllAsText(store, summary))
   panel.appendChild(batchButton)
 
+  const colorNote = document.createElement('p')
+  colorNote.className = 'controls-note'
+  panel.appendChild(colorNote)
+
   panel.appendChild(summary)
   container.appendChild(panel)
+
+  function applyLabels(): void {
+    eyebrow.textContent = t('export.eyebrow')
+    for (const { format, button } of formatButtons) {
+      // aria-label carries the full sentence as the accessible name (what
+      // screen readers and Playwright's getByRole both read), while the
+      // visible label stays a compact format code.
+      const label = t('export.formatAriaLabel', { format: format.toUpperCase() })
+      button.setAttribute('aria-label', label)
+      button.title = label
+    }
+    batchButton.textContent = t('export.batchButton')
+    colorNote.textContent = t('controls.colorTxtNote')
+  }
+  applyLabels()
+  subscribeLocale(applyLabels)
 }
 
 async function buildOutput(item: BatchItem, store: Store, format: ExportFormat): Promise<Blob> {
@@ -57,7 +74,8 @@ async function buildOutput(item: BatchItem, store: Store, format: ExportFormat):
   const options = store.getState().options
   const measure = createCanvasGlyphMeasurer()
   const table = buildFontWidthTable(options.charset, options.font, measure)
-  const grid = assembleGrid(item.imageData, table, options)
+  const transformed = applyImageFilters(item.imageData, options)
+  const grid = assembleGrid(transformed, table, options)
 
   switch (format) {
     case 'txt':
@@ -169,20 +187,22 @@ async function exportActive(store: Store, format: ExportFormat, summary: HTMLEle
   const state = store.getState()
   const item = state.items.find((i) => i.id === state.activeItemId)
   if (!item) {
-    summary.textContent = 'No active image to export.'
+    summary.textContent = t('export.noActiveImage')
     return
   }
   try {
     const blob = await buildOutput(item, store, format)
     const delivered = await downloadBlob(blob, `${item.file.name}.${format}`)
     if (!delivered) {
-      summary.textContent = `Export of "${item.file.name}" cancelled.`
+      summary.textContent = t('export.cancelled', { name: item.file.name })
       return
     }
     store.updateItem(item.id, { status: 'exported' })
-    summary.textContent = `Exported "${item.file.name}" as ${format.toUpperCase()}.`
+    summary.textContent = t('export.exported', { name: item.file.name, format: format.toUpperCase() })
   } catch (error) {
-    summary.textContent = `Export failed: ${error instanceof Error ? error.message : String(error)}`
+    summary.textContent = t('export.failed', {
+      error: error instanceof Error ? error.message : String(error),
+    })
   }
 }
 
@@ -206,6 +226,6 @@ async function exportAllAsText(store: Store, summary: HTMLElement): Promise<void
       failed++
     }
   }
-  const cancelledNote = cancelled > 0 ? `, ${cancelled} cancelled` : ''
-  summary.textContent = `Batch export: ${succeeded} succeeded, ${failed} failed${cancelledNote}.`
+  const cancelledSuffix = cancelled > 0 ? t('export.batchCancelledSuffix', { cancelled }) : ''
+  summary.textContent = t('export.batchSummary', { succeeded, failed, cancelledSuffix })
 }

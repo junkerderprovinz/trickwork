@@ -1,4 +1,5 @@
 import {
+  applyImageFilters,
   assembleGrid,
   buildFontWidthTable,
   createCanvasGlyphMeasurer,
@@ -8,18 +9,24 @@ import {
   type CellSize,
   type FontWidthTable,
 } from 'trickwork-core'
+import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
 export function mountPreview(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
-  eyebrow.textContent = 'Preview'
   container.appendChild(eyebrow)
 
   const empty = document.createElement('div')
   empty.className = 'preview-empty glim-well'
-  empty.textContent = 'Drop an image above to see it here as ASCII art.'
   container.appendChild(empty)
+
+  function applyLabels(): void {
+    eyebrow.textContent = t('preview.eyebrow')
+    empty.textContent = t('preview.empty')
+  }
+  applyLabels()
+  subscribeLocale(applyLabels)
 
   const canvasWrap = document.createElement('div')
   canvasWrap.className = 'preview-canvas-wrap'
@@ -67,7 +74,8 @@ export function mountPreview(container: HTMLElement, store: Store): void {
       lastTableKey = tableKey
     }
 
-    const grid = assembleGrid(activeItem.imageData, cachedTable, state.options)
+    const transformed = applyImageFilters(activeItem.imageData, state.options)
+    const grid = assembleGrid(transformed, cachedTable, state.options)
 
     const columns = grid[0]?.length ?? 0
     const rows = grid.length

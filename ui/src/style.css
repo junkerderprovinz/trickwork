@@ -264,6 +264,33 @@ input[type="text"]:focus-visible {
   color: var(--carbon-text-muted);
 }
 
+/* Groups Transform/Filters rows within the one Controls card (rule 1: never
+   nest a card inside a card) - spacing and the caption treatment carry the
+   separation, not a rule line (never a literal border for a divider). */
+.controls-subhead {
+  margin-top: 0.4rem;
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--carbon-text-muted);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-dense);
+  color: var(--carbon-text-sub);
+  cursor: pointer;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 /* ---------------------------------------------------------------------
    Queue
    --------------------------------------------------------------------- */
@@ -410,14 +437,25 @@ button:focus-visible {
   gap: 0.85rem;
 }
 
+/* A toggle-switch group, not a row of independent pill buttons: one shared
+   well reads as a single control, and only the active segment is filled -
+   mirrors how a real segmented toggle groups its options. */
 .segmented-row {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background-color: var(--carbon-surface2);
+  border-radius: var(--radius-control);
 }
 
 .segmented-button {
   flex: 1;
   text-align: center;
+  background-color: transparent;
+}
+
+.segmented-button:hover {
+  background-color: var(--carbon-hover);
 }
 
 .segmented-button--active {
@@ -435,16 +473,25 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
+/* Circle swatches with a border-colour highlight on the active preset,
+   mirroring BombVault's Settings.tsx accent picker exactly (border, not a
+   box-shadow ring) so the control reads the same across sibling apps. */
 .accent-swatch {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
   padding: 0;
-  border-radius: var(--radius-pill);
+  border-radius: 50%;
+  border: 2px solid var(--carbon-border);
   cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.accent-swatch:hover {
+  transform: scale(1.1);
 }
 
 .accent-swatch--active {
-  box-shadow: 0 0 0 2px var(--carbon-surface), 0 0 0 4px var(--carbon-text);
+  border-color: var(--carbon-text);
 }
 
 .accent-controls-row {

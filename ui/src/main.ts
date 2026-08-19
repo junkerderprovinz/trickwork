@@ -1,6 +1,7 @@
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 import { applyCachedAppearance } from './design/appearance'
 import { applyCachedTheme } from './design/theme'
+import { applyCachedLocale, subscribeLocale, t } from './i18n'
 import { createStore } from './state'
 import { mountDropzone } from './dropzone'
 import { mountPreview } from './preview'
@@ -16,9 +17,11 @@ if (!app) {
 
 // GlimStone's boot-time entry point (its actual current export - not
 // applyAppearance(), which doesn't exist upstream). Theme has no GlimStone
-// export at all (see design/theme.ts) so it's applied separately.
+// export at all (see design/theme.ts) so it's applied separately, and
+// locale is a third, independent boot-time cache read (see i18n.ts).
 applyCachedAppearance()
 applyCachedTheme()
+applyCachedLocale()
 
 const store = createStore()
 
@@ -30,8 +33,16 @@ function section(): HTMLDivElement {
 
 const header = document.createElement('header')
 header.className = 'app-header'
-header.innerHTML = '<h1>TrickWork</h1><span class="app-tagline">Image to ASCII art</span>'
+const heading = document.createElement('h1')
+heading.textContent = 'TrickWork'
+const tagline = document.createElement('span')
+tagline.className = 'app-tagline'
+header.append(heading, tagline)
 app.appendChild(header)
+subscribeLocale(() => {
+  tagline.textContent = t('app.tagline')
+})
+tagline.textContent = t('app.tagline')
 
 const main = document.createElement('main')
 main.className = 'app-main'

@@ -1,6 +1,22 @@
 // core/src/grid.ts
-import { computeBlockLuminance, mapLuminanceToChar } from './mapping'
+import {
+  computeBlockAverageColor,
+  computeBlockLuminance,
+  mapLuminanceToChar,
+  mapLuminanceToCharWithAchieved,
+} from './mapping'
 import type { FontWidthTable, Grid, MappingOptions } from './types'
+
+/**
+ * Floyd-Steinberg diffusion coefficients, applied to the CHARACTER grid (the
+ * error between a cell's target luminance and the achieved luminance of the
+ * glyph actually chosen for it) rather than to source pixels - see
+ * docs/superpowers/specs/2026-08-19-trickwork-v1.1-design.md, section 3.3.
+ */
+const DITHER_RIGHT = 7 / 16
+const DITHER_BELOW_LEFT = 3 / 16
+const DITHER_BELOW = 5 / 16
+const DITHER_BELOW_RIGHT = 1 / 16
 
 /**
  * Character cells are roughly twice as tall as they are wide on screen, so
@@ -25,6 +41,14 @@ export function assembleGrid(
   const blockH = blockW * CELL_ASPECT_COMPENSATION
   const rows = Math.max(1, Math.round(height / blockH))
 
+  // One accumulator per cell, only allocated when dithering is on. A cell's
+  // diffused error can arrive from its left, top-left, top, or top-right
+  // neighbour, so this has to be a full 2D buffer read-and-written across
+  // rows, not a value that could be tracked with a single running variable.
+  const errorBuffer: number[][] | null = options.dither
+    ? Array.from({ length: rows }, () => new Array<number>(columns).fill(0))
+    : null
+
   const grid: Grid = []
   for (let row = 0; row < rows; row++) {
     const cells = []
@@ -41,8 +65,31 @@ export function assembleGrid(
         options.brightness,
         options.contrast,
       )
-      const char = mapLuminanceToChar(luminance, table)
-      cells.push({ char, font: options.font })
+
+      let char: string
+      if (errorBuffer) {
+        const rowErrors = errorBuffer[row] as number[]
+        const target = Math.min(1, Math.max(0, luminance + (rowErrors[col] ?? 0)))
+        const picked = mapLuminanceToCharWithAchieved(target, table)
+        char = picked.char
+        const error = target - picked.achievedLuminance
+        if (col + 1 < columns) rowErrors[col + 1] = (rowErrors[col + 1] ?? 0) + error * DITHER_RIGHT
+        if (row + 1 < rows) {
+          const nextRowErrors = errorBuffer[row + 1] as number[]
+          if (col - 1 >= 0) {
+            nextRowErrors[col - 1] = (nextRowErrors[col - 1] ?? 0) + error * DITHER_BELOW_LEFT
+          }
+          nextRowErrors[col] = (nextRowErrors[col] ?? 0) + error * DITHER_BELOW
+          if (col + 1 < columns) {
+            nextRowErrors[col + 1] = (nextRowErrors[col + 1] ?? 0) + error * DITHER_BELOW_RIGHT
+          }
+        }
+      } else {
+        char = mapLuminanceToChar(luminance, table)
+      }
+
+      const color = options.color ? computeBlockAverageColor(imageData, x, y, w, h) : undefined
+      cells.push(color ? { char, font: options.font, color } : { char, font: options.font })
     }
     grid.push(cells)
   }

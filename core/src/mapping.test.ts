@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeBlockLuminance, mapLuminanceToChar } from './mapping'
+import { computeBlockAverageColor, computeBlockLuminance, mapLuminanceToChar, mapLuminanceToCharWithAchieved } from './mapping'
 import type { FontWidthTable } from './types'
 
 function makeImageData(pixels: number[][]): ImageData {
@@ -134,5 +134,96 @@ describe('mapLuminanceToChar', () => {
     }
     expect(mapLuminanceToChar(0, flat)).toBe('a')
     expect(mapLuminanceToChar(1, flat)).toBe('a')
+  })
+})
+
+describe('computeBlockAverageColor', () => {
+  function makeRgbImageData(pixels: [number, number, number][][]): ImageData {
+    const height = pixels.length
+    const width = pixels[0]?.length ?? 0
+    const data = new Uint8ClampedArray(width * height * 4)
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const [r, g, b] = pixels[y]?.[x] ?? [0, 0, 0]
+        const i = (y * width + x) * 4
+        data[i] = r
+        data[i + 1] = g
+        data[i + 2] = b
+        data[i + 3] = 255
+      }
+    }
+    return { data, width, height, colorSpace: 'srgb' } as ImageData
+  }
+
+  it('returns the exact colour of a uniform block', () => {
+    const img = makeRgbImageData([
+      [
+        [200, 50, 10],
+        [200, 50, 10],
+      ],
+    ])
+    expect(computeBlockAverageColor(img, 0, 0, 2, 1)).toEqual({ r: 200, g: 50, b: 10 })
+  })
+
+  it('averages per-channel across a mixed block', () => {
+    const img = makeRgbImageData([
+      [
+        [0, 0, 0],
+        [255, 255, 255],
+      ],
+    ])
+    expect(computeBlockAverageColor(img, 0, 0, 2, 1)).toEqual({ r: 128, g: 128, b: 128 })
+  })
+
+  it('reads only the requested sub-region', () => {
+    const img = makeRgbImageData([
+      [
+        [255, 0, 0],
+        [0, 255, 0],
+      ],
+    ])
+    expect(computeBlockAverageColor(img, 1, 0, 1, 1)).toEqual({ r: 0, g: 255, b: 0 })
+  })
+})
+
+describe('mapLuminanceToCharWithAchieved', () => {
+  const table: FontWidthTable = {
+    font: { family: 'monospace', sizePx: 16 },
+    entries: [
+      { char: '@', inkCoverage: 0.9 },
+      { char: '*', inkCoverage: 0.4 },
+      { char: ' ', inkCoverage: 0 },
+    ],
+  }
+
+  it('picks the same glyph mapLuminanceToChar would for the same input', () => {
+    expect(mapLuminanceToCharWithAchieved(0.5, table).char).toBe(mapLuminanceToChar(0.5, table))
+  })
+
+  it('reports zero achieved error when the exact target coverage is hit', () => {
+    // luminance 0 -> targetCoverage = 0.9 (the table's own max) -> picks '@'
+    // exactly, so the achieved luminance must equal the target: 0 error.
+    const { achievedLuminance } = mapLuminanceToCharWithAchieved(0, table)
+    expect(achievedLuminance).toBeCloseTo(0, 5)
+  })
+
+  it('reports nonzero achieved error when the best glyph only approximates the target', () => {
+    // luminance 0.5 -> targetCoverage = 0 + 0.5*0.9 = 0.45 -> nearest is '*' (0.4),
+    // whose achieved luminance is 1 - (0.4-0)/0.9 = 0.5555... - not exactly 0.5.
+    const { char, achievedLuminance } = mapLuminanceToCharWithAchieved(0.5, table)
+    expect(char).toBe('*')
+    expect(achievedLuminance).not.toBeCloseTo(0.5, 3)
+  })
+
+  it('reports the input luminance itself (zero error) when every entry has identical coverage', () => {
+    const flat: FontWidthTable = {
+      font: { family: 'monospace', sizePx: 16 },
+      entries: [
+        { char: 'a', inkCoverage: 0.03 },
+        { char: 'b', inkCoverage: 0.03 },
+      ],
+    }
+    const { achievedLuminance } = mapLuminanceToCharWithAchieved(0.37, flat)
+    expect(achievedLuminance).toBe(0.37)
   })
 })

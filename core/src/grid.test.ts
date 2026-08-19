@@ -113,4 +113,71 @@ describe('assembleGrid', () => {
     expect(grid[0]).toHaveLength(3)
     expect(grid[0]?.[2]?.char).toBe('@')
   })
+
+  it('attaches no colour field when options.color is unset (existing behaviour)', () => {
+    const img = makeImageData([[0, 255]])
+    const options: MappingOptions = {
+      columns: 2,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+    }
+    const grid = assembleGrid(img, table, options)
+    expect(grid[0]?.[0]?.color).toBeUndefined()
+  })
+
+  it('attaches the block average colour to every cell when options.color is true', () => {
+    const img = makeImageData([[0, 255]])
+    const options: MappingOptions = {
+      columns: 2,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+      color: true,
+    }
+    const grid = assembleGrid(img, table, options)
+    expect(grid[0]?.[0]?.color).toEqual({ r: 0, g: 0, b: 0 })
+    expect(grid[0]?.[1]?.color).toEqual({ r: 255, g: 255, b: 255 })
+  })
+
+  it('diffuses quantization error to the next cell, flipping its glyph relative to plain (undithered) mapping', () => {
+    // Two cells, gray 130 then 140 (luminance ~0.5098 then ~0.5490). Against
+    // the 2-level {@:1, ' ':0} table both cells are, on their own, closer to
+    // coverage 0 and plain-map to ' ' independently. Cell 0's own
+    // quantization error (its target luminance minus the achieved luminance
+    // of the ' ' actually picked, ~-0.49) diffuses rightward at 7/16 and is
+    // large enough to pull cell 1's target down past the halfway point,
+    // flipping it to '@' - something a per-cell-independent mapping (plain)
+    // can never do.
+    const img = makeImageData([[130, 140]])
+    const options: MappingOptions = {
+      columns: 2,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+    }
+    const plain = assembleGrid(img, table, options)
+    const dithered = assembleGrid(img, table, { ...options, dither: true })
+
+    expect(plain[0]?.map((c) => c.char)).toEqual([' ', ' '])
+    expect(dithered[0]?.map((c) => c.char)).toEqual([' ', '@'])
+  })
+
+  it('dithering does not change the grid dimensions', () => {
+    const img = makeImageData([[0, 128, 255]])
+    const options: MappingOptions = {
+      columns: 3,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+      dither: true,
+    }
+    const grid = assembleGrid(img, table, options)
+    expect(grid).toHaveLength(1)
+    expect(grid[0]).toHaveLength(3)
+  })
 })

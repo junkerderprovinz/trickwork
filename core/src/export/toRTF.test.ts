@@ -62,4 +62,42 @@ describe('toRTF', () => {
     const rtf = toRTF(grid)
     expect(rtf).toContain('A\\line')
   })
+
+  it('emits no colour table at all for an uncoloured grid', () => {
+    const grid: Grid = [[{ char: 'A', font: { family: 'monospace', sizePx: 10 } }]]
+    expect(toRTF(grid)).not.toContain('\\colortbl')
+  })
+
+  it('builds a colour table and a \\cfN run for a coloured grid', () => {
+    const grid: Grid = [[{ char: 'A', font: { family: 'monospace', sizePx: 10 }, color: { r: 255, g: 0, b: 0 } }]]
+    const rtf = toRTF(grid)
+    expect(rtf).toContain('{\\colortbl;\\red255\\green0\\blue0;}')
+    expect(rtf).toContain('\\cf1 A')
+  })
+
+  it('groups consecutive same-colour cells into one \\cfN run instead of one per character', () => {
+    const red = { r: 255, g: 0, b: 0 }
+    const grid: Grid = [
+      [
+        { char: 'A', font: { family: 'monospace', sizePx: 10 }, color: red },
+        { char: 'B', font: { family: 'monospace', sizePx: 10 }, color: red },
+      ],
+    ]
+    const rtf = toRTF(grid)
+    expect(rtf).toContain('\\cf1 AB')
+    expect((rtf.match(/\\cf1/g) ?? []).length).toBe(1)
+  })
+
+  it('assigns distinct colour-table indices to each distinct colour, in first-seen order', () => {
+    const grid: Grid = [
+      [
+        { char: 'A', font: { family: 'monospace', sizePx: 10 }, color: { r: 0, g: 255, b: 0 } },
+        { char: 'B', font: { family: 'monospace', sizePx: 10 }, color: { r: 255, g: 0, b: 0 } },
+      ],
+    ]
+    const rtf = toRTF(grid)
+    expect(rtf).toContain('{\\colortbl;\\red0\\green255\\blue0;\\red255\\green0\\blue0;}')
+    expect(rtf).toContain('\\cf1 A')
+    expect(rtf).toContain('\\cf2 B')
+  })
 })

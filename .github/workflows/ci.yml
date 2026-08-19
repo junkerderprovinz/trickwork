@@ -32,16 +32,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # The only workspace with automated (Vitest) unit tests - ui/'s tests are
-      # E2E/Playwright, covered by the separate e2e job below.
       - name: Unit tests (core)
         run: npm run test --workspace core
 
-      # core must build before ui can typecheck: ui imports trickwork-core as a
+      # core must build before ui can typecheck or run its own Vitest suite
+      # (the i18n locale-parity test): ui imports trickwork-core as a
       # workspace dependency, resolved via core/dist (core/package.json's
       # "main"), which only exists after a build.
       - name: Build core
         run: npm run build --workspace core
+
+      # ui/'s Vitest suite is the locale-parity check (i18n.parity.test.ts) -
+      # its E2E/Playwright coverage is the separate job below.
+      - name: Unit tests (ui)
+        run: npm run test --workspace ui
 
       - name: Typecheck (core + ui)
         run: npm run typecheck

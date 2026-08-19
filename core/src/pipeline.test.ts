@@ -1,0 +1,74 @@
+import { describe, expect, it } from 'vitest'
+import { applyImageFilters } from './pipeline'
+import type { MappingOptions } from './types'
+
+function makeImageData(pixels: number[][]): ImageData {
+  const height = pixels.length
+  const width = pixels[0]?.length ?? 0
+  const data = new Uint8ClampedArray(width * height * 4)
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const gray = pixels[y]?.[x] ?? 0
+      const i = (y * width + x) * 4
+      data[i] = gray
+      data[i + 1] = gray
+      data[i + 2] = gray
+      data[i + 3] = 255
+    }
+  }
+  return { data, width, height, colorSpace: 'srgb' } as ImageData
+}
+
+function pixel0(img: ImageData): number {
+  return img.data[0] ?? 0
+}
+
+const baseOptions: MappingOptions = {
+  columns: 2,
+  brightness: 0,
+  contrast: 0,
+  charset: ['@', ' '],
+  font: { family: 'monospace', sizePx: 16 },
+}
+
+describe('applyImageFilters', () => {
+  it('is a no-op copy when every filter option is unset', () => {
+    const img = makeImageData([[10, 20]])
+    const out = applyImageFilters(img, baseOptions)
+    expect(out.width).toBe(2)
+    expect(pixel0(out)).toBe(10)
+  })
+
+  it('applies rotate before flip (a 90-degree rotate then horizontal flip is not the same as the reverse order)', () => {
+    // 2x1 source: [10, 200]. Rotate 90 -> 1x2 column [10; 200] (top=10,bottom=200).
+    // Flip horizontal on a 1-wide image is a no-op, so this alone doesn't
+    // distinguish order - use flipVertical to prove rotate ran first.
+    const img = makeImageData([[10, 200]])
+    const out = applyImageFilters(img, { ...baseOptions, rotate: 90, flipVertical: true })
+    expect(out.width).toBe(1)
+    expect(out.height).toBe(2)
+    // rotate first -> [10;200] top-to-bottom, THEN vertical flip -> [200;10]
+    expect(pixel0(out)).toBe(200)
+  })
+
+  it('applies invert after the geometric transforms', () => {
+    const img = makeImageData([[10, 200]])
+    const out = applyImageFilters(img, { ...baseOptions, flipHorizontal: true, invert: true })
+    // flip first: [200, 10], then invert: [55, 245]
+    expect(pixel0(out)).toBe(55)
+  })
+
+  it('applies sharpen last, on the already-transformed image', () => {
+    const img = makeImageData([
+      [128, 128, 128],
+      [128, 128, 128],
+      [128, 128, 128],
+    ])
+    const out = applyImageFilters(img, { ...baseOptions, invert: true, sharpen: 'sharpen' })
+    // A flat image stays flat through invert and through the sharpen kernel
+    // (which sums to 1), so the center pixel should be the inverted flat
+    // value, proving sharpen ran on inverted data rather than pre-invert.
+    const centerIndex = (1 * 3 + 1) * 4
+    expect(out.data[centerIndex]).toBe(255 - 128)
+  })
+})

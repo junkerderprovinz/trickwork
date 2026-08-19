@@ -1,4 +1,4 @@
-import type { FontWidthTable } from './types'
+import type { FontWidthTable, RGB } from './types'
 
 export function computeBlockLuminance(
   imageData: ImageData,
@@ -24,6 +24,39 @@ export function computeBlockLuminance(
     }
   }
   return count === 0 ? 0 : sum / count
+}
+
+/**
+ * Mirrors computeBlockLuminance's exact block-bounds loop, but averages the
+ * raw R/G/B channels instead of reducing to a single luma value. Only called
+ * when MappingOptions.color is set, so the colour-off hot path (every slider
+ * drag) pays nothing extra.
+ */
+export function computeBlockAverageColor(
+  imageData: ImageData,
+  x: number,
+  y: number,
+  blockW: number,
+  blockH: number,
+): RGB {
+  const { data, width, height } = imageData
+  let r = 0
+  let g = 0
+  let b = 0
+  let count = 0
+  const endX = Math.min(x + blockW, width)
+  const endY = Math.min(y + blockH, height)
+  for (let py = y; py < endY; py++) {
+    for (let px = x; px < endX; px++) {
+      const i = (py * width + px) * 4
+      r += data[i] ?? 0
+      g += data[i + 1] ?? 0
+      b += data[i + 2] ?? 0
+      count++
+    }
+  }
+  if (count === 0) return { r: 0, g: 0, b: 0 }
+  return { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) }
 }
 
 /**
@@ -66,4 +99,46 @@ export function mapLuminanceToChar(
     }
   }
   return best.char
+}
+
+/**
+ * Same selection as mapLuminanceToChar, but also reports the "achieved"
+ * luminance of the glyph actually picked (the inverse of the interpolation
+ * above) so a caller can diffuse the difference to neighbouring cells —
+ * Floyd-Steinberg dithering needs this error, mapLuminanceToChar's plain
+ * char-only return doesn't carry it. Kept as a separate function rather than
+ * changing mapLuminanceToChar's signature, since every existing call site and
+ * test expects a bare string back.
+ */
+export function mapLuminanceToCharWithAchieved(
+  luminance: number,
+  table: FontWidthTable,
+): { char: string; achievedLuminance: number } {
+  let best = table.entries[0]
+  if (!best) {
+    throw new Error('mapLuminanceToCharWithAchieved: font width table has no entries')
+  }
+
+  let lo = best.inkCoverage
+  let hi = best.inkCoverage
+  for (const entry of table.entries) {
+    if (entry.inkCoverage < lo) lo = entry.inkCoverage
+    if (entry.inkCoverage > hi) hi = entry.inkCoverage
+  }
+  const targetCoverage = hi === lo ? lo : lo + (1 - luminance) * (hi - lo)
+
+  let bestDistance = Math.abs(best.inkCoverage - targetCoverage)
+  for (const entry of table.entries) {
+    const distance = Math.abs(entry.inkCoverage - targetCoverage)
+    if (distance < bestDistance) {
+      best = entry
+      bestDistance = distance
+    }
+  }
+
+  // hi === lo means every glyph has identical coverage - there is no error to
+  // diffuse since no choice could have done better, so report the target
+  // itself as achieved (zero error).
+  const achievedLuminance = hi === lo ? luminance : 1 - (best.inkCoverage - lo) / (hi - lo)
+  return { char: best.char, achievedLuminance }
 }

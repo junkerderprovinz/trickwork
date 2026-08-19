@@ -1,4 +1,5 @@
 // core/src/renderGridToCanvas.ts
+import { rgbToHex } from './color'
 import type { Grid } from './types'
 
 export interface RenderOptions {
@@ -37,6 +38,10 @@ export function renderGridToCanvas(
   // cell but the first. The empty sentinel can never equal a real font string
   // (always "<number>px <family>"), so the first cell always sets it.
   let lastFont = ''
+  // Same reasoning as the font cache above: fillStyle reassignment is cheap,
+  // but skipping it when unchanged avoids parsing the colour string again on
+  // every single cell in the (extremely common) uncoloured/mono-colour case.
+  let lastFillStyle = options.foreground
 
   for (let row = 0; row < rows; row++) {
     const cells = grid[row] ?? []
@@ -47,6 +52,11 @@ export function renderGridToCanvas(
       if (font !== lastFont) {
         ctx.font = font
         lastFont = font
+      }
+      const fillStyle = cell.color ? rgbToHex(cell.color) : options.foreground
+      if (fillStyle !== lastFillStyle) {
+        ctx.fillStyle = fillStyle
+        lastFillStyle = fillStyle
       }
       ctx.fillText(cell.char, col * options.cellWidthPx, row * options.cellHeightPx)
     }
