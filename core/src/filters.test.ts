@@ -1,6 +1,6 @@
 // core/src/filters.test.ts
 import { describe, expect, it } from 'vitest'
-import { flipImage, invertImage, rotateImage, sharpenImage } from './filters'
+import { applyLevels, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
 
 function makeImageData(pixels: number[][]): ImageData {
   const height = pixels.length
@@ -168,5 +168,68 @@ describe('sharpenImage', () => {
     ])
     const out = sharpenImage(img, 'unsharp')
     expect(pixelAt(out, 1, 1)[0]).toBeGreaterThan(200)
+  })
+})
+
+describe('applyLevels', () => {
+  it('the identity {black: 0, gamma: 1, white: 255} returns an unmodified copy', () => {
+    const img = makeImageData([[0, 60, 128, 200, 255]])
+    const out = applyLevels(img, { black: 0, gamma: 1, white: 255 })
+    expect(pixelAt(out, 0, 0)[0]).toBe(0)
+    expect(pixelAt(out, 2, 0)[0]).toBe(128)
+    expect(pixelAt(out, 4, 0)[0]).toBe(255)
+  })
+
+  it('clips everything at or below the black point to 0', () => {
+    const img = makeImageData([[0, 30, 50]])
+    const out = applyLevels(img, { black: 50, gamma: 1, white: 255 })
+    expect(pixelAt(out, 0, 0)[0]).toBe(0)
+    expect(pixelAt(out, 1, 0)[0]).toBe(0)
+    expect(pixelAt(out, 2, 0)[0]).toBe(0)
+  })
+
+  it('clips everything at or above the white point to 255', () => {
+    const img = makeImageData([[200, 220, 255]])
+    const out = applyLevels(img, { black: 0, gamma: 1, white: 200 })
+    expect(pixelAt(out, 0, 0)[0]).toBe(255)
+    expect(pixelAt(out, 1, 0)[0]).toBe(255)
+    expect(pixelAt(out, 2, 0)[0]).toBe(255)
+  })
+
+  it('linearly stretches the range between black and white', () => {
+    const img = makeImageData([[50, 100, 150]])
+    const out = applyLevels(img, { black: 50, gamma: 1, white: 150 })
+    expect(pixelAt(out, 0, 0)[0]).toBe(0)
+    expect(pixelAt(out, 1, 0)[0]).toBe(128)
+    expect(pixelAt(out, 2, 0)[0]).toBe(255)
+  })
+
+  it('a gamma below 1 sinks midtones darker', () => {
+    const img = makeImageData([[128]])
+    const out = applyLevels(img, { black: 0, gamma: 0.5, white: 255 })
+    // normalized 0.5 ** (1/0.5) = 0.5 ** 2 = 0.25 -> ~64
+    expect(pixelAt(out, 0, 0)[0]).toBe(64)
+  })
+
+  it('a gamma above 1 lifts midtones brighter', () => {
+    const img = makeImageData([[128]])
+    const out = applyLevels(img, { black: 0, gamma: 2, white: 255 })
+    // normalized 128/255 ~ 0.502 ** (1/2) ~ 0.7085 -> ~181
+    expect(pixelAt(out, 0, 0)[0]).toBe(181)
+  })
+
+  it('applies uniformly to all three RGB channels, leaving alpha untouched', () => {
+    const height = 1
+    const width = 1
+    const data = new Uint8ClampedArray([50, 100, 150, 128])
+    const img = { data, width, height, colorSpace: 'srgb' } as ImageData
+    const out = applyLevels(img, { black: 50, gamma: 1, white: 150 })
+    expect(pixelAt(out, 0, 0)).toEqual([0, 128, 255, 128])
+  })
+
+  it('does not mutate the input', () => {
+    const img = makeImageData([[128]])
+    applyLevels(img, { black: 50, gamma: 1, white: 150 })
+    expect(pixelAt(img, 0, 0)[0]).toBe(128)
   })
 })

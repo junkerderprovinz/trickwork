@@ -71,4 +71,25 @@ describe('applyImageFilters', () => {
     const centerIndex = (1 * 3 + 1) * 4
     expect(out.data[centerIndex]).toBe(255 - 128)
   })
+
+  it('applies levels after invert but before sharpen', () => {
+    const img = makeImageData([[10, 200]])
+    // invert first: [245, 55], then levels {black:0,white:200} clips/stretches
+    // 245 -> 255 (clipped, since 245 > white) and 55 -> round(55/200*255) = 70.
+    const out = applyImageFilters(img, {
+      ...baseOptions,
+      invert: true,
+      levels: { black: 0, gamma: 1, white: 200 },
+    })
+    expect(pixel0(out)).toBe(255)
+  })
+
+  it('a levels no-op ({black:0, gamma:1, white:255}) leaves the image unchanged', () => {
+    const img = makeImageData([[10, 200]])
+    const out = applyImageFilters(img, {
+      ...baseOptions,
+      levels: { black: 0, gamma: 1, white: 255 },
+    })
+    expect(pixel0(out)).toBe(10)
+  })
 })

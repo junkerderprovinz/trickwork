@@ -82,11 +82,15 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     canvas.width = columns * cachedCellSize.cellWidthPx
     canvas.height = rows * cachedCellSize.cellHeightPx
 
+    // White page / black ink by default, regardless of the app's own theme
+    // (matches ASCGen2's own output convention and .preview-canvas-wrap's
+    // fixed white background) - PNG and XHTML export use the same pair, see
+    // exportPanel.ts.
     renderGridToCanvas(ctx!, grid, {
       cellWidthPx: cachedCellSize.cellWidthPx,
       cellHeightPx: cachedCellSize.cellHeightPx,
-      background: '#000000',
-      foreground: '#ffffff',
+      background: '#ffffff',
+      foreground: '#000000',
     })
   }
 

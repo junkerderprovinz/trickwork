@@ -81,7 +81,9 @@ async function buildOutput(item: BatchItem, store: Store, format: ExportFormat):
     case 'txt':
       return new Blob([toText(grid)], { type: 'text/plain' })
     case 'xhtml':
-      return new Blob([toXHTML(grid, { background: '#000000', foreground: '#ffffff' })], {
+      // White page / black ink, matching the live preview and RTF's implicit
+      // white-page default - see preview.ts.
+      return new Blob([toXHTML(grid, { background: '#ffffff', foreground: '#000000' })], {
         type: 'application/xhtml+xml',
       })
     case 'rtf':
@@ -95,8 +97,8 @@ async function buildOutput(item: BatchItem, store: Store, format: ExportFormat):
         grid,
         {
           ...measureCellSize(options.font, createCanvasWidthMeasurer()),
-          background: '#000000',
-          foreground: '#ffffff',
+          background: '#ffffff',
+          foreground: '#000000',
         },
         (w, h) => {
           const canvas = document.createElement('canvas')

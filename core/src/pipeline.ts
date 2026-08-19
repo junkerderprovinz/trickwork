@@ -5,15 +5,17 @@
 // order was exactly the class of bug the v1 whole-branch review caught, so
 // this exists specifically to prevent a repeat.
 
-import { flipImage, invertImage, rotateImage, sharpenImage } from './filters'
+import { applyLevels, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
 import type { MappingOptions } from './types'
 
 /**
- * Applies rotate -> flip -> invert -> sharpen in that fixed order, matching
- * ASCGen2's own Edit menu grouping (Input transforms - rotate/flip - before
- * Output transforms - invert/sharpen). No-op fields are skipped internally by
- * each filter (see filters.ts), so calling this with an all-default options
- * object is cheap - just a single ImageData clone.
+ * Applies rotate -> flip -> invert -> levels -> sharpen in that fixed order,
+ * matching ASCGen2's own Edit menu grouping (Input transforms - rotate/flip -
+ * before Output transforms - invert/levels/sharpen, all under one Edit >
+ * Output dialog there). Levels runs before sharpen so its tonal remap isn't
+ * fighting the sharpen kernel's own contrast boost. No-op fields are skipped
+ * internally by each filter (see filters.ts), so calling this with an
+ * all-default options object is cheap - just a single ImageData clone.
  */
 export function applyImageFilters(imageData: ImageData, options: MappingOptions): ImageData {
   let result = imageData
@@ -25,6 +27,9 @@ export function applyImageFilters(imageData: ImageData, options: MappingOptions)
   }
   if (options.invert) {
     result = invertImage(result)
+  }
+  if (options.levels) {
+    result = applyLevels(result, options.levels)
   }
   if (options.sharpen && options.sharpen !== 'none') {
     result = sharpenImage(result, options.sharpen)

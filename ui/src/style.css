@@ -131,6 +131,14 @@ html, body {
 
 .glim-section > .glim-eyebrow {
   margin-bottom: -0.25rem;
+  /* GlimStone exception (recorded in the vault project note): the shared
+     .glim-eyebrow is deliberately quiet everywhere else because it labels a
+     panel the user has already navigated to via a tab or sidebar item. Here
+     it is the ONLY heading five simultaneously-visible cards have - it IS
+     the navigation, not a secondary label under it - so it needs the
+     contrast and weight of an actual card title, not a footnote. */
+  color: var(--carbon-text-sub);
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------------------
@@ -195,12 +203,16 @@ html, body {
 .preview-canvas-wrap {
   /* Hug the canvas's own size (max-content) rather than stretching to the
      full card width — a smaller-than-card canvas would otherwise leave a
-     block of this wrap's own black background sitting empty beside it. */
+     block of this wrap's own background sitting empty beside it.
+     Background is a fixed white, not a theme token, on purpose: the
+     working canvas simulates the printed/plain-text page the export
+     actually produces, so it stays white even while the rest of the app
+     is in dark mode - matching ASCGen2's own default output look. */
   width: max-content;
   max-width: 100%;
   overflow: auto;
   border-radius: var(--radius-control);
-  background-color: #000;
+  background-color: #fff;
   max-height: 60vh;
 }
 
@@ -312,40 +324,55 @@ input[type="text"]:focus-visible {
 }
 
 /* The live, editable character-ramp preview (ASCGen2's "Valid Ramp Chars"
-   dialog) - a well holding one tile per character, each rendered at real
-   size in the active font so a 70-character preset is actually legible, not
-   just a name in a dropdown. */
+   dialog) - one well holding the actual characters as plain text, each
+   rendered at real size in the active font so a 70-character preset is
+   legible, not just a name in a dropdown. Deliberately NOT individually
+   boxed/pill-shaped ("badges") - it reads as running text you can click
+   into, matching a plain character preview rather than a chip picker. The
+   add-characters field lives inside this same well, right after the last
+   character, so adding and removing both happen in the one preview area
+   instead of a tile grid plus a separate input underneath it. */
 .charset-ramp {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  padding: 0.5rem;
+  align-items: center;
+  gap: 0.05rem;
+  padding: 0.55rem 0.7rem;
   min-height: 2.75rem;
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
 }
 
 .charset-tile {
-  width: 1.75rem;
-  height: 1.75rem;
-  padding: 0;
+  padding: 0.1rem 0.15rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1;
-  background-color: var(--carbon-surface3);
+  color: var(--carbon-text);
+  background-color: transparent;
   border-radius: var(--radius-control);
-  transition: background-color 120ms ease, color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .charset-tile:hover {
-  background-color: var(--status-fail-bg);
   color: var(--status-fail-text);
+  background-color: var(--status-fail-bg);
+  text-decoration: line-through;
 }
 
 .charset-add-input {
-  margin-top: 0.35rem;
+  flex: 1 1 auto;
+  min-width: 6rem;
+  width: auto;
+  padding: 0.1rem 0.15rem;
+  background: transparent;
+  font-size: var(--text-dense);
+}
+
+.charset-add-input:focus-visible {
+  background-color: var(--carbon-surface3);
 }
 
 .controls-note {
@@ -354,6 +381,120 @@ input[type="text"]:focus-visible {
   font-size: var(--text-caption);
   line-height: 1.5;
   color: var(--carbon-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Levels — ASCGen2's histogram + black/gamma/white point dialog, folded
+   into the Filters card instead of a separate modal/tab. Three native
+   range inputs share one track over the histogram (transparent track,
+   pointer-events only on each thumb) rather than a hand-rolled pointer-drag
+   implementation - keyboard-operable and far less code than reimplementing
+   dragging. Thumbs are CSS triangles pointing up into the histogram,
+   matching the reference dialog's own marker shape.
+   --------------------------------------------------------------------- */
+.levels-canvas-wrap {
+  padding: 0;
+  overflow: hidden;
+}
+
+.levels-histogram {
+  display: block;
+  width: 100%;
+  height: 64px;
+  background-color: var(--carbon-surface2);
+}
+
+.levels-track {
+  position: relative;
+  height: 18px;
+}
+
+.levels-handle-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+input.levels-handle-input::-webkit-slider-runnable-track {
+  background: transparent;
+}
+input.levels-handle-input::-moz-range-track {
+  background: transparent;
+}
+
+/* background/box-shadow are declared explicitly here (not just left unset) -
+   CSS applies unconflicting declarations from the generic input[type="range"]
+   thumb rule (style.css above: a filled accent circle + a box-shadow halo)
+   even though THIS rule wins every property it does declare, since the
+   cascade resolves per-DECLARATION, not per-rule. Without these two lines
+   that circle+halo painted right through the 0-size triangle box. */
+input.levels-handle-input::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  width: 0;
+  height: 0;
+  margin-top: 0;
+  cursor: ew-resize;
+  background: transparent;
+  box-shadow: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 10px solid currentColor;
+}
+input.levels-handle-input::-moz-range-thumb {
+  pointer-events: auto;
+  width: 0;
+  height: 0;
+  cursor: ew-resize;
+  border: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 10px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Fixed, not theme tokens: these three triangles represent an absolute
+   black point / midtone / white point, the same way the preview canvas
+   stays a fixed white page regardless of the app's own theme - a "black"
+   handle that turned white under dark mode (following --carbon-text) would
+   invert the exact meaning it's showing. */
+.levels-handle-input--black {
+  color: #1a1a1a;
+}
+.levels-handle-input--gamma {
+  color: #8d8d8d;
+}
+.levels-handle-input--white {
+  color: #ffffff;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
+
+.levels-caption-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.levels-caption-row .glim-num {
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+}
+
+.levels-reset-button {
+  padding: 0.2rem 0.55rem;
+  font-size: var(--text-caption);
+  background-color: transparent;
+}
+.levels-reset-button:hover {
+  background-color: var(--carbon-hover);
 }
 
 .checkbox-row {
@@ -370,6 +511,16 @@ input[type="text"]:focus-visible {
   height: 1rem;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+.checkbox-row-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--carbon-text-muted);
+}
+
+.checkbox-row-icon .control-icon {
+  display: block;
 }
 
 /* ---------------------------------------------------------------------
@@ -531,8 +682,16 @@ button:focus-visible {
 
 .segmented-button {
   flex: 1;
+  min-width: 0;
   text-align: center;
   background-color: transparent;
+  /* One line, always - a long label (German "Unscharf maskieren" vs. short
+     "0°") must never make this row taller than a sibling card's row of the
+     same --radius-control/padding rhythm; title="" on the button carries
+     the full text when it truncates. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .segmented-button:hover {

@@ -9,7 +9,7 @@
 // not pixel error, so it lives inside grid.ts's own raster loop instead (see
 // docs/superpowers/specs/2026-08-19-trickwork-v1.1-design.md, section 3.3).
 
-import type { Rotation, SharpenMethod } from './types'
+import type { LevelsSpec, Rotation, SharpenMethod } from './types'
 
 function cloneImageData(imageData: ImageData): ImageData {
   return {
@@ -87,6 +87,33 @@ export function flipImage(imageData: ImageData, horizontal: boolean, vertical: b
   }
 
   return { data: dstData, width, height, colorSpace: imageData.colorSpace } as ImageData
+}
+
+/**
+ * Photoshop-style RGB/composite Levels: clip everything at or below `black`
+ * to 0 and at or above `white` to 255, linearly remap what's between, then
+ * apply a gamma (midtone) curve - identical to ASCGen2's own "Levels" dialog
+ * (single composite histogram, not per-channel R/G/B), applied to all three
+ * channels equally so it stays correct under color output too, not just the
+ * luminance mapping.
+ */
+export function applyLevels(imageData: ImageData, levels: LevelsSpec): ImageData {
+  const { black, gamma, white } = levels
+  if (black === 0 && gamma === 1 && white === 255) return cloneImageData(imageData)
+
+  const out = cloneImageData(imageData)
+  const { data } = out
+  const span = white - black || 1
+  const invGamma = 1 / gamma
+  for (let i = 0; i < data.length; i += 4) {
+    for (let c = 0; c < 3; c++) {
+      const input = data[i + c] ?? 0
+      const normalized = Math.min(1, Math.max(0, (input - black) / span))
+      data[i + c] = Math.round(normalized ** invGamma * 255)
+    }
+    // alpha (i + 3) untouched
+  }
+  return out
 }
 
 /** 3x3 convolution, edge pixels clamp to the nearest in-bounds source pixel. */

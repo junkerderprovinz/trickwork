@@ -45,6 +45,18 @@ export type Grid = CharCell[][]
 export type Rotation = 0 | 90 | 180 | 270
 export type SharpenMethod = 'none' | 'sharpen' | 'unsharp'
 
+/**
+ * Photoshop/ASCGen2-style Levels: black/white are 0..255 input clip points,
+ * gamma is the midtone curve (1 = linear, >1 lifts midtones, <1 sinks them).
+ * {black: 0, gamma: 1, white: 255} is the identity - see filters.ts's
+ * applyLevels.
+ */
+export interface LevelsSpec {
+  black: number
+  gamma: number
+  white: number
+}
+
 export interface MappingOptions {
   columns: number
   brightness: number // -1..1, additive
@@ -61,4 +73,6 @@ export interface MappingOptions {
   flipVertical?: boolean
   invert?: boolean
   sharpen?: SharpenMethod
+  /** Default {black: 0, gamma: 1, white: 255} (no-op) when omitted. */
+  levels?: LevelsSpec
 }

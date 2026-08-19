@@ -36,6 +36,12 @@ export function segmentedRow<T extends string>(
       btn.type = 'button'
       btn.className = 'segmented-button' + (choice.value === active ? ' segmented-button--active' : '')
       btn.textContent = choice.label
+      // A long label (e.g. German "Unscharf maskieren") would otherwise wrap
+      // to two lines and make this row taller than a short-label row (e.g.
+      // Rotate's "0°/90°/180°/270°") sitting in a sibling card of the same
+      // width - the CSS forces one line + ellipsis, so title carries the
+      // full text for anyone who needs it.
+      btn.title = choice.label
       btn.addEventListener('click', () => {
         if (choice.value === active) return
         active = choice.value
@@ -50,8 +56,20 @@ export function segmentedRow<T extends string>(
   return wrap
 }
 
-/** A single labelled checkbox, styled to sit in the same control-slider rhythm as everything else. */
-export function checkboxRow(label: string, initial: boolean, onChange: (checked: boolean) => void): HTMLElement {
+/**
+ * A single labelled checkbox, styled to sit in the same control-slider
+ * rhythm as everything else. `icon`, when given, is a small aria-hidden SVG
+ * string (see icons.ts's controlSvg()-built exports) placed between the box
+ * and the label text - the label itself still carries the accessible name,
+ * the icon is purely a faster-to-scan visual cue for options like Flip/
+ * Invert/Dither/Color that read slower as plain text alone.
+ */
+export function checkboxRow(
+  label: string,
+  initial: boolean,
+  onChange: (checked: boolean) => void,
+  icon?: string,
+): HTMLElement {
   const wrap = document.createElement('label')
   wrap.className = 'checkbox-row'
 
@@ -60,9 +78,18 @@ export function checkboxRow(label: string, initial: boolean, onChange: (checked:
   input.checked = initial
   input.addEventListener('change', () => onChange(input.checked))
 
+  wrap.appendChild(input)
+
+  if (icon) {
+    const iconWrap = document.createElement('span')
+    iconWrap.className = 'checkbox-row-icon'
+    iconWrap.innerHTML = icon
+    wrap.appendChild(iconWrap)
+  }
+
   const text = document.createElement('span')
   text.textContent = label
+  wrap.appendChild(text)
 
-  wrap.append(input, text)
   return wrap
 }

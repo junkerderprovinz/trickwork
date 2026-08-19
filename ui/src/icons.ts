@@ -4,10 +4,70 @@
 // sidebar icon treatment (20x20 viewBox, currentColor, strokeWidth 1.5 for
 // stroked glyphs). TrickWork itself uses the corner Settings badge instead of
 // a full sidebar (a deliberate GlimStone-documented exception - see main.ts
-// and the vault project note), so only the badge's own two icons live here.
+// and the vault project note), so the badge's own two icons live here
+// alongside the small option glyphs checkboxRow() (controlWidgets.ts) puts
+// next to Flip/Invert/Dither/Color - aria-hidden everywhere since the visible
+// label text next to each one already carries the accessible name.
 
 function svg(inner: string, viewBox = '0 0 20 20'): string {
   return `<svg width="22" height="22" viewBox="${viewBox}" fill="none" class="nav-icon" aria-hidden="true">${inner}</svg>`
+}
+
+// Sized for a checkbox-row label (matches --text-dense's line height), not
+// the 22px badge - a full-size glyph there would dwarf the text next to it.
+function controlSvg(inner: string): string {
+  return `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="control-icon" aria-hidden="true">${inner}</svg>`
+}
+
+// Two triangles pointing away from a dashed vertical mirror axis - flips
+// left-right across that axis.
+export function iconFlipHorizontal(): string {
+  return controlSvg(
+    `<path d="M10 3v14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="2 2.5" />` +
+      `<path d="M7 7 3 10l4 3z" fill="currentColor" />` +
+      `<path d="M13 7l4 3-4 3z" fill="currentColor" />`,
+  )
+}
+
+// Same idea rotated a quarter turn - flips top-bottom across a horizontal axis.
+export function iconFlipVertical(): string {
+  return controlSvg(
+    `<path d="M3 10h14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="2 2.5" />` +
+      `<path d="M7 7 10 3l3 4z" fill="currentColor" />` +
+      `<path d="M7 13l3 4 3-4z" fill="currentColor" />`,
+  )
+}
+
+// Half-filled circle - the standard "invert/contrast" glyph, one ring split
+// light/dark down the middle.
+export function iconInvert(): string {
+  return controlSvg(
+    `<circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.25" />` +
+      `<path d="M10 2.75a7.25 7.25 0 0 0 0 14.5z" fill="currentColor" />`,
+  )
+}
+
+// A loose scatter of varying-size dots - the halftone/noise pattern
+// dithering actually produces, rather than a generic settings glyph.
+export function iconDither(): string {
+  return controlSvg(
+    `<circle cx="5" cy="6" r="1.5" fill="currentColor" />` +
+      `<circle cx="10.5" cy="5" r="0.9" fill="currentColor" />` +
+      `<circle cx="15.5" cy="7.5" r="1.7" fill="currentColor" />` +
+      `<circle cx="5.5" cy="12" r="0.9" fill="currentColor" />` +
+      `<circle cx="11" cy="13" r="1.5" fill="currentColor" />` +
+      `<circle cx="16" cy="12" r="0.75" fill="currentColor" />` +
+      `<circle cx="4" cy="17" r="0.65" fill="currentColor" />` +
+      `<circle cx="10" cy="17.5" r="1.2" fill="currentColor" />` +
+      `<circle cx="15" cy="16.5" r="0.9" fill="currentColor" />`,
+  )
+}
+
+// A paint droplet - color output.
+export function iconColor(): string {
+  return controlSvg(
+    `<path d="M10 2.8c-2.7 3.3-5.1 6.5-5.1 9.3a5.1 5.1 0 0 0 10.2 0c0-2.8-2.4-6-5.1-9.3z" fill="currentColor" />`,
+  )
 }
 
 // Left arrow - the settings badge's own state once Settings is open (toggles

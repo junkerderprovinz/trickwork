@@ -3,6 +3,22 @@ import { enableSelectScroll } from './design/selectScroll'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
+// Display names for the preset dropdown - CHARSET_PRESETS' own keys are
+// lowercase identifiers ("standard", "detailed"), never shown to a user
+// directly (that produced an all-lowercase-looking dropdown).
+const CHARSET_PRESET_KEYS: Record<CharsetPresetKey, TranslationKey> = {
+  standard: 'controls.charsetPresetStandard',
+  detailed: 'controls.charsetPresetDetailed',
+  blocks: 'controls.charsetPresetBlocks',
+  classic: 'controls.charsetPresetClassic',
+  alternate: 'controls.charsetPresetAlternate',
+  compact: 'controls.charsetPresetCompact',
+  bold: 'controls.charsetPresetBold',
+  symbols: 'controls.charsetPresetSymbols',
+  minimal: 'controls.charsetPresetMinimal',
+  binary: 'controls.charsetPresetBinary',
+}
+
 const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontMonoSystem', family: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
   { key: 'controls.fontMonoAlt', family: 'Consolas, "Courier New", monospace' },
@@ -61,12 +77,12 @@ export function mountControls(container: HTMLElement, store: Store): void {
     for (const key of Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]) {
       const opt = document.createElement('option')
       opt.value = key
-      opt.textContent = key
+      opt.textContent = t(CHARSET_PRESET_KEYS[key])
       charsetSelect.appendChild(opt)
     }
     const customOpt = document.createElement('option')
     customOpt.value = 'custom'
-    customOpt.textContent = 'custom'
+    customOpt.textContent = t('controls.charsetPresetCustom')
     charsetSelect.appendChild(customOpt)
     // charsetWrap is a plain <div>, not a <label> - it also holds the ramp's
     // tile buttons and the add-characters field, and a <label> wrapping
@@ -89,11 +105,13 @@ export function mountControls(container: HTMLElement, store: Store): void {
     ramp.className = 'charset-ramp'
     charsetWrap.appendChild(ramp)
 
+    // Lives INSIDE the ramp well, right after the last character - adding
+    // and removing both happen in the one preview field instead of a tile
+    // grid plus a separate input underneath it.
     const addInput = document.createElement('input')
     addInput.type = 'text'
     addInput.className = 'charset-add-input'
     addInput.placeholder = t('controls.charsetAddPlaceholder')
-    charsetWrap.appendChild(addInput)
 
     function syncCharsetSelect(): void {
       const current = store.getState().options
@@ -106,6 +124,11 @@ export function mountControls(container: HTMLElement, store: Store): void {
 
     function renderRamp(): void {
       const current = store.getState().options
+      // Detaching addInput (via innerHTML='') drops its focus even though
+      // it's the same node re-appended below - restore it after, so
+      // pressing Enter repeatedly to add several characters in a row
+      // doesn't kick focus out of the field each time.
+      const hadFocus = document.activeElement === addInput
       ramp.innerHTML = ''
       ramp.style.fontFamily = current.font.family
       current.charset.forEach((ch, index) => {
@@ -127,6 +150,8 @@ export function mountControls(container: HTMLElement, store: Store): void {
         })
         ramp.appendChild(tile)
       })
+      ramp.appendChild(addInput)
+      if (hadFocus) addInput.focus()
     }
     renderRamp()
 
