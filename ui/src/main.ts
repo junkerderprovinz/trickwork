@@ -11,7 +11,8 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
-import { mountTabs } from './tabs'
+import { mountSidebarNav } from './sidebarNav'
+import { iconAdjust, iconAppearance, iconExport, iconFilters, iconQueue, iconTransform } from './icons'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -34,21 +35,44 @@ function section(): HTMLDivElement {
   return el
 }
 
-const header = document.createElement('header')
-header.className = 'app-header'
-const heading = document.createElement('h1')
-heading.textContent = 'TrickWork'
-const tagline = document.createElement('span')
-tagline.className = 'app-tagline'
-header.append(heading, tagline)
-app.appendChild(header)
-subscribeLocale(() => {
-  tagline.textContent = t('app.tagline')
-})
-tagline.textContent = t('app.tagline')
+// Left-rail navigation + main content, matching BombVault's/KnightLoader's
+// own Sidebar.tsx structure exactly (not a top header + tabbed side panel,
+// which was jdp's direct correction): a fixed-width sidebar carrying the
+// brand mark, a vertical icon+label nav list, and Appearance pinned at the
+// bottom - no separate top app-bar at all.
+const shell = document.createElement('div')
+shell.className = 'app-shell'
+app.appendChild(shell)
 
-const main = document.createElement('main')
-main.className = 'app-main'
+const sidebar = document.createElement('aside')
+sidebar.className = 'nav-sidebar'
+shell.appendChild(sidebar)
+
+const brand = document.createElement('div')
+brand.className = 'nav-brand'
+const brandName = document.createElement('span')
+brandName.className = 'nav-brand-name'
+brandName.textContent = 'TrickWork'
+const brandTagline = document.createElement('span')
+brandTagline.className = 'nav-brand-tagline'
+brand.append(brandName, brandTagline)
+sidebar.appendChild(brand)
+subscribeLocale(() => {
+  brandTagline.textContent = t('app.tagline')
+})
+brandTagline.textContent = t('app.tagline')
+
+const navMain = document.createElement('nav')
+navMain.className = 'nav-list'
+sidebar.appendChild(navMain)
+
+const navBottom = document.createElement('div')
+navBottom.className = 'nav-list nav-list--bottom'
+sidebar.appendChild(navBottom)
+
+const body = document.createElement('div')
+body.className = 'app-body'
+shell.appendChild(body)
 
 const primary = document.createElement('section')
 primary.className = 'app-primary'
@@ -56,19 +80,10 @@ const dropzoneCard = section()
 const previewCard = section()
 primary.append(dropzoneCard, previewCard)
 
-// One card, tabbed - jdp's explicit correction after the previous session's
-// "just add more rows to the one Controls card" approach: ASCGen2 groups its
-// functions into real menus/panels (File/Edit-Input/Edit-Output/View), and
-// stacking every control into a single flat page read as unfinished no
-// matter how many features it actually had. Each tab panel is a plain div
-// mounted once at boot (same "always mounted, subscribe to changes" pattern
-// as everything else in this app) - mountTabs only toggles which one is
-// visible, it doesn't re-mount anything.
-const sidebar = document.createElement('aside')
-sidebar.className = 'app-sidebar'
-const tabCard = document.createElement('div')
-tabCard.className = 'glim-card glim-section tab-card'
-sidebar.appendChild(tabCard)
+const panelCard = document.createElement('div')
+panelCard.className = 'glim-card glim-section nav-panel-host'
+
+body.append(primary, panelCard)
 
 const adjustPanel = document.createElement('div')
 const transformPanelEl = document.createElement('div')
@@ -77,16 +92,29 @@ const queuePanel = document.createElement('div')
 const exportPanelEl = document.createElement('div')
 const appearancePanelEl = document.createElement('div')
 
-const tabs = mountTabs(tabCard, [
-  { id: 'adjust', label: t('tabs.adjust'), panel: adjustPanel },
-  { id: 'transform', label: t('tabs.transform'), panel: transformPanelEl },
-  { id: 'filters', label: t('tabs.filters'), panel: filtersPanelEl },
-  { id: 'queue', label: t('queue.eyebrow'), panel: queuePanel },
-  { id: 'export', label: t('export.eyebrow'), panel: exportPanelEl },
-  { id: 'appearance', label: t('appearance.eyebrow'), panel: appearancePanelEl },
-])
+const nav = mountSidebarNav(
+  panelCard,
+  [
+    {
+      container: navMain,
+      items: [
+        { id: 'adjust', label: t('tabs.adjust'), icon: iconAdjust(), panel: adjustPanel },
+        { id: 'transform', label: t('tabs.transform'), icon: iconTransform(), panel: transformPanelEl },
+        { id: 'filters', label: t('tabs.filters'), icon: iconFilters(), panel: filtersPanelEl },
+        { id: 'queue', label: t('queue.eyebrow'), icon: iconQueue(), panel: queuePanel },
+        { id: 'export', label: t('export.eyebrow'), icon: iconExport(), panel: exportPanelEl },
+      ],
+    },
+    {
+      container: navBottom,
+      items: [{ id: 'appearance', label: t('appearance.eyebrow'), icon: iconAppearance(), panel: appearancePanelEl }],
+    },
+  ],
+  'adjust',
+)
+
 subscribeLocale(() => {
-  tabs.setLabels({
+  nav.setLabels({
     adjust: t('tabs.adjust'),
     transform: t('tabs.transform'),
     filters: t('tabs.filters'),
@@ -95,9 +123,6 @@ subscribeLocale(() => {
     appearance: t('appearance.eyebrow'),
   })
 })
-
-main.append(primary, sidebar)
-app.appendChild(main)
 
 mountDropzone(dropzoneCard, store)
 mountPreview(previewCard, store)

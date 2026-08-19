@@ -8,6 +8,15 @@ import { fileURLToPath } from 'node:url'
 // import.meta.url instead.
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Nav items are plain buttons (real page-navigation semantics via
+// aria-current, not the ARIA tabs pattern - see sidebarNav.ts), and several
+// of their labels ("Export", "Queue") are also substrings of buttons living
+// inside the panels themselves, so every nav click needs exact:true to avoid
+// a Playwright strict-mode ambiguity between the two.
+function nav(page: import('@playwright/test').Page, name: string) {
+  return page.getByRole('button', { name, exact: true })
+}
+
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
   await page.goto('/')
 
@@ -23,7 +32,7 @@ test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
     })
     .toBe(true)
 
-  await page.getByRole('tab', { name: 'Export' }).click()
+  await nav(page, 'Export').click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export active image as TXT' }).click()
   const download = await downloadPromise
@@ -42,10 +51,10 @@ test('rotate, invert, and color output all still produce a non-empty preview and
   const canvas = page.locator('canvas.preview-canvas')
   await expect(canvas).toBeVisible()
 
-  await page.getByRole('tab', { name: 'Transform' }).click()
+  await nav(page, 'Transform').click()
   await page.getByRole('button', { name: '90°' }).click()
 
-  await page.getByRole('tab', { name: 'Filters' }).click()
+  await nav(page, 'Filters').click()
   await page.getByLabel('Invert colors').check()
   await page.getByLabel('Color output').check()
 
@@ -56,36 +65,36 @@ test('rotate, invert, and color output all still produce a non-empty preview and
     })
     .toBe(true)
 
-  await page.getByRole('tab', { name: 'Export' }).click()
+  await nav(page, 'Export').click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export active image as PNG' }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toContain('.png')
 })
 
-test('switching language updates tab labels and the active panel', async ({ page }) => {
+test('switching language updates nav labels and the active panel', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.getByRole('tab', { name: 'Adjust', exact: true })).toBeVisible()
+  await expect(nav(page, 'Adjust')).toBeVisible()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
 
-  await page.getByRole('tab', { name: 'Appearance', exact: true }).click()
+  await nav(page, 'Appearance').click()
   await page.getByLabel('Language').selectOption('de')
 
   // "Adjust" -> "Anpassen" and "Queue" -> "Warteschlange" are genuinely
   // distinct strings between the two languages - real positive proof the
-  // switch propagated to the tab bar itself (always visible, regardless of
+  // switch propagated to the nav rail itself (always visible, regardless of
   // which panel is active).
-  await expect(page.getByRole('tab', { name: 'Adjust', exact: true })).toHaveCount(0)
-  await expect(page.getByRole('tab', { name: 'Anpassen', exact: true })).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Warteschlange', exact: true })).toBeVisible()
+  await expect(nav(page, 'Adjust')).toHaveCount(0)
+  await expect(nav(page, 'Anpassen')).toBeVisible()
+  await expect(nav(page, 'Warteschlange')).toBeVisible()
 
-  // Queue was never the active tab during the switch - proves an
+  // Queue was never the active panel during the switch - proves an
   // already-mounted but hidden (display:none) panel's DOM updates too, not
   // just the currently visible one.
-  await page.getByRole('tab', { name: 'Warteschlange', exact: true }).click()
+  await nav(page, 'Warteschlange').click()
   await expect(page.getByText('Noch keine Bilder.', { exact: true })).toBeVisible()
 
-  await page.getByRole('tab', { name: 'Anpassen', exact: true }).click()
+  await nav(page, 'Anpassen').click()
   await expect(page.getByText('Breite (Spalten)', { exact: true })).toBeVisible()
 })
