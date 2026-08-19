@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Muunna',
   'nav.settings': 'Asetukset',
   'nav.backToConvert': 'Takaisin',
+  'nav.undo': 'Kumoa',
+  'nav.redo': 'Tee uudelleen',
 
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',

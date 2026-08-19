@@ -102,6 +102,26 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     syncHandles()
   }
 
+  // Same gesture-aware undo pattern as numberSlider (controls.ts): snapshot
+  // once per drag/keyboard gesture, not once per 'input' tick, so a whole
+  // drag undoes as a single step back to the value before the drag began.
+  function wireGestureUndo(input: HTMLInputElement): void {
+    let committedThisGesture = false
+    function commitGestureStart(): void {
+      if (committedThisGesture) return
+      committedThisGesture = true
+      store.commitOptionsSnapshot()
+    }
+    input.addEventListener('pointerdown', commitGestureStart)
+    input.addEventListener('keydown', commitGestureStart)
+    input.addEventListener('blur', () => {
+      committedThisGesture = false
+    })
+  }
+  wireGestureUndo(blackInput)
+  wireGestureUndo(whiteInput)
+  wireGestureUndo(gammaInput)
+
   blackInput.addEventListener('input', () => {
     const white = levelsOf(store).white
     commit({ black: Math.min(Number(blackInput.value), white - 1) })
@@ -115,6 +135,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     commit({ gamma: gammaFromTrackPosition(Number(gammaInput.value), black, white) })
   })
   resetButton.addEventListener('click', () => {
+    store.commitOptionsSnapshot()
     commit({ ...IDENTITY_LEVELS })
   })
 
@@ -177,4 +198,8 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   // DOM (container.appendChild above only attaches it) - re-measure once
   // after layout so the very first histogram isn't drawn at a 0px width.
   requestAnimationFrame(drawHistogram)
+
+  // Re-syncs the three handle positions after an undo/redo changes `levels`
+  // from outside this panel - see state.ts's subscribeHistory doc comment.
+  store.subscribeHistory(syncHandles)
 }

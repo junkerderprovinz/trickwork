@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': '변환',
   'nav.settings': '설정',
   'nav.backToConvert': '뒤로',
+  'nav.undo': '실행 취소',
+  'nav.redo': '다시 실행',
 
   'import.eyebrow': '가져오기',
   'import.dropzoneText': '이미지를 여기에 놓거나 클릭하여 파일을 선택하세요',

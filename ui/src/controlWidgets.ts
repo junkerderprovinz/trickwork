@@ -8,11 +8,20 @@
 // via its own subscribeLocale callback rather than these widgets trying to
 // patch their own text in place.
 
+/**
+ * `onBeforeChange`, when given, fires exactly once per click, right before
+ * `onChange` - the undo/redo call sites (transformPanel.ts/filtersPanel.ts)
+ * use it to snapshot the pre-click options onto the history stack. A plain
+ * click is already one atomic gesture, so every call is a good undo step
+ * (contrast this with numberSlider's continuous drag, which only snapshots
+ * once per whole gesture - see controls.ts).
+ */
 export function segmentedRow<T extends string>(
   label: string,
   choices: { value: T; label: string }[],
   initial: T,
   onChange: (value: T) => void,
+  onBeforeChange?: () => void,
 ): HTMLElement {
   const wrap = document.createElement('div')
   wrap.className = 'control-slider'
@@ -44,6 +53,7 @@ export function segmentedRow<T extends string>(
       btn.title = choice.label
       btn.addEventListener('click', () => {
         if (choice.value === active) return
+        onBeforeChange?.()
         active = choice.value
         onChange(active)
         render()
@@ -69,6 +79,7 @@ export function checkboxRow(
   initial: boolean,
   onChange: (checked: boolean) => void,
   icon?: string,
+  onBeforeChange?: () => void,
 ): HTMLElement {
   const wrap = document.createElement('label')
   wrap.className = 'checkbox-row'
@@ -76,7 +87,10 @@ export function checkboxRow(
   const input = document.createElement('input')
   input.type = 'checkbox'
   input.checked = initial
-  input.addEventListener('change', () => onChange(input.checked))
+  input.addEventListener('change', () => {
+    onBeforeChange?.()
+    onChange(input.checked)
+  })
 
   wrap.appendChild(input)
 

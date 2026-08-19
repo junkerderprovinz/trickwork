@@ -33,6 +33,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       (value) => {
         store.setState({ options: { ...store.getState().options, rotate: Number(value) as Rotation } })
       },
+      () => store.commitOptionsSnapshot(),
     )
 
     const flipH = checkboxRow(
@@ -42,6 +43,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
         store.setState({ options: { ...store.getState().options, flipHorizontal: checked } })
       },
       iconFlipHorizontal(),
+      () => store.commitOptionsSnapshot(),
     )
     const flipV = checkboxRow(
       t('controls.flipVertical'),
@@ -50,6 +52,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
         store.setState({ options: { ...store.getState().options, flipVertical: checked } })
       },
       iconFlipVertical(),
+      () => store.commitOptionsSnapshot(),
     )
 
     panel.append(rotateRow, flipH, flipV)
@@ -57,4 +60,8 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
 
   build()
   subscribeLocale(build)
+  // See controls.ts: re-syncs the rotate/flip controls after an undo/redo
+  // changes them from outside this panel, without rebuilding on every
+  // regular options change (that would break mid-drag interactions elsewhere).
+  store.subscribeHistory(build)
 }

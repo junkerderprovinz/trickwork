@@ -79,6 +79,22 @@ export function iconBack(): string {
   )
 }
 
+// Corner-up-left arrow - Undo, in the header's undo/redo button pair.
+export function iconUndo(): string {
+  return svg(
+    `<path d="M7.5 12 3.5 8l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
+      `<path d="M16.5 16v-4.5A3.5 3.5 0 0 0 13 8H3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
+  )
+}
+
+// Mirror of iconUndo() - Redo.
+export function iconRedo(): string {
+  return svg(
+    `<path d="M12.5 12 16.5 8l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
+      `<path d="M3.5 16v-4.5A3.5 3.5 0 0 1 7 8h9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
+  )
+}
+
 // Standard 8-tooth cog - Appearance/settings, identical concept to BV/KL's own Settings glyph.
 export function iconAppearance(): string {
   return svg(

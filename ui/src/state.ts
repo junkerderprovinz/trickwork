@@ -28,6 +28,12 @@ function nextId(): string {
   return `item-${Date.now()}-${idCounter++}`
 }
 
+// Undo/redo covers `options` only (the generation-affecting adjustments a
+// user is actively tuning), never `items`/`activeItemId` - reverting "which
+// image is loaded" isn't what a user reaches for Ctrl+Z expecting. Capped so
+// a long editing session can't grow this unboundedly.
+const HISTORY_LIMIT = 50
+
 export function createStore() {
   let state: AppState = {
     items: [],
@@ -41,14 +47,62 @@ export function createStore() {
     },
   }
   const listeners = new Set<Listener>()
+  // A second, narrower channel: every control widget (controls.ts,
+  // transformPanel.ts, filtersPanel.ts, levelsPanel.ts) owns its OWN local
+  // DOM state (a slider's value, a segmented row's active button) and only
+  // pushes changes TO the store - it never reads the store back except at
+  // mount time, so a plain setState (e.g. mid-drag, on every 'input' tick)
+  // intentionally does NOT touch this. undo()/redo() are the one case where
+  // `options` changes from OUTSIDE the widget that's displaying it, so
+  // widgets subscribe here specifically to re-sync their displayed value
+  // after a history jump, without rebuilding on every live drag tick (which
+  // would yank focus out from under whatever the user is actively dragging).
+  const historyListeners = new Set<() => void>()
+  let past: MappingOptions[] = []
+  let future: MappingOptions[] = []
 
   function notify() {
     for (const listener of listeners) listener(state)
   }
 
+  function notifyHistory() {
+    for (const listener of historyListeners) listener()
+  }
+
   function setState(patch: Partial<AppState>) {
     state = { ...state, ...patch }
     notify()
+  }
+
+  // Called once per discrete user gesture, BEFORE the change it's about to
+  // make - the widget layer (controlWidgets.ts/controls.ts/levelsPanel.ts)
+  // decides what "one gesture" means (a single click, or a whole drag from
+  // pointerdown to blur) and calls this exactly once per gesture, right
+  // before applying the new value via setState.
+  function commitOptionsSnapshot() {
+    past = [...past.slice(-(HISTORY_LIMIT - 1)), state.options]
+    future = []
+    notify()
+  }
+
+  function undo() {
+    const previous = past[past.length - 1]
+    if (!previous) return
+    past = past.slice(0, -1)
+    future = [state.options, ...future]
+    state = { ...state, options: previous }
+    notify()
+    notifyHistory()
+  }
+
+  function redo() {
+    const next = future[0]
+    if (!next) return
+    future = future.slice(1)
+    past = [...past, state.options]
+    state = { ...state, options: next }
+    notify()
+    notifyHistory()
   }
 
   function updateItem(id: string, patch: Partial<BatchItem>) {
@@ -88,9 +142,18 @@ export function createStore() {
       listeners.add(listener)
       return () => listeners.delete(listener)
     },
+    subscribeHistory: (listener: () => void) => {
+      historyListeners.add(listener)
+      return () => historyListeners.delete(listener)
+    },
     setState,
     updateItem,
     addFiles,
+    commitOptionsSnapshot,
+    undo,
+    redo,
+    canUndo: () => past.length > 0,
+    canRedo: () => future.length > 0,
   }
 }
 

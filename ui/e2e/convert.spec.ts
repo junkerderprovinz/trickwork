@@ -74,6 +74,58 @@ test('rotate, invert, and color output all still produce a non-empty preview and
   expect(download.suggestedFilename()).toContain('.png')
 })
 
+test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
+  await page.goto('/')
+
+  // exact: true matters here - "0°" is a substring of "90°"/"180°"/"270°"
+  // too, so a loose match resolves to all four rotate buttons.
+  const rotate90 = page.getByRole('button', { name: '90°', exact: true })
+  const rotate0 = page.getByRole('button', { name: '0°', exact: true })
+  await expect(rotate0).toHaveClass(/segmented-button--active/)
+
+  await rotate90.click()
+  await expect(rotate90).toHaveClass(/segmented-button--active/)
+
+  await page.keyboard.press('Control+z')
+  await expect(rotate0).toHaveClass(/segmented-button--active/)
+
+  await page.keyboard.press('Control+y')
+  await expect(rotate90).toHaveClass(/segmented-button--active/)
+})
+
+test('undo/redo header buttons reflect history state and a dragged slider undoes as one step', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const undoButton = page.getByRole('button', { name: 'Undo' })
+  const redoButton = page.getByRole('button', { name: 'Redo' })
+  await expect(undoButton).toBeDisabled()
+  await expect(redoButton).toBeDisabled()
+
+  // Located via the stable label text, not getByLabel(full accessible name)
+  // - the accessible name here also concatenates the live numeric readout
+  // ("Width (columns) 120"), which changes on every keypress and would make
+  // a name-based locator stop matching after the very first ArrowRight.
+  const widthSlider = page
+    .locator('.control-slider', { hasText: 'Width (columns)' })
+    .locator('input[type="range"]')
+  await widthSlider.focus()
+  // Each arrow-key press is one 'input' tick within the same focus session -
+  // gesture-aware history should collapse all of them into ONE undo step.
+  for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight')
+  await expect(widthSlider).toHaveValue('125')
+  await expect(undoButton).toBeEnabled()
+
+  await undoButton.click()
+  await expect(widthSlider).toHaveValue('120')
+  await expect(undoButton).toBeDisabled()
+  await expect(redoButton).toBeEnabled()
+
+  await redoButton.click()
+  await expect(widthSlider).toHaveValue('125')
+})
+
 test('the character-set ramp is directly editable: remove a tile, add a character', async ({ page }) => {
   await page.goto('/')
 

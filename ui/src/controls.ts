@@ -41,9 +41,17 @@ export function mountControls(container: HTMLElement, store: Store): void {
     panel.innerHTML = ''
     const options = store.getState().options
 
-    const columns = numberSlider(t('controls.width'), 20, 400, options.columns, (value) => {
-      store.setState({ options: { ...store.getState().options, columns: value } })
-    })
+    const columns = numberSlider(
+      t('controls.width'),
+      20,
+      400,
+      options.columns,
+      (value) => {
+        store.setState({ options: { ...store.getState().options, columns: value } })
+      },
+      1,
+      () => store.commitOptionsSnapshot(),
+    )
 
     const brightness = numberSlider(
       t('controls.brightness'),
@@ -54,6 +62,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, brightness: value } })
       },
       0.05,
+      () => store.commitOptionsSnapshot(),
     )
 
     const contrast = numberSlider(
@@ -65,6 +74,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, contrast: value } })
       },
       0.05,
+      () => store.commitOptionsSnapshot(),
     )
 
     const charsetWrap = document.createElement('div')
@@ -143,6 +153,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
         tile.setAttribute('aria-label', label)
         tile.title = label
         tile.addEventListener('click', () => {
+          store.commitOptionsSnapshot()
           const cur = store.getState().options
           store.setState({ options: { ...cur, charset: cur.charset.filter((_, i) => i !== index) } })
           syncCharsetSelect()
@@ -158,6 +169,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     charsetSelect.addEventListener('change', () => {
       const key = charsetSelect.value
       if (key === 'custom') return // nothing to apply yet - edited via the tiles/add field below
+      store.commitOptionsSnapshot()
       store.setState({
         options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key as CharsetPresetKey]] },
       })
@@ -174,6 +186,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
       // comes back out.
       const additions = Array.from(addInput.value).filter((ch) => !cur.charset.includes(ch))
       if (additions.length > 0) {
+        store.commitOptionsSnapshot()
         store.setState({ options: { ...cur, charset: [...cur.charset, ...additions] } })
       }
       addInput.value = ''
@@ -201,6 +214,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     }
     fontSelect.value = options.font.family
     fontSelect.addEventListener('change', () => {
+      store.commitOptionsSnapshot()
       const current = store.getState().options
       store.setState({ options: { ...current, font: { ...current.font, family: fontSelect.value } } })
       renderRamp()
@@ -217,6 +231,11 @@ export function mountControls(container: HTMLElement, store: Store): void {
 
   build()
   subscribeLocale(build)
+  // A full rebuild re-reads store.getState().options fresh, which is exactly
+  // what's needed after undo/redo changes it from outside this panel - see
+  // state.ts's subscribeHistory doc comment for why this is a SEPARATE
+  // channel from store.subscribe (a plain drag must never trigger this).
+  store.subscribeHistory(build)
 }
 
 function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
@@ -227,6 +246,15 @@ function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
   return true
 }
 
+/**
+ * `onBeforeChange`, when given, fires ONCE per drag/keyboard gesture (from
+ * the first pointerdown or keydown until the input blurs), not once per
+ * 'input' tick - a continuous drag fires dozens of 'input' events, and
+ * treating each as its own undo step would make undo useless (one press
+ * would barely move the value back). Snapshotting once at gesture-start
+ * instead means a whole drag undoes as a single step, back to the value
+ * before the drag began.
+ */
 export function numberSlider(
   label: string,
   min: number,
@@ -234,6 +262,7 @@ export function numberSlider(
   initial: number,
   onChange: (value: number) => void,
   step = 1,
+  onBeforeChange?: () => void,
 ): HTMLElement {
   const wrapper = document.createElement('label')
   wrapper.className = 'control-slider'
@@ -253,6 +282,19 @@ export function numberSlider(
   input.max = String(max)
   input.step = String(step)
   input.value = String(initial)
+
+  let committedThisGesture = false
+  function commitGestureStart(): void {
+    if (committedThisGesture) return
+    committedThisGesture = true
+    onBeforeChange?.()
+  }
+  input.addEventListener('pointerdown', commitGestureStart)
+  input.addEventListener('keydown', commitGestureStart)
+  input.addEventListener('blur', () => {
+    committedThisGesture = false
+  })
+
   input.addEventListener('input', () => {
     valueText.textContent = input.value
     onChange(Number(input.value))

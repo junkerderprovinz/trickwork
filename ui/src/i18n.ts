@@ -20,6 +20,8 @@ export const en = {
   'nav.convert': 'Convert',
   'nav.settings': 'Settings',
   'nav.backToConvert': 'Back',
+  'nav.undo': 'Undo',
+  'nav.redo': 'Redo',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Drop images here, or click to choose files',
@@ -133,6 +135,8 @@ export const de: Translations = {
   'nav.convert': 'Konvertieren',
   'nav.settings': 'Einstellungen',
   'nav.backToConvert': 'Zurück',
+  'nav.undo': 'Rückgängig',
+  'nav.redo': 'Wiederherstellen',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',

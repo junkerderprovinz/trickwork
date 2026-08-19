@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'แปลง',
   'nav.settings': 'การตั้งค่า',
   'nav.backToConvert': 'กลับ',
+  'nav.undo': 'เลิกทำ',
+  'nav.redo': 'ทำซ้ำ',
 
   'import.eyebrow': 'นำเข้า',
   'import.dropzoneText': 'ลากภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์',

@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Konverter',
   'nav.settings': 'Indstillinger',
   'nav.backToConvert': 'Tilbage',
+  'nav.undo': 'Fortryd',
+  'nav.redo': 'Gentag',
 
   'import.eyebrow': 'Importer',
   'import.dropzoneText': 'Slip billeder her, eller klik for at vælge filer',

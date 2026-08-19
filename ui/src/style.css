@@ -49,6 +49,44 @@ html, body {
   color: var(--carbon-text-muted);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+/* Undo/redo - same square-badge treatment as Settings (rule: a square/
+   circle badge implies "just a glyph", matching GlimStone's own pill-vs-
+   badge distinction), disabled by greying out rather than hiding, since a
+   hidden-then-reappearing button would shift the whole header's layout on
+   every history change. */
+.header-icon-button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text-sub);
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
+}
+
+.header-icon-button:hover:not(:disabled) {
+  background-color: var(--carbon-hover);
+  color: var(--carbon-text);
+}
+
+.header-icon-button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
 /* Square, not the pill (GlimStone's own distinction: pill implies text
    content, a square/circle badge implies "just a glyph") - opens Settings
    as its own full page, no preview or working cards behind it. */

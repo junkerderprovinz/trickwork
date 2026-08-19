@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Dönüştür',
   'nav.settings': 'Ayarlar',
   'nav.backToConvert': 'Geri',
+  'nav.undo': 'Geri al',
+  'nav.redo': 'Yinele',
 
   'import.eyebrow': 'İçe Aktar',
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",

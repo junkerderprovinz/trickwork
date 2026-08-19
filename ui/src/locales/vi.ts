@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Chuyển đổi',
   'nav.settings': 'Cài đặt',
   'nav.backToConvert': 'Quay lại',
+  'nav.undo': 'Hoàn tác',
+  'nav.redo': 'Làm lại',
 
   'import.eyebrow': 'Nhập',
   'import.dropzoneText': 'Thả ảnh vào đây, hoặc nhấp để chọn tệp',

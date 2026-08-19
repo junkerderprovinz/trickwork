@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Konvertálás',
   'nav.settings': 'Beállítások',
   'nav.backToConvert': 'Vissza',
+  'nav.undo': 'Visszavonás',
+  'nav.redo': 'Ismétlés',
 
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',

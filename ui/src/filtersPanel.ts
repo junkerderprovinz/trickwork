@@ -43,6 +43,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, invert: checked } })
       },
       iconInvert(),
+      () => store.commitOptionsSnapshot(),
     )
     const dither = checkboxRow(
       t('controls.dither'),
@@ -51,6 +52,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, dither: checked } })
       },
       iconDither(),
+      () => store.commitOptionsSnapshot(),
     )
 
     const sharpenRow = segmentedRow(
@@ -60,6 +62,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       (value) => {
         store.setState({ options: { ...store.getState().options, sharpen: value } })
       },
+      () => store.commitOptionsSnapshot(),
     )
 
     const color = checkboxRow(
@@ -69,6 +72,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, color: checked } })
       },
       iconColor(),
+      () => store.commitOptionsSnapshot(),
     )
     // The "TXT never carries colour" caveat lives in the Export tab instead,
     // right next to the TXT button it's actually about.
@@ -78,4 +82,8 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
 
   build()
   subscribeLocale(build)
+  // See controls.ts: re-syncs invert/dither/sharpen/color after an undo/
+  // redo changes them from outside this panel. levelsPanel.ts wires its own
+  // history subscription separately (it isn't rebuilt by this build()).
+  store.subscribeHistory(build)
 }

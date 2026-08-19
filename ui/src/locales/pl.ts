@@ -10,6 +10,8 @@ const dict: Translations = {
   'nav.convert': 'Konwertuj',
   'nav.settings': 'Ustawienia',
   'nav.backToConvert': 'Wstecz',
+  'nav.undo': 'Cofnij',
+  'nav.redo': 'Ponów',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Upuść tu obrazy albo kliknij, aby wybrać pliki',
