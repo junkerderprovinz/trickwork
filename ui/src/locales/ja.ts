@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'プレビュー',
   'preview.empty': '上に画像をドロップすると、ここにASCIIアートとして表示されます。',
+  'preview.zoomOut': 'ズームアウト',
+  'preview.zoomIn': 'ズームイン',
+  'preview.zoomReset': 'ズームを100%にリセット',
 
   'controls.eyebrow': 'コントロール',
   'controls.width': '幅(列数)',

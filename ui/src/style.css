@@ -255,16 +255,56 @@ html, body {
   border-radius: var(--radius-control);
   background-color: #fff;
   max-height: 60vh;
+  cursor: grab;
+}
+.preview-canvas-wrap--dragging {
+  cursor: grabbing;
 }
 
+/* No max-width/height:auto here (used to shrink-to-fit on load) - the zoom
+   control (preview.ts) now owns width/height explicitly via inline style at
+   every zoom level including 100%, and canvasWrap's own overflow:auto is
+   what contains it, not a shrink on the canvas itself. A leftover
+   max-width:100% here would silently re-clamp anything past the card's own
+   width back down, defeating zooming in past 100% entirely. */
 canvas.preview-canvas {
   display: block;
-  max-width: 100%;
-  height: auto;
 }
 
 canvas.preview-canvas[width="0"] {
   display: none;
+}
+
+.preview-zoom-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  margin-top: -0.25rem;
+}
+
+.preview-zoom-button {
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background-color: var(--carbon-surface2);
+}
+
+.preview-zoom-label {
+  min-width: 3rem;
+  padding: 0.2rem 0.4rem;
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+  background-color: transparent;
+  text-align: center;
+}
+.preview-zoom-label:hover {
+  color: var(--carbon-text);
+  background-color: var(--carbon-hover);
 }
 
 /* ---------------------------------------------------------------------

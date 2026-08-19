@@ -252,3 +252,39 @@ test('a malformed settings file is rejected with an error, not a silent crash', 
   await page.locator('input[type="file"][accept*="json"]').setInputFiles(badFile)
   await expect(page.getByText('That file is not a valid TrickWork preset.')).toBeVisible()
 })
+
+test('preview zoom: buttons change the displayed canvas size and the label resets on a new image', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+
+  const canvas = page.locator('canvas.preview-canvas')
+  await expect(canvas).toBeVisible()
+  const zoomLabel = page.locator('.preview-zoom-label')
+  await expect(zoomLabel).toHaveText('100%')
+  const initialBox = await canvas.boundingBox()
+
+  await page.getByRole('button', { name: 'Zoom in' }).click()
+  await expect(zoomLabel).toHaveText('110%')
+  const zoomedInBox = await canvas.boundingBox()
+  expect(zoomedInBox?.width).toBeGreaterThan(initialBox?.width ?? 0)
+
+  await zoomLabel.click()
+  await expect(zoomLabel).toHaveText('100%')
+
+  await page.getByRole('button', { name: 'Zoom out' }).click()
+  await expect(zoomLabel).toHaveText('90%')
+
+  // Switching the ACTIVE image (not just adding another to the queue -
+  // addFiles never changes activeItemId once one is already set) resets the
+  // zoom back to a predictable 100% rather than carrying over whatever the
+  // previous image happened to be zoomed to. Upload the same fixture again
+  // (a second, distinctly-id'd queue item under the same filename) and
+  // select it explicitly.
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+  await page.getByRole('button', { name: 'Preview small.png' }).last().click()
+  await expect(zoomLabel).toHaveText('100%')
+})

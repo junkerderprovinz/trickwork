@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Esikatselu',
   'preview.empty': 'Pudota kuva yllä nähdäksesi sen tässä ASCII-taiteena.',
+  'preview.zoomOut': 'Loitonna',
+  'preview.zoomIn': 'Lähennä',
+  'preview.zoomReset': 'Palauta zoomaus 100 %:iin',
 
   'controls.eyebrow': 'Säädöt',
   'controls.width': 'Leveys (sarakkeet)',

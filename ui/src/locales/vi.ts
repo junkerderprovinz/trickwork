@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Xem trước',
   'preview.empty': 'Thả một ảnh ở trên để xem dưới dạng nghệ thuật ASCII tại đây.',
+  'preview.zoomOut': 'Thu nhỏ',
+  'preview.zoomIn': 'Phóng to',
+  'preview.zoomReset': 'Đặt lại thu phóng về 100%',
 
   'controls.eyebrow': 'Điều khiển',
   'controls.width': 'Chiều rộng (cột)',

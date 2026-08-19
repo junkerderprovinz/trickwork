@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Просмотр',
   'preview.empty': 'Перетащите изображение выше, чтобы увидеть его здесь в виде ASCII-арта.',
+  'preview.zoomOut': 'Уменьшить',
+  'preview.zoomIn': 'Увеличить',
+  'preview.zoomReset': 'Сбросить масштаб до 100%',
 
   'controls.eyebrow': 'Настройки',
   'controls.width': 'Ширина (столбцы)',

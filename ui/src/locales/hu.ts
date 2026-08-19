@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Előnézet',
   'preview.empty': 'Húzzon ide egy képet fentről, hogy itt ASCII-művészetként lássa.',
+  'preview.zoomOut': 'Kicsinyítés',
+  'preview.zoomIn': 'Nagyítás',
+  'preview.zoomReset': 'Nagyítás visszaállítása 100%-ra',
 
   'controls.eyebrow': 'Beállítások',
   'controls.width': 'Szélesség (oszlopok)',

@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'ตัวอย่าง',
   'preview.empty': 'ลากภาพมาวางด้านบนเพื่อดูเป็นภาพศิลป์ ASCII ที่นี่',
+  'preview.zoomOut': 'ซูมออก',
+  'preview.zoomIn': 'ซูมเข้า',
+  'preview.zoomReset': 'รีเซ็ตการซูมเป็น 100%',
 
   'controls.eyebrow': 'ตัวควบคุม',
   'controls.width': 'ความกว้าง (คอลัมน์)',

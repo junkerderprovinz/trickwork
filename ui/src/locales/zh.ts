@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': '预览',
   'preview.empty': '将图片拖到上方，即可在此处以 ASCII 艺术形式查看。',
+  'preview.zoomOut': '缩小',
+  'preview.zoomIn': '放大',
+  'preview.zoomReset': '将缩放重置为 100%',
 
   'controls.eyebrow': '控制项',
   'controls.width': '宽度(列数)',

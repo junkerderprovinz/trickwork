@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Προεπισκόπηση',
   'preview.empty': 'Αφήστε μια εικόνα παραπάνω για να τη δείτε εδώ ως ASCII τέχνη.',
+  'preview.zoomOut': 'Σμίκρυνση',
+  'preview.zoomIn': 'Μεγέθυνση',
+  'preview.zoomReset': 'Επαναφορά ζουμ στο 100%',
 
   'controls.eyebrow': 'Ρυθμίσεις',
   'controls.width': 'Πλάτος (στήλες)',

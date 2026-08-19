@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'תצוגה מקדימה',
   'preview.empty': 'גררו תמונה למעלה כדי לראות אותה כאן כאמנות ASCII.',
+  'preview.zoomOut': 'התרחקות',
+  'preview.zoomIn': 'התקרבות',
+  'preview.zoomReset': 'איפוס התקריב ל-100%',
 
   'controls.eyebrow': 'בקרות',
   'controls.width': 'רוחב (עמודות)',

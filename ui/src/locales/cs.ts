@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Náhled',
   'preview.empty': 'Přetáhněte sem nahoru obrázek, abyste ho zde viděli jako ASCII art.',
+  'preview.zoomOut': 'Oddálit',
+  'preview.zoomIn': 'Přiblížit',
+  'preview.zoomReset': 'Obnovit přiblížení na 100 %',
 
   'controls.eyebrow': 'Ovládání',
   'controls.width': 'Šířka (sloupce)',

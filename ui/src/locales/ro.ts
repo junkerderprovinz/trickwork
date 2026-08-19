@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Previzualizare',
   'preview.empty': 'Trage o imagine mai sus pentru a o vedea aici ca artă ASCII.',
+  'preview.zoomOut': 'Micșorează',
+  'preview.zoomIn': 'Mărește',
+  'preview.zoomReset': 'Resetează zoomul la 100%',
 
   'controls.eyebrow': 'Comenzi',
   'controls.width': 'Lățime (coloane)',

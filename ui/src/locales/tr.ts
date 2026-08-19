@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Önizleme',
   'preview.empty': "ASCII sanatı olarak burada görmek için yukarıya bir resim bırakın.",
+  'preview.zoomOut': 'Uzaklaştır',
+  'preview.zoomIn': 'Yakınlaştır',
+  'preview.zoomReset': "Yakınlaştırmayı %100'e sıfırla",
 
   'controls.eyebrow': 'Kontroller',
   'controls.width': 'Genişlik (sütun)',

@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Forhåndsvisning',
   'preview.empty': 'Slipp et bilde ovenfor for å se det her som ASCII-kunst.',
+  'preview.zoomOut': 'Zoom ut',
+  'preview.zoomIn': 'Zoom inn',
+  'preview.zoomReset': 'Tilbakestill zoom til 100 %',
 
   'controls.eyebrow': 'Innstillinger',
   'controls.width': 'Bredde (kolonner)',

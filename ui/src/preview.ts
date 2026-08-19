@@ -12,6 +12,11 @@ import {
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
+const MIN_ZOOM = 10
+const MAX_ZOOM = 400
+const ZOOM_STEP = 10
+const DEFAULT_ZOOM = 100
+
 export function mountPreview(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
@@ -21,9 +26,34 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   empty.className = 'preview-empty glim-well'
   container.appendChild(empty)
 
+  // Zoom is view-only state, deliberately NOT part of store.options - it
+  // isn't a generation setting (undo/redo, presets, and exports must all
+  // ignore it entirely), it's purely "how am I looking at the result right
+  // now", matching ASCGen2's own Zoom In/Out buttons on its preview widget.
+  let zoomPct = DEFAULT_ZOOM
+
+  const zoomRow = document.createElement('div')
+  zoomRow.className = 'preview-zoom-row'
+  const zoomOutButton = document.createElement('button')
+  zoomOutButton.type = 'button'
+  zoomOutButton.className = 'preview-zoom-button'
+  zoomOutButton.textContent = '−'
+  const zoomLabel = document.createElement('button')
+  zoomLabel.type = 'button'
+  zoomLabel.className = 'preview-zoom-label glim-num'
+  const zoomInButton = document.createElement('button')
+  zoomInButton.type = 'button'
+  zoomInButton.className = 'preview-zoom-button'
+  zoomInButton.textContent = '+'
+  zoomRow.append(zoomOutButton, zoomLabel, zoomInButton)
+  container.appendChild(zoomRow)
+
   function applyLabels(): void {
     eyebrow.textContent = t('preview.eyebrow')
     empty.textContent = t('preview.empty')
+    zoomOutButton.setAttribute('aria-label', t('preview.zoomOut'))
+    zoomInButton.setAttribute('aria-label', t('preview.zoomIn'))
+    zoomLabel.title = t('preview.zoomReset')
   }
   applyLabels()
   subscribeLocale(applyLabels)
@@ -40,6 +70,73 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     throw new Error('mountPreview: 2D context unavailable')
   }
 
+  function applyZoom(): void {
+    zoomLabel.textContent = `${zoomPct}%`
+    if (canvas.width === 0) return
+    // Explicit pixel dimensions, not a CSS transform: scaling the actual
+    // layout box (not just its paint) is what makes canvasWrap's own
+    // overflow:auto produce real scrollbars once the scaled image is
+    // bigger than the card - a transform: scale() repaints in place
+    // without touching layout size, so nothing would ever overflow to pan.
+    canvas.style.width = `${(canvas.width * zoomPct) / 100}px`
+    canvas.style.height = `${(canvas.height * zoomPct) / 100}px`
+  }
+
+  function setZoom(next: number): void {
+    zoomPct = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(next / ZOOM_STEP) * ZOOM_STEP))
+    applyZoom()
+  }
+
+  zoomOutButton.addEventListener('click', () => setZoom(zoomPct - ZOOM_STEP))
+  zoomInButton.addEventListener('click', () => setZoom(zoomPct + ZOOM_STEP))
+  zoomLabel.addEventListener('click', () => setZoom(DEFAULT_ZOOM))
+
+  // Ctrl/Cmd+wheel zooms (the common image-viewer convention) - a bare
+  // wheel is left alone so it still scrolls canvasWrap's own scrollbars
+  // normally when not zooming.
+  canvasWrap.addEventListener(
+    'wheel',
+    (event) => {
+      if (!event.ctrlKey && !event.metaKey) return
+      event.preventDefault()
+      setZoom(zoomPct - Math.sign(event.deltaY) * ZOOM_STEP)
+    },
+    { passive: false },
+  )
+
+  // Click-and-drag panning, on top of the scrollbars canvasWrap's own
+  // overflow:auto already provides - ASCGen2 itself only ever had
+  // scrollbar-based panning (confirmed against its source, no dedicated
+  // pan tool), so this is TrickWork going a step beyond the original.
+  let dragging = false
+  let dragStartX = 0
+  let dragStartY = 0
+  let dragScrollLeft = 0
+  let dragScrollTop = 0
+  canvasWrap.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return
+    dragging = true
+    dragStartX = event.clientX
+    dragStartY = event.clientY
+    dragScrollLeft = canvasWrap.scrollLeft
+    dragScrollTop = canvasWrap.scrollTop
+    canvasWrap.classList.add('preview-canvas-wrap--dragging')
+    canvasWrap.setPointerCapture(event.pointerId)
+  })
+  canvasWrap.addEventListener('pointermove', (event) => {
+    if (!dragging) return
+    canvasWrap.scrollLeft = dragScrollLeft - (event.clientX - dragStartX)
+    canvasWrap.scrollTop = dragScrollTop - (event.clientY - dragStartY)
+  })
+  function endDrag(event: PointerEvent): void {
+    if (!dragging) return
+    dragging = false
+    canvasWrap.classList.remove('preview-canvas-wrap--dragging')
+    canvasWrap.releasePointerCapture(event.pointerId)
+  }
+  canvasWrap.addEventListener('pointerup', endDrag)
+  canvasWrap.addEventListener('pointercancel', endDrag)
+
   const measure = createCanvasGlyphMeasurer()
   const measureWidth = createCanvasWidthMeasurer()
 
@@ -51,6 +148,11 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   let lastTableKey: string | null = null
   let cachedTable: FontWidthTable | null = null
   let cachedCellSize: CellSize | null = null
+  // Recomputed grids reset the zoom back to 100% only when the ACTIVE IMAGE
+  // changes (a fresh image should always start at a predictable zoom), never
+  // on every render (that would fight the user zooming while adjusting an
+  // unrelated slider).
+  let lastImageId: string | null = null
 
   function render() {
     const state = store.getState()
@@ -60,10 +162,17 @@ export function mountPreview(container: HTMLElement, store: Store): void {
       canvas.height = 0
       empty.style.display = ''
       canvasWrap.style.display = 'none'
+      zoomRow.style.display = 'none'
+      lastImageId = null
       return
     }
     empty.style.display = 'none'
     canvasWrap.style.display = ''
+    zoomRow.style.display = ''
+    if (activeItem.id !== lastImageId) {
+      lastImageId = activeItem.id
+      zoomPct = DEFAULT_ZOOM
+    }
 
     const { charset, font } = state.options
     const tableKey = `${charset.join('')}|${font.family}|${font.sizePx}`
@@ -92,6 +201,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
       background: '#ffffff',
       foreground: '#000000',
     })
+    applyZoom()
   }
 
   store.subscribe(render)

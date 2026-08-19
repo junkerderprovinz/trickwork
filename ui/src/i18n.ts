@@ -29,6 +29,9 @@ export const en = {
 
   'preview.eyebrow': 'Preview',
   'preview.empty': 'Drop an image above to see it here as ASCII art.',
+  'preview.zoomOut': 'Zoom out',
+  'preview.zoomIn': 'Zoom in',
+  'preview.zoomReset': 'Reset zoom to 100%',
 
   'controls.eyebrow': 'Controls',
   'controls.width': 'Width (columns)',
@@ -152,6 +155,9 @@ export const de: Translations = {
 
   'preview.eyebrow': 'Vorschau',
   'preview.empty': 'Ziehe oben ein Bild hinein, um es hier als ASCII-Kunst zu sehen.',
+  'preview.zoomOut': 'Verkleinern',
+  'preview.zoomIn': 'Vergrößern',
+  'preview.zoomReset': 'Zoom auf 100 % zurücksetzen',
 
   'controls.eyebrow': 'Regler',
   'controls.width': 'Breite (Spalten)',

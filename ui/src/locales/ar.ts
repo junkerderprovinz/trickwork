@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'معاينة',
   'preview.empty': 'أفلت صورة أعلاه لرؤيتها هنا كفن ASCII.',
+  'preview.zoomOut': 'تصغير',
+  'preview.zoomIn': 'تكبير',
+  'preview.zoomReset': 'إعادة ضبط التكبير إلى 100٪',
 
   'controls.eyebrow': 'الإعدادات',
   'controls.width': 'العرض (أعمدة)',

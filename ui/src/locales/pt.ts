@@ -19,6 +19,9 @@ const dict: Translations = {
 
   'preview.eyebrow': 'Pré-visualização',
   'preview.empty': 'Solte uma imagem acima para vê-la aqui como arte ASCII.',
+  'preview.zoomOut': 'Diminuir zoom',
+  'preview.zoomIn': 'Aumentar zoom',
+  'preview.zoomReset': 'Redefinir zoom para 100%',
 
   'controls.eyebrow': 'Controles',
   'controls.width': 'Largura (colunas)',
