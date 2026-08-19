@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Zpět',
   'nav.redo': 'Znovu',
 
+  'history.eyebrow': 'Historie',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Přetáhněte sem obrázky, nebo klikněte pro výběr souborů',
   'import.ariaLabel': 'Vyberte obrázkové soubory ke konverzi',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Jas',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Znaková sada',
+  'controls.charsetPresetLabel': 'Předvolba znakové sady',
   'controls.charsetPresetStandard': 'Standardní',
   'controls.charsetPresetDetailed': 'Podrobný',
   'controls.charsetPresetBlocks': 'Bloky',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimální',
   'controls.charsetPresetBinary': 'Binární',
   'controls.charsetPresetCustom': 'Vlastní',
-  'controls.charsetCustomPlaceholder': 'znaky od nejtmavšího po nejsvětlejší',
-  'controls.charsetAddPlaceholder': 'Znaky přidat…',
-  'controls.charsetRemoveAriaLabel': 'Odebrat "{char}" ze znakové sady',
   'controls.font': 'Písmo',
   'controls.fontMonoSystem': 'Neproporcionální (systémové)',
   'controls.fontMonoAlt': 'Neproporcionální (alt)',

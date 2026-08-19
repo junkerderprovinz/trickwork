@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'เลิกทำ',
   'nav.redo': 'ทำซ้ำ',
 
+  'history.eyebrow': 'ประวัติ',
+
   'import.eyebrow': 'นำเข้า',
   'import.dropzoneText': 'ลากภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์',
   'import.ariaLabel': 'เลือกไฟล์ภาพที่ต้องการแปลง',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'ความสว่าง',
   'controls.contrast': 'ความคมชัด',
   'controls.charset': 'ชุดอักขระ',
+  'controls.charsetPresetLabel': 'พรีเซ็ตชุดอักขระ',
   'controls.charsetPresetStandard': 'มาตรฐาน',
   'controls.charsetPresetDetailed': 'รายละเอียด',
   'controls.charsetPresetBlocks': 'บล็อก',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'น้อยที่สุด',
   'controls.charsetPresetBinary': 'ไบนารี',
   'controls.charsetPresetCustom': 'กำหนดเอง',
-  'controls.charsetCustomPlaceholder': 'อักขระจากเข้มที่สุดไปสว่างที่สุด',
-  'controls.charsetAddPlaceholder': 'เพิ่มอักขระ…',
-  'controls.charsetRemoveAriaLabel': 'ลบ "{char}" ออกจากชุดอักขระ',
   'controls.font': 'แบบอักษร',
   'controls.fontMonoSystem': 'ความกว้างคงที่ (ระบบ)',
   'controls.fontMonoAlt': 'ความกว้างคงที่ (สำรอง)',

@@ -1,5 +1,5 @@
 import type { Rotation } from 'trickwork-core'
-import { checkboxRow, segmentedRow } from './controlWidgets'
+import { iconToggleButton, segmentedRow } from './controlWidgets'
 import { iconFlipHorizontal, iconFlipVertical } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
@@ -36,26 +36,30 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       () => store.commitOptionsSnapshot(),
     )
 
-    const flipH = checkboxRow(
+    const flipRow = document.createElement('div')
+    flipRow.className = 'icon-toggle-row'
+
+    const flipH = iconToggleButton(
       t('controls.flipHorizontal'),
+      iconFlipHorizontal(),
       !!options.flipHorizontal,
       (checked) => {
         store.setState({ options: { ...store.getState().options, flipHorizontal: checked } })
       },
-      iconFlipHorizontal(),
       () => store.commitOptionsSnapshot(),
     )
-    const flipV = checkboxRow(
+    const flipV = iconToggleButton(
       t('controls.flipVertical'),
+      iconFlipVertical(),
       !!options.flipVertical,
       (checked) => {
         store.setState({ options: { ...store.getState().options, flipVertical: checked } })
       },
-      iconFlipVertical(),
       () => store.commitOptionsSnapshot(),
     )
+    flipRow.append(flipH, flipV)
 
-    panel.append(rotateRow, flipH, flipV)
+    panel.append(rotateRow, flipRow)
   }
 
   build()

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Annuler',
   'nav.redo': 'Rétablir',
 
+  'history.eyebrow': 'Historique',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Déposez des images ici, ou cliquez pour choisir des fichiers',
   'import.ariaLabel': 'Choisir des fichiers image à convertir',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Luminosité',
   'controls.contrast': 'Contraste',
   'controls.charset': 'Jeu de caractères',
+  'controls.charsetPresetLabel': 'Préréglage du jeu de caractères',
   'controls.charsetPresetStandard': 'Standard',
   'controls.charsetPresetDetailed': 'Détaillé',
   'controls.charsetPresetBlocks': 'Blocs',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binaire',
   'controls.charsetPresetCustom': 'Personnalisé',
-  'controls.charsetCustomPlaceholder': 'caractères du plus sombre au plus clair',
-  'controls.charsetAddPlaceholder': 'Ajouter des caractères…',
-  'controls.charsetRemoveAriaLabel': 'Retirer « {char} » du jeu de caractères',
   'controls.font': 'Police',
   'controls.fontMonoSystem': 'Monospace (système)',
   'controls.fontMonoAlt': 'Monospace (alt)',

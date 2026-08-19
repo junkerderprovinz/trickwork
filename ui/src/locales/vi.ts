@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Hoàn tác',
   'nav.redo': 'Làm lại',
 
+  'history.eyebrow': 'Lịch sử',
+
   'import.eyebrow': 'Nhập',
   'import.dropzoneText': 'Thả ảnh vào đây, hoặc nhấp để chọn tệp',
   'import.ariaLabel': 'Chọn tệp ảnh cần chuyển đổi',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Độ sáng',
   'controls.contrast': 'Độ tương phản',
   'controls.charset': 'Bộ ký tự',
+  'controls.charsetPresetLabel': 'Cài đặt sẵn bộ ký tự',
   'controls.charsetPresetStandard': 'Tiêu chuẩn',
   'controls.charsetPresetDetailed': 'Chi tiết',
   'controls.charsetPresetBlocks': 'Khối',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Tối giản',
   'controls.charsetPresetBinary': 'Nhị phân',
   'controls.charsetPresetCustom': 'Tùy chỉnh',
-  'controls.charsetCustomPlaceholder': 'ký tự từ tối nhất đến sáng nhất',
-  'controls.charsetAddPlaceholder': 'Thêm ký tự…',
-  'controls.charsetRemoveAriaLabel': 'Xóa "{char}" khỏi bộ ký tự',
   'controls.font': 'Phông chữ',
   'controls.fontMonoSystem': 'Đơn cách (hệ thống)',
   'controls.fontMonoAlt': 'Đơn cách (thay thế)',

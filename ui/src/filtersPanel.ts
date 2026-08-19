@@ -1,5 +1,5 @@
 import type { SharpenMethod } from 'trickwork-core'
-import { checkboxRow, segmentedRow } from './controlWidgets'
+import { iconToggleButton, segmentedRow } from './controlWidgets'
 import { iconColor, iconDither, iconInvert } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import { mountLevelsPanel } from './levelsPanel'
@@ -36,24 +36,39 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
     panel.innerHTML = ''
     const options = store.getState().options
 
-    const invert = checkboxRow(
+    const toggleRow = document.createElement('div')
+    toggleRow.className = 'icon-toggle-row'
+
+    const invert = iconToggleButton(
       t('controls.invert'),
+      iconInvert(),
       !!options.invert,
       (checked) => {
         store.setState({ options: { ...store.getState().options, invert: checked } })
       },
-      iconInvert(),
       () => store.commitOptionsSnapshot(),
     )
-    const dither = checkboxRow(
+    const dither = iconToggleButton(
       t('controls.dither'),
+      iconDither(),
       !!options.dither,
       (checked) => {
         store.setState({ options: { ...store.getState().options, dither: checked } })
       },
-      iconDither(),
       () => store.commitOptionsSnapshot(),
     )
+    const color = iconToggleButton(
+      t('controls.color'),
+      iconColor(),
+      !!options.color,
+      (checked) => {
+        store.setState({ options: { ...store.getState().options, color: checked } })
+      },
+      () => store.commitOptionsSnapshot(),
+    )
+    toggleRow.append(invert, dither, color)
+    // The "TXT never carries colour" caveat lives in the Export tab instead,
+    // right next to the TXT button it's actually about.
 
     const sharpenRow = segmentedRow(
       t('controls.sharpen'),
@@ -65,19 +80,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       () => store.commitOptionsSnapshot(),
     )
 
-    const color = checkboxRow(
-      t('controls.color'),
-      !!options.color,
-      (checked) => {
-        store.setState({ options: { ...store.getState().options, color: checked } })
-      },
-      iconColor(),
-      () => store.commitOptionsSnapshot(),
-    )
-    // The "TXT never carries colour" caveat lives in the Export tab instead,
-    // right next to the TXT button it's actually about.
-
-    panel.append(invert, dither, sharpenRow, color)
+    panel.append(toggleRow, sharpenRow)
   }
 
   build()

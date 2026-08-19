@@ -63,9 +63,12 @@ test('rotate, invert, and color output all still produce a non-empty preview and
 
   // Transform and Filters are their own always-visible cards now, not
   // separate nav destinations - interact directly, no nav click first.
+  // Invert/Color are icon-only toggle buttons (not checkboxes), so a click
+  // toggles them - their accessible name comes from the button's own
+  // title/aria-label, not adjacent label text.
   await page.getByRole('button', { name: '90°' }).click()
-  await page.getByLabel('Invert colors').check()
-  await page.getByLabel('Color output').check()
+  await page.getByRole('button', { name: 'Invert colors' }).click()
+  await page.getByRole('button', { name: 'Color output' }).click()
 
   await expect
     .poll(async () => {
@@ -132,25 +135,30 @@ test('undo/redo header buttons reflect history state and a dragged slider undoes
   await expect(widthSlider).toHaveValue('125')
 })
 
-test('the character-set ramp is directly editable: remove a tile, add a character', async ({ page }) => {
+test('the character set field is plain, freely editable text - no click-to-delete tiles', async ({ page }) => {
   await page.goto('/')
 
-  const removeAt = page.getByRole('button', { name: 'Remove "@" from the character set' })
-  await expect(removeAt).toBeVisible()
-  await removeAt.click()
-  await expect(removeAt).toHaveCount(0)
+  // Distinct accessible names on purpose (controls.ts) - "Character set
+  // preset" for the dropdown, "Character set" for the actual text field -
+  // so this locator can only ever match the field, never the select too.
+  const charsetField = page.getByLabel('Character set', { exact: true })
+  const presetSelect = page.getByLabel('Character set preset', { exact: true })
+  await expect(charsetField).toHaveValue(' .:-=+*#%@')
+  await expect(presetSelect).toHaveValue('standard')
 
-  // Editing the ramp away from any preset's exact contents flips the preset
-  // picker to "custom". exact:true matters here - Playwright's getByLabel
-  // does a case-insensitive substring match by default, and every tile's own
-  // aria-label ("Remove ... from the character set") contains this same
-  // text, so a loose match resolves to 11 elements instead of one.
-  await expect(page.getByLabel('Character set', { exact: true })).toHaveValue('custom')
+  // A real "select all, type over it" edit, exactly like editing any other
+  // text field - not a series of tile clicks.
+  await charsetField.click()
+  await charsetField.press('Control+a')
+  await charsetField.pressSequentially('@%#')
+  await expect(presetSelect).toHaveValue('custom')
 
-  const addInput = page.getByPlaceholder('Add characters…')
-  await addInput.fill('&')
-  await addInput.press('Enter')
-  await expect(page.getByRole('button', { name: 'Remove "&" from the character set' })).toBeVisible()
+  // Backspacing removes a character the normal way too, no click-to-delete
+  // affordance involved.
+  await charsetField.press('Backspace')
+  await charsetField.blur()
+  // On blur the field redraws from the deduped canonical charset ("@%").
+  await expect(charsetField).toHaveValue('@%')
 })
 
 test('a closed select answers the mouse wheel without opening', async ({ page }) => {
@@ -330,4 +338,57 @@ test('crop: dragging on the source image sets a selection that survives undo and
   await clearButton.click()
   await expect(overlay).toBeHidden()
   await expect(clearButton).toBeHidden()
+})
+
+test('crop: an existing selection can be moved and resized, not just redrawn from scratch', async ({ page }) => {
+  await page.goto('/')
+
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+
+  const cropCanvas = page.locator('canvas.crop-source-canvas')
+  await expect(cropCanvas).toBeVisible()
+  const overlay = page.locator('.crop-overlay')
+  const box = await cropCanvas.boundingBox()
+  if (!box) throw new Error('crop canvas has no bounding box')
+
+  // Draw an initial selection roughly in the middle third of the canvas.
+  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.3)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.6, { steps: 6 })
+  await page.mouse.up()
+  await expect(overlay).toBeVisible()
+  const drawn = await overlay.boundingBox()
+  if (!drawn) throw new Error('overlay has no bounding box after drawing')
+
+  // Grab the INTERIOR (not a corner) and drag it - this should MOVE the
+  // selection at its existing size, not start a brand new one.
+  const interiorX = drawn.x + drawn.width / 2
+  const interiorY = drawn.y + drawn.height / 2
+  await page.mouse.move(interiorX, interiorY)
+  await page.mouse.down()
+  await page.mouse.move(interiorX + 20, interiorY + 15, { steps: 6 })
+  await page.mouse.up()
+  const moved = await overlay.boundingBox()
+  if (!moved) throw new Error('overlay has no bounding box after moving')
+  expect(Math.round(moved.width)).toBe(Math.round(drawn.width))
+  expect(Math.round(moved.height)).toBe(Math.round(drawn.height))
+  expect(moved.x).toBeGreaterThan(drawn.x + 10)
+  expect(moved.y).toBeGreaterThan(drawn.y + 5)
+
+  // Grab the bottom-right CORNER and drag it outward - this should RESIZE
+  // (grow) the selection while its opposite (top-left) corner stays put.
+  const cornerX = moved.x + moved.width
+  const cornerY = moved.y + moved.height
+  await page.mouse.move(cornerX, cornerY)
+  await page.mouse.down()
+  await page.mouse.move(cornerX + 25, cornerY + 20, { steps: 6 })
+  await page.mouse.up()
+  const resized = await overlay.boundingBox()
+  if (!resized) throw new Error('overlay has no bounding box after resizing')
+  expect(resized.width).toBeGreaterThan(moved.width + 10)
+  expect(resized.height).toBeGreaterThan(moved.height + 8)
+  // The top-left corner (the one NOT being dragged) stayed fixed.
+  expect(Math.abs(resized.x - moved.x)).toBeLessThan(2)
+  expect(Math.abs(resized.y - moved.y)).toBeLessThan(2)
 })

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': '실행 취소',
   'nav.redo': '다시 실행',
 
+  'history.eyebrow': '기록',
+
   'import.eyebrow': '가져오기',
   'import.dropzoneText': '이미지를 여기에 놓거나 클릭하여 파일을 선택하세요',
   'import.ariaLabel': '변환할 이미지 파일 선택',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': '밝기',
   'controls.contrast': '대비',
   'controls.charset': '문자 세트',
+  'controls.charsetPresetLabel': '문자 세트 프리셋',
   'controls.charsetPresetStandard': '표준',
   'controls.charsetPresetDetailed': '상세',
   'controls.charsetPresetBlocks': '블록',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': '최소',
   'controls.charsetPresetBinary': '이진',
   'controls.charsetPresetCustom': '사용자 지정',
-  'controls.charsetCustomPlaceholder': '가장 어두운 문자부터 가장 밝은 문자까지',
-  'controls.charsetAddPlaceholder': '문자 추가…',
-  'controls.charsetRemoveAriaLabel': '문자 세트에서 "{char}" 제거',
   'controls.font': '글꼴',
   'controls.fontMonoSystem': '고정폭(시스템)',
   'controls.fontMonoAlt': '고정폭(대체)',

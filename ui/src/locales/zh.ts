@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': '撤销',
   'nav.redo': '重做',
 
+  'history.eyebrow': '历史',
+
   'import.eyebrow': '导入',
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',
   'import.ariaLabel': '选择要转换的图片文件',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': '亮度',
   'controls.contrast': '对比度',
   'controls.charset': '字符集',
+  'controls.charsetPresetLabel': '字符集预设',
   'controls.charsetPresetStandard': '标准',
   'controls.charsetPresetDetailed': '详细',
   'controls.charsetPresetBlocks': '方块',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': '最简',
   'controls.charsetPresetBinary': '二进制',
   'controls.charsetPresetCustom': '自定义',
-  'controls.charsetCustomPlaceholder': '从最暗到最亮的字符',
-  'controls.charsetAddPlaceholder': '添加字符…',
-  'controls.charsetRemoveAriaLabel': '从字符集中移除"{char}"',
   'controls.font': '字体',
   'controls.fontMonoSystem': '等宽(系统)',
   'controls.fontMonoAlt': '等宽(备用)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Visszavonás',
   'nav.redo': 'Ismétlés',
 
+  'history.eyebrow': 'Előzmények',
+
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',
   'import.ariaLabel': 'Válassza ki az átalakítandó képfájlokat',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Fényerő',
   'controls.contrast': 'Kontraszt',
   'controls.charset': 'Karakterkészlet',
+  'controls.charsetPresetLabel': 'Karakterkészlet-előbeállítás',
   'controls.charsetPresetStandard': 'Alapértelmezett',
   'controls.charsetPresetDetailed': 'Részletes',
   'controls.charsetPresetBlocks': 'Blokkok',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimális',
   'controls.charsetPresetBinary': 'Bináris',
   'controls.charsetPresetCustom': 'Egyéni',
-  'controls.charsetCustomPlaceholder': 'karakterek a legsötétebbtől a legvilágosabbig',
-  'controls.charsetAddPlaceholder': 'Karakterek hozzáadása…',
-  'controls.charsetRemoveAriaLabel': '"{char}" eltávolítása a karakterkészletből',
   'controls.font': 'Betűtípus',
   'controls.fontMonoSystem': 'Fix szélességű (rendszer)',
   'controls.fontMonoAlt': 'Fix szélességű (alt)',

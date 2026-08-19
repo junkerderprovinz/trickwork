@@ -94,34 +94,26 @@ export function mountControls(container: HTMLElement, store: Store): void {
     customOpt.value = 'custom'
     customOpt.textContent = t('controls.charsetPresetCustom')
     charsetSelect.appendChild(customOpt)
-    // charsetWrap is a plain <div>, not a <label> - it also holds the ramp's
-    // tile buttons and the add-characters field, and a <label> wrapping
-    // multiple interactive controls forwards every click to the first one
-    // (the exact trap GlimStone's design-language.md calls out for Field).
-    // An explicit aria-label keeps the select's accessible name without it.
-    charsetSelect.setAttribute('aria-label', t('controls.charset'))
+    // Distinct from the textarea's own aria-label below - both used to say
+    // plain "Character set", which gave a screen reader (and any test
+    // locator by accessible name) two same-named controls with no way to
+    // tell the preset picker from the actual text field apart.
+    charsetSelect.setAttribute('aria-label', t('controls.charsetPresetLabel'))
     charsetWrap.appendChild(charsetSelect)
     enableSelectScroll(charsetSelect)
 
     // The live, editable ramp preview ASCGen2 had (its "Valid Ramp Chars"
-    // dialog) and TrickWork didn't: every character actually in play, each
-    // rendered at real size in the currently selected font - some presets
-    // (the 70-character "detailed" one) are otherwise impossible to judge
-    // from a plain option name. Order doesn't matter here: assembleGrid's
-    // font-width table re-sorts by measured ink coverage regardless of the
-    // order characters arrive in, so this is a set (click a tile to remove
-    // it, type to add more), not a sequence to rearrange.
-    const ramp = document.createElement('div')
-    ramp.className = 'charset-ramp'
-    charsetWrap.appendChild(ramp)
-
-    // Lives INSIDE the ramp well, right after the last character - adding
-    // and removing both happen in the one preview field instead of a tile
-    // grid plus a separate input underneath it.
-    const addInput = document.createElement('input')
-    addInput.type = 'text'
-    addInput.className = 'charset-add-input'
-    addInput.placeholder = t('controls.charsetAddPlaceholder')
+    // dialog) and TrickWork didn't - a genuinely plain <textarea> (jdp:
+    // "einfach ein normaler Text, den man normal bearbeiten kann"), not a
+    // tile grid you click to delete from. Order doesn't matter for the
+    // algorithm (assembleGrid's font-width table re-sorts by measured ink
+    // coverage regardless of array order), so free typing/pasting/deleting
+    // anywhere in the field is exactly as valid as any other order.
+    const charsetField = document.createElement('textarea')
+    charsetField.className = 'charset-field'
+    charsetField.spellcheck = false
+    charsetField.setAttribute('aria-label', t('controls.charset'))
+    charsetWrap.appendChild(charsetField)
 
     function syncCharsetSelect(): void {
       const current = store.getState().options
@@ -132,73 +124,59 @@ export function mountControls(container: HTMLElement, store: Store): void {
     }
     syncCharsetSelect()
 
-    function renderRamp(): void {
+    // Only touches the field's DISPLAYED text and font - never called from
+    // the field's own 'input' handler (that would fight the user's cursor
+    // mid-keystroke), only on external changes: initial mount, a preset
+    // pick, a font change, or blur (to show the deduped canonical form once
+    // editing is done).
+    function syncCharsetFieldDisplay(): void {
       const current = store.getState().options
-      // Detaching addInput (via innerHTML='') drops its focus even though
-      // it's the same node re-appended below - restore it after, so
-      // pressing Enter repeatedly to add several characters in a row
-      // doesn't kick focus out of the field each time.
-      const hadFocus = document.activeElement === addInput
-      ramp.innerHTML = ''
-      ramp.style.fontFamily = current.font.family
-      current.charset.forEach((ch, index) => {
-        const tile = document.createElement('button')
-        tile.type = 'button'
-        tile.className = 'charset-tile'
-        // A literal space renders as an invisible button; U+2423 OPEN BOX is
-        // the conventional stand-in so the tile still shows something - the
-        // actual stored character stays the real space either way.
-        tile.textContent = ch === ' ' ? '␣' : ch
-        const label = t('controls.charsetRemoveAriaLabel', { char: ch })
-        tile.setAttribute('aria-label', label)
-        tile.title = label
-        tile.addEventListener('click', () => {
-          store.commitOptionsSnapshot()
-          const cur = store.getState().options
-          store.setState({ options: { ...cur, charset: cur.charset.filter((_, i) => i !== index) } })
-          syncCharsetSelect()
-          renderRamp()
-        })
-        ramp.appendChild(tile)
-      })
-      ramp.appendChild(addInput)
-      if (hadFocus) addInput.focus()
+      charsetField.style.fontFamily = current.font.family
+      charsetField.value = current.charset.join('')
     }
-    renderRamp()
+    syncCharsetFieldDisplay()
+
+    // Extracts the live set of unique characters from whatever the user has
+    // typed and pushes it straight to the store - Array.from iterates by
+    // code point, so an astral character (emoji) stays one entry instead of
+    // splitting into two lone surrogates. Newlines are the textarea's own
+    // wrapping mechanism, not a real ramp character, so they're dropped.
+    function commitCharsetField(): void {
+      const seen: string[] = []
+      for (const ch of Array.from(charsetField.value)) {
+        if (ch === '\n' || ch === '\r') continue
+        if (!seen.includes(ch)) seen.push(ch)
+      }
+      if (seen.length === 0) return // never commit an empty charset
+      store.setState({ options: { ...store.getState().options, charset: seen } })
+      syncCharsetSelect()
+    }
+
+    // Gesture-aware undo, same pattern as numberSlider: one snapshot per
+    // focus session (however many keystrokes happen while focused), not one
+    // per keystroke - otherwise typing ten characters would take ten
+    // Ctrl+Z presses to undo instead of one.
+    let committedThisSession = false
+    charsetField.addEventListener('focus', () => {
+      if (committedThisSession) return
+      committedThisSession = true
+      store.commitOptionsSnapshot()
+    })
+    charsetField.addEventListener('input', commitCharsetField)
+    charsetField.addEventListener('blur', () => {
+      committedThisSession = false
+      syncCharsetFieldDisplay()
+    })
 
     charsetSelect.addEventListener('change', () => {
       const key = charsetSelect.value
-      if (key === 'custom') return // nothing to apply yet - edited via the tiles/add field below
+      if (key === 'custom') return // nothing to apply yet - edited via the field below
       store.commitOptionsSnapshot()
       store.setState({
         options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key as CharsetPresetKey]] },
       })
-      renderRamp()
+      syncCharsetFieldDisplay()
     })
-
-    function commitAddInput(): void {
-      if (addInput.value.length === 0) return
-      const cur = store.getState().options
-      // Array.from iterates by code point, so an astral character (emoji)
-      // stays one charset entry instead of splitting into two lone
-      // surrogates. Only genuinely new characters are appended - a tile
-      // already covers "this one is in the ramp", clicking it is how it
-      // comes back out.
-      const additions = Array.from(addInput.value).filter((ch) => !cur.charset.includes(ch))
-      if (additions.length > 0) {
-        store.commitOptionsSnapshot()
-        store.setState({ options: { ...cur, charset: [...cur.charset, ...additions] } })
-      }
-      addInput.value = ''
-      syncCharsetSelect()
-      renderRamp()
-    }
-    addInput.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') return
-      event.preventDefault()
-      commitAddInput()
-    })
-    addInput.addEventListener('blur', commitAddInput)
 
     const fontLabel = document.createElement('label')
     fontLabel.className = 'control-slider'
@@ -217,7 +195,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
       store.commitOptionsSnapshot()
       const current = store.getState().options
       store.setState({ options: { ...current, font: { ...current.font, family: fontSelect.value } } })
-      renderRamp()
+      syncCharsetFieldDisplay()
     })
     fontLabel.appendChild(fontSelect)
     enableSelectScroll(fontSelect)

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Αναίρεση',
   'nav.redo': 'Επανάληψη',
 
+  'history.eyebrow': 'Ιστορικό',
+
   'import.eyebrow': 'Εισαγωγή',
   'import.dropzoneText': 'Αφήστε εικόνες εδώ, ή κάντε κλικ για να επιλέξετε αρχεία',
   'import.ariaLabel': 'Επιλέξτε αρχεία εικόνων προς μετατροπή',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Φωτεινότητα',
   'controls.contrast': 'Αντίθεση',
   'controls.charset': 'Σύνολο χαρακτήρων',
+  'controls.charsetPresetLabel': 'Προεπιλογή συνόλου χαρακτήρων',
   'controls.charsetPresetStandard': 'Βασικό',
   'controls.charsetPresetDetailed': 'Λεπτομερές',
   'controls.charsetPresetBlocks': 'Μπλοκ',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Ελάχιστο',
   'controls.charsetPresetBinary': 'Δυαδικό',
   'controls.charsetPresetCustom': 'Προσαρμοσμένο',
-  'controls.charsetCustomPlaceholder': 'χαρακτήρες από το πιο σκούρο στο πιο ανοιχτό',
-  'controls.charsetAddPlaceholder': 'Προσθήκη χαρακτήρων…',
-  'controls.charsetRemoveAriaLabel': 'Αφαίρεση "{char}" από το σύνολο χαρακτήρων',
   'controls.font': 'Γραμματοσειρά',
   'controls.fontMonoSystem': 'Σταθερού πλάτους (σύστημα)',
   'controls.fontMonoAlt': 'Σταθερού πλάτους (εναλλακτική)',

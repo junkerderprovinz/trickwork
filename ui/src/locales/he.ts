@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'בטל',
   'nav.redo': 'בצע שוב',
 
+  'history.eyebrow': 'היסטוריה',
+
   'import.eyebrow': 'ייבוא',
   'import.dropzoneText': 'גררו תמונות לכאן, או לחצו לבחירת קבצים',
   'import.ariaLabel': 'בחירת קובצי תמונה להמרה',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'בהירות',
   'controls.contrast': 'ניגודיות',
   'controls.charset': 'ערכת תווים',
+  'controls.charsetPresetLabel': 'הגדרה קבועה מראש של ערכת תווים',
   'controls.charsetPresetStandard': 'רגיל',
   'controls.charsetPresetDetailed': 'מפורט',
   'controls.charsetPresetBlocks': 'בלוקים',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'מינימלי',
   'controls.charsetPresetBinary': 'בינארי',
   'controls.charsetPresetCustom': 'מותאם אישית',
-  'controls.charsetCustomPlaceholder': 'תווים מהכהה ביותר לבהיר ביותר',
-  'controls.charsetAddPlaceholder': 'הוסף תווים…',
-  'controls.charsetRemoveAriaLabel': 'הסר את "{char}" מערכת התווים',
   'controls.font': 'גופן',
   'controls.fontMonoSystem': 'רוחב קבוע (מערכת)',
   'controls.fontMonoAlt': 'רוחב קבוע (חלופי)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'تراجع',
   'nav.redo': 'إعادة',
 
+  'history.eyebrow': 'تاريخ',
+
   'import.eyebrow': 'استيراد',
   'import.dropzoneText': 'أفلت الصور هنا، أو انقر لاختيار الملفات',
   'import.ariaLabel': 'اختر ملفات الصور المراد تحويلها',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'السطوع',
   'controls.contrast': 'التباين',
   'controls.charset': 'مجموعة الأحرف',
+  'controls.charsetPresetLabel': 'قالب طقم الأحرف',
   'controls.charsetPresetStandard': 'قياسي',
   'controls.charsetPresetDetailed': 'مفصل',
   'controls.charsetPresetBlocks': 'كتل',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'أدنى',
   'controls.charsetPresetBinary': 'ثنائي',
   'controls.charsetPresetCustom': 'مخصص',
-  'controls.charsetCustomPlaceholder': 'الأحرف من الأغمق إلى الأفتح',
-  'controls.charsetAddPlaceholder': 'أضف أحرفًا…',
-  'controls.charsetRemoveAriaLabel': 'إزالة "{char}" من مجموعة الأحرف',
   'controls.font': 'الخط',
   'controls.fontMonoSystem': 'أحادي التباعد (النظام)',
   'controls.fontMonoAlt': 'أحادي التباعد (بديل)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': '元に戻す',
   'nav.redo': 'やり直す',
 
+  'history.eyebrow': '履歴',
+
   'import.eyebrow': 'インポート',
   'import.dropzoneText': '画像をここにドロップするか、クリックしてファイルを選択',
   'import.ariaLabel': '変換する画像ファイルを選択',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': '明るさ',
   'controls.contrast': 'コントラスト',
   'controls.charset': '文字セット',
+  'controls.charsetPresetLabel': '文字セットのプリセット',
   'controls.charsetPresetStandard': '標準',
   'controls.charsetPresetDetailed': '詳細',
   'controls.charsetPresetBlocks': 'ブロック',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': '最小',
   'controls.charsetPresetBinary': 'バイナリ',
   'controls.charsetPresetCustom': 'カスタム',
-  'controls.charsetCustomPlaceholder': '最も暗い文字から最も明るい文字まで',
-  'controls.charsetAddPlaceholder': '文字を追加…',
-  'controls.charsetRemoveAriaLabel': '文字セットから"{char}"を削除',
   'controls.font': 'フォント',
   'controls.fontMonoSystem': '等幅(システム)',
   'controls.fontMonoAlt': '等幅(代替)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Deshacer',
   'nav.redo': 'Rehacer',
 
+  'history.eyebrow': 'Historial',
+
   'import.eyebrow': 'Importar',
   'import.dropzoneText': 'Suelta imágenes aquí, o haz clic para elegir archivos',
   'import.ariaLabel': 'Elegir archivos de imagen para convertir',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Brillo',
   'controls.contrast': 'Contraste',
   'controls.charset': 'Conjunto de caracteres',
+  'controls.charsetPresetLabel': 'Preajuste de conjunto de caracteres',
   'controls.charsetPresetStandard': 'Estándar',
   'controls.charsetPresetDetailed': 'Detallado',
   'controls.charsetPresetBlocks': 'Bloques',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Mínimo',
   'controls.charsetPresetBinary': 'Binario',
   'controls.charsetPresetCustom': 'Personalizado',
-  'controls.charsetCustomPlaceholder': 'caracteres del más oscuro al más claro',
-  'controls.charsetAddPlaceholder': 'Añadir caracteres…',
-  'controls.charsetRemoveAriaLabel': 'Quitar "{char}" del conjunto de caracteres',
   'controls.font': 'Fuente',
   'controls.fontMonoSystem': 'Monoespaciada (sistema)',
   'controls.fontMonoAlt': 'Monoespaciada (alternativa)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Angre',
   'nav.redo': 'Gjør om',
 
+  'history.eyebrow': 'Historikk',
+
   'import.eyebrow': 'Importer',
   'import.dropzoneText': 'Slipp bilder her, eller klikk for å velge filer',
   'import.ariaLabel': 'Velg bildefiler som skal konverteres',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Lysstyrke',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Tegnsett',
+  'controls.charsetPresetLabel': 'Tegnsett-forhåndsinnstilling',
   'controls.charsetPresetStandard': 'Standard',
   'controls.charsetPresetDetailed': 'Detaljert',
   'controls.charsetPresetBlocks': 'Blokker',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binær',
   'controls.charsetPresetCustom': 'Tilpasset',
-  'controls.charsetCustomPlaceholder': 'tegn fra mørkest til lysest',
-  'controls.charsetAddPlaceholder': 'Legg til tegn…',
-  'controls.charsetRemoveAriaLabel': 'Fjern "{char}" fra tegnsettet',
   'controls.font': 'Skrift',
   'controls.fontMonoSystem': 'Fast bredde (system)',
   'controls.fontMonoAlt': 'Fast bredde (alt)',

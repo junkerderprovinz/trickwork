@@ -1,3 +1,4 @@
+import { iconUpload } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -11,9 +12,16 @@ export function mountDropzone(container: HTMLElement, store: Store): void {
   zone.tabIndex = 0
   zone.setAttribute('role', 'button')
 
+  const iconWrap = document.createElement('div')
+  iconWrap.className = 'dropzone-icon'
+  iconWrap.innerHTML = iconUpload()
+  const text = document.createElement('span')
+  text.className = 'dropzone-text'
+  zone.append(iconWrap, text)
+
   function applyLabels(): void {
     eyebrow.textContent = t('import.eyebrow')
-    zone.textContent = t('import.dropzoneText')
+    text.textContent = t('import.dropzoneText')
     zone.setAttribute('aria-label', t('import.ariaLabel'))
   }
   applyLabels()

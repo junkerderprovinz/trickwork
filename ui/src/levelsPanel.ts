@@ -80,6 +80,20 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   const gammaInput = makeHandle('gamma')
   const whiteInput = makeHandle('white')
 
+  // Live numeric values, not just a hover tooltip - ASCGen2's own dialog
+  // reads as more polished partly because the black/gamma/white numbers are
+  // always visible, not hidden behind a mouseover.
+  const readoutRow = document.createElement('div')
+  readoutRow.className = 'levels-readout-row'
+  const blackReadout = document.createElement('span')
+  blackReadout.className = 'levels-readout levels-readout--black glim-num'
+  const gammaReadout = document.createElement('span')
+  gammaReadout.className = 'levels-readout levels-readout--gamma glim-num'
+  const whiteReadout = document.createElement('span')
+  whiteReadout.className = 'levels-readout levels-readout--white glim-num'
+  readoutRow.append(blackReadout, gammaReadout, whiteReadout)
+  wrap.appendChild(readoutRow)
+
   function syncHandles(): void {
     const levels = levelsOf(store)
     blackInput.value = String(levels.black)
@@ -94,6 +108,9 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     blackInput.title = title
     gammaInput.title = title
     whiteInput.title = title
+    blackReadout.textContent = String(levels.black)
+    gammaReadout.textContent = levels.gamma.toFixed(2)
+    whiteReadout.textContent = String(levels.white)
   }
 
   function commit(patch: Partial<LevelsSpec>): void {

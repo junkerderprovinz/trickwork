@@ -5,18 +5,20 @@
 // stroked glyphs). TrickWork itself uses the corner Settings badge instead of
 // a full sidebar (a deliberate GlimStone-documented exception - see main.ts
 // and the vault project note), so the badge's own two icons live here
-// alongside the small option glyphs checkboxRow() (controlWidgets.ts) puts
-// next to Flip/Invert/Dither/Color - aria-hidden everywhere since the visible
-// label text next to each one already carries the accessible name.
+// alongside the icon-only toggle buttons iconToggleButton() (controlWidgets.ts)
+// uses for Flip/Invert/Dither/Color - aria-hidden everywhere since the
+// button's own title/aria-label (the hover tooltip) carries the accessible
+// name, not visible text next to the glyph anymore.
 
 function svg(inner: string, viewBox = '0 0 20 20'): string {
   return `<svg width="22" height="22" viewBox="${viewBox}" fill="none" class="nav-icon" aria-hidden="true">${inner}</svg>`
 }
 
-// Sized for a checkbox-row label (matches --text-dense's line height), not
-// the 22px badge - a full-size glyph there would dwarf the text next to it.
+// Sized to be the ENTIRE content of a toggle button, not a small aside next
+// to label text anymore - bumped up from the original 16px now that the
+// icon alone has to carry the option.
 function controlSvg(inner: string): string {
-  return `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="control-icon" aria-hidden="true">${inner}</svg>`
+  return `<svg width="19" height="19" viewBox="0 0 20 20" fill="none" class="control-icon" aria-hidden="true">${inner}</svg>`
 }
 
 // Two triangles pointing away from a dashed vertical mirror axis - flips
@@ -68,6 +70,17 @@ export function iconColor(): string {
   return controlSvg(
     `<path d="M10 2.8c-2.7 3.3-5.1 6.5-5.1 9.3a5.1 5.1 0 0 0 10.2 0c0-2.8-2.4-6-5.1-9.3z" fill="currentColor" />`,
   )
+}
+
+// An arrow rising into a receiving tray - the dropzone's own icon, sized up
+// from the toolbar glyphs (36px) since it's the sole visual anchor of a
+// genuinely inviting drop target, not a small aside next to text.
+export function iconUpload(): string {
+  return `<svg width="36" height="36" viewBox="0 0 20 20" fill="none" aria-hidden="true">` +
+    `<path d="M10 3v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />` +
+    `<path d="M5.5 8.5 10 4l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
+    `<path d="M3.5 14.5v1.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
+    `</svg>`
 }
 
 // Left arrow - the settings badge's own state once Settings is open (toggles

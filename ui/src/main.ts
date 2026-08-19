@@ -13,7 +13,8 @@ import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
 import { mountPresetsPanel } from './presetsPanel'
-import { iconAppearance, iconBack, iconRedo, iconUndo } from './icons'
+import { mountHistoryPanel } from './historyPanel'
+import { iconAppearance, iconBack } from './icons'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -60,27 +61,14 @@ subscribeLocale(() => {
 })
 brandTagline.textContent = t('app.tagline')
 
-// Undo/redo covers only the generation-affecting options (see state.ts) -
-// global header actions, not tucked into any one card, since they apply
-// across every card at once.
-const headerActions = document.createElement('div')
-headerActions.className = 'header-actions'
-header.appendChild(headerActions)
-
-const undoButton = document.createElement('button')
-undoButton.type = 'button'
-undoButton.className = 'header-icon-button'
-undoButton.innerHTML = iconUndo()
-const redoButton = document.createElement('button')
-redoButton.type = 'button'
-redoButton.className = 'header-icon-button'
-redoButton.innerHTML = iconRedo()
-headerActions.append(undoButton, redoButton)
-
+// Undo/redo used to live here too, but moved into its own card at the top
+// of the secondary column (jdp: "in einer seitlichen Card") - see
+// historyPanel.ts. The header now holds just the brand and the Settings
+// entry point.
 const settingsBadge = document.createElement('button')
 settingsBadge.type = 'button'
 settingsBadge.className = 'settings-badge'
-headerActions.appendChild(settingsBadge)
+header.appendChild(settingsBadge)
 
 const body = document.createElement('div')
 body.className = 'app-body'
@@ -92,19 +80,23 @@ convertView.className = 'convert-view'
 
 const primary = document.createElement('section')
 primary.className = 'app-primary'
+const topRow = document.createElement('div')
+topRow.className = 'app-primary-row'
 const dropzoneCard = section()
 const cropCard = section()
+topRow.append(dropzoneCard, cropCard)
 const previewCard = section()
-primary.append(dropzoneCard, cropCard, previewCard)
+primary.append(topRow, previewCard)
 
 const secondary = document.createElement('section')
 secondary.className = 'app-secondary'
+const historyCard = section()
 const adjustCard = section()
 const transformCard = section()
 const filtersCard = section()
 const queueCard = section()
 const exportCard = section()
-secondary.append(adjustCard, transformCard, filtersCard, queueCard, exportCard)
+secondary.append(historyCard, adjustCard, transformCard, filtersCard, queueCard, exportCard)
 
 convertView.append(primary, secondary)
 body.appendChild(convertView)
@@ -141,25 +133,6 @@ settingsBadge.addEventListener('click', () => {
 subscribeLocale(applyBadgeLabel)
 render()
 
-function applyUndoRedoLabels(): void {
-  const undoLabel = t('nav.undo')
-  const redoLabel = t('nav.redo')
-  undoButton.setAttribute('aria-label', undoLabel)
-  undoButton.title = undoLabel
-  redoButton.setAttribute('aria-label', redoLabel)
-  redoButton.title = redoLabel
-}
-function refreshUndoRedoState(): void {
-  undoButton.disabled = !store.canUndo()
-  redoButton.disabled = !store.canRedo()
-}
-undoButton.addEventListener('click', () => store.undo())
-redoButton.addEventListener('click', () => store.redo())
-store.subscribe(refreshUndoRedoState)
-subscribeLocale(applyUndoRedoLabels)
-applyUndoRedoLabels()
-refreshUndoRedoState()
-
 // Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y (and the Cmd equivalents on macOS). Skipped
 // while a text field has focus (the charset add-characters input, the
 // Settings accent hex field) so the browser's own native text-undo inside
@@ -187,6 +160,7 @@ window.addEventListener('keydown', (event) => {
 mountDropzone(dropzoneCard, store)
 mountCropPanel(cropCard, store)
 mountPreview(previewCard, store)
+mountHistoryPanel(historyCard, store)
 mountControls(adjustCard, store)
 mountTransformPanel(transformCard, store)
 mountFiltersPanel(filtersCard, store)

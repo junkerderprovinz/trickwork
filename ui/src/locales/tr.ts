@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Geri al',
   'nav.redo': 'Yinele',
 
+  'history.eyebrow': 'Geçmiş',
+
   'import.eyebrow': 'İçe Aktar',
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",
   'import.ariaLabel': "Dönüştürülecek resim dosyalarını seçin",
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Parlaklık',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Karakter kümesi',
+  'controls.charsetPresetLabel': 'Karakter kümesi ön ayarı',
   'controls.charsetPresetStandard': 'Standart',
   'controls.charsetPresetDetailed': 'Ayrıntılı',
   'controls.charsetPresetBlocks': 'Bloklar',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'İkili',
   'controls.charsetPresetCustom': 'Özel',
-  'controls.charsetCustomPlaceholder': 'en koyudan en açığa karakterler',
-  'controls.charsetAddPlaceholder': 'Karakter ekle…',
-  'controls.charsetRemoveAriaLabel': '"{char}" karakterini karakter kümesinden kaldır',
   'controls.font': 'Yazı tipi',
   'controls.fontMonoSystem': 'Sabit genişlikli (sistem)',
   'controls.fontMonoAlt': 'Sabit genişlikli (alt)',

@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Ongedaan maken',
   'nav.redo': 'Opnieuw',
 
+  'history.eyebrow': 'Geschiedenis',
+
   'import.eyebrow': 'Importeren',
   'import.dropzoneText': 'Sleep afbeeldingen hierheen, of klik om bestanden te kiezen',
   'import.ariaLabel': 'Kies afbeeldingsbestanden om te converteren',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Helderheid',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Tekenset',
+  'controls.charsetPresetLabel': 'Tekenset-voorinstelling',
   'controls.charsetPresetStandard': 'Standaard',
   'controls.charsetPresetDetailed': 'Gedetailleerd',
   'controls.charsetPresetBlocks': 'Blokken',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimaal',
   'controls.charsetPresetBinary': 'Binair',
   'controls.charsetPresetCustom': 'Aangepast',
-  'controls.charsetCustomPlaceholder': 'donkerste..lichtste tekens',
-  'controls.charsetAddPlaceholder': 'Tekens toevoegen…',
-  'controls.charsetRemoveAriaLabel': '"{char}" uit de tekenset verwijderen',
   'controls.font': 'Lettertype',
   'controls.fontMonoSystem': 'Monospace (systeem)',
   'controls.fontMonoAlt': 'Monospace (alt)',

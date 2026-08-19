@@ -67,43 +67,41 @@ export function segmentedRow<T extends string>(
 }
 
 /**
- * A single labelled checkbox, styled to sit in the same control-slider
- * rhythm as everything else. `icon`, when given, is a small aria-hidden SVG
- * string (see icons.ts's controlSvg()-built exports) placed between the box
- * and the label text - the label itself still carries the accessible name,
- * the icon is purely a faster-to-scan visual cue for options like Flip/
- * Invert/Dither/Color that read slower as plain text alone.
+ * A single icon-only toggle button - replaces the earlier checkbox+text row
+ * for options like Flip/Invert/Dither/Color entirely (jdp: "Icons anstelle
+ * der Checkboxen und Texte verwenden, nicht ergänzen"). The icon alone
+ * carries the option on screen; `label` becomes the hover tooltip (title)
+ * and the accessible name (aria-label) instead of visible text. Active
+ * state reads through the same accent-fill GlimStone already uses for a
+ * segmented row's active button, not a checkbox mark.
  */
-export function checkboxRow(
+export function iconToggleButton(
   label: string,
+  icon: string,
   initial: boolean,
   onChange: (checked: boolean) => void,
-  icon?: string,
   onBeforeChange?: () => void,
-): HTMLElement {
-  const wrap = document.createElement('label')
-  wrap.className = 'checkbox-row'
+): HTMLButtonElement {
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  btn.className = 'icon-toggle-button'
+  btn.innerHTML = icon
+  btn.title = label
+  btn.setAttribute('aria-label', label)
 
-  const input = document.createElement('input')
-  input.type = 'checkbox'
-  input.checked = initial
-  input.addEventListener('change', () => {
+  let checked = initial
+  function applyState(): void {
+    btn.classList.toggle('icon-toggle-button--active', checked)
+    btn.setAttribute('aria-pressed', String(checked))
+  }
+  applyState()
+
+  btn.addEventListener('click', () => {
     onBeforeChange?.()
-    onChange(input.checked)
+    checked = !checked
+    applyState()
+    onChange(checked)
   })
 
-  wrap.appendChild(input)
-
-  if (icon) {
-    const iconWrap = document.createElement('span')
-    iconWrap.className = 'checkbox-row-icon'
-    iconWrap.innerHTML = icon
-    wrap.appendChild(iconWrap)
-  }
-
-  const text = document.createElement('span')
-  text.textContent = label
-  wrap.appendChild(text)
-
-  return wrap
+  return btn
 }

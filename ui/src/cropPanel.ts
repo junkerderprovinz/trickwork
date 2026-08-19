@@ -6,6 +6,13 @@
 // nothing previously showed the SOURCE image anywhere (only the converted
 // ASCII output, in preview.ts). Sits between Import and Preview in the
 // primary column: import -> optionally crop the source -> see the result.
+//
+// A second pass added corner-resize and interior-move on top of the
+// original draw-a-fresh-rectangle-every-time behaviour (jdp: "man soll
+// Breite und Höhe verschieben können") - dragging now branches three ways
+// depending on where the gesture starts relative to the EXISTING selection:
+// a corner resizes it (opposite corner stays fixed), the interior moves it,
+// anywhere else draws a brand new one.
 
 import type { CropSpec } from 'trickwork-core'
 import { subscribeLocale, t } from './i18n'
@@ -21,6 +28,9 @@ const DISPLAY_MAX_HEIGHT = 320
 const MIN_DISPLAY_DIMENSION = 200
 const MAX_UPSCALE = 10
 const MIN_DRAG_PX = 8
+// How close (in canvas px) a pointer has to be to a corner to grab it for
+// resizing instead of starting a move or a fresh selection.
+const HANDLE_ZONE_PX = 12
 
 function computeDisplayScale(width: number, height: number): number {
   if (width > DISPLAY_MAX_WIDTH || height > DISPLAY_MAX_HEIGHT) {
@@ -30,6 +40,38 @@ function computeDisplayScale(width: number, height: number): number {
     return Math.min(MAX_UPSCALE, MIN_DISPLAY_DIMENSION / width, MIN_DISPLAY_DIMENSION / height)
   }
   return 1
+}
+
+interface Point {
+  x: number
+  y: number
+}
+
+interface PixelRect {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+type Corner = 'nw' | 'ne' | 'sw' | 'se'
+type DragMode = 'new' | 'move' | 'resize'
+
+function pointInRect(point: Point, rect: PixelRect): boolean {
+  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height
+}
+
+function hitCorner(point: Point, rect: PixelRect): Corner | null {
+  const corners: [Corner, number, number][] = [
+    ['nw', rect.x, rect.y],
+    ['ne', rect.x + rect.width, rect.y],
+    ['sw', rect.x, rect.y + rect.height],
+    ['se', rect.x + rect.width, rect.y + rect.height],
+  ]
+  for (const [id, cx, cy] of corners) {
+    if (Math.abs(point.x - cx) <= HANDLE_ZONE_PX && Math.abs(point.y - cy) <= HANDLE_ZONE_PX) return id
+  }
+  return null
 }
 
 export function mountCropPanel(container: HTMLElement, store: Store): void {
@@ -77,27 +119,35 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     return store.getState().options.crop
   }
 
-  function positionOverlay(x: number, y: number, width: number, height: number): void {
+  function currentCropPixels(): PixelRect | null {
+    const crop = currentCrop()
+    if (!crop || canvas.width === 0) return null
+    return {
+      x: crop.x * canvas.width,
+      y: crop.y * canvas.height,
+      width: crop.width * canvas.width,
+      height: crop.height * canvas.height,
+    }
+  }
+
+  function positionOverlay(rect: PixelRect): void {
     // 'block', not '' - the CSS class's own default is display:none (so the
     // overlay starts hidden with no JS needed), and setting an inline style
     // to '' only REMOVES an inline override, falling straight back to that
     // same display:none rather than showing the element.
-    overlay.style.display = width > 0 && height > 0 ? 'block' : 'none'
-    overlay.style.left = `${x}px`
-    overlay.style.top = `${y}px`
-    overlay.style.width = `${width}px`
-    overlay.style.height = `${height}px`
+    overlay.style.display = rect.width > 0 && rect.height > 0 ? 'block' : 'none'
+    overlay.style.left = `${rect.x}px`
+    overlay.style.top = `${rect.y}px`
+    overlay.style.width = `${rect.width}px`
+    overlay.style.height = `${rect.height}px`
   }
 
   /** Draws the overlay from the STORED crop (normalized) - the resting state between drags. */
   function drawStoredOverlay(): void {
     const crop = currentCrop()
     clearButton.style.display = crop ? '' : 'none'
-    if (!crop || canvas.width === 0) {
-      positionOverlay(0, 0, 0, 0)
-      return
-    }
-    positionOverlay(crop.x * canvas.width, crop.y * canvas.height, crop.width * canvas.width, crop.height * canvas.height)
+    const rect = currentCropPixels()
+    positionOverlay(rect ?? { x: 0, y: 0, width: 0, height: 0 })
   }
 
   let lastImageId: string | null = null
@@ -142,7 +192,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     drawStoredOverlay()
   }
 
-  function canvasPoint(event: PointerEvent): { x: number; y: number } {
+  function canvasPoint(event: PointerEvent): Point {
     const rect = canvas.getBoundingClientRect()
     return {
       x: Math.min(canvas.width, Math.max(0, event.clientX - rect.left)),
@@ -150,45 +200,111 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     }
   }
 
+  function cursorForCorner(corner: Corner): string {
+    return corner === 'nw' || corner === 'se' ? 'nwse-resize' : 'nesw-resize'
+  }
+
+  function updateHoverCursor(point: Point): void {
+    const rect = currentCropPixels()
+    if (!rect) {
+      canvas.style.cursor = 'crosshair'
+      return
+    }
+    const corner = hitCorner(point, rect)
+    if (corner) {
+      canvas.style.cursor = cursorForCorner(corner)
+    } else if (pointInRect(point, rect)) {
+      canvas.style.cursor = 'move'
+    } else {
+      canvas.style.cursor = 'crosshair'
+    }
+  }
+
   let dragging = false
-  let dragStart = { x: 0, y: 0 }
+  let dragMode: DragMode = 'new'
+  // 'new': the fixed start corner. 'resize': the fixed OPPOSITE corner
+  // (the one not being dragged). 'move': the point grabbed inside the
+  // selection, to measure the drag delta from.
+  let dragAnchor: Point = { x: 0, y: 0 }
+  let dragOriginalRect: PixelRect | null = null
+  let pendingRect: PixelRect | null = null
 
   canvas.addEventListener('pointerdown', (event) => {
     if (event.button !== 0 || canvas.width === 0) return
+    const point = canvasPoint(event)
+    const rect = currentCropPixels()
+
+    if (rect) {
+      const corner = hitCorner(point, rect)
+      if (corner) {
+        dragMode = 'resize'
+        dragAnchor = {
+          x: corner === 'nw' || corner === 'sw' ? rect.x + rect.width : rect.x,
+          y: corner === 'nw' || corner === 'ne' ? rect.y + rect.height : rect.y,
+        }
+      } else if (pointInRect(point, rect)) {
+        dragMode = 'move'
+        dragAnchor = point
+        dragOriginalRect = rect
+      } else {
+        dragMode = 'new'
+        dragAnchor = point
+      }
+    } else {
+      dragMode = 'new'
+      dragAnchor = point
+    }
+
     dragging = true
-    dragStart = canvasPoint(event)
+    pendingRect = null
     canvas.setPointerCapture(event.pointerId)
   })
 
   canvas.addEventListener('pointermove', (event) => {
-    if (!dragging) return
     const point = canvasPoint(event)
-    const x = Math.min(dragStart.x, point.x)
-    const y = Math.min(dragStart.y, point.y)
-    positionOverlay(x, y, Math.abs(point.x - dragStart.x), Math.abs(point.y - dragStart.y))
+    if (!dragging) {
+      updateHoverCursor(point)
+      return
+    }
+
+    let rect: PixelRect
+    if (dragMode === 'move' && dragOriginalRect) {
+      const dx = point.x - dragAnchor.x
+      const dy = point.y - dragAnchor.y
+      const x = Math.max(0, Math.min(canvas.width - dragOriginalRect.width, dragOriginalRect.x + dx))
+      const y = Math.max(0, Math.min(canvas.height - dragOriginalRect.height, dragOriginalRect.y + dy))
+      rect = { x, y, width: dragOriginalRect.width, height: dragOriginalRect.height }
+    } else {
+      // 'new' and 'resize' both work the same way geometrically: a
+      // rectangle spanning from a fixed anchor point to the current pointer.
+      const x = Math.min(dragAnchor.x, point.x)
+      const y = Math.min(dragAnchor.y, point.y)
+      rect = { x, y, width: Math.abs(point.x - dragAnchor.x), height: Math.abs(point.y - dragAnchor.y) }
+    }
+    pendingRect = rect
+    positionOverlay(rect)
   })
 
   function endDrag(event: PointerEvent): void {
     if (!dragging) return
     dragging = false
+    dragOriginalRect = null
     canvas.releasePointerCapture(event.pointerId)
-    const point = canvasPoint(event)
-    const pxWidth = Math.abs(point.x - dragStart.x)
-    const pxHeight = Math.abs(point.y - dragStart.y)
-    if (pxWidth < MIN_DRAG_PX || pxHeight < MIN_DRAG_PX) {
-      // Too small to be a deliberate selection (a stray click, or a
+
+    const rect = pendingRect
+    pendingRect = null
+    if (!rect || rect.width < MIN_DRAG_PX || rect.height < MIN_DRAG_PX) {
+      // Too small to be a deliberate selection/resize (a stray click, or a
       // near-zero drag) - leave whatever crop was already stored alone
       // rather than committing an accidental sliver.
       drawStoredOverlay()
       return
     }
-    const x = Math.min(dragStart.x, point.x)
-    const y = Math.min(dragStart.y, point.y)
     const crop: CropSpec = {
-      x: x / canvas.width,
-      y: y / canvas.height,
-      width: pxWidth / canvas.width,
-      height: pxHeight / canvas.height,
+      x: rect.x / canvas.width,
+      y: rect.y / canvas.height,
+      width: rect.width / canvas.width,
+      height: rect.height / canvas.height,
     }
     store.commitOptionsSnapshot()
     store.setState({ options: { ...store.getState().options, crop } })

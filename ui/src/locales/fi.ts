@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Kumoa',
   'nav.redo': 'Tee uudelleen',
 
+  'history.eyebrow': 'Historia',
+
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',
   'import.ariaLabel': 'Valitse muunnettavat kuvatiedostot',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Kirkkaus',
   'controls.contrast': 'Kontrasti',
   'controls.charset': 'Merkistö',
+  'controls.charsetPresetLabel': 'Merkistön esiasetus',
   'controls.charsetPresetStandard': 'Vakio',
   'controls.charsetPresetDetailed': 'Yksityiskohtainen',
   'controls.charsetPresetBlocks': 'Lohkot',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimaalinen',
   'controls.charsetPresetBinary': 'Binaari',
   'controls.charsetPresetCustom': 'Mukautettu',
-  'controls.charsetCustomPlaceholder': 'merkit tummimmasta vaaleimpaan',
-  'controls.charsetAddPlaceholder': 'Lisää merkkejä…',
-  'controls.charsetRemoveAriaLabel': 'Poista "{char}" merkistöstä',
   'controls.font': 'Fontti',
   'controls.fontMonoSystem': 'Tasavälinen (järjestelmä)',
   'controls.fontMonoAlt': 'Tasavälinen (vaihtoehtoinen)',

@@ -49,54 +49,49 @@ html, body {
   color: var(--carbon-text-muted);
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-
-/* Undo/redo - same square-badge treatment as Settings (rule: a square/
-   circle badge implies "just a glyph", matching GlimStone's own pill-vs-
-   badge distinction), disabled by greying out rather than hiding, since a
-   hidden-then-reappearing button would shift the whole header's layout on
-   every history change. */
-.header-icon-button {
+/* Undo/redo - now a card of its own (historyPanel.ts) rather than header
+   actions, sitting in the same icon-toggle-row well as Flip/Invert/etc.,
+   but without their persistent active/checked state - these are momentary
+   actions, not toggles, so no --active fill, just hover/disabled states.
+   Disabled by greying out rather than hiding, since a hidden-then-
+   reappearing button would shift the row's own width on every history change. */
+.history-button {
   appearance: none;
   border: none;
   cursor: pointer;
-  flex-shrink: 0;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.35rem;
+  height: 2.35rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-control);
-  background-color: var(--carbon-surface2);
+  background-color: transparent;
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
 }
 
-.header-icon-button:hover:not(:disabled) {
+.history-button:hover:not(:disabled) {
   background-color: var(--carbon-hover);
   color: var(--carbon-text);
 }
 
-.header-icon-button:disabled {
+.history-button:disabled {
   cursor: default;
   opacity: 0.35;
 }
 
 /* Square, not the pill (GlimStone's own distinction: pill implies text
    content, a square/circle badge implies "just a glyph") - opens Settings
-   as its own full page, no preview or working cards behind it. */
+   as its own full page, no preview or working cards behind it. Sized up
+   from the original 2.25rem - it's the single entry point to the whole
+   Settings destination, not just another toolbar icon. */
 .settings-badge {
   appearance: none;
   border: none;
   cursor: pointer;
   flex-shrink: 0;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 3rem;
+  height: 3rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -104,6 +99,11 @@ html, body {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease;
+}
+
+.settings-badge svg {
+  width: 26px;
+  height: 26px;
 }
 
 .settings-badge:hover {
@@ -145,21 +145,57 @@ html, body {
   min-width: 0;
 }
 
+/* Import + Crop side by side - importing and then trimming the source
+   image are one continuous step before anything gets converted, so they
+   read as a pair rather than a vertical stack. Preview stays full-width
+   below both, since it's the thing everything else feeds into. */
+.app-primary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .app-primary-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Settings is its own page, not a column beside the canvas - centred and
    width-capped, since Shape/Theme/Accent/Language never need the full
    viewport the working canvas does. Two cards stack here now (appearance,
    presets) - one card per section still holds, this is two sections. */
+/* Settings is deliberately roomier than the dense working cards on Convert -
+   it's a destination you visit and read, not a live panel you glance at
+   mid-drag, so it gets real breathing room instead of the Convert page's
+   compact rhythm. Scoped to .settings-view so the Convert cards (Adjust/
+   Transform/Filters/...) keep their own tighter --text-dense spacing. */
 .settings-view {
-  padding: 1.5rem;
+  padding: 2.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.75rem;
 }
 
 .settings-card {
   width: 100%;
-  max-width: 30rem;
+  max-width: 34rem;
+  padding: 1.75rem 2rem;
+}
+
+.settings-view .control-slider {
+  gap: 0.6rem;
+  font-size: var(--text-body);
+}
+
+.settings-view .segmented-row {
+  padding: 0.3rem;
+}
+
+.settings-view .segmented-button {
+  padding: 0.6rem 0.75rem;
 }
 
 /* One card per section (rule 1: never nest cards). */
@@ -171,15 +207,20 @@ html, body {
 }
 
 .glim-section > .glim-eyebrow {
-  margin-bottom: -0.25rem;
+  margin-bottom: -0.15rem;
   /* GlimStone exception (recorded in the vault project note): the shared
      .glim-eyebrow is deliberately quiet everywhere else because it labels a
      panel the user has already navigated to via a tab or sidebar item. Here
      it is the ONLY heading five simultaneously-visible cards have - it IS
-     the navigation, not a secondary label under it - so it needs the
-     contrast and weight of an actual card title, not a footnote. */
-  color: var(--carbon-text-sub);
-  font-weight: 600;
+     the navigation, not a secondary label under it, so it reads as an
+     actual card TITLE: full text contrast (not the muted -sub step),
+     bumped a size up from the base eyebrow, and bolder still. A second
+     pass after jdp flagged the first attempt (carbon-text-sub, 600) as
+     still too quiet to register as a heading at a glance. */
+  font-size: var(--text-dense);
+  color: var(--carbon-text);
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
 
 /* ---------------------------------------------------------------------
@@ -202,7 +243,9 @@ html, body {
 
 .crop-source-canvas {
   display: block;
-  cursor: crosshair;
+  /* No static cursor here - cropPanel.ts sets it dynamically per pointer
+     position (crosshair over open space, move over the selection interior,
+     resize cursors over its corners). */
 }
 
 .crop-overlay {
@@ -231,34 +274,40 @@ html, body {
 }
 
 /* ---------------------------------------------------------------------
-   Drop zone — a compact well that expands into the full empty-state
-   invitation when the queue has nothing in it yet.
+   Drop zone — a real, inviting drop target now (jdp: "eine schöne Drop
+   Zone"), not a thin bar: a centred icon-well over the label, filling the
+   full height of its half of the Import/Crop row so both cards read as an
+   equal pair.
    --------------------------------------------------------------------- */
 .dropzone {
   cursor: pointer;
   border-radius: var(--radius-control);
-  padding: 0.9rem 1rem;
+  padding: 2rem 1.25rem;
   display: flex;
+  flex: 1;
+  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
+  gap: 0.85rem;
+  min-height: 12rem;
+  box-sizing: border-box;
   color: var(--carbon-text-sub);
   font-size: var(--text-body);
+  text-align: center;
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-.dropzone::before {
-  content: "+";
+.dropzone-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 4rem;
+  height: 4rem;
+  flex-shrink: 0;
   border-radius: var(--radius-pill);
   background-color: var(--carbon-surface3);
   color: var(--carbon-text);
-  font-size: 1rem;
-  line-height: 1;
-  flex-shrink: 0;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
 .dropzone:hover {
@@ -270,7 +319,7 @@ html, body {
   color: var(--carbon-text);
 }
 
-.dropzone--active::before {
+.dropzone--active .dropzone-icon {
   background-color: var(--accent);
   color: var(--accent-contrast);
 }
@@ -453,55 +502,33 @@ input[type="text"]:focus-visible {
 }
 
 /* The live, editable character-ramp preview (ASCGen2's "Valid Ramp Chars"
-   dialog) - one well holding the actual characters as plain text, each
-   rendered at real size in the active font so a 70-character preset is
-   legible, not just a name in a dropdown. Deliberately NOT individually
-   boxed/pill-shaped ("badges") - it reads as running text you can click
-   into, matching a plain character preview rather than a chip picker. The
-   add-characters field lives inside this same well, right after the last
-   character, so adding and removing both happen in the one preview area
-   instead of a tile grid plus a separate input underneath it. */
-.charset-ramp {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.05rem;
-  padding: 0.55rem 0.7rem;
-  min-height: 2.75rem;
+   dialog) - a genuinely plain, freely-editable text field holding the
+   actual characters, rendered at real size in the active font so a
+   70-character preset is legible, not just a name in a dropdown. Second
+   design pass: the first version modelled this as click-to-remove tiles
+   plus a separate fixed add-row, which jdp flagged as not "normal text you
+   can edit normally" - a <textarea> instead, so typing/selecting/pasting/
+   backspacing anywhere in the field works exactly like editing any other
+   text, with no click-to-delete behaviour and no separate input row at all. */
+.charset-field {
+  display: block;
+  width: 100%;
+  min-height: 3.5rem;
+  resize: vertical;
+  padding: 0.6rem 0.7rem;
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
-}
-
-.charset-tile {
-  padding: 0.1rem 0.15rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  line-height: 1;
+  border: none;
   color: var(--carbon-text);
-  background-color: transparent;
-  border-radius: var(--radius-control);
-  transition: color 120ms ease, background-color 120ms ease;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
-.charset-tile:hover {
-  color: var(--status-fail-text);
-  background-color: var(--status-fail-bg);
-  text-decoration: line-through;
-}
-
-.charset-add-input {
-  flex: 1 1 auto;
-  min-width: 6rem;
-  width: auto;
-  padding: 0.1rem 0.15rem;
-  background: transparent;
-  font-size: var(--text-dense);
-}
-
-.charset-add-input:focus-visible {
-  background-color: var(--carbon-surface3);
+.charset-field:focus-visible {
+  outline: none;
+  background-color: var(--carbon-hover);
 }
 
 .controls-note {
@@ -526,23 +553,32 @@ input[type="text"]:focus-visible {
   overflow: hidden;
 }
 
+/* Fixed white, like ASCGen2's own Levels dialog (and matching the same
+   "represents actual tonal data, not app chrome" reasoning the crop source
+   canvas and the ASCII preview already use a fixed white page for) - a
+   dark-surface histogram reads far weaker than bars plotted on white. */
 .levels-histogram {
   display: block;
   width: 100%;
-  height: 64px;
-  background-color: var(--carbon-surface2);
+  height: 84px;
+  background-color: #fff;
 }
 
+/* A literal black-to-white gradient band under the histogram - the same
+   visual cue ASCGen2's/Photoshop's own Levels dialog uses so the black/
+   gamma/white handles read immediately as points along a tonal range,
+   not just three unlabeled triangles on a flat grey bar. */
 .levels-track {
   position: relative;
-  height: 18px;
+  height: 22px;
+  background: linear-gradient(to right, #000, #fff);
 }
 
 .levels-handle-input {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 18px;
+  height: 22px;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -626,30 +662,66 @@ input.levels-handle-input::-moz-range-thumb {
   background-color: var(--carbon-hover);
 }
 
-.checkbox-row {
+/* Live black/gamma/white numbers under the track, positioned to sit roughly
+   under their own handle (left/center/right) - always visible, not just on
+   hover, the same as ASCGen2's own dialog. */
+.levels-readout-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: var(--text-dense);
-  color: var(--carbon-text-sub);
-  cursor: pointer;
+  justify-content: space-between;
+  padding-top: 0.1rem;
+  font-size: var(--text-caption);
 }
 
-.checkbox-row input[type='checkbox'] {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--accent);
-  cursor: pointer;
+.levels-readout--black {
+  color: var(--carbon-text);
 }
-
-.checkbox-row-icon {
-  display: inline-flex;
-  flex-shrink: 0;
+.levels-readout--gamma {
   color: var(--carbon-text-muted);
 }
+.levels-readout--white {
+  color: var(--carbon-text-sub);
+}
 
-.checkbox-row-icon .control-icon {
-  display: block;
+/* Icon-only toggle buttons - replaced the earlier checkbox+text rows
+   entirely (jdp: icons INSTEAD of checkboxes and text, not alongside).
+   Sits in the same well-and-segments family as .segmented-row: a shared
+   inset well holding equal-sized square buttons, active state is an
+   accent fill (GlimStone rule: colour marks activity), never a checkmark. */
+.icon-toggle-row {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.2rem;
+  background-color: var(--carbon-surface2);
+  border-radius: var(--radius-control);
+  width: fit-content;
+}
+
+.icon-toggle-button {
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--carbon-text-sub);
+  border-radius: var(--radius-control);
+}
+
+.icon-toggle-button:hover {
+  background-color: var(--carbon-hover);
+  color: var(--carbon-text);
+}
+
+.icon-toggle-button--active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.icon-toggle-button--active:hover {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
 }
 
 /* ---------------------------------------------------------------------
@@ -794,7 +866,7 @@ button:focus-visible {
 .presets-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.85rem;
 }
 
 .presets-button-row {
@@ -814,7 +886,7 @@ button:focus-visible {
 .appearance-settings {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1.5rem;
 }
 
 /* A toggle-switch group, not a row of independent pill buttons: one shared

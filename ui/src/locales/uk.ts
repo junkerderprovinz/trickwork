@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Скасувати',
   'nav.redo': 'Повторити',
 
+  'history.eyebrow': 'Історія',
+
   'import.eyebrow': 'Імпорт',
   'import.dropzoneText': 'Перетягніть зображення сюди або натисніть, щоб вибрати файли',
   'import.ariaLabel': 'Вибрати файли зображень для конвертації',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Яскравість',
   'controls.contrast': 'Контраст',
   'controls.charset': 'Набір символів',
+  'controls.charsetPresetLabel': 'Пресет набору символів',
   'controls.charsetPresetStandard': 'Стандартний',
   'controls.charsetPresetDetailed': 'Детальний',
   'controls.charsetPresetBlocks': 'Блоки',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Мінімальний',
   'controls.charsetPresetBinary': 'Двійковий',
   'controls.charsetPresetCustom': 'Власний',
-  'controls.charsetCustomPlaceholder': 'символи від найтемнішого до найсвітлішого',
-  'controls.charsetAddPlaceholder': 'Додати символи…',
-  'controls.charsetRemoveAriaLabel': 'Видалити "{char}" з набору символів',
   'controls.font': 'Шрифт',
   'controls.fontMonoSystem': 'Моноширинний (системний)',
   'controls.fontMonoAlt': 'Моноширинний (альт.)',

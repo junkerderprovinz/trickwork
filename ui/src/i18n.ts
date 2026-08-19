@@ -23,6 +23,8 @@ export const en = {
   'nav.undo': 'Undo',
   'nav.redo': 'Redo',
 
+  'history.eyebrow': 'History',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Drop images here, or click to choose files',
   'import.ariaLabel': 'Choose image files to convert',
@@ -42,6 +44,7 @@ export const en = {
   'controls.brightness': 'Brightness',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Character set',
+  'controls.charsetPresetLabel': 'Character set preset',
   'controls.charsetPresetStandard': 'Standard',
   'controls.charsetPresetDetailed': 'Detailed',
   'controls.charsetPresetBlocks': 'Blocks',
@@ -53,9 +56,6 @@ export const en = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binary',
   'controls.charsetPresetCustom': 'Custom',
-  'controls.charsetCustomPlaceholder': 'darkest..lightest characters',
-  'controls.charsetAddPlaceholder': 'Add characters…',
-  'controls.charsetRemoveAriaLabel': 'Remove "{char}" from the character set',
   'controls.font': 'Font',
   'controls.fontMonoSystem': 'Monospace (system)',
   'controls.fontMonoAlt': 'Monospace (alt)',
@@ -153,6 +153,8 @@ export const de: Translations = {
   'nav.undo': 'Rückgängig',
   'nav.redo': 'Wiederherstellen',
 
+  'history.eyebrow': 'Verlauf',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',
   'import.ariaLabel': 'Bilddateien zum Konvertieren auswählen',
@@ -172,6 +174,7 @@ export const de: Translations = {
   'controls.brightness': 'Helligkeit',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Zeichensatz',
+  'controls.charsetPresetLabel': 'Zeichensatz-Vorlage',
   'controls.charsetPresetStandard': 'Standard',
   'controls.charsetPresetDetailed': 'Detailliert',
   'controls.charsetPresetBlocks': 'Blöcke',
@@ -183,9 +186,6 @@ export const de: Translations = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binär',
   'controls.charsetPresetCustom': 'Benutzerdefiniert',
-  'controls.charsetCustomPlaceholder': 'dunkelste..hellste Zeichen',
-  'controls.charsetAddPlaceholder': 'Zeichen hinzufügen…',
-  'controls.charsetRemoveAriaLabel': '"{char}" aus dem Zeichensatz entfernen',
   'controls.font': 'Schriftart',
   'controls.fontMonoSystem': 'Monospace (System)',
   'controls.fontMonoAlt': 'Monospace (alternativ)',

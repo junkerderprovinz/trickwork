@@ -13,6 +13,8 @@ const dict: Translations = {
   'nav.undo': 'Anulează',
   'nav.redo': 'Refă',
 
+  'history.eyebrow': 'Istoric',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Trage imagini aici sau dă clic pentru a alege fișiere',
   'import.ariaLabel': 'Alege fișierele imagine de convertit',
@@ -32,6 +34,7 @@ const dict: Translations = {
   'controls.brightness': 'Luminozitate',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Set de caractere',
+  'controls.charsetPresetLabel': 'Presetare set de caractere',
   'controls.charsetPresetStandard': 'Standard',
   'controls.charsetPresetDetailed': 'Detaliat',
   'controls.charsetPresetBlocks': 'Blocuri',
@@ -43,9 +46,6 @@ const dict: Translations = {
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binar',
   'controls.charsetPresetCustom': 'Personalizat',
-  'controls.charsetCustomPlaceholder': 'caractere de la cel mai închis la cel mai deschis',
-  'controls.charsetAddPlaceholder': 'Adaugă caractere…',
-  'controls.charsetRemoveAriaLabel': 'Elimină "{char}" din setul de caractere',
   'controls.font': 'Font',
   'controls.fontMonoSystem': 'Monospațiat (sistem)',
   'controls.fontMonoAlt': 'Monospațiat (alt)',
