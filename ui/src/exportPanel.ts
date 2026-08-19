@@ -16,10 +16,6 @@ import type { BatchItem, Store } from './state'
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
 
 export function mountExportPanel(container: HTMLElement, store: Store): void {
-  const eyebrow = document.createElement('div')
-  eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
-
   const panel = document.createElement('div')
   panel.className = 'export-panel'
 
@@ -51,7 +47,6 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   container.appendChild(panel)
 
   function applyLabels(): void {
-    eyebrow.textContent = t('export.eyebrow')
     for (const { format, button } of formatButtons) {
       // aria-label carries the full sentence as the accessible name (what
       // screen readers and Playwright's getByRole both read), while the

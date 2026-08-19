@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': "Görüntüden ASCII sanatına",
 
+  'tabs.adjust': 'Ayarla',
+  'tabs.transform': 'Dönüştür',
+  'tabs.filters': 'Filtreler',
+
   'import.eyebrow': 'İçe Aktar',
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",
   'import.ariaLabel': "Dönüştürülecek resim dosyalarını seçin",

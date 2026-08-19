@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': 'Képből ASCII-művészet',
 
+  'tabs.adjust': 'Beállítás',
+  'tabs.transform': 'Átalakítás',
+  'tabs.filters': 'Szűrők',
+
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',
   'import.ariaLabel': 'Válassza ki az átalakítandó képfájlokat',

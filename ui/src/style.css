@@ -83,6 +83,54 @@ html, body {
 }
 
 /* ---------------------------------------------------------------------
+   Tabs — GlimStone's one horizontal-selector component (design-language.md,
+   "Der eine waagerechte Wähler"). No box around the strip itself (the filled
+   tab already shows the selection), wraps rather than scrolls, roving
+   tabindex handled in tabs.ts.
+   --------------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.5rem;
+}
+
+.tab-button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-dense);
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--carbon-text-muted);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.tab-button:hover {
+  color: var(--carbon-text);
+  background-color: var(--carbon-hover);
+}
+
+.tab-button--active,
+.tab-button--active:hover {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ---------------------------------------------------------------------
    Drop zone — a compact well that expands into the full empty-state
    invitation when the queue has nothing in it yet.
    --------------------------------------------------------------------- */
@@ -261,17 +309,6 @@ input[type="text"]:focus-visible {
   padding-top: 0.25rem;
   font-size: var(--text-caption);
   line-height: 1.5;
-  color: var(--carbon-text-muted);
-}
-
-/* Groups Transform/Filters rows within the one Controls card (rule 1: never
-   nest a card inside a card) - spacing and the caption treatment carry the
-   separation, not a rule line (never a literal border for a divider). */
-.controls-subhead {
-  margin-top: 0.4rem;
-  font-size: var(--text-caption);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--carbon-text-muted);
 }
 

@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': '图片转 ASCII 艺术',
 
+  'tabs.adjust': '调整',
+  'tabs.transform': '变换',
+  'tabs.filters': '滤镜',
+
   'import.eyebrow': '导入',
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',
   'import.ariaLabel': '选择要转换的图片文件',

@@ -42,10 +42,6 @@ const ACCENT_KEYS: Record<string, TranslationKey> = {
 }
 
 export function mountAppearanceSettings(container: HTMLElement): void {
-  const eyebrow = document.createElement('div')
-  eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
-
   const panel = document.createElement('div')
   panel.className = 'appearance-settings'
   container.appendChild(panel)
@@ -67,7 +63,6 @@ export function mountAppearanceSettings(container: HTMLElement): void {
   // than patching five different label sites in place (same reasoning as
   // controls.ts) - it's a rare, deliberate action, not a hot path.
   function build(): void {
-    eyebrow.textContent = t('appearance.eyebrow')
     panel.innerHTML = ''
 
     const shapeRow = segmentedRow(

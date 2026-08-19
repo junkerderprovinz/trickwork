@@ -10,10 +10,6 @@ const STATUS_KEYS: Record<BatchItemStatus, TranslationKey> = {
 }
 
 export function mountQueue(container: HTMLElement, store: Store): void {
-  const eyebrow = document.createElement('div')
-  eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
-
   const empty = document.createElement('p')
   empty.className = 'queue-empty'
   container.appendChild(empty)
@@ -23,7 +19,6 @@ export function mountQueue(container: HTMLElement, store: Store): void {
   container.appendChild(list)
 
   function render() {
-    eyebrow.textContent = t('queue.eyebrow')
     empty.textContent = t('queue.empty')
     const state = store.getState()
     empty.style.display = state.items.length === 0 ? '' : 'none'

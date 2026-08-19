@@ -1,5 +1,4 @@
-import { CHARSET_PRESETS, type CharsetPresetKey, type Rotation, type SharpenMethod } from 'trickwork-core'
-import { checkboxRow, segmentedRow } from './controlWidgets'
+import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
@@ -10,35 +9,13 @@ const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontSans', family: 'ui-sans-serif, system-ui, "Segoe UI", sans-serif' },
 ]
 
-const ROTATIONS: { value: Rotation; key: TranslationKey }[] = [
-  { value: 0, key: 'controls.rotate0' },
-  { value: 90, key: 'controls.rotate90' },
-  { value: 180, key: 'controls.rotate180' },
-  { value: 270, key: 'controls.rotate270' },
-]
-
-const SHARPEN_METHODS: { value: SharpenMethod; key: TranslationKey }[] = [
-  { value: 'none', key: 'controls.sharpenNone' },
-  { value: 'sharpen', key: 'controls.sharpenSharpen' },
-  { value: 'unsharp', key: 'controls.sharpenUnsharp' },
-]
-
+/** The Adjust tab: the core rendering parameters (not transform/filter/colour - see transformPanel.ts/filtersPanel.ts). */
 export function mountControls(container: HTMLElement, store: Store): void {
-  const eyebrow = document.createElement('div')
-  eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
-
   const panel = document.createElement('div')
   panel.className = 'controls'
   container.appendChild(panel)
 
-  // The whole panel is cheap to rebuild (a handful of DOM nodes, no heavy
-  // work) and it only happens on a deliberate language switch, so a full
-  // rebuild from current store state is simpler and more robust than trying
-  // to patch every label and option string in place across five different
-  // control types.
   function build(): void {
-    eyebrow.textContent = t('controls.eyebrow')
     panel.innerHTML = ''
     const options = store.getState().options
 
@@ -140,68 +117,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     rtfNote.className = 'controls-note'
     rtfNote.textContent = t('controls.rtfNote')
 
-    const transformLabel = document.createElement('div')
-    transformLabel.className = 'controls-subhead'
-    transformLabel.textContent = t('controls.transform')
-
-    const rotateRow = segmentedRow(
-      t('controls.rotate'),
-      ROTATIONS.map((r) => ({ value: String(r.value), label: t(r.key) })),
-      String(options.rotate ?? 0),
-      (value) => {
-        store.setState({ options: { ...store.getState().options, rotate: Number(value) as Rotation } })
-      },
-    )
-
-    const flipH = checkboxRow(t('controls.flipHorizontal'), !!options.flipHorizontal, (checked) => {
-      store.setState({ options: { ...store.getState().options, flipHorizontal: checked } })
-    })
-    const flipV = checkboxRow(t('controls.flipVertical'), !!options.flipVertical, (checked) => {
-      store.setState({ options: { ...store.getState().options, flipVertical: checked } })
-    })
-
-    const filtersLabel = document.createElement('div')
-    filtersLabel.className = 'controls-subhead'
-    filtersLabel.textContent = t('controls.filters')
-
-    const invert = checkboxRow(t('controls.invert'), !!options.invert, (checked) => {
-      store.setState({ options: { ...store.getState().options, invert: checked } })
-    })
-    const dither = checkboxRow(t('controls.dither'), !!options.dither, (checked) => {
-      store.setState({ options: { ...store.getState().options, dither: checked } })
-    })
-
-    const sharpenRow = segmentedRow(
-      t('controls.sharpen'),
-      SHARPEN_METHODS.map((s) => ({ value: s.value, label: t(s.key) })),
-      options.sharpen ?? 'none',
-      (value) => {
-        store.setState({ options: { ...store.getState().options, sharpen: value } })
-      },
-    )
-
-    const color = checkboxRow(t('controls.color'), !!options.color, (checked) => {
-      store.setState({ options: { ...store.getState().options, color: checked } })
-    })
-
-    panel.append(
-      columns,
-      brightness,
-      contrast,
-      charsetLabel,
-      customInput,
-      fontLabel,
-      rtfNote,
-      transformLabel,
-      rotateRow,
-      flipH,
-      flipV,
-      filtersLabel,
-      invert,
-      dither,
-      sharpenRow,
-      color,
-    )
+    panel.append(columns, brightness, contrast, charsetLabel, customInput, fontLabel, rtfNote)
   }
 
   build()
@@ -216,7 +132,7 @@ function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
   return true
 }
 
-function numberSlider(
+export function numberSlider(
   label: string,
   min: number,
   max: number,

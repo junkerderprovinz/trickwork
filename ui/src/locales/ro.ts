@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': 'Imagine în artă ASCII',
 
+  'tabs.adjust': 'Ajustare',
+  'tabs.transform': 'Transformare',
+  'tabs.filters': 'Filtre',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Trage imagini aici sau dă clic pentru a alege fișiere',
   'import.ariaLabel': 'Alege fișierele imagine de convertit',

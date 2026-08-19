@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': '이미지를 ASCII 아트로',
 
+  'tabs.adjust': '조정',
+  'tabs.transform': '변형',
+  'tabs.filters': '필터',
+
   'import.eyebrow': '가져오기',
   'import.dropzoneText': '이미지를 여기에 놓거나 클릭하여 파일을 선택하세요',
   'import.ariaLabel': '변환할 이미지 파일 선택',

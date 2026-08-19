@@ -4,6 +4,10 @@ import type { Translations } from '../i18n'
 const dict: Translations = {
   'app.tagline': 'Kuvasta ASCII-taiteeksi',
 
+  'tabs.adjust': 'Säädä',
+  'tabs.transform': 'Muunnos',
+  'tabs.filters': 'Suodattimet',
+
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',
   'import.ariaLabel': 'Valitse muunnettavat kuvatiedostot',

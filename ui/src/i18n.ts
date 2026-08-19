@@ -14,6 +14,10 @@
 export const en = {
   'app.tagline': 'Image to ASCII art',
 
+  'tabs.adjust': 'Adjust',
+  'tabs.transform': 'Transform',
+  'tabs.filters': 'Filters',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Drop images here, or click to choose files',
   'import.ariaLabel': 'Choose image files to convert',
@@ -101,6 +105,10 @@ export type Translations = Partial<Record<TranslationKey, string>>
 
 export const de: Translations = {
   'app.tagline': 'Bild zu ASCII-Kunst',
+
+  'tabs.adjust': 'Anpassen',
+  'tabs.transform': 'Transformation',
+  'tabs.filters': 'Filter',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',
