@@ -102,7 +102,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-control);
+  border-radius: min(var(--radius-pill), 50%);
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
@@ -151,11 +151,15 @@ html, body {
   font-size: var(--text-caption);
 }
 
-/* Square, not the pill (GlimStone's own distinction: pill implies text
-   content, a square/circle badge implies "just a glyph") - opens Settings
-   as its own full page, no preview or working cards behind it. Sized up
-   from the original 2.25rem - it's the single entry point to the whole
-   Settings destination, not just another toolbar icon. */
+/* GlimStone's own "Badges" register: an icon-only/single-glyph badge is the
+   "circle" register (min(--radius-pill, 50%)), not "rounded" (--radius-
+   control) - that second one is for rectangular text-bearing controls. This
+   used to say the opposite ("Square, not the pill") and rendered as a
+   rounded square instead of a true circle in Round shape mode - jdp: "Der
+   Rund form modus macht die badges nicht richtig rund". Opens Settings as
+   its own full page, no preview or working cards behind it. Sized up from
+   the original 2.25rem - it's the single entry point to the whole Settings
+   destination, not just another toolbar icon. */
 .settings-badge {
   appearance: none;
   border: none;
@@ -166,7 +170,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-control);
+  border-radius: min(var(--radius-pill), 50%);
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease;
@@ -499,6 +503,9 @@ canvas.preview-canvas[width="0"] {
   justify-content: center;
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
+  /* Overrides the base button rule's --radius-control (a rectangular-
+     control radius) - an icon-only badge is GlimStone's "circle" register. */
+  border-radius: min(var(--radius-pill), 50%);
 }
 .preview-copy-button .control-icon {
   width: 15px;
@@ -524,6 +531,7 @@ canvas.preview-canvas[width="0"] {
   justify-content: center;
   line-height: 1;
   background-color: var(--carbon-surface2);
+  border-radius: min(var(--radius-pill), 50%);
 }
 
 .preview-zoom-label {
@@ -855,7 +863,7 @@ input.levels-handle-input::-moz-range-thumb {
   justify-content: center;
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
-  border-radius: var(--radius-control);
+  border-radius: min(var(--radius-pill), 50%);
 }
 
 .icon-toggle-button:hover {
@@ -1127,31 +1135,6 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
-/* The native colour input, sized and shaped like BombVault's own (h-8 w-14 -
-   a rectangle, not squeezed into the swatches' own circular badge size). */
-.accent-custom-input {
-  appearance: none;
-  flex-shrink: 0;
-  width: 3.5rem;
-  height: 2rem;
-  padding: 0.125rem;
-  border: none;
-  border-radius: var(--radius-control);
-  background-color: var(--carbon-surface2);
-  cursor: pointer;
-}
-.accent-custom-input::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-.accent-custom-input::-webkit-color-swatch {
-  border: none;
-  border-radius: calc(var(--radius-control) - 0.125rem);
-}
-.accent-custom-input::-moz-color-swatch {
-  border: none;
-  border-radius: calc(var(--radius-control) - 0.125rem);
-}
-
 /* Swatches with a border-colour highlight on the active preset, mirroring
    BombVault's own technique exactly (border, not a box-shadow ring) -
    BombVault itself has no shape engine yet, so its own swatches are
@@ -1162,9 +1145,19 @@ button:focus-visible {
    icon-badge stages (--badge-sm/md/lg) - a colour swatch and an icon badge
    are two different kinds of control and don't need to share one size, they
    each just need to be consistent WITHIN their own kind (GlimStone's
-   "Badges" rule - jdp: "ich will insgesamt im Design immer Standardgrößen"). */
+   "Badges" rule - jdp: "ich will insgesamt im Design immer Standardgrößen").
+
+   .accent-custom-input (the native <input type="color">) joins this SAME
+   selector group - jdp: "Die farbpicker farbfläche soll nicht größer sein
+   als die andere. soll exakt gleich aussehen". It used to be its own bigger
+   rectangle sized off BombVault's literal h-8 w-14 pixels, which read as a
+   mismatched control size sitting next to the presets; here it's just one
+   more circle in the row, indistinguishable in size or shape from every
+   preset beside it. */
 .accent-swatch,
-.palette-swatch {
+.palette-swatch,
+.accent-custom-input {
+  appearance: none;
   width: var(--swatch-size);
   height: var(--swatch-size);
   padding: 0;
@@ -1176,12 +1169,37 @@ button:focus-visible {
 }
 
 .accent-swatch:hover,
-.palette-swatch:hover {
+.palette-swatch:hover,
+.accent-custom-input:hover {
   transform: scale(1.1);
 }
 
 .accent-swatch--active {
   border-color: var(--carbon-text);
+}
+
+/* The native swatch fill sits inside the same 2px border as every other
+   swatch, so it must be flush (no native padding) and share the same
+   radius - otherwise a square patch of colour peeks out past the circular
+   border on the corners. Covers BOTH native <input type="color"> swatches:
+   the accent picker's own .accent-custom-input, and each rainbow palette
+   position (also an <input type="color">, class .palette-swatch, since
+   appearanceSettings.ts moved off the earlier one-shared-hidden-input
+   approach to eight real, always-present inputs). */
+.accent-custom-input::-webkit-color-swatch-wrapper,
+.palette-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: var(--radius-pill);
+}
+.accent-custom-input::-webkit-color-swatch,
+.palette-swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: var(--radius-pill);
+}
+.accent-custom-input::-moz-color-swatch,
+.palette-swatch::-moz-color-swatch {
+  border: none;
+  border-radius: var(--radius-pill);
 }
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
@@ -1197,6 +1215,7 @@ button:focus-visible {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   border: none;
+  border-radius: min(var(--radius-pill), 50%);
 }
 
 .icon-reset-badge:hover {
@@ -1206,31 +1225,18 @@ button:focus-visible {
 
 /* The rainbow palette - editable now (jdp: "die Farben des Rainbowmodes
    sollen auch bearbeitbar sein, daher brauchen wir dort auch einen Reset
-   Button"), each swatch a real <button> opening the shared native colour
-   input declared in appearanceSettings.ts, same border/hover treatment and
-   --swatch-size as the accent presets above. Dimmed (not hidden) and
-   pointer-events: none while rainbow mode itself is off, matching
-   CannonadeCommand's own treatment of its dependent rainbow sub-controls. */
+   Button"), each position a real, always-present <input type="color">
+   (class .palette-swatch, styled via the shared swatch group above), same
+   border/hover treatment and --swatch-size as the accent presets. Dimmed
+   (not hidden) and pointer-events: none while rainbow mode itself is off,
+   matching CannonadeCommand's own treatment of its dependent rainbow
+   sub-controls. */
 .palette-swatch-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   transition: opacity 150ms ease;
-}
-
-/* The shared hidden native colour input the palette swatches open on click -
-   never visible itself, only its own native OS picker UI is. */
-.palette-color-input {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  padding: 0;
-  border: none;
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* A genuine sliding switch (controlWidgets.ts's toggleSwitch) - GlimStone's
@@ -1256,6 +1262,21 @@ button:focus-visible {
 }
 .toggle-switch--on:hover {
   background-color: var(--accent);
+}
+/* Rainbow mode's own ON track (jdp: "der toggle des rainbowmodes [ist] ganz
+   hässlich") previews the actual palette as a real spectrum gradient
+   instead of the flat --accent fill every other "on" switch uses - a flat
+   fill here was indistinguishable from the Shape/Theme rows' own "on"
+   colour right above it and said nothing about what the mode does.
+   CannonadeCommand's own precedent (its share-progress bar in rainbow mode,
+   CannonadeCommand.Shares.css) reserves this same technique for the one
+   control that IS the rainbow feature - every other badge still takes a
+   single flat jewel colour, unchanged. --rainbow-gradient is written by
+   appearanceSettings.ts's syncRainbowGradient() from the LIVE (possibly
+   user-edited) palette, so the switch always shows what will actually
+   apply; the flat fallback only shows before that first JS write. */
+.toggle-switch--rainbow.toggle-switch--on {
+  background-image: var(--rainbow-gradient);
 }
 .toggle-switch-knob {
   position: absolute;

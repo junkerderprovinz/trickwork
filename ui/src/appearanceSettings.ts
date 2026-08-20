@@ -79,34 +79,6 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     cacheTheme(theme)
   }
 
-  // One shared hidden colour input, reused for whichever palette swatch is
-  // currently being edited - a real native colour picker per swatch would
-  // mean eight always-present <input type="color"> elements for a feature
-  // only one is ever open at a time.
-  const paletteColorInput = document.createElement('input')
-  paletteColorInput.type = 'color'
-  paletteColorInput.className = 'palette-color-input'
-  paletteColorInput.setAttribute('aria-hidden', 'true')
-  paletteColorInput.tabIndex = -1
-  document.body.appendChild(paletteColorInput)
-  let editingIndex: number | null = null
-  // Declared here, assigned inside build() - the closure below needs to call
-  // whichever build() produced most recently (a locale switch rebuilds the
-  // whole panel, including a fresh renderPalette), not a stale one captured
-  // at mount time.
-  let renderPalette: () => void = () => {}
-  paletteColorInput.addEventListener('input', () => {
-    if (editingIndex === null) return
-    palette[editingIndex] = paletteColorInput.value
-    // Spread the CURRENT rainbow state first, not just {palette} - applyRainbow
-    // merges onto RAINBOW_OFF's defaults, so passing palette alone would
-    // silently reset on/reactive/rotate/seed back to off every time a colour
-    // is edited (the same trap the toggle handler below has to avoid too).
-    applyRainbow({ ...rainbowState(), palette: [...palette] })
-    persist()
-    renderPalette()
-  })
-
   // Rebuilding the whole panel on a locale switch is simpler and more robust
   // than patching five different label sites in place (same reasoning as
   // controls.ts) - it's a rare, deliberate action, not a hot path.
@@ -244,27 +216,65 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       applyRainbow({ ...rainbowState(), palette: [...palette] })
       persist()
       renderPalette()
+      syncRainbowGradient()
     })
 
-    // Each swatch is clickable now (jdp: "die Farben des Rainbowmodes sollen
-    // auch bearbeitbar sein, daher brauchen wir dort auch einen Reset
-    // Button") - opens the shared native colour input declared above,
-    // matching CannonadeCommand's own precedent of an editable rainbow
-    // palette (an inline picker there; a native <input type="color"> here,
-    // same functional outcome with far less code to maintain).
-    renderPalette = function renderPaletteImpl(): void {
+    // The toggle's own ON track previews the palette (a real multi-stop
+    // gradient across all 8 positions), not a flat --accent fill - jdp:
+    // "der toggle des rainbowmodes [ist] ganz hässlich". A flat accent fill
+    // is indistinguishable from every other "on" control on this same panel
+    // (Shape/Theme above use the identical colour) and says nothing about
+    // what the mode actually does; CannonadeCommand's own precedent for a
+    // genuinely rainbow-mode-specific surface (its share-progress bar,
+    // CannonadeCommand.Shares.css) uses exactly this technique - a real
+    // multi-stop spectrum gradient, reserved for the one control that IS
+    // the rainbow feature, not applied to every badge (those still take one
+    // flat jewel colour each, unchanged). Reads the LIVE palette (including
+    // user edits), not the hardcoded default, so the switch always shows
+    // what will actually apply.
+    function syncRainbowGradient(): void {
+      rainbowToggle.style.setProperty('--rainbow-gradient', `linear-gradient(90deg, ${palette.join(', ')})`)
+    }
+
+    // Each position is its own real <input type="color"> now (jdp: "die
+    // Farben des Rainbowmodes sollen auch bearbeitbar sein, daher brauchen
+    // wir dort auch einen Reset Button"), styled via the shared
+    // .accent-swatch/.palette-swatch/.accent-custom-input CSS group in
+    // style.css so it's visually identical to the accent picker's own
+    // circular swatches. This replaces an earlier approach that used ONE
+    // shared hidden <input> (opacity:0, pointer-events:none, 0x0) opened via
+    // a programmatic .click() from a plain <button> swatch - never actually
+    // provable in Playwright (native colour dialogs can't be driven by it),
+    // and a real, plausible cause of repeated "rainbow mode doesn't work"
+    // reports: a browser can refuse to open a native picker from .click()
+    // on an invisible, zero-size input. A real, visible, properly-sized
+    // <input type="color"> that the user clicks directly has no such
+    // reliability gap.
+    function renderPalette(): void {
       paletteRow.innerHTML = ''
       palette.forEach((hex, index) => {
-        const sw = document.createElement('button')
-        sw.type = 'button'
+        const sw = document.createElement('input')
+        sw.type = 'color'
         sw.className = 'palette-swatch'
-        sw.style.backgroundColor = hex
+        sw.value = hex
         sw.setAttribute('data-tip', hex)
         sw.setAttribute('aria-label', hex)
-        sw.addEventListener('click', () => {
-          editingIndex = index
-          paletteColorInput.value = hex
-          paletteColorInput.click()
+        sw.addEventListener('input', () => {
+          const value = sw.value
+          palette[index] = value
+          sw.setAttribute('data-tip', value)
+          sw.setAttribute('aria-label', value)
+          // Spread the CURRENT rainbow state first, not just {palette} -
+          // applyRainbow merges onto RAINBOW_OFF's defaults, so passing
+          // palette alone would silently reset on/reactive/rotate/seed back
+          // to off every time a colour is edited (the same trap the toggle
+          // handler below has to avoid too). Deliberately NOT calling
+          // renderPalette() here - the native picker fires 'input'
+          // continuously while the user drags inside it, and tearing down
+          // this very <input> mid-drag would kill the open dialog.
+          applyRainbow({ ...rainbowState(), palette: [...palette] })
+          persist()
+          syncRainbowGradient()
         })
         paletteRow.appendChild(sw)
       })
@@ -284,13 +294,15 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
       rainbowOn = checked
-      // Spread the current state, not just {on} - see paletteColorInput's
+      // Spread the current state, not just {on} - see the palette input's
       // own listener above for why (this exact call used to silently wipe
       // any custom palette back to the RAINBOW default on every toggle).
       applyRainbow({ ...rainbowState(), on: rainbowOn })
       persist()
       syncPaletteDim()
     })
+    rainbowToggle.classList.add('toggle-switch--rainbow')
+    syncRainbowGradient()
     rainbowLabelRow.append(rainbowLabelText, rainbowToggle)
     rainbowWrap.append(rainbowLabelRow, paletteRow)
 
