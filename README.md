@@ -24,9 +24,9 @@ visual "ink" they cover at your chosen font, not just by brightness, so proporti
 render correctly instead of looking stretched or squashed.<br>
 <br>
 Ships two ways from one shared TypeScript/Canvas core, so the desktop app and the self-hosted container are
-always pixel-for-pixel the same tool: a <b>portable desktop app</b> (Windows/Linux/macOS, via Wails, no
-installer) and a <b>self-hosted Docker container</b> (with an Unraid Community Applications template).
-Stateless — no database, no accounts, nothing to configure beyond the port.
+always pixel-for-pixel the same tool: a <b>desktop app</b> for Windows, macOS and Linux (via Wails) and a
+<b>self-hosted Docker container</b> (with an Unraid Community Applications template). Stateless — no
+database, no accounts, nothing to configure beyond the port.
 </p>
 
 <br>
@@ -171,10 +171,10 @@ Open `http://localhost:3210/`. No environment variables, no volumes — that's t
 
 ## 8. Desktop app
 
-A portable Wails wrapper around the exact same engine and UI the container serves — no installer, a single
-file. Windows, Linux and macOS builds are produced by CI from a version tag; see
-[Releases](https://github.com/junkerderprovinz/trickwork/releases) once one exists. To build it yourself
-right now, see [Development](#9-development) below.
+A Wails wrapper around the exact same engine and UI the container serves. Each [release](https://github.com/junkerderprovinz/trickwork/releases)
+carries a real installer per platform: an NSIS installer (`.exe`) on Windows, a `.dmg` on macOS. Linux has no
+equivalent single-file installer convention, so it ships as a plain self-contained binary — `chmod +x` and
+run. To build it yourself right now, see [Development](#9-development) below.
 
 <br>
 

@@ -18,7 +18,7 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             slug: windows-amd64
-            extra: ""
+            extra: "-nsis"
           - os: macos-latest
             platform: darwin/universal
             slug: macos-universal
@@ -44,6 +44,15 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      # -nsis (below) shells out to makensis to produce a real Windows
+      # installer instead of a bare .exe - windows-latest has historically
+      # carried NSIS preinstalled, but that's an implicit runner-image detail
+      # GitHub has already dropped once for a newer image (actions/runner-
+      # images#11754), so install it explicitly rather than depend on it.
+      - name: Install NSIS
+        if: runner.os == 'Windows'
+        run: choco install nsis -y
+
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
 
@@ -66,6 +75,19 @@ jobs:
           go mod tidy
           wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }}
 
+      # macOS gets no built-in Wails installer step (unlike -nsis on Windows) -
+      # wraps the .app bundle it just built into a real .dmg with hdiutil,
+      # already present on every macos-latest runner, no extra tooling needed.
+      # The bare .app is removed afterward so only the .dmg (the one file a
+      # user should actually download) reaches the artifact.
+      - name: Package macOS .app into a .dmg
+        if: runner.os == 'macOS'
+        working-directory: desktop
+        run: |
+          set -eu
+          hdiutil create -volname "TrickWork" -srcfolder build/bin/TrickWork.app -ov -format UDZO build/bin/TrickWork.dmg
+          rm -rf build/bin/TrickWork.app
+
       - uses: actions/upload-artifact@v4
         with:
           name: trickwork-${{ matrix.slug }}
@@ -86,17 +108,25 @@ jobs:
         with:
           path: bundles
 
-      # One archive per platform, named for the tag, so a download sitting in
-      # somebody's folder still says which version it is.
+      # One real installer per platform, named for the tag - not a zip of the
+      # raw build output (jdp: "für die desktop versionen sollen es keine
+      # zips sein sondern direkt die installations datei"). Windows and macOS
+      # each produce exactly one genuine installer file above (the NSIS .exe,
+      # the .dmg); Linux has no equivalent single-file installer convention,
+      # so its own "installation file" is the raw self-contained binary
+      # (chmod +x && run) - the closest honest equivalent on a platform
+      # without Windows/macOS's own installer paradigm.
       - name: Package
         run: |
           set -eu
           mkdir -p dist
-          for d in bundles/trickwork-*; do
-            [ -d "$d" ] || continue
-            slug="${d#bundles/trickwork-}"
-            (cd "$d" && zip -qr "../../dist/trickwork-${GITHUB_REF_NAME}-${slug}.zip" .)
-          done
+          cp bundles/trickwork-windows-amd64/*-installer.exe \
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
+          cp bundles/trickwork-macos-universal/TrickWork.dmg \
+            "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
+          cp bundles/trickwork-linux-amd64/TrickWork \
+            "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
+          chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
           ls -lh dist
 
       # The release is expected to exist for this tag by the time the bundles are
@@ -121,4 +151,4 @@ jobs:
       - name: Attach the bundles
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber --repo "$GITHUB_REPOSITORY"
+        run: gh release upload "$GITHUB_REF_NAME" dist/* --clobber --repo "$GITHUB_REPOSITORY"

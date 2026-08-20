@@ -18,7 +18,7 @@ The first public release. TrickWork turns images into proportional-font-aware AS
 - Undo/redo history with a readable log of what changed, gesture-aware so a whole slider drag undoes as one step.
 - Export to TXT, XHTML, RTF or PNG, or copy the active image straight to the clipboard.
 - Export/import the full settings object as a JSON file, to save or share a configuration.
-- Two ways to run it from one shared TypeScript/Canvas core, always pixel-for-pixel identical: a self-hosted Docker container (amd64 + arm64, with an Unraid Community Applications template) and a portable desktop app for Windows, macOS and Linux (via Wails, no installer). Both are stateless - no database, no accounts, nothing to configure beyond the port.
+- Two ways to run it from one shared TypeScript/Canvas core, always pixel-for-pixel identical: a self-hosted Docker container (amd64 + arm64, with an Unraid Community Applications template) and a desktop app for Windows, macOS and Linux (via Wails - a real installer on Windows/macOS, a self-contained binary on Linux). Both are stateless - no database, no accounts, nothing to configure beyond the port.
 
 ### 🎨 Design
 
