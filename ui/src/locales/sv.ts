@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Grön',
   'appearance.accentRed': 'Röd',
   'appearance.accentPurple': 'Lila',
-  'appearance.rainbow': 'Regnbåge',
+  'appearance.rainbow': 'Regnbågsläge',
   'appearance.rainbowPalette': 'Regnbågspalett',
   'appearance.resetToDefault': 'Återställ till standard',
   'appearance.language': 'Språk',

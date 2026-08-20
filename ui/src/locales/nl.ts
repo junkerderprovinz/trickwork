@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Groen',
   'appearance.accentRed': 'Rood',
   'appearance.accentPurple': 'Paars',
-  'appearance.rainbow': 'Regenboog',
+  'appearance.rainbow': 'Regenboogmodus',
   'appearance.rainbowPalette': 'Regenboogpalet',
   'appearance.resetToDefault': 'Terugzetten naar standaard',
   'appearance.language': 'Taal',

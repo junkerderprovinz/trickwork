@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Verde',
   'appearance.accentRed': 'Vermelho',
   'appearance.accentPurple': 'Roxo',
-  'appearance.rainbow': 'Arco-íris',
+  'appearance.rainbow': 'Modo arco-íris',
   'appearance.rainbowPalette': 'Paleta arco-íris',
   'appearance.resetToDefault': 'Restaurar padrão',
   'appearance.language': 'Idioma',

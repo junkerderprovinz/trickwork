@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Yeşil',
   'appearance.accentRed': 'Kırmızı',
   'appearance.accentPurple': 'Mor',
-  'appearance.rainbow': 'Gökkuşağı',
+  'appearance.rainbow': 'Gökkuşağı modu',
   'appearance.rainbowPalette': 'Gökkuşağı paleti',
   'appearance.resetToDefault': 'Varsayılana sıfırla',
   'appearance.language': 'Dil',

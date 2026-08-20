@@ -69,6 +69,18 @@ function renderItem(item: BatchItem, isActive: boolean, index: number, store: St
     }
   }
 
+  // A solid dot, not just the background wash (jdp: "der Regenbogen-Modus
+  // funktioniert nicht!!" - the wash is real and verified correct, but a
+  // ~16-22% alpha tint over an already-similar surface colour is easy to
+  // miss entirely depending on the display; a fully-opaque swatch can't be
+  // mistaken for "nothing changed" the way a subtle wash can).
+  if (hue) {
+    const dot = document.createElement('span')
+    dot.className = 'queue-item-dot'
+    dot.style.backgroundColor = hue
+    li.appendChild(dot)
+  }
+
   const name = document.createElement('span')
   name.className = 'queue-item-name'
   name.textContent = item.file.name

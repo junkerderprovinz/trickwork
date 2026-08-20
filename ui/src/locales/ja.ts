@@ -154,7 +154,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'グリーン',
   'appearance.accentRed': 'レッド',
   'appearance.accentPurple': 'パープル',
-  'appearance.rainbow': 'レインボー',
+  'appearance.rainbow': 'レインボーモード',
   'appearance.rainbowPalette': 'レインボーパレット',
   'appearance.resetToDefault': '既定値にリセット',
   'appearance.language': '言語',

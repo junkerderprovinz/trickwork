@@ -1,6 +1,7 @@
 import { applyCachedAppearance } from './design/appearance'
 import { applyCachedTheme } from './design/theme'
 import { enableSelectScrollForAll } from './design/selectScroll'
+import { wireTooltips } from './design/tooltip'
 import { applyCachedLocale, subscribeLocale, t } from './i18n'
 import { createStore } from './state'
 import { mountDropzone } from './dropzone'
@@ -29,6 +30,10 @@ if (!app) {
 applyCachedAppearance()
 applyCachedTheme()
 applyCachedLocale()
+// The shared tooltip/info-bubble engine (design/tooltip.ts) - one call at
+// boot upgrades every existing icon-only button's native `title` into the
+// styled bubble automatically, no per-component rewiring needed.
+wireTooltips()
 
 const store = createStore()
 

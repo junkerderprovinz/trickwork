@@ -153,7 +153,7 @@ const dict: Translations = {
   'appearance.accentGreen': '绿色',
   'appearance.accentRed': '红色',
   'appearance.accentPurple': '紫色',
-  'appearance.rainbow': '彩虹',
+  'appearance.rainbow': '彩虹模式',
   'appearance.rainbowPalette': '彩虹调色板',
   'appearance.resetToDefault': '恢复默认设置',
   'appearance.language': '语言',

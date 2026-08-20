@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Πράσινο',
   'appearance.accentRed': 'Κόκκινο',
   'appearance.accentPurple': 'Μοβ',
-  'appearance.rainbow': 'Ουράνιο τόξο',
+  'appearance.rainbow': 'Λειτουργία ουράνιου τόξου',
   'appearance.rainbowPalette': 'Παλέτα ουράνιου τόξου',
   'appearance.resetToDefault': 'Επαναφορά προεπιλογής',
   'appearance.language': 'Γλώσσα',

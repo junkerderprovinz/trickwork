@@ -15,7 +15,7 @@
 // anywhere else draws a brand new one.
 
 import type { CropSpec } from 'trickwork-core'
-import { infoIcon } from './design/infoBubble'
+import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -338,6 +338,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
   function applyLabels(): void {
     eyebrow.textContent = t('crop.eyebrow')
     empty.textContent = t('preview.empty')
+    eyebrowInfo.setAttribute('data-tip', t('crop.hint'))
     eyebrowInfo.setAttribute('aria-label', t('crop.hint'))
     clearButton.textContent = t('crop.clearButton')
   }

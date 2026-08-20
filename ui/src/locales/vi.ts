@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Xanh lá',
   'appearance.accentRed': 'Đỏ',
   'appearance.accentPurple': 'Tím',
-  'appearance.rainbow': 'Cầu vồng',
+  'appearance.rainbow': 'Chế độ cầu vồng',
   'appearance.rainbowPalette': 'Bảng màu cầu vồng',
   'appearance.resetToDefault': 'Đặt lại về mặc định',
   'appearance.language': 'Ngôn ngữ',

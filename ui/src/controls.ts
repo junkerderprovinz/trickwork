@@ -1,6 +1,6 @@
 import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
 import { enableSelectScroll } from './design/selectScroll'
-import { infoIcon } from './design/infoBubble'
+import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 

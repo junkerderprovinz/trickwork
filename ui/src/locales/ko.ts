@@ -154,7 +154,7 @@ const dict: Translations = {
   'appearance.accentGreen': '초록',
   'appearance.accentRed': '빨강',
   'appearance.accentPurple': '보라',
-  'appearance.rainbow': '무지개',
+  'appearance.rainbow': '레인보우 모드',
   'appearance.rainbowPalette': '레인보우 팔레트',
   'appearance.resetToDefault': '기본값으로 재설정',
   'appearance.language': '언어',

@@ -271,28 +271,82 @@ body {
   font-feature-settings: "tnum" 1, "zero" 1;
 }
 
-/* The info bubble (rule 8). Render at body level (position measured from the
-   trigger icon in JS) so no scroll container, card or table can clip it.
-   Translated back by half its own width to centre it under the icon without
-   measuring the text first. */
+/* The tooltip and info bubble (rule 8), one shared engine for both -
+   reference/tooltip.ts. Render at body level (position measured from the
+   trigger element in JS) so no scroll container, card or table can clip
+   it, viewport-clamped, flips above the trigger when opening below would
+   clip the viewport's bottom edge (.glim-bubble--above), a small arrow
+   that tracks the trigger's real position even when the bubble itself has
+   been clamped off-centre. No transition - an instant display toggle reads
+   as more responsive than even a very short fade for something this small
+   and this frequently triggered. Matches CannonadeCommand's own reference
+   implementation pixel-for-pixel (its #cc-tipfloat) - previously this
+   class had its own bespoke, JS-free styling with none of the above, which
+   read as visibly inconsistent against a sibling app using the real thing. */
 .glim-bubble {
   position: fixed;
-  z-index: 60;
+  z-index: 2147483647;
   transform: translateX(-50%);
+  width: max-content;
   max-width: 280px;
   pointer-events: none;
-  background-color: var(--carbon-surface);
+  background-color: var(--carbon-surface2);
   color: var(--carbon-text);
-  border-radius: var(--radius-control);
-  box-shadow: var(--elevation), var(--hairline);
-  padding: 7px 10px;
-  font-size: var(--text-caption);
+  border: none;
+  border-radius: min(var(--radius-control), 10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+  padding: 9px 12px;
+  font-size: 12.5px;
   line-height: 1.45;
   letter-spacing: normal;
   text-transform: none;
   font-weight: 400;
   text-align: start;
-  white-space: normal;
+  white-space: pre-line;
+}
+.glim-bubble::before {
+  content: '';
+  position: absolute;
+  left: var(--glim-tip-ax, 50%);
+  top: -6px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent var(--carbon-surface2) transparent;
+}
+.glim-bubble--above::before {
+  top: auto;
+  bottom: -6px;
+  border-width: 6px 6px 0 6px;
+  border-color: var(--carbon-surface2) transparent transparent transparent;
+}
+
+/* The "(i)" trigger (reference/tooltip.ts's infoIcon()) - a bare stroke-only
+   SVG glyph, never a filled badge (rule 3: the accent means activity, and a
+   background fill on furniture like this reads as a control it isn't).
+   Opacity carries the hover/focus state instead of a colour or fill change. */
+.glim-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--carbon-text-muted);
+  opacity: .8;
+  cursor: help;
+}
+.glim-info-icon svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+.glim-info-icon:hover,
+.glim-info-icon:focus-visible {
+  opacity: 1;
+  outline: none;
 }
 
 /* ---------------------------------------------------------------------------

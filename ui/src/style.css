@@ -322,31 +322,12 @@ html, body {
   gap: 0.35rem;
 }
 
-/* The (i) info bubble trigger (GlimStone rule 8) - neutral, never the
-   accent (design-language.md: "the icon is furniture; the accent means
-   activity"). Text lives entirely in the shared .glim-bubble it opens
-   (design/infoBubble.ts), never printed beside it. */
-.info-icon {
-  width: 1.05rem;
-  height: 1.05rem;
-  padding: 0;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: var(--carbon-surface3);
-  color: var(--carbon-text-muted);
-  font-size: 0.65rem;
-  font-style: italic;
-  font-family: Georgia, 'Times New Roman', serif;
-  line-height: 1;
-}
-.info-icon:hover,
-.info-icon:focus-visible {
-  background-color: var(--carbon-hover);
-  color: var(--carbon-text);
-}
+/* The (i) info bubble trigger and the shared tooltip bubble itself
+   (.glim-info-icon / .glim-bubble) now come from GlimStone's own
+   tokens.css (design/tooltip.ts) - matches CannonadeCommand's reference
+   implementation exactly (jdp: "die i Infobubbles schauen in TW auch
+   anders aus als in CC"), so no TrickWork-local override lives here
+   anymore. */
 
 /* ---------------------------------------------------------------------
    Crop — ASCGen2's WidgetImage selection tool: drag a rectangle on the
@@ -931,6 +912,16 @@ input.levels-handle-input::-moz-range-thumb {
 
 .queue-item--active {
   box-shadow: inset 0 0 0 999px var(--accent-soft);
+}
+
+/* A solid, fully-opaque rainbow-position dot - see queue.ts's own comment on
+   why this exists alongside the wash (the wash alone reads as "nothing
+   happened" on some displays even when it's applying correctly). */
+.queue-item-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
 }
 
 .queue-item-name {

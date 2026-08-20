@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Verde',
   'appearance.accentRed': 'Roșu',
   'appearance.accentPurple': 'Mov',
-  'appearance.rainbow': 'Curcubeu',
+  'appearance.rainbow': 'Mod curcubeu',
   'appearance.rainbowPalette': 'Paletă curcubeu',
   'appearance.resetToDefault': 'Resetează la valorile implicite',
   'appearance.language': 'Limbă',

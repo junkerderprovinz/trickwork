@@ -48,12 +48,10 @@ export function segmentedRow<T extends string>(
       btn.type = 'button'
       btn.className = 'segmented-button' + (choice.value === active ? ' segmented-button--active' : '')
       btn.textContent = choice.label
-      // A long label (e.g. German "Unscharf maskieren") would otherwise wrap
-      // to two lines and make this row taller than a short-label row (e.g.
-      // Rotate's "0°/90°/180°/270°") sitting in a sibling card of the same
-      // width - the CSS forces one line + ellipsis, so title carries the
-      // full text for anyone who needs it.
-      btn.title = choice.label
+      // The CSS forces one line + ellipsis so a long label (e.g. German
+      // "Unscharf maskieren") never wraps and makes this row taller than a
+      // short-label row (e.g. Rotate's "0°/90°/180°/270°") in a sibling card
+      // of the same width.
       btn.addEventListener('click', () => {
         if (choice.value === active) return
         onBeforeChange?.(choice.value)
@@ -62,6 +60,24 @@ export function segmentedRow<T extends string>(
         render()
       })
       row.appendChild(btn)
+      // A tooltip only when the visible label is ACTUALLY truncated by that
+      // ellipsis (jdp: "die Drehoptionen haben eine Bubble die genau das
+      // gleiche anzeigt was man eh schon sieht" - a short label like "90°"
+      // never truncates, so a tooltip repeating it verbatim adds nothing; a
+      // long one like "Unscharf maskieren" does get cut and still needs the
+      // full text available on hover). Deferred to the next frame, not
+      // measured right after appendChild - render() itself runs INSIDE
+      // segmentedRow(), before the function has even returned `wrap` to the
+      // caller who actually attaches it to the visible document, so
+      // scrollWidth/clientWidth would both read 0 (equal, "not truncated")
+      // at that point regardless of the real eventual layout - the same
+      // measure-before-layout trap levelsPanel.ts's histogram canvas hit
+      // earlier this session.
+      requestAnimationFrame(() => {
+        if (btn.isConnected && btn.scrollWidth > btn.clientWidth) {
+          btn.setAttribute('data-tip', choice.label)
+        }
+      })
     }
   }
   render()

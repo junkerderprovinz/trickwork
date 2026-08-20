@@ -11,7 +11,7 @@ import {
   toXHTML,
 } from 'trickwork-core'
 import { downloadBlob } from './download'
-import { infoIcon } from './design/infoBubble'
+import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
 
@@ -66,6 +66,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
       button.title = label
     }
     batchButton.textContent = t('export.batchButton')
+    eyebrowInfo.setAttribute('data-tip', t('controls.colorTxtNote'))
     eyebrowInfo.setAttribute('aria-label', t('controls.colorTxtNote'))
   }
   applyLabels()

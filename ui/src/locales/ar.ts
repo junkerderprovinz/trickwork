@@ -154,7 +154,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'أخضر',
   'appearance.accentRed': 'أحمر',
   'appearance.accentPurple': 'بنفسجي',
-  'appearance.rainbow': 'قوس قزح',
+  'appearance.rainbow': 'وضع قوس قزح',
   'appearance.rainbowPalette': 'لوحة قوس قزح',
   'appearance.resetToDefault': 'إعادة التعيين إلى الافتراضي',
   'appearance.language': 'اللغة',

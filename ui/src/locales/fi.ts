@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Vihreä',
   'appearance.accentRed': 'Punainen',
   'appearance.accentPurple': 'Violetti',
-  'appearance.rainbow': 'Sateenkaari',
+  'appearance.rainbow': 'Sateenkaaritila',
   'appearance.rainbowPalette': 'Sateenkaaripaletti',
   'appearance.resetToDefault': 'Palauta oletusasetukset',
   'appearance.language': 'Kieli',

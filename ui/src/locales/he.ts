@@ -154,7 +154,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'ירוק',
   'appearance.accentRed': 'אדום',
   'appearance.accentPurple': 'סגול',
-  'appearance.rainbow': 'קשת',
+  'appearance.rainbow': 'מצב קשת',
   'appearance.rainbowPalette': 'פלטת קשת',
   'appearance.resetToDefault': 'איפוס לברירת המחדל',
   'appearance.language': 'שפה',

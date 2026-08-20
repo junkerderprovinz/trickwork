@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Zelená',
   'appearance.accentRed': 'Červená',
   'appearance.accentPurple': 'Fialová',
-  'appearance.rainbow': 'Duha',
+  'appearance.rainbow': 'Duhový režim',
   'appearance.rainbowPalette': 'Duhová paleta',
   'appearance.resetToDefault': 'Obnovit výchozí',
   'appearance.language': 'Jazyk',

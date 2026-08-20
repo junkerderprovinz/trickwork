@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Zöld',
   'appearance.accentRed': 'Piros',
   'appearance.accentPurple': 'Lila',
-  'appearance.rainbow': 'Szivárvány',
+  'appearance.rainbow': 'Szivárvány mód',
   'appearance.rainbowPalette': 'Szivárvány paletta',
   'appearance.resetToDefault': 'Visszaállítás alapértelmezettre',
   'appearance.language': 'Nyelv',

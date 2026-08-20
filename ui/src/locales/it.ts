@@ -155,7 +155,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'Verde',
   'appearance.accentRed': 'Rosso',
   'appearance.accentPurple': 'Viola',
-  'appearance.rainbow': 'Arcobaleno',
+  'appearance.rainbow': 'Modalità arcobaleno',
   'appearance.rainbowPalette': 'Tavolozza arcobaleno',
   'appearance.resetToDefault': 'Ripristina predefiniti',
   'appearance.language': 'Lingua',

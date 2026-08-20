@@ -154,7 +154,7 @@ const dict: Translations = {
   'appearance.accentGreen': 'เขียว',
   'appearance.accentRed': 'แดง',
   'appearance.accentPurple': 'ม่วง',
-  'appearance.rainbow': 'สายรุ้ง',
+  'appearance.rainbow': 'โหมดสีรุ้ง',
   'appearance.rainbowPalette': 'จานสีรุ้ง',
   'appearance.resetToDefault': 'รีเซ็ตเป็นค่าเริ่มต้น',
   'appearance.language': 'ภาษา',
