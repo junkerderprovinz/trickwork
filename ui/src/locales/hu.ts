@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Előzmények',
 
+  'history.entryWidth': 'Szélesség megváltozott',
+
+  'history.entryCharsetEdited': 'Karakterkészlet szerkesztve',
+
+  'history.entryCharsetPreset': 'Karakterkészlet: {preset}',
+
+  'history.entryFont': 'Betűtípus megváltozott',
+
+  'history.entryRotated': '{deg}°-kal elforgatva',
+
+  'history.entryFlipHorizontal': 'Vízszintesen tükrözve',
+
+  'history.entryFlipVertical': 'Függőlegesen tükrözve',
+
+  'history.entryBrightness': 'Fényerő megváltozott',
+
+  'history.entryContrast': 'Kontraszt megváltozott',
+
+  'history.entryInvert': 'Invertálás átkapcsolva',
+
+  'history.entryDither': 'Dithering átkapcsolva',
+
+  'history.entryColor': 'Színes kimenet átkapcsolva',
+
+  'history.entrySharpen': 'Élesítés megváltozott',
+
+  'history.entryLevels': 'Szintek módosítva',
+
+  'history.entryLevelsReset': 'Szintek visszaállítva',
+
+  'history.entryCrop': 'Vágás megváltozott',
+
+  'history.entryCropCleared': 'Vágás eltávolítva',
+
+  'history.entrySettingsImported': 'Beállítások importálva',
+
+  'history.logEmpty': 'Még nincs változás.',
+
   'import.eyebrow': 'Importálás',
   'import.dropzoneText': 'Húzza ide a képeket, vagy kattintson fájlok kiválasztásához',
   'import.ariaLabel': 'Válassza ki az átalakítandó képfájlokat',

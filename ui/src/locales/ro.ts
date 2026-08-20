@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Istoric',
 
+  'history.entryWidth': 'Lățime modificată',
+
+  'history.entryCharsetEdited': 'Set de caractere editat',
+
+  'history.entryCharsetPreset': 'Set de caractere: {preset}',
+
+  'history.entryFont': 'Font modificat',
+
+  'history.entryRotated': 'Rotit cu {deg}°',
+
+  'history.entryFlipHorizontal': 'Răsturnat orizontal',
+
+  'history.entryFlipVertical': 'Răsturnat vertical',
+
+  'history.entryBrightness': 'Luminozitate modificată',
+
+  'history.entryContrast': 'Contrast modificat',
+
+  'history.entryInvert': 'Inversare culori comutată',
+
+  'history.entryDither': 'Dithering comutat',
+
+  'history.entryColor': 'Ieșire color comutată',
+
+  'history.entrySharpen': 'Claritate modificată',
+
+  'history.entryLevels': 'Niveluri ajustate',
+
+  'history.entryLevelsReset': 'Niveluri resetate',
+
+  'history.entryCrop': 'Decupare modificată',
+
+  'history.entryCropCleared': 'Decupare eliminată',
+
+  'history.entrySettingsImported': 'Setări importate',
+
+  'history.logEmpty': 'Nicio modificare încă.',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Trage imagini aici sau dă clic pentru a alege fișiere',
   'import.ariaLabel': 'Alege fișierele imagine de convertit',

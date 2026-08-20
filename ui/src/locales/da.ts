@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Historik',
 
+  'history.entryWidth': 'Bredde ændret',
+
+  'history.entryCharsetEdited': 'Tegnsæt redigeret',
+
+  'history.entryCharsetPreset': 'Tegnsæt: {preset}',
+
+  'history.entryFont': 'Skrifttype ændret',
+
+  'history.entryRotated': 'Drejet {deg}°',
+
+  'history.entryFlipHorizontal': 'Vendt vandret',
+
+  'history.entryFlipVertical': 'Vendt lodret',
+
+  'history.entryBrightness': 'Lysstyrke ændret',
+
+  'history.entryContrast': 'Kontrast ændret',
+
+  'history.entryInvert': 'Invertering skiftet',
+
+  'history.entryDither': 'Dithering skiftet',
+
+  'history.entryColor': 'Farveudskrift skiftet',
+
+  'history.entrySharpen': 'Skarphed ændret',
+
+  'history.entryLevels': 'Toner justeret',
+
+  'history.entryLevelsReset': 'Toner nulstillet',
+
+  'history.entryCrop': 'Beskæring ændret',
+
+  'history.entryCropCleared': 'Beskæring fjernet',
+
+  'history.entrySettingsImported': 'Indstillinger importeret',
+
+  'history.logEmpty': 'Ingen ændringer endnu.',
+
   'import.eyebrow': 'Importer',
   'import.dropzoneText': 'Slip billeder her, eller klik for at vælge filer',
   'import.ariaLabel': 'Vælg billedfiler der skal konverteres',

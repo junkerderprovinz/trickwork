@@ -334,16 +334,35 @@ body {
    Without this, a list row only shows colour through its progress fill,
    which turns green on completion (rule 4) — on a list of finished items the
    palette would show nothing. The wash is an inset shadow, not a background,
-   so the row's own hover tint still reads through it at 7% alpha. */
+   so the row's own hover tint still reads through it at 16% alpha. */
 [data-rainbow] .glim-tint {
   box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+/* The active/selected member of the set gets the stronger soft tint instead
+   of the plain wash - `[data-rainbow]` (bare attribute) matches BOTH `on`
+   and `reactive`, so this single rule covers both. Bug found via a real
+   adopting app (TrickWork): before this rule existed, `.glim-tint`'s own
+   box-shadow declaration always won the cascade against an app's own
+   `.active`-style rule (attribute+class beats a single class), even though
+   that rule was already resolving `--accent-soft` to the right colour via
+   `.glim-hue` above it - the ACTIVE row's highlight silently collapsed to
+   the same flat wash as every other row, in every adopting app that never
+   itself carried `.glim-active`. An adopting app's own "this one is
+   selected" class must ALSO carry `.glim-active` (not only its app-specific
+   equivalent) for this composition to engage - see design-language.md.
+   Higher specificity than the plain .glim-tint rule above by design, so it
+   wins regardless of source order. */
+[data-rainbow] .glim-tint.glim-active {
+  box-shadow: inset 0 0 0 999px var(--item-hue-soft);
 }
 [data-rainbow='reactive'] .glim-tint {
   box-shadow: none;
 }
-[data-rainbow='reactive'] .glim-tint:hover,
-[data-rainbow='reactive'] .glim-tint.glim-active {
+[data-rainbow='reactive'] .glim-tint:hover {
   box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+[data-rainbow='reactive'] .glim-tint.glim-active {
+  box-shadow: inset 0 0 0 999px var(--item-hue-soft);
 }
 
 /* Reactive: the palette rests. Everything stays quiet until hovered or

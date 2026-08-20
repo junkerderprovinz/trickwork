@@ -55,6 +55,11 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   labelRow.append(labelText, resetButton)
   wrap.appendChild(labelRow)
 
+  // The boxed "window" (glim-well) now wraps ONLY the histogram, not the
+  // track underneath it (jdp: "das Fenster soll am oberen Ende der
+  // Verschieberegler aufhören") - the track sits as a plain sibling right
+  // after it, background-free, so the handles float directly on the card's
+  // own surface instead of inside a second boxed strip.
   const canvasWrap = document.createElement('div')
   canvasWrap.className = 'levels-canvas-wrap glim-well'
   wrap.appendChild(canvasWrap)
@@ -65,7 +70,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
 
   const track = document.createElement('div')
   track.className = 'levels-track'
-  canvasWrap.appendChild(track)
+  wrap.appendChild(track)
 
   function makeHandle(modifier: string): HTMLInputElement {
     const input = document.createElement('input')
@@ -127,7 +132,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     function commitGestureStart(): void {
       if (committedThisGesture) return
       committedThisGesture = true
-      store.commitOptionsSnapshot()
+      store.commitOptionsSnapshot(t('history.entryLevels'))
     }
     input.addEventListener('pointerdown', commitGestureStart)
     input.addEventListener('keydown', commitGestureStart)
@@ -152,7 +157,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     commit({ gamma: gammaFromTrackPosition(Number(gammaInput.value), black, white) })
   })
   resetButton.addEventListener('click', () => {
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot(t('history.entryLevelsReset'))
     commit({ ...IDENTITY_LEVELS })
   })
 
@@ -165,10 +170,26 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   function drawHistogram(): void {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    // CSS pixels, not device pixels - width/height below are the box the
+    // histogram actually occupies on screen (style.css's own 84px), read
+    // live via clientHeight instead of a hard-coded constant that had
+    // drifted out of sync with it (a real, independent cause of the
+    // "blurry compared to ASCII Gen 2" look jdp flagged: the canvas's own
+    // internal buffer was 64px tall while CSS stretched it to 84px, and
+    // browsers blur a stretched canvas exactly like a stretched photo).
     const width = canvas.clientWidth || 280
-    const height = 64
-    if (canvas.width !== width) canvas.width = width
-    if (canvas.height !== height) canvas.height = height
+    const height = canvas.clientHeight || 84
+    // The OTHER independent cause: a canvas's backing store defaults to one
+    // pixel per CSS pixel, which looks soft on any display scaled above
+    // 100% (dpr > 1 - common on Windows) even once width/height agree with
+    // the CSS box. Size the actual bitmap up by dpr and scale the context
+    // so every draw call below still thinks in CSS-pixel coordinates.
+    const dpr = window.devicePixelRatio || 1
+    const bufferWidth = Math.round(width * dpr)
+    const bufferHeight = Math.round(height * dpr)
+    if (canvas.width !== bufferWidth) canvas.width = bufferWidth
+    if (canvas.height !== bufferHeight) canvas.height = bufferHeight
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, width, height)
     if (!lastHistogram) return
     const max = Math.max(1, ...lastHistogram)

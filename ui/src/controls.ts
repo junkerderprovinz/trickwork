@@ -51,7 +51,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, columns: value } })
       },
       1,
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryWidth')),
     )
 
     const charsetWrap = document.createElement('div')
@@ -146,7 +146,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     charsetField.addEventListener('focus', () => {
       if (committedThisSession) return
       committedThisSession = true
-      store.commitOptionsSnapshot()
+      store.commitOptionsSnapshot(t('history.entryCharsetEdited'))
     })
     charsetField.addEventListener('input', commitCharsetField)
     charsetField.addEventListener('blur', () => {
@@ -155,10 +155,10 @@ export function mountControls(container: HTMLElement, store: Store): void {
     })
 
     charsetSelect.addEventListener('change', () => {
-      const key = charsetSelect.value
-      store.commitOptionsSnapshot()
+      const key = charsetSelect.value as CharsetPresetKey
+      store.commitOptionsSnapshot(t('history.entryCharsetPreset', { preset: t(CHARSET_PRESET_KEYS[key]) }))
       store.setState({
-        options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key as CharsetPresetKey]] },
+        options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key]] },
       })
       syncCharsetFieldDisplay()
     })
@@ -188,7 +188,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     }
     fontSelect.value = options.font.family
     fontSelect.addEventListener('change', () => {
-      store.commitOptionsSnapshot()
+      store.commitOptionsSnapshot(t('history.entryFont'))
       const current = store.getState().options
       store.setState({ options: { ...current, font: { ...current.font, family: fontSelect.value } } })
       syncCharsetFieldDisplay()

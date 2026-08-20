@@ -13,6 +13,7 @@ import {
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
 import { flagEmoji } from './design/flagEmoji'
 import { customDropdown, segmentedRow, toggleSwitch } from './controlWidgets'
+import { iconReset } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
@@ -100,22 +101,47 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       },
     )
 
+    // One row now, not swatches-then-a-separate-controls-row below (jdp:
+    // "der Farbpicker soll in die gleiche Zeile wie die Farbfelder und auch
+    // gleich groß sein" - matches BombVault's own accent picker layout).
+    // Every element in this row shares the SAME 1.5rem swatch size
+    // (accent-swatch class, even on the native colour input and the reset
+    // button) - a size mismatch between the picker/swatches/reset was
+    // jdp's other direct complaint ("alle Farbfelder gleich groß machen").
+    // Documented as the canonical accent-row pattern in GlimStone.
     const accentWrap = document.createElement('div')
     accentWrap.className = 'control-slider'
     const accentLabel = document.createElement('span')
     accentLabel.textContent = t('appearance.accent')
 
-    const swatchRow = document.createElement('div')
-    swatchRow.className = 'accent-swatch-row'
+    const accentRow = document.createElement('div')
+    accentRow.className = 'accent-row'
 
     const customInput = document.createElement('input')
     customInput.type = 'color'
-    customInput.className = 'accent-custom-input'
+    customInput.className = 'accent-swatch accent-custom-input'
     customInput.setAttribute('aria-label', t('appearance.accent'))
     customInput.value = accent || DEFAULT_ACCENT
 
+    const resetBtn = document.createElement('button')
+    resetBtn.type = 'button'
+    // Icon badge, not text (jdp: "immer Symbole statt Texte für solche
+    // Badges verwenden" - a general rule now, see icons.ts's iconReset()
+    // and the same treatment on the preview Copy badge below).
+    resetBtn.className = 'accent-swatch accent-reset-button'
+    resetBtn.innerHTML = iconReset()
+    resetBtn.title = t('appearance.resetToDefault')
+    resetBtn.setAttribute('aria-label', t('appearance.resetToDefault'))
+    resetBtn.addEventListener('click', () => {
+      accent = ''
+      applyAccent(undefined)
+      persist()
+      customInput.value = DEFAULT_ACCENT
+      renderSwatches()
+    })
+
     function renderSwatches(): void {
-      swatchRow.innerHTML = ''
+      accentRow.innerHTML = ''
       for (const preset of ACCENTS) {
         const presetLabel = ACCENT_KEYS[preset.name] ? t(ACCENT_KEYS[preset.name] as TranslationKey) : preset.name
         const btn = document.createElement('button')
@@ -131,8 +157,9 @@ export function mountAppearanceSettings(container: HTMLElement): void {
           customInput.value = accent
           renderSwatches()
         })
-        swatchRow.appendChild(btn)
+        accentRow.appendChild(btn)
       }
+      accentRow.append(customInput, resetBtn)
     }
     renderSwatches()
 
@@ -143,23 +170,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       renderSwatches()
     })
 
-    const resetBtn = document.createElement('button')
-    resetBtn.type = 'button'
-    resetBtn.className = 'accent-reset-button'
-    resetBtn.textContent = t('appearance.resetToDefault')
-    resetBtn.addEventListener('click', () => {
-      accent = ''
-      applyAccent(undefined)
-      persist()
-      customInput.value = DEFAULT_ACCENT
-      renderSwatches()
-    })
-
-    const accentControlsRow = document.createElement('div')
-    accentControlsRow.className = 'accent-controls-row'
-    accentControlsRow.append(customInput, resetBtn)
-
-    accentWrap.append(accentLabel, swatchRow, accentControlsRow)
+    accentWrap.append(accentLabel, accentRow)
 
     // A genuine sliding switch now, not a segmented Off/On pair (jdp: "soll
     // ein Toggle sein, der auch der Form folgt") - GlimStone's own

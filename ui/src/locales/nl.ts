@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Geschiedenis',
 
+  'history.entryWidth': 'Breedte gewijzigd',
+
+  'history.entryCharsetEdited': 'Tekenset bewerkt',
+
+  'history.entryCharsetPreset': 'Tekenset: {preset}',
+
+  'history.entryFont': 'Lettertype gewijzigd',
+
+  'history.entryRotated': '{deg}° gedraaid',
+
+  'history.entryFlipHorizontal': 'Horizontaal gespiegeld',
+
+  'history.entryFlipVertical': 'Verticaal gespiegeld',
+
+  'history.entryBrightness': 'Helderheid gewijzigd',
+
+  'history.entryContrast': 'Contrast gewijzigd',
+
+  'history.entryInvert': 'Omkeren omgeschakeld',
+
+  'history.entryDither': 'Dithering omgeschakeld',
+
+  'history.entryColor': 'Kleurweergave omgeschakeld',
+
+  'history.entrySharpen': 'Verscherpen gewijzigd',
+
+  'history.entryLevels': 'Niveaus aangepast',
+
+  'history.entryLevelsReset': 'Niveaus gereset',
+
+  'history.entryCrop': 'Uitsnede gewijzigd',
+
+  'history.entryCropCleared': 'Uitsnede verwijderd',
+
+  'history.entrySettingsImported': 'Instellingen geïmporteerd',
+
+  'history.logEmpty': 'Nog geen wijzigingen.',
+
   'import.eyebrow': 'Importeren',
   'import.dropzoneText': 'Sleep afbeeldingen hierheen, of klik om bestanden te kiezen',
   'import.ariaLabel': 'Kies afbeeldingsbestanden om te converteren',

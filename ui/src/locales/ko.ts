@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': '기록',
 
+  'history.entryWidth': '너비 변경됨',
+
+  'history.entryCharsetEdited': '문자 세트 편집됨',
+
+  'history.entryCharsetPreset': '문자 세트: {preset}',
+
+  'history.entryFont': '글꼴 변경됨',
+
+  'history.entryRotated': '{deg}° 회전됨',
+
+  'history.entryFlipHorizontal': '좌우 반전됨',
+
+  'history.entryFlipVertical': '상하 반전됨',
+
+  'history.entryBrightness': '밝기 변경됨',
+
+  'history.entryContrast': '대비 변경됨',
+
+  'history.entryInvert': '색상 반전 전환됨',
+
+  'history.entryDither': '디더링 전환됨',
+
+  'history.entryColor': '컬러 출력 전환됨',
+
+  'history.entrySharpen': '선명도 변경됨',
+
+  'history.entryLevels': '레벨 조정됨',
+
+  'history.entryLevelsReset': '레벨 재설정됨',
+
+  'history.entryCrop': '자르기 변경됨',
+
+  'history.entryCropCleared': '자르기 제거됨',
+
+  'history.entrySettingsImported': '설정 가져옴',
+
+  'history.logEmpty': '아직 변경 사항이 없습니다.',
+
   'import.eyebrow': '가져오기',
   'import.dropzoneText': '이미지를 여기에 놓거나 클릭하여 파일을 선택하세요',
   'import.ariaLabel': '변환할 이미지 파일 선택',

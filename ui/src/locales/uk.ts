@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Історія',
 
+  'history.entryWidth': 'Ширину змінено',
+
+  'history.entryCharsetEdited': 'Набір символів відредаговано',
+
+  'history.entryCharsetPreset': 'Набір символів: {preset}',
+
+  'history.entryFont': 'Шрифт змінено',
+
+  'history.entryRotated': 'Повернуто на {deg}°',
+
+  'history.entryFlipHorizontal': 'Віддзеркалено горизонтально',
+
+  'history.entryFlipVertical': 'Віддзеркалено вертикально',
+
+  'history.entryBrightness': 'Яскравість змінено',
+
+  'history.entryContrast': 'Контраст змінено',
+
+  'history.entryInvert': 'Інверсію кольорів перемкнуто',
+
+  'history.entryDither': 'Дизеринг перемкнуто',
+
+  'history.entryColor': 'Кольоровий вивід перемкнуто',
+
+  'history.entrySharpen': 'Різкість змінено',
+
+  'history.entryLevels': 'Рівні скориговано',
+
+  'history.entryLevelsReset': 'Рівні скинуто',
+
+  'history.entryCrop': 'Обрізку змінено',
+
+  'history.entryCropCleared': 'Обрізку видалено',
+
+  'history.entrySettingsImported': 'Налаштування імпортовано',
+
+  'history.logEmpty': 'Поки що без змін.',
+
   'import.eyebrow': 'Імпорт',
   'import.dropzoneText': 'Перетягніть зображення сюди або натисніть, щоб вибрати файли',
   'import.ariaLabel': 'Вибрати файли зображень для конвертації',

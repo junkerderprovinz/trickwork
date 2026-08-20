@@ -31,9 +31,38 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
   undoButton.addEventListener('click', () => store.undo())
   redoButton.addEventListener('click', () => store.redo())
 
+  // The log window (jdp: "ein kleines Protokollfenster") - a small scrollable
+  // list of the recent, human-readable actions each commitOptionsSnapshot()
+  // call site now labels (see state.ts's HistoryEntry). Most recent on top;
+  // the underlying stack is already capped (HISTORY_LIMIT in state.ts), so
+  // this only needs its own fixed height, not its own separate cap.
+  const log = document.createElement('ul')
+  log.className = 'history-log'
+  container.appendChild(log)
+
+  function renderLog(): void {
+    const entries = store.historyLog()
+    if (entries.length === 0) {
+      log.innerHTML = ''
+      const empty = document.createElement('li')
+      empty.className = 'history-log-empty'
+      empty.textContent = t('history.logEmpty')
+      log.appendChild(empty)
+      return
+    }
+    log.innerHTML = ''
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const item = document.createElement('li')
+      item.className = 'history-log-entry'
+      item.textContent = entries[i] ?? ''
+      log.appendChild(item)
+    }
+  }
+
   function refreshState(): void {
     undoButton.disabled = !store.canUndo()
     redoButton.disabled = !store.canRedo()
+    renderLog()
   }
   store.subscribe(refreshState)
   refreshState()
@@ -46,6 +75,7 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
     undoButton.setAttribute('aria-label', undoLabel)
     redoButton.title = redoLabel
     redoButton.setAttribute('aria-label', redoLabel)
+    renderLog()
   }
   applyLabels()
   subscribeLocale(applyLabels)

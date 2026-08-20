@@ -33,7 +33,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       (value) => {
         store.setState({ options: { ...store.getState().options, rotate: Number(value) as Rotation } })
       },
-      () => store.commitOptionsSnapshot(),
+      (value) => store.commitOptionsSnapshot(t('history.entryRotated', { deg: value })),
     )
 
     const flipRow = document.createElement('div')
@@ -46,7 +46,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       (checked) => {
         store.setState({ options: { ...store.getState().options, flipHorizontal: checked } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryFlipHorizontal')),
     )
     const flipV = iconToggleButton(
       t('controls.flipVertical'),
@@ -55,7 +55,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       (checked) => {
         store.setState({ options: { ...store.getState().options, flipVertical: checked } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryFlipVertical')),
     )
     flipRow.append(flipH, flipV)
 

@@ -108,6 +108,30 @@ export function iconRedo(): string {
   )
 }
 
+// A counter-clockwise circular arrow - "reset to default", matching
+// CannonadeCommand's own reset badge (a Font Awesome fa-undo glyph) rather
+// than iconUndo()'s corner-turn arrow, which already means something more
+// specific ("step back in history") elsewhere in this app.
+export function iconReset(): string {
+  return controlSvg(
+    `<path d="M4 10a6 6 0 1 1 1.9 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
+      `<path d="M4 6v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
+  )
+}
+
+// A clipboard glyph - "copy to clipboard", the preview panel's Copy badge.
+export function iconCopy(): string {
+  return controlSvg(
+    `<rect x="6" y="4.5" width="9" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
+      `<path d="M8.5 4.5V3.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.3" fill="none" />`,
+  )
+}
+
+// A checkmark - the Copy badge's own momentary "copied" confirmation.
+export function iconCheck(): string {
+  return controlSvg(`<path d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
+}
+
 // Standard 8-tooth cog - Appearance/settings, identical concept to BV/KL's own Settings glyph.
 export function iconAppearance(): string {
   return svg(

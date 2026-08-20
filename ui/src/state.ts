@@ -17,6 +17,16 @@ export interface AppState {
   options: MappingOptions
 }
 
+// A history entry pairs a snapshot with the human-readable action that
+// produced it (jdp: "kleines Protokollfenster" - a small log of recent
+// changes, not just a bare undo/redo count). state.ts stays i18n-free like
+// the rest of it, so `label` arrives pre-translated from the widget layer
+// (controls.ts/transformPanel.ts/etc.), which already calls t() anyway.
+export interface HistoryEntry {
+  options: MappingOptions
+  label: string
+}
+
 export type Listener = (state: AppState) => void
 
 // crypto.randomUUID() is secure-context only, and the container is served over
@@ -58,8 +68,8 @@ export function createStore() {
   // after a history jump, without rebuilding on every live drag tick (which
   // would yank focus out from under whatever the user is actively dragging).
   const historyListeners = new Set<() => void>()
-  let past: MappingOptions[] = []
-  let future: MappingOptions[] = []
+  let past: HistoryEntry[] = []
+  let future: HistoryEntry[] = []
 
   function notify() {
     for (const listener of listeners) listener(state)
@@ -79,8 +89,8 @@ export function createStore() {
   // decides what "one gesture" means (a single click, or a whole drag from
   // pointerdown to blur) and calls this exactly once per gesture, right
   // before applying the new value via setState.
-  function commitOptionsSnapshot() {
-    past = [...past.slice(-(HISTORY_LIMIT - 1)), state.options]
+  function commitOptionsSnapshot(label: string) {
+    past = [...past.slice(-(HISTORY_LIMIT - 1)), { options: state.options, label }]
     future = []
     notify()
   }
@@ -90,8 +100,8 @@ export function createStore() {
   // widget's displayed value" contract as undo()/redo() below, since a
   // preset swap is exactly as external to e.g. the rotate segmented row as
   // an undo jump is.
-  function replaceOptions(next: MappingOptions) {
-    commitOptionsSnapshot()
+  function replaceOptions(next: MappingOptions, label: string) {
+    commitOptionsSnapshot(label)
     state = { ...state, options: next }
     notify()
     notifyHistory()
@@ -101,8 +111,8 @@ export function createStore() {
     const previous = past[past.length - 1]
     if (!previous) return
     past = past.slice(0, -1)
-    future = [state.options, ...future]
-    state = { ...state, options: previous }
+    future = [{ options: state.options, label: previous.label }, ...future]
+    state = { ...state, options: previous.options }
     notify()
     notifyHistory()
   }
@@ -111,8 +121,8 @@ export function createStore() {
     const next = future[0]
     if (!next) return
     future = future.slice(1)
-    past = [...past, state.options]
-    state = { ...state, options: next }
+    past = [...past, { options: state.options, label: next.label }]
+    state = { ...state, options: next.options }
     notify()
     notifyHistory()
   }
@@ -167,6 +177,9 @@ export function createStore() {
     redo,
     canUndo: () => past.length > 0,
     canRedo: () => future.length > 0,
+    // Oldest first, matching push order - historyPanel.ts's log window slices
+    // from the end and reverses for a most-recent-first display.
+    historyLog: () => past.map((entry) => entry.label),
   }
 }
 

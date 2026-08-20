@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Historia',
 
+  'history.entryWidth': 'Szerokość zmieniona',
+
+  'history.entryCharsetEdited': 'Zestaw znaków edytowany',
+
+  'history.entryCharsetPreset': 'Zestaw znaków: {preset}',
+
+  'history.entryFont': 'Czcionka zmieniona',
+
+  'history.entryRotated': 'Obrócono o {deg}°',
+
+  'history.entryFlipHorizontal': 'Odbito poziomo',
+
+  'history.entryFlipVertical': 'Odbito pionowo',
+
+  'history.entryBrightness': 'Jasność zmieniona',
+
+  'history.entryContrast': 'Kontrast zmieniony',
+
+  'history.entryInvert': 'Przełączono odwracanie kolorów',
+
+  'history.entryDither': 'Przełączono dithering',
+
+  'history.entryColor': 'Przełączono wyjście kolorowe',
+
+  'history.entrySharpen': 'Wyostrzanie zmienione',
+
+  'history.entryLevels': 'Dostosowano poziomy',
+
+  'history.entryLevelsReset': 'Zresetowano poziomy',
+
+  'history.entryCrop': 'Kadr zmieniony',
+
+  'history.entryCropCleared': 'Kadr usunięty',
+
+  'history.entrySettingsImported': 'Zaimportowano ustawienia',
+
+  'history.logEmpty': 'Jeszcze brak zmian.',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Upuść tu obrazy albo kliknij, aby wybrać pliki',
   'import.ariaLabel': 'Wybierz pliki obrazów do konwersji',

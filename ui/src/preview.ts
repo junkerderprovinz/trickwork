@@ -11,6 +11,7 @@ import {
   type FontWidthTable,
   type Grid,
 } from 'trickwork-core'
+import { iconCheck, iconCopy } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -36,13 +37,14 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   // now", matching ASCGen2's own Zoom In/Out buttons on its preview widget.
   let zoomPct = DEFAULT_ZOOM
 
-  // Copy sits on the opposite end of the same row from zoom (jdp: "bitte füg
-  // einen Kopieren Button hinzu") - the zoom cluster keeps its own internal
-  // grouping so the row reads as two independent controls, not four buttons
-  // all fighting for the same alignment.
+  // Icon badge, not text (jdp: "der Badge soll ein Badge mit Symbol sein,
+  // nicht mit Text" - a general rule now, see icons.ts's iconCopy()),
+  // pinned to the FAR RIGHT of the row (jdp: "der Badge soll auch ganz
+  // rechts sein") - the zoom cluster sits on the left instead.
   const copyButton = document.createElement('button')
   copyButton.type = 'button'
   copyButton.className = 'preview-copy-button'
+  copyButton.innerHTML = iconCopy()
 
   const zoomCluster = document.createElement('div')
   zoomCluster.className = 'preview-zoom-cluster'
@@ -61,7 +63,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
 
   const zoomRow = document.createElement('div')
   zoomRow.className = 'preview-zoom-row'
-  zoomRow.append(copyButton, zoomCluster)
+  zoomRow.append(zoomCluster, copyButton)
   container.appendChild(zoomRow)
 
   let copiedFeedbackTimer: ReturnType<typeof setTimeout> | null = null
@@ -76,7 +78,10 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     // normal label mid-timeout would cut the feedback short on a locale
     // switch (rare, but a full rebuild elsewhere in the app can trigger
     // this callback at any time).
-    if (!copiedFeedbackTimer) copyButton.textContent = t('preview.copy')
+    if (!copiedFeedbackTimer) {
+      copyButton.title = t('preview.copy')
+      copyButton.setAttribute('aria-label', t('preview.copy'))
+    }
   }
   applyLabels()
   subscribeLocale(applyLabels)
@@ -87,10 +92,17 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     if (!lastGrid) return
     void navigator.clipboard.writeText(toText(lastGrid)).then(() => {
       if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
-      copyButton.textContent = t('preview.copied')
+      copyButton.innerHTML = iconCheck()
+      copyButton.classList.add('preview-copy-button--copied')
+      const copiedLabel = t('preview.copied')
+      copyButton.title = copiedLabel
+      copyButton.setAttribute('aria-label', copiedLabel)
       copiedFeedbackTimer = setTimeout(() => {
         copiedFeedbackTimer = null
-        copyButton.textContent = t('preview.copy')
+        copyButton.innerHTML = iconCopy()
+        copyButton.classList.remove('preview-copy-button--copied')
+        copyButton.title = t('preview.copy')
+        copyButton.setAttribute('aria-label', t('preview.copy'))
       }, COPIED_FEEDBACK_MS)
     })
   })

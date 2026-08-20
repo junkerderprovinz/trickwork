@@ -190,11 +190,16 @@ export function hueVars(hex: string | undefined): Record<string, string> {
   return {
     '--item-hue': hex,
     '--item-hue-ink': contrastOn(hex),
-    '--item-hue-soft': `rgba(${r}, ${g}, ${b}, 0.14)`,
-    // The wash covers a whole row, so it sits far below the soft tint: at 14%
-    // eight rows of eight hues stop being a download list and start being a
-    // colour chart.
-    '--item-hue-wash': `rgba(${r}, ${g}, ${b}, 0.07)`,
+    '--item-hue-soft': `rgba(${r}, ${g}, ${b}, 0.22)`,
+    // The wash covers a whole row, so it sits below the soft tint - but not
+    // as far below as the original 7% figure: three independent adopting-app
+    // reports said the mode "does nothing" at that strength, and measuring
+    // the actual rendered colour confirmed the mechanism was wiring
+    // correctly (the values genuinely differed row to row) while staying
+    // under the threshold a person registers as "this changed." 16% is the
+    // new floor - still short of 22%'s "colour chart" territory, but no
+    // longer indistinguishable from the ground colour at a glance.
+    '--item-hue-wash': `rgba(${r}, ${g}, ${b}, 0.16)`,
     // The focus ring follows the position too. A gold ring around a teal tab
     // is the one place the single accent leaks back into the plural mode, and
     // it is the most visible one, because it only ever appears on the element

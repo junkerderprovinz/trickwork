@@ -50,7 +50,9 @@ html, body {
 }
 
 /* Undo/redo - now a card of its own (historyPanel.ts) rather than header
-   actions, sitting in the same icon-toggle-row well as Flip/Invert/etc.,
+   actions, in the same icon-toggle-row layout as Flip/Invert/etc. (own tile
+   background each, matching .icon-toggle-button - jdp flagged the earlier
+   fully-transparent-at-rest look as no longer reading as a badge at all),
    but without their persistent active/checked state - these are momentary
    actions, not toggles, so no --active fill, just hover/disabled states.
    Disabled by greying out rather than hiding, since a hidden-then-
@@ -65,7 +67,7 @@ html, body {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-control);
-  background-color: transparent;
+  background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
 }
@@ -78,6 +80,39 @@ html, body {
 .history-button:disabled {
   cursor: default;
   opacity: 0.35;
+}
+
+/* The log window (jdp: "ein kleines Protokollfenster") - a small, always-
+   present list of recent actions (historyPanel.ts's renderLog), most recent
+   on top. A fixed max-height with its own scroll, not the card's own, so a
+   long session's log never grows the whole sidecard. */
+.history-log {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  max-height: 8.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.history-log-entry {
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text-sub);
+  font-size: var(--text-caption);
+}
+
+.history-log-entry:first-child {
+  color: var(--carbon-text);
+}
+
+.history-log-empty {
+  padding: 0.3rem 0.5rem;
+  color: var(--carbon-text-muted);
+  font-size: var(--text-caption);
 }
 
 /* Square, not the pill (GlimStone's own distinction: pill implies text
@@ -204,6 +239,19 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+/* The controls panel each Convert-page sidecard mounts its rows into
+   (controls.ts/transformPanel.ts/filtersPanel.ts) had NO layout rule of its
+   own at all - every slider/field/toggle-row inside it stacked with zero
+   explicit space between them, relying on nothing (jdp: "in den Sidecards
+   sind die Optionen teilweise super nah beieinander"). .glim-section's own
+   gap only separates its direct children (eyebrow, this panel) from each
+   other, never reaches inside it. */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 .glim-section > .glim-eyebrow {
@@ -423,10 +471,25 @@ canvas.preview-canvas[width="0"] {
   margin-top: -0.25rem;
 }
 
+/* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
+   solche Badges") - same compact sizing as the zoom buttons beside it. */
 .preview-copy-button {
-  padding: 0.2rem 0.6rem;
-  font-size: var(--text-caption);
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--carbon-surface2);
+  color: var(--carbon-text-sub);
+}
+.preview-copy-button .control-icon {
+  width: 14px;
+  height: 14px;
+}
+.preview-copy-button--copied {
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-text);
 }
 
 .preview-zoom-cluster {
@@ -466,7 +529,14 @@ canvas.preview-canvas[width="0"] {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  font-size: var(--text-dense);
+  /* --text-body (14px), not --text-dense - GlimStone's own type scale
+     already documents --text-dense as "list rows, table cells, anywhere
+     many instances stack" (design-language.md, "The type scale"), and a
+     single slider/select/field's own label is none of those. This was a
+     TrickWork misapplication, not a GlimStone gap - jdp compared it
+     directly against BombVault, whose equivalent control-label text
+     renders at 14px (Tailwind's text-sm), confirming the mismatch. */
+  font-size: var(--text-body);
   color: var(--carbon-text-sub);
 }
 
@@ -534,8 +604,8 @@ input[type="text"] {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text);
   font: inherit;
-  font-size: var(--text-dense);
-  padding: 0.5rem 2rem 0.5rem 0.65rem;
+  font-size: var(--text-body);
+  padding: 0.55rem 2rem 0.55rem 0.7rem;
 }
 
 select {
@@ -619,18 +689,16 @@ input[type="text"]:focus-visible {
   background-color: #fff;
 }
 
-/* A fixed, neutral mid-grey track, not the black-to-white gradient this
-   session added and then reversed (jdp: "die Regler sieht man kaum, dieser
-   Verlauf soll weg") - the near-black and near-white ends of that gradient
-   buried the very handles that were supposed to sit on top of them, the
-   opposite of what it was meant to do. Fixed rather than a theme token
-   (--carbon-surface3 goes near-white in light mode, which would repeat the
-   exact same problem for the white handle) - same "absolute point, not
-   theme-reactive" reasoning the three handle colours below already use. */
+/* No visible track background at all now (jdp, second pass: "der graue
+   Balken soll weg. Das Fenster soll am oberen Ende der Verschieberegler
+   aufhören") - the grey bar from the previous pass is gone entirely, and
+   levelsPanel.ts moved this element OUTSIDE .levels-canvas-wrap's own
+   glim-well box, so that box's edge now sits exactly at the histogram's own
+   bottom edge instead of extending an extra 22px to wrap this too. The
+   three handles float directly on the card's own surface colour. */
 .levels-track {
   position: relative;
   height: 22px;
-  background: #787878;
 }
 
 .levels-handle-input {
@@ -889,11 +957,15 @@ button {
   border: none;
   cursor: pointer;
   font: inherit;
-  font-size: var(--text-dense);
+  /* --text-body, matching select/input[type=text] above and the same
+     role-mapping fix (see .control-slider) - a button's own label isn't a
+     stacking-many-instances context either. .queue-item and its dense-
+     tier siblings keep --text-dense deliberately (they DO stack). */
+  font-size: var(--text-body);
   color: var(--carbon-text);
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
-  padding: 0.45rem 0.75rem;
+  padding: 0.5rem 0.8rem;
   transition: background-color 120ms ease;
 }
 
@@ -998,10 +1070,20 @@ button:focus-visible {
   background-color: var(--accent);
 }
 
-.accent-swatch-row {
+/* One row: preset swatches, the custom colour picker, and the reset badge -
+   all the same 1.5rem size (jdp: "alle Farbfelder gleich groß machen...
+   der Farbpicker in die gleiche Zeile... auch gleich groß"), reset pinned to
+   the far right. Documented as the canonical accent-row pattern in
+   GlimStone (design-language.md, "The user-owned axes"). */
+.accent-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+}
+
+.accent-row .accent-reset-button {
+  margin-left: auto;
 }
 
 /* Swatches with a border-colour highlight on the active preset, mirroring
@@ -1012,11 +1094,14 @@ button:focus-visible {
    sollen der Form folgen", CannonadeCommand's own precedent for a shape-
    reactive swatch: border-radius: var(--cc-b-radius)). --radius-pill is
    used directly, uncapped - a 999px radius on a 24px box is already a
-   perfect circle, no min() needed the way a taller element requires. */
+   perfect circle, no min() needed the way a taller element requires. This
+   same class now also sizes the native colour input and the reset badge
+   (below), so all three read as one consistent row of equally-sized controls. */
 .accent-swatch {
   width: 1.5rem;
   height: 1.5rem;
   padding: 0;
+  flex-shrink: 0;
   border-radius: var(--radius-pill);
   border: 2px solid var(--carbon-border);
   cursor: pointer;
@@ -1031,21 +1116,9 @@ button:focus-visible {
   border-color: var(--carbon-text);
 }
 
-.accent-controls-row {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
 .accent-custom-input {
   appearance: none;
-  width: 2.75rem;
-  height: 1.75rem;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-control);
   background: none;
-  cursor: pointer;
 }
 .accent-custom-input::-webkit-color-swatch-wrapper {
   padding: 0;
@@ -1059,14 +1132,21 @@ button:focus-visible {
   border-radius: inherit;
 }
 
+/* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
+   solche Badges") - matching .icon-toggle-button's own neutral/hover
+   treatment instead of the plain-text link look this used to have. */
 .accent-reset-button {
-  background: none;
-  color: var(--carbon-text-muted);
-  padding: 0.3rem 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text-sub);
+  border: none;
 }
 
 .accent-reset-button:hover {
-  background: none;
+  transform: none;
+  background-color: var(--carbon-hover);
   color: var(--carbon-text);
 }
 
@@ -1146,7 +1226,8 @@ button:focus-visible {
   color: var(--carbon-text);
   font: inherit;
   font-size: var(--text-body);
-  padding: 0.85rem 1rem;
+  /* Bumped again - jdp: still reads as cramped even after the first pass. */
+  padding: 1.1rem 1.2rem;
 }
 .dropdown-trigger:hover {
   background-color: var(--carbon-hover);
@@ -1158,12 +1239,12 @@ button:focus-visible {
   right: 0;
   top: calc(100% + 0.4rem);
   z-index: 40;
-  max-height: 16rem;
+  max-height: 19rem;
   overflow-y: auto;
   background-color: var(--carbon-surface);
   border-radius: var(--radius-card);
   box-shadow: var(--elevation), var(--hairline);
-  padding: 0.35rem;
+  padding: 0.45rem;
 }
 
 .dropdown-option {
@@ -1173,7 +1254,7 @@ button:focus-visible {
   background-color: transparent;
   color: var(--carbon-text-sub);
   border-radius: var(--radius-control);
-  padding: 0.75rem 0.85rem;
+  padding: 0.9rem 1rem;
   font-size: var(--text-body);
 }
 .dropdown-option:hover {

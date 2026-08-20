@@ -311,7 +311,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
       width: rect.width / canvas.width,
       height: rect.height / canvas.height,
     }
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot(t('history.entryCrop'))
     store.setState({ options: { ...store.getState().options, crop } })
     drawStoredOverlay()
   }
@@ -320,7 +320,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
 
   clearButton.addEventListener('click', () => {
     if (!currentCrop()) return
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot(t('history.entryCropCleared'))
     const options = { ...store.getState().options }
     delete options.crop
     store.setState({ options })

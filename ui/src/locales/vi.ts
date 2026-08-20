@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Lịch sử',
 
+  'history.entryWidth': 'Đã thay đổi chiều rộng',
+
+  'history.entryCharsetEdited': 'Đã chỉnh sửa bộ ký tự',
+
+  'history.entryCharsetPreset': 'Bộ ký tự: {preset}',
+
+  'history.entryFont': 'Đã thay đổi phông chữ',
+
+  'history.entryRotated': 'Đã xoay {deg}°',
+
+  'history.entryFlipHorizontal': 'Đã lật ngang',
+
+  'history.entryFlipVertical': 'Đã lật dọc',
+
+  'history.entryBrightness': 'Đã thay đổi độ sáng',
+
+  'history.entryContrast': 'Đã thay đổi độ tương phản',
+
+  'history.entryInvert': 'Đã chuyển đổi đảo ngược màu',
+
+  'history.entryDither': 'Đã chuyển đổi dithering',
+
+  'history.entryColor': 'Đã chuyển đổi xuất màu',
+
+  'history.entrySharpen': 'Đã thay đổi làm nét',
+
+  'history.entryLevels': 'Đã điều chỉnh mức',
+
+  'history.entryLevelsReset': 'Đã đặt lại mức',
+
+  'history.entryCrop': 'Đã thay đổi cắt xén',
+
+  'history.entryCropCleared': 'Đã xóa cắt xén',
+
+  'history.entrySettingsImported': 'Đã nhập cài đặt',
+
+  'history.logEmpty': 'Chưa có thay đổi nào.',
+
   'import.eyebrow': 'Nhập',
   'import.dropzoneText': 'Thả ảnh vào đây, hoặc nhấp để chọn tệp',
   'import.ariaLabel': 'Chọn tệp ảnh cần chuyển đổi',

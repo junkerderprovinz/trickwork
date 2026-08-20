@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Geçmiş',
 
+  'history.entryWidth': 'Genişlik değiştirildi',
+
+  'history.entryCharsetEdited': 'Karakter kümesi düzenlendi',
+
+  'history.entryCharsetPreset': 'Karakter kümesi: {preset}',
+
+  'history.entryFont': 'Yazı tipi değiştirildi',
+
+  'history.entryRotated': '{deg}° döndürüldü',
+
+  'history.entryFlipHorizontal': 'Yatay çevrildi',
+
+  'history.entryFlipVertical': 'Dikey çevrildi',
+
+  'history.entryBrightness': 'Parlaklık değiştirildi',
+
+  'history.entryContrast': 'Kontrast değiştirildi',
+
+  'history.entryInvert': 'Renk tersine çevirme değiştirildi',
+
+  'history.entryDither': 'Dithering değiştirildi',
+
+  'history.entryColor': 'Renkli çıktı değiştirildi',
+
+  'history.entrySharpen': 'Keskinleştirme değiştirildi',
+
+  'history.entryLevels': 'Tonlar ayarlandı',
+
+  'history.entryLevelsReset': 'Tonlar sıfırlandı',
+
+  'history.entryCrop': 'Kırpma değiştirildi',
+
+  'history.entryCropCleared': 'Kırpma kaldırıldı',
+
+  'history.entrySettingsImported': 'Ayarlar içe aktarıldı',
+
+  'history.logEmpty': 'Henüz değişiklik yok.',
+
   'import.eyebrow': 'İçe Aktar',
   'import.dropzoneText': "Resimleri buraya bırakın veya dosya seçmek için tıklayın",
   'import.ariaLabel': "Dönüştürülecek resim dosyalarını seçin",

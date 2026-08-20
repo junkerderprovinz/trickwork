@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Cronologia',
 
+  'history.entryWidth': 'Larghezza modificata',
+
+  'history.entryCharsetEdited': 'Set di caratteri modificato',
+
+  'history.entryCharsetPreset': 'Set di caratteri: {preset}',
+
+  'history.entryFont': 'Carattere modificato',
+
+  'history.entryRotated': 'Ruotato di {deg}°',
+
+  'history.entryFlipHorizontal': 'Capovolto orizzontalmente',
+
+  'history.entryFlipVertical': 'Capovolto verticalmente',
+
+  'history.entryBrightness': 'Luminosità modificata',
+
+  'history.entryContrast': 'Contrasto modificato',
+
+  'history.entryInvert': 'Inversione colori commutata',
+
+  'history.entryDither': 'Retinatura commutata',
+
+  'history.entryColor': 'Output a colori commutato',
+
+  'history.entrySharpen': 'Nitidezza modificata',
+
+  'history.entryLevels': 'Livelli regolati',
+
+  'history.entryLevelsReset': 'Livelli ripristinati',
+
+  'history.entryCrop': 'Ritaglio modificato',
+
+  'history.entryCropCleared': 'Ritaglio rimosso',
+
+  'history.entrySettingsImported': 'Impostazioni importate',
+
+  'history.logEmpty': 'Ancora nessuna modifica.',
+
   'import.eyebrow': 'Importa',
   'import.dropzoneText': 'Trascina qui le immagini, oppure clicca per scegliere i file',
   'import.ariaLabel': 'Scegli i file immagine da convertire',

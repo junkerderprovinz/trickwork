@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Historia',
 
+  'history.entryWidth': 'Leveys muutettu',
+
+  'history.entryCharsetEdited': 'Merkistöä muokattu',
+
+  'history.entryCharsetPreset': 'Merkistö: {preset}',
+
+  'history.entryFont': 'Fontti vaihdettu',
+
+  'history.entryRotated': 'Kierretty {deg}°',
+
+  'history.entryFlipHorizontal': 'Peilattu vaakasuunnassa',
+
+  'history.entryFlipVertical': 'Peilattu pystysuunnassa',
+
+  'history.entryBrightness': 'Kirkkaus muutettu',
+
+  'history.entryContrast': 'Kontrasti muutettu',
+
+  'history.entryInvert': 'Värien kääntö vaihdettu',
+
+  'history.entryDither': 'Rasterointi vaihdettu',
+
+  'history.entryColor': 'Värillinen tuloste vaihdettu',
+
+  'history.entrySharpen': 'Terävöinti muutettu',
+
+  'history.entryLevels': 'Tasoja säädetty',
+
+  'history.entryLevelsReset': 'Tasot palautettu',
+
+  'history.entryCrop': 'Rajausta muutettu',
+
+  'history.entryCropCleared': 'Rajaus poistettu',
+
+  'history.entrySettingsImported': 'Asetukset tuotu',
+
+  'history.logEmpty': 'Ei vielä muutoksia.',
+
   'import.eyebrow': 'Tuo',
   'import.dropzoneText': 'Pudota kuvat tähän tai valitse tiedostot napsauttamalla',
   'import.ariaLabel': 'Valitse muunnettavat kuvatiedostot',

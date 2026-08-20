@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Historie',
 
+  'history.entryWidth': 'Šířka změněna',
+
+  'history.entryCharsetEdited': 'Znaková sada upravena',
+
+  'history.entryCharsetPreset': 'Znaková sada: {preset}',
+
+  'history.entryFont': 'Písmo změněno',
+
+  'history.entryRotated': 'Otočeno o {deg}°',
+
+  'history.entryFlipHorizontal': 'Překlopeno vodorovně',
+
+  'history.entryFlipVertical': 'Překlopeno svisle',
+
+  'history.entryBrightness': 'Jas změněn',
+
+  'history.entryContrast': 'Kontrast změněn',
+
+  'history.entryInvert': 'Přepnuta inverze barev',
+
+  'history.entryDither': 'Přepnuto rozptylování',
+
+  'history.entryColor': 'Přepnut barevný výstup',
+
+  'history.entrySharpen': 'Doostření změněno',
+
+  'history.entryLevels': 'Tóny upraveny',
+
+  'history.entryLevelsReset': 'Tóny obnoveny',
+
+  'history.entryCrop': 'Ořez změněn',
+
+  'history.entryCropCleared': 'Ořez odstraněn',
+
+  'history.entrySettingsImported': 'Nastavení importováno',
+
+  'history.logEmpty': 'Zatím žádné změny.',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Přetáhněte sem obrázky, nebo klikněte pro výběr souborů',
   'import.ariaLabel': 'Vyberte obrázkové soubory ke konverzi',

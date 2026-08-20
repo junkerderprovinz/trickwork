@@ -19,7 +19,7 @@ describe('undo/redo', () => {
   it('commitOptionsSnapshot then a change makes undo restore the pre-change value', () => {
     const store = createStore()
     const original = store.getState().options.columns
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 200 } })
     expect(store.getState().options.columns).toBe(200)
 
@@ -29,7 +29,7 @@ describe('undo/redo', () => {
 
   it('redo re-applies what undo just reverted', () => {
     const store = createStore()
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 200 } })
     store.undo()
     store.redo()
@@ -38,12 +38,12 @@ describe('undo/redo', () => {
 
   it('a new commit after undo clears the redo stack (the standard editor behavior)', () => {
     const store = createStore()
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 200 } })
     store.undo()
     expect(store.canRedo()).toBe(true)
 
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 50 } })
     expect(store.canRedo()).toBe(false)
     store.redo()
@@ -52,11 +52,11 @@ describe('undo/redo', () => {
 
   it('multiple commits undo in reverse order (LIFO)', () => {
     const store = createStore()
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 100 } })
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 150 } })
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 200 } })
 
     store.undo()
@@ -70,7 +70,7 @@ describe('undo/redo', () => {
 
   it('items/activeItemId changes are never part of the options undo history', () => {
     const store = createStore()
-    store.commitOptionsSnapshot()
+    store.commitOptionsSnapshot('test')
     store.setState({ options: { ...store.getState().options, columns: 200 } })
     store.setState({ activeItemId: 'some-item' })
 
@@ -87,7 +87,7 @@ describe('undo/redo', () => {
       historyFired++
     })
 
-    store.replaceOptions({ ...store.getState().options, columns: 300 })
+    store.replaceOptions({ ...store.getState().options, columns: 300 }, 'test')
     expect(store.getState().options.columns).toBe(300)
     expect(historyFired).toBe(1)
     expect(store.canUndo()).toBe(true)
@@ -101,7 +101,7 @@ describe('undo/redo', () => {
   it('caps history depth so an unbounded editing session cannot grow it forever', () => {
     const store = createStore()
     for (let i = 0; i < 60; i++) {
-      store.commitOptionsSnapshot()
+      store.commitOptionsSnapshot('test')
       store.setState({ options: { ...store.getState().options, columns: 100 + i } })
     }
     let undoCount = 0

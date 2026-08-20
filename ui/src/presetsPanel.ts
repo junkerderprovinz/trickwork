@@ -140,7 +140,7 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
       // step back from with Ctrl+Z if the loaded preset turns out wrong -
       // replaceOptions() gets that AND re-syncs every control's displayed
       // value, the same as an undo/redo jump (see state.ts).
-      store.replaceOptions(options)
+      store.replaceOptions(options, t('history.entrySettingsImported'))
       summary.textContent = t('presets.imported')
     })()
   })

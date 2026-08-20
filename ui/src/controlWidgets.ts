@@ -14,14 +14,17 @@
  * use it to snapshot the pre-click options onto the history stack. A plain
  * click is already one atomic gesture, so every call is a good undo step
  * (contrast this with numberSlider's continuous drag, which only snapshots
- * once per whole gesture - see controls.ts).
+ * once per whole gesture - see controls.ts). Receives the TARGET value (the
+ * choice about to become active), not the outgoing one - a history-log label
+ * describing the action ("Rotated 90°") needs to know what's being switched
+ * TO, and onBeforeChange fires before `active` is updated.
  */
 export function segmentedRow<T extends string>(
   label: string,
   choices: { value: T; label: string }[],
   initial: T,
   onChange: (value: T) => void,
-  onBeforeChange?: () => void,
+  onBeforeChange?: (value: T) => void,
 ): HTMLElement {
   const wrap = document.createElement('div')
   wrap.className = 'control-slider'
@@ -53,7 +56,7 @@ export function segmentedRow<T extends string>(
       btn.title = choice.label
       btn.addEventListener('click', () => {
         if (choice.value === active) return
-        onBeforeChange?.()
+        onBeforeChange?.(choice.value)
         active = choice.value
         onChange(active)
         render()

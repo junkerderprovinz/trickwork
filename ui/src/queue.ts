@@ -46,7 +46,13 @@ export function mountQueue(container: HTMLElement, store: Store): void {
 
 function renderItem(item: BatchItem, isActive: boolean, index: number, store: Store): HTMLLIElement {
   const li = document.createElement('li')
-  li.className = `queue-item queue-item--${item.status}${isActive ? ' queue-item--active' : ''}`
+  // .glim-active alongside the app's own queue-item--active - GlimStone's
+  // shared rainbow composition rule (tokens.css's `.glim-tint.glim-active`)
+  // keys off the GENERIC marker, not an app-specific one; without it, the
+  // active row silently fell back to the same flat wash as every other row
+  // (a real bug found this session - see design-language.md's rainbow
+  // section, "the active row needs its own class").
+  li.className = `queue-item queue-item--${item.status}${isActive ? ' queue-item--active glim-active' : ''}`
 
   // Each row owns one palette position - the canonical rainbow use case
   // (design-language.md: "a download row owns a colour"). rainbowColor()

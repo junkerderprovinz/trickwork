@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'Ιστορικό',
 
+  'history.entryWidth': 'Το πλάτος άλλαξε',
+
+  'history.entryCharsetEdited': 'Το σύνολο χαρακτήρων επεξεργάστηκε',
+
+  'history.entryCharsetPreset': 'Σύνολο χαρακτήρων: {preset}',
+
+  'history.entryFont': 'Η γραμματοσειρά άλλαξε',
+
+  'history.entryRotated': 'Περιστράφηκε {deg}°',
+
+  'history.entryFlipHorizontal': 'Οριζόντια αναστροφή',
+
+  'history.entryFlipVertical': 'Κατακόρυφη αναστροφή',
+
+  'history.entryBrightness': 'Η φωτεινότητα άλλαξε',
+
+  'history.entryContrast': 'Η αντίθεση άλλαξε',
+
+  'history.entryInvert': 'Η αντιστροφή χρωμάτων εναλλάχθηκε',
+
+  'history.entryDither': 'Το dithering εναλλάχθηκε',
+
+  'history.entryColor': 'Η έγχρωμη έξοδος εναλλάχθηκε',
+
+  'history.entrySharpen': 'Η όξυνση άλλαξε',
+
+  'history.entryLevels': 'Τα επίπεδα προσαρμόστηκαν',
+
+  'history.entryLevelsReset': 'Τα επίπεδα επαναφέρθηκαν',
+
+  'history.entryCrop': 'Η περικοπή άλλαξε',
+
+  'history.entryCropCleared': 'Η περικοπή αφαιρέθηκε',
+
+  'history.entrySettingsImported': 'Οι ρυθμίσεις εισήχθησαν',
+
+  'history.logEmpty': 'Καμία αλλαγή ακόμα.',
+
   'import.eyebrow': 'Εισαγωγή',
   'import.dropzoneText': 'Αφήστε εικόνες εδώ, ή κάντε κλικ για να επιλέξετε αρχεία',
   'import.ariaLabel': 'Επιλέξτε αρχεία εικόνων προς μετατροπή',

@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'ประวัติ',
 
+  'history.entryWidth': 'เปลี่ยนความกว้างแล้ว',
+
+  'history.entryCharsetEdited': 'แก้ไขชุดอักขระแล้ว',
+
+  'history.entryCharsetPreset': 'ชุดอักขระ: {preset}',
+
+  'history.entryFont': 'เปลี่ยนแบบอักษรแล้ว',
+
+  'history.entryRotated': 'หมุน {deg}° แล้ว',
+
+  'history.entryFlipHorizontal': 'พลิกแนวนอนแล้ว',
+
+  'history.entryFlipVertical': 'พลิกแนวตั้งแล้ว',
+
+  'history.entryBrightness': 'เปลี่ยนความสว่างแล้ว',
+
+  'history.entryContrast': 'เปลี่ยนความคมชัดแล้ว',
+
+  'history.entryInvert': 'สลับการกลับสีแล้ว',
+
+  'history.entryDither': 'สลับดิเธอร์แล้ว',
+
+  'history.entryColor': 'สลับเอาต์พุตสีแล้ว',
+
+  'history.entrySharpen': 'เปลี่ยนความคมชัดภาพแล้ว',
+
+  'history.entryLevels': 'ปรับโทนสีแล้ว',
+
+  'history.entryLevelsReset': 'รีเซ็ตโทนสีแล้ว',
+
+  'history.entryCrop': 'เปลี่ยนการครอบตัดแล้ว',
+
+  'history.entryCropCleared': 'ล้างการครอบตัดแล้ว',
+
+  'history.entrySettingsImported': 'นำเข้าการตั้งค่าแล้ว',
+
+  'history.logEmpty': 'ยังไม่มีการเปลี่ยนแปลง',
+
   'import.eyebrow': 'นำเข้า',
   'import.dropzoneText': 'ลากภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์',
   'import.ariaLabel': 'เลือกไฟล์ภาพที่ต้องการแปลง',

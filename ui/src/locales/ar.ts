@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'تاريخ',
 
+  'history.entryWidth': 'تم تغيير العرض',
+
+  'history.entryCharsetEdited': 'تم تعديل مجموعة الأحرف',
+
+  'history.entryCharsetPreset': 'مجموعة الأحرف: {preset}',
+
+  'history.entryFont': 'تم تغيير الخط',
+
+  'history.entryRotated': 'تم التدوير {deg}°',
+
+  'history.entryFlipHorizontal': 'تم القلب أفقيًا',
+
+  'history.entryFlipVertical': 'تم القلب رأسيًا',
+
+  'history.entryBrightness': 'تم تغيير السطوع',
+
+  'history.entryContrast': 'تم تغيير التباين',
+
+  'history.entryInvert': 'تم تبديل عكس الألوان',
+
+  'history.entryDither': 'تم تبديل التنقيط',
+
+  'history.entryColor': 'تم تبديل الإخراج الملون',
+
+  'history.entrySharpen': 'تم تغيير الحدة',
+
+  'history.entryLevels': 'تم ضبط المستويات',
+
+  'history.entryLevelsReset': 'تمت إعادة تعيين المستويات',
+
+  'history.entryCrop': 'تم تغيير القص',
+
+  'history.entryCropCleared': 'تمت إزالة القص',
+
+  'history.entrySettingsImported': 'تم استيراد الإعدادات',
+
+  'history.logEmpty': 'لا توجد تغييرات بعد.',
+
   'import.eyebrow': 'استيراد',
   'import.dropzoneText': 'أفلت الصور هنا، أو انقر لاختيار الملفات',
   'import.ariaLabel': 'اختر ملفات الصور المراد تحويلها',

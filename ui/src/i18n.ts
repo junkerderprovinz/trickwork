@@ -25,6 +25,44 @@ export const en = {
 
   'history.eyebrow': 'History',
 
+  'history.entryWidth': 'Width changed',
+
+  'history.entryCharsetEdited': 'Charset edited',
+
+  'history.entryCharsetPreset': 'Charset: {preset}',
+
+  'history.entryFont': 'Font changed',
+
+  'history.entryRotated': 'Rotated {deg}°',
+
+  'history.entryFlipHorizontal': 'Flipped horizontal',
+
+  'history.entryFlipVertical': 'Flipped vertical',
+
+  'history.entryBrightness': 'Brightness changed',
+
+  'history.entryContrast': 'Contrast changed',
+
+  'history.entryInvert': 'Invert toggled',
+
+  'history.entryDither': 'Dithering toggled',
+
+  'history.entryColor': 'Color toggled',
+
+  'history.entrySharpen': 'Sharpening changed',
+
+  'history.entryLevels': 'Levels adjusted',
+
+  'history.entryLevelsReset': 'Levels reset',
+
+  'history.entryCrop': 'Crop changed',
+
+  'history.entryCropCleared': 'Crop cleared',
+
+  'history.entrySettingsImported': 'Settings imported',
+
+  'history.logEmpty': 'No changes yet.',
+
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Drop images here, or click to choose files',
   'import.ariaLabel': 'Choose image files to convert',
@@ -157,6 +195,44 @@ export const de: Translations = {
   'nav.redo': 'Wiederherstellen',
 
   'history.eyebrow': 'Verlauf',
+
+  'history.entryWidth': 'Breite geändert',
+
+  'history.entryCharsetEdited': 'Zeichensatz bearbeitet',
+
+  'history.entryCharsetPreset': 'Zeichensatz: {preset}',
+
+  'history.entryFont': 'Schriftart geändert',
+
+  'history.entryRotated': 'Um {deg}° gedreht',
+
+  'history.entryFlipHorizontal': 'Horizontal gespiegelt',
+
+  'history.entryFlipVertical': 'Vertikal gespiegelt',
+
+  'history.entryBrightness': 'Helligkeit geändert',
+
+  'history.entryContrast': 'Kontrast geändert',
+
+  'history.entryInvert': 'Invertieren umgeschaltet',
+
+  'history.entryDither': 'Dithering umgeschaltet',
+
+  'history.entryColor': 'Farbausgabe umgeschaltet',
+
+  'history.entrySharpen': 'Schärfen geändert',
+
+  'history.entryLevels': 'Tonwertkorrektur angepasst',
+
+  'history.entryLevelsReset': 'Tonwertkorrektur zurückgesetzt',
+
+  'history.entryCrop': 'Zuschnitt geändert',
+
+  'history.entryCropCleared': 'Zuschnitt entfernt',
+
+  'history.entrySettingsImported': 'Einstellungen importiert',
+
+  'history.logEmpty': 'Noch keine Änderungen.',
 
   'import.eyebrow': 'Import',
   'import.dropzoneText': 'Bilder hierher ziehen oder klicken zum Auswählen',

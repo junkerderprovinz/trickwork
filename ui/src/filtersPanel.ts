@@ -51,7 +51,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, brightness: value } })
       },
       0.05,
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryBrightness')),
     )
 
     const contrast = numberSlider(
@@ -63,7 +63,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, contrast: value } })
       },
       0.05,
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryContrast')),
     )
 
     const toggleRow = document.createElement('div')
@@ -76,7 +76,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       (checked) => {
         store.setState({ options: { ...store.getState().options, invert: checked } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryInvert')),
     )
     const dither = iconToggleButton(
       t('controls.dither'),
@@ -85,7 +85,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       (checked) => {
         store.setState({ options: { ...store.getState().options, dither: checked } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryDither')),
     )
     const color = iconToggleButton(
       t('controls.color'),
@@ -94,7 +94,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       (checked) => {
         store.setState({ options: { ...store.getState().options, color: checked } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entryColor')),
     )
     toggleRow.append(invert, dither, color)
     // The "TXT never carries colour" caveat lives in the Export tab instead,
@@ -107,7 +107,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       (value) => {
         store.setState({ options: { ...store.getState().options, sharpen: value } })
       },
-      () => store.commitOptionsSnapshot(),
+      () => store.commitOptionsSnapshot(t('history.entrySharpen')),
     )
 
     panel.append(brightness, contrast, toggleRow, sharpenRow)

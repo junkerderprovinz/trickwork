@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'היסטוריה',
 
+  'history.entryWidth': 'הרוחב השתנה',
+
+  'history.entryCharsetEdited': 'ערכת התווים נערכה',
+
+  'history.entryCharsetPreset': 'ערכת תווים: {preset}',
+
+  'history.entryFont': 'הגופן השתנה',
+
+  'history.entryRotated': 'סובב ב-{deg}°',
+
+  'history.entryFlipHorizontal': 'הופך אופקית',
+
+  'history.entryFlipVertical': 'הופך אנכית',
+
+  'history.entryBrightness': 'הבהירות השתנתה',
+
+  'history.entryContrast': 'הניגודיות השתנתה',
+
+  'history.entryInvert': 'היפוך הצבעים הוחלף',
+
+  'history.entryDither': 'הדיתור הוחלף',
+
+  'history.entryColor': 'הפלט הצבעוני הוחלף',
+
+  'history.entrySharpen': 'החידוד השתנה',
+
+  'history.entryLevels': 'הרמות הותאמו',
+
+  'history.entryLevelsReset': 'הרמות אופסו',
+
+  'history.entryCrop': 'החיתוך השתנה',
+
+  'history.entryCropCleared': 'החיתוך הוסר',
+
+  'history.entrySettingsImported': 'ההגדרות יובאו',
+
+  'history.logEmpty': 'אין שינויים עדיין.',
+
   'import.eyebrow': 'ייבוא',
   'import.dropzoneText': 'גררו תמונות לכאן, או לחצו לבחירת קבצים',
   'import.ariaLabel': 'בחירת קובצי תמונה להמרה',

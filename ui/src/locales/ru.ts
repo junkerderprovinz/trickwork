@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': 'История',
 
+  'history.entryWidth': 'Ширина изменена',
+
+  'history.entryCharsetEdited': 'Набор символов изменён',
+
+  'history.entryCharsetPreset': 'Набор символов: {preset}',
+
+  'history.entryFont': 'Шрифт изменён',
+
+  'history.entryRotated': 'Повёрнуто на {deg}°',
+
+  'history.entryFlipHorizontal': 'Отражено по горизонтали',
+
+  'history.entryFlipVertical': 'Отражено по вертикали',
+
+  'history.entryBrightness': 'Яркость изменена',
+
+  'history.entryContrast': 'Контраст изменён',
+
+  'history.entryInvert': 'Инверсия цветов переключена',
+
+  'history.entryDither': 'Дизеринг переключён',
+
+  'history.entryColor': 'Цветной вывод переключён',
+
+  'history.entrySharpen': 'Резкость изменена',
+
+  'history.entryLevels': 'Уровни скорректированы',
+
+  'history.entryLevelsReset': 'Уровни сброшены',
+
+  'history.entryCrop': 'Обрезка изменена',
+
+  'history.entryCropCleared': 'Обрезка удалена',
+
+  'history.entrySettingsImported': 'Настройки импортированы',
+
+  'history.logEmpty': 'Пока нет изменений.',
+
   'import.eyebrow': 'Импорт',
   'import.dropzoneText': 'Перетащите изображения сюда или нажмите, чтобы выбрать файлы',
   'import.ariaLabel': 'Выбрать файлы изображений для конвертации',

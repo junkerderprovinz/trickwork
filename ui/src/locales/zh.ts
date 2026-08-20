@@ -15,6 +15,44 @@ const dict: Translations = {
 
   'history.eyebrow': '历史',
 
+  'history.entryWidth': '宽度已更改',
+
+  'history.entryCharsetEdited': '字符集已编辑',
+
+  'history.entryCharsetPreset': '字符集：{preset}',
+
+  'history.entryFont': '字体已更改',
+
+  'history.entryRotated': '已旋转 {deg}°',
+
+  'history.entryFlipHorizontal': '已水平翻转',
+
+  'history.entryFlipVertical': '已垂直翻转',
+
+  'history.entryBrightness': '亮度已更改',
+
+  'history.entryContrast': '对比度已更改',
+
+  'history.entryInvert': '反转颜色已切换',
+
+  'history.entryDither': '抖动已切换',
+
+  'history.entryColor': '彩色输出已切换',
+
+  'history.entrySharpen': '锐化已更改',
+
+  'history.entryLevels': '色阶已调整',
+
+  'history.entryLevelsReset': '色阶已重置',
+
+  'history.entryCrop': '裁剪已更改',
+
+  'history.entryCropCleared': '裁剪已清除',
+
+  'history.entrySettingsImported': '设置已导入',
+
+  'history.logEmpty': '尚无更改。',
+
   'import.eyebrow': '导入',
   'import.dropzoneText': '将图片拖到此处，或点击选择文件',
   'import.ariaLabel': '选择要转换的图片文件',
