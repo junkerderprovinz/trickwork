@@ -1,0 +1,27 @@
+# Changelog
+
+All notable changes to TrickWork are documented here.
+
+## 1.0.0 — 2026-08-21
+
+The first public release. TrickWork turns images into proportional-font-aware ASCII art - a rebuild of the abandoned ASCGen2, with characters picked by how much visual "ink" they actually cover at your chosen font instead of by brightness alone.
+
+### ✨ Added
+
+- Core conversion engine: source image → character grid, driven by real measured glyph ink coverage (a canvas-rendered sample of each character, not an assumption that every glyph looks equally "full") - proportional (non-monospace) fonts render correctly instead of looking stretched or squashed.
+- Nine of ASCII Gen 2's own original character ramps, fetched and verified byte-for-byte against its real 2011 source archive - including its own weighting mechanic (a character repeated in the ramp claims proportionally more of the brightness range), plus a bonus 70-character "Detailed" ramp for extra tonal range. The character-set field is fully free-text: paste, edit or hand-tune any ramp.
+- Live interactive preview with zoom, alongside the source image and an adjustable crop region.
+- Levels (black/gamma/white point, with a live histogram), Brightness/Contrast, Invert, Floyd-Steinberg Dithering, and Color output (per-cell average source colour, carried through every export except plain TXT).
+- Sharpen and Unsharp Mask.
+- Rotate (0/90/180/270°) and horizontal/vertical flip.
+- A batch queue: convert several images with the same settings, export them together as one TXT file.
+- Undo/redo history with a readable log of what changed, gesture-aware so a whole slider drag undoes as one step.
+- Export to TXT, XHTML, RTF or PNG, or copy the active image straight to the clipboard.
+- Export/import the full settings object as a JSON file, to save or share a configuration.
+- Two ways to run it from one shared TypeScript/Canvas core, always pixel-for-pixel identical: a self-hosted Docker container (amd64 + arm64, with an Unraid Community Applications template) and a portable desktop app for Windows, macOS and Linux (via Wails, no installer). Both are stateless - no database, no accounts, nothing to configure beyond the port.
+
+### 🎨 Design
+
+- A full GlimStone-based interface: dark/light/system theme, a Round/Soft/Square shape engine that reshapes every corner across the whole app at once, and an optional Rainbow mode that hands out a distinct colour per control instead of one flat accent.
+- Drag-and-drop reorderable sidebar cards, so the working layout matches how you actually use it.
+- Translated into 26 languages.
