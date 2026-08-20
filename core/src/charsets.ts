@@ -1,11 +1,19 @@
 // standard/blocks/classic/alternate/compact/bold/symbols/minimal/binary are
 // ASCGen2's own nine DefaultRamps (Variables.cs, fetched from the real
-// SourceForge source archive and verified byte-for-byte, reversed here from
-// its dark->light storage order to TrickWork's own light->dark convention).
-// Unlike an earlier revision of this file, REPEATS ARE KEPT, not deduped to
-// a distinct-character set: mapLuminanceToChar (mapping.ts) ranks each
-// preset's characters by their own MEASURED ink coverage (more accurate
-// than ASCGen2's hand-picked ordering) and then picks by ASCGen2's own
+// SourceForge source archive and verified byte-for-byte) - kept in their
+// AUTHENTIC dark-to-light storage order, densest character first and blank
+// space last (jdp: "im ASCII Gen 2 ist die zeichenreihenfolge des
+// zeichensatz genau umgekehrt und die leerzeichen kommen zum schluss" - an
+// earlier revision of this file reversed the order to TrickWork's own
+// light-to-dark habit, which reads backwards next to the real source). Order
+// has no effect on the RENDERED output either way - mapLuminanceToChar
+// (mapping.ts) always re-ranks by measured ink coverage before picking - so
+// this is purely about the charset field showing the same string ASCGen2
+// itself would have shown, not a functional change.
+//
+// REPEATS ARE KEPT, not deduped to a distinct-character set: each preset's
+// characters are ranked by their own MEASURED ink coverage (more accurate
+// than ASCGen2's hand-picked ordering) and then picked by ASCGen2's own
 // linear-percentile RANK, not nearest-value - so a character repeated N
 // times in the source ramp claims N adjacent rank slots and covers a
 // proportionally wider luminance band, exactly reproducing ASCGen2's own
@@ -20,39 +28,39 @@
 // at all (its dropdown just showed the raw string); these names are
 // TrickWork's own.
 export const CHARSET_PRESETS = {
-  standard: [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'],
+  standard: ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' '],
   detailed:
     ' .\'`^",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'.split(
       '',
     ),
-  blocks: [' ', '░', '▒', '▓', '█'],
+  blocks: ['█', '▓', '▒', '░', ' '],
   classic: [
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '.', '.', '.', '.', '.', '.', ',', ',', ',', ',', ',', ',',
-    ':', ',', ':', ':', ':', ':', ':', ':', ':', 'i', 'i', 'i', 'i', 'i', 'i', 'i', 'i', 'i', ';', ';', ';', ';',
-    ';', ';', ';', ';', 'r', 'r', 'r', 'r', 'r', 'r', 'r', '7', '7', '7', '7', '7', '7', '7', 'X', 'X', 'X', 'X',
-    'X', 'X', 'X', 'X', 'X', 'X', 'X', 'S', 'S', 'S', 'S', 'S', 'S', 'S', '2', '2', '2', '2', '2', '2', '2', 'a',
-    'a', 'a', 'a', 'a', 'a', 'Z', 'a', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', '8', '8', '8', '8', '8', '8',
-    '8', '0', '0', '0', '0', '0', '0', '0', '0', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'W', 'W', 'W', 'W', 'W',
-    'W', 'W', 'W', 'W', '@', '@', '@', '@', '@', '@', '@', 'M', 'M', 'M', 'M', 'M', 'M', 'M',
+    'M', 'M', 'M', 'M', 'M', 'M', 'M', '@', '@', '@', '@', '@', '@', '@', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W',
+    'W', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', '0', '0', '0', '0', '0', '0', '0', '0', '8', '8', '8', '8', '8',
+    '8', '8', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'a', 'Z', 'a', 'a', 'a', 'a', 'a', 'a', '2', '2', '2',
+    '2', '2', '2', '2', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+    '7', '7', '7', '7', '7', '7', '7', 'r', 'r', 'r', 'r', 'r', 'r', 'r', ';', ';', ';', ';', ';', ';', ';', ';',
+    'i', 'i', 'i', 'i', 'i', 'i', 'i', 'i', 'i', ':', ':', ':', ':', ':', ':', ':', ',', ':', ',', ',', ',', ',',
+    ',', ',', '.', '.', '.', '.', '.', '.', '.', '.', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
   ],
   alternate: [
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', '.', '.', '.', '.', '.', ',', ',', ',', ',', ',', ',',
-    ',', ':', ':', ':', ':', ':', ':', ':', ';', ';', ';', ';', ';', ';', ';', ';', 'r', 'r', 'r', 'r', 'r', 'r',
-    'r', 's', 's', 's', 's', 'i', 'i', 'i', 'i', 'S', 'S', 'S', '5', '5', '2', '2', '2', '2', 'X', 'X', 'X', '3',
-    '3', '9', '9', 'h', 'h', 'G', 'G', '&', '&', 'A', 'A', 'A', 'A', 'H', 'H', 'H', 'B', 'B', 'M', 'M', 'M', '#',
-    '#', '#', '#', '#', '#', '@', '@', '@', '@', '@', '@', '@',
+    '@', '@', '@', '@', '@', '@', '@', '#', '#', '#', '#', '#', '#', 'M', 'M', 'M', 'B', 'B', 'H', 'H', 'H', 'A',
+    'A', 'A', 'A', '&', '&', 'G', 'G', 'h', 'h', '9', '9', '3', '3', 'X', 'X', 'X', '2', '2', '2', '2', '5', '5',
+    'S', 'S', 'S', 'i', 'i', 'i', 'i', 's', 's', 's', 's', 'r', 'r', 'r', 'r', 'r', 'r', 'r', ';', ';', ';', ';',
+    ';', ';', ';', ';', ':', ':', ':', ':', ':', ':', ':', ',', ',', ',', ',', ',', ',', ',', '.', '.', '.', '.',
+    '.', '.', '.', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
   ],
-  compact: [' ', '.', ',', ':', ';', '=', '+', 'i', 't', 'I', 'Y', 'V', 'X', 'R', 'B', 'M', 'W', '#'],
+  compact: ['#', 'W', 'M', 'B', 'R', 'X', 'V', 'Y', 'I', 't', 'i', '+', '=', ';', ':', ',', '.', ' '],
   bold: [
-    ' ', ' ', ' ', ' ', '.', '.', '.', ',', ',', ';', ';', '-', '-', '-', '=', '=', '=', '+', '+', '+', 'x', 'x',
-    'x', 'X', 'X', '#', '#',
+    '#', '#', 'X', 'X', 'x', 'x', 'x', '+', '+', '+', '=', '=', '=', '-', '-', '-', ';', ';', ',', ',', '.', '.',
+    '.', ' ', ' ', ' ', ' ',
   ],
   symbols: [
-    ' ', ' ', ' ', ' ', '.', ',', '-', '=', '+', '+', '°', 'o', 'o', '0', 'ø', '$', '$', 'Ø', 'Ø', '®', '®', '¥',
-    '¥', '#',
+    '#', '¥', '¥', '®', '®', 'Ø', 'Ø', '$', '$', 'ø', '0', 'o', 'o', '°', '+', '+', '=', '-', ',', '.', ' ', ' ',
+    ' ', ' ',
   ],
-  minimal: [' ', '#'],
-  binary: [' ', '1', '0'],
+  minimal: ['#', ' '],
+  binary: ['0', '1', ' '],
 } as const
 
 export type CharsetPresetKey = keyof typeof CHARSET_PRESETS

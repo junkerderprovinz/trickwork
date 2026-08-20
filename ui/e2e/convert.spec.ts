@@ -143,7 +143,9 @@ test('the character set field is plain, freely editable text - no click-to-delet
   // so this locator can only ever match the field, never the select too.
   const charsetField = page.getByLabel('Character set', { exact: true })
   const presetSelect = page.getByLabel('Character set preset', { exact: true })
-  await expect(charsetField).toHaveValue(' .:-=+*#%@')
+  // ASCGen2's own dark-to-light order (jdp: "die leerzeichen kommen zum
+  // schluss") - densest character first, blank space last.
+  await expect(charsetField).toHaveValue('@%#*+=-:. ')
   await expect(presetSelect).toHaveValue('standard')
 
   // A real "select all, type over it" edit, exactly like editing any other
