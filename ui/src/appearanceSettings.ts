@@ -12,6 +12,7 @@ import {
 } from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
 import { flagEmoji } from './design/flagEmoji'
+import { colorPicker } from './design/colorPicker'
 import { customDropdown, segmentedRow, toggleSwitch } from './controlWidgets'
 import { iconReset } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
@@ -107,30 +108,31 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       },
     )
 
-    // Matches BombVault's Settings.tsx accent picker exactly (jdp: "der
-    // Farbpicker sieht ganz anders aus, er soll aussehen wie in BV") - a
-    // rectangular native colour input (BV's own h-8 w-14, not squeezed into
-    // the same square as the swatches), a small muted "Presets:" label,
-    // then the five circular preset swatches with a border-colour highlight
-    // on whichever one is active (BV's own technique, not a fill - "die
-    // Voreingestellten Farben sollen gekennzeichnet werden wie in BV").
-    // Reset is still an icon badge (GlimStone's own "icons not text for
-    // small action badges" rule), at --badge-sm like every other icon
-    // badge in the app, not swatch-sized - a colour swatch and an icon
-    // badge are two different things and don't need to share one size.
+    // The picker is a real, permanently embedded saturation/value square +
+    // hue bar (jdp: "es soll sich kein komplett neues Fenster öffnen. es
+    // soll der gleiche Picker erscheinen wie in BV") - GlimStone's own
+    // colorPicker(), ported from CannonadeCommand's inlinePicker(), never a
+    // native <input type="color"> (which hands off to a browser/OS surface
+    // entirely outside the page - a genuinely separate window on some
+    // setups, and functionally unverifiable in Playwright since that
+    // surface sits outside the page's own DOM). Always visible for this
+    // single accent value, re-synced via setValue() whenever a preset is
+    // clicked so it always shows the current colour regardless of how it
+    // was set - matches GlimStone's documented single-value picker layout.
     const accentWrap = document.createElement('div')
     accentWrap.className = 'control-slider'
     const accentLabel = document.createElement('span')
     accentLabel.textContent = t('appearance.accent')
 
-    const accentRow = document.createElement('div')
-    accentRow.className = 'accent-row'
+    const accentPicker = colorPicker(accent || DEFAULT_ACCENT, (hex) => {
+      accent = hex
+      applyAccent(accent)
+      persist()
+      renderSwatches()
+    })
 
-    const customInput = document.createElement('input')
-    customInput.type = 'color'
-    customInput.className = 'accent-custom-input'
-    customInput.setAttribute('aria-label', t('appearance.accent'))
-    customInput.value = accent || DEFAULT_ACCENT
+    const presetsRow = document.createElement('div')
+    presetsRow.className = 'accent-row'
 
     const presetsLabel = document.createElement('span')
     presetsLabel.className = 'accent-presets-label'
@@ -149,10 +151,15 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       accent = ''
       applyAccent(undefined)
       persist()
-      customInput.value = DEFAULT_ACCENT
+      accentPicker.setValue(DEFAULT_ACCENT)
       renderSwatches()
     })
 
+    // Preset/palette swatches stay flat colour circles, not pickers of
+    // their own (GlimStone's own rule) - a click selects the value AND
+    // resyncs the one embedded picker, matching BombVault's border-colour
+    // highlight on the active preset (jdp: "die Voreingestellten Farben
+    // sollen gekennzeichnet werden wie in BV" - a border, not a fill).
     function renderSwatches(): void {
       swatchGroup.innerHTML = ''
       for (const preset of ACCENTS) {
@@ -167,7 +174,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
           accent = preset.hex
           applyAccent(accent)
           persist()
-          customInput.value = accent
+          accentPicker.setValue(accent)
           renderSwatches()
         })
         swatchGroup.appendChild(btn)
@@ -175,15 +182,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     }
     renderSwatches()
 
-    customInput.addEventListener('input', () => {
-      accent = customInput.value
-      applyAccent(accent)
-      persist()
-      renderSwatches()
-    })
-
-    accentRow.append(customInput, presetsLabel, swatchGroup, resetBtn)
-    accentWrap.append(accentLabel, accentRow)
+    presetsRow.append(presetsLabel, swatchGroup, resetBtn)
+    accentWrap.append(accentLabel, accentPicker.el, presetsRow)
 
     // A genuine sliding switch now, not a segmented Off/On pair (jdp: "soll
     // ein Toggle sein, der auch der Form folgt") - GlimStone's own
@@ -205,6 +205,34 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     paletteRow.setAttribute('role', 'group')
     paletteRow.setAttribute('aria-label', t('appearance.rainbowPalette'))
 
+    // ONE shared embedded picker for all 8 positions (GlimStone's own
+    // multi-value-palette layout rule), not eight always-open pickers
+    // stacked in the settings page - matches CannonadeCommand's own
+    // rainbow-palette editor exactly (rbPick/rbPickWrap). Hidden until a
+    // swatch is first clicked, then revealed directly below the row and
+    // re-synced to whichever swatch was clicked most recently.
+    let paletteEditingIndex: number | null = null
+    const palettePickerWrap = document.createElement('div')
+    palettePickerWrap.style.display = 'none'
+    const sharedPalettePicker = colorPicker(palette[0] ?? DEFAULT_ACCENT, (hex) => {
+      if (paletteEditingIndex === null) return
+      palette[paletteEditingIndex] = hex
+      const swatch = paletteRow.children[paletteEditingIndex] as HTMLElement | undefined
+      if (swatch) {
+        swatch.style.backgroundColor = hex
+        swatch.setAttribute('data-tip', hex)
+        swatch.setAttribute('aria-label', hex)
+      }
+      // Spread the CURRENT rainbow state first, not just {palette} -
+      // applyRainbow merges onto RAINBOW_OFF's defaults, so passing palette
+      // alone would silently reset on/reactive/rotate/seed back to off
+      // every time a colour is edited (the same trap the toggle handler
+      // below has to avoid too).
+      applyRainbow({ ...rainbowState(), palette: [...palette] })
+      persist()
+    })
+    palettePickerWrap.appendChild(sharedPalettePicker.el)
+
     const paletteResetBtn = document.createElement('button')
     paletteResetBtn.type = 'button'
     paletteResetBtn.className = 'icon-reset-badge'
@@ -216,65 +244,27 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       applyRainbow({ ...rainbowState(), palette: [...palette] })
       persist()
       renderPalette()
-      syncRainbowGradient()
+      const resetHex = paletteEditingIndex !== null ? palette[paletteEditingIndex] : undefined
+      if (resetHex) sharedPalettePicker.setValue(resetHex)
     })
 
-    // The toggle's own ON track previews the palette (a real multi-stop
-    // gradient across all 8 positions), not a flat --accent fill - jdp:
-    // "der toggle des rainbowmodes [ist] ganz hässlich". A flat accent fill
-    // is indistinguishable from every other "on" control on this same panel
-    // (Shape/Theme above use the identical colour) and says nothing about
-    // what the mode actually does; CannonadeCommand's own precedent for a
-    // genuinely rainbow-mode-specific surface (its share-progress bar,
-    // CannonadeCommand.Shares.css) uses exactly this technique - a real
-    // multi-stop spectrum gradient, reserved for the one control that IS
-    // the rainbow feature, not applied to every badge (those still take one
-    // flat jewel colour each, unchanged). Reads the LIVE palette (including
-    // user edits), not the hardcoded default, so the switch always shows
-    // what will actually apply.
-    function syncRainbowGradient(): void {
-      rainbowToggle.style.setProperty('--rainbow-gradient', `linear-gradient(90deg, ${palette.join(', ')})`)
-    }
-
-    // Each position is its own real <input type="color"> now (jdp: "die
-    // Farben des Rainbowmodes sollen auch bearbeitbar sein, daher brauchen
-    // wir dort auch einen Reset Button"), styled via the shared
-    // .accent-swatch/.palette-swatch/.accent-custom-input CSS group in
-    // style.css so it's visually identical to the accent picker's own
-    // circular swatches. This replaces an earlier approach that used ONE
-    // shared hidden <input> (opacity:0, pointer-events:none, 0x0) opened via
-    // a programmatic .click() from a plain <button> swatch - never actually
-    // provable in Playwright (native colour dialogs can't be driven by it),
-    // and a real, plausible cause of repeated "rainbow mode doesn't work"
-    // reports: a browser can refuse to open a native picker from .click()
-    // on an invisible, zero-size input. A real, visible, properly-sized
-    // <input type="color"> that the user clicks directly has no such
-    // reliability gap.
+    // Each position is a plain flat colour circle - a click selects it AND
+    // reveals/resyncs the one shared picker below the row (jdp: "die Farben
+    // des Rainbowmodes sollen auch bearbeitbar sein, daher brauchen wir
+    // dort auch einen Reset Button").
     function renderPalette(): void {
       paletteRow.innerHTML = ''
       palette.forEach((hex, index) => {
-        const sw = document.createElement('input')
-        sw.type = 'color'
+        const sw = document.createElement('button')
+        sw.type = 'button'
         sw.className = 'palette-swatch'
-        sw.value = hex
+        sw.style.backgroundColor = hex
         sw.setAttribute('data-tip', hex)
         sw.setAttribute('aria-label', hex)
-        sw.addEventListener('input', () => {
-          const value = sw.value
-          palette[index] = value
-          sw.setAttribute('data-tip', value)
-          sw.setAttribute('aria-label', value)
-          // Spread the CURRENT rainbow state first, not just {palette} -
-          // applyRainbow merges onto RAINBOW_OFF's defaults, so passing
-          // palette alone would silently reset on/reactive/rotate/seed back
-          // to off every time a colour is edited (the same trap the toggle
-          // handler below has to avoid too). Deliberately NOT calling
-          // renderPalette() here - the native picker fires 'input'
-          // continuously while the user drags inside it, and tearing down
-          // this very <input> mid-drag would kill the open dialog.
-          applyRainbow({ ...rainbowState(), palette: [...palette] })
-          persist()
-          syncRainbowGradient()
+        sw.addEventListener('click', () => {
+          paletteEditingIndex = index
+          sharedPalettePicker.setValue(hex)
+          palettePickerWrap.style.display = ''
         })
         paletteRow.appendChild(sw)
       })
@@ -289,22 +279,22 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     function syncPaletteDim(): void {
       paletteRow.style.opacity = rainbowOn ? '1' : '0.45'
       paletteRow.style.pointerEvents = rainbowOn ? '' : 'none'
+      palettePickerWrap.style.opacity = rainbowOn ? '1' : '0.45'
+      palettePickerWrap.style.pointerEvents = rainbowOn ? '' : 'none'
     }
     syncPaletteDim()
 
     const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
       rainbowOn = checked
-      // Spread the current state, not just {on} - see the palette input's
+      // Spread the current state, not just {on} - see the shared picker's
       // own listener above for why (this exact call used to silently wipe
       // any custom palette back to the RAINBOW default on every toggle).
       applyRainbow({ ...rainbowState(), on: rainbowOn })
       persist()
       syncPaletteDim()
     })
-    rainbowToggle.classList.add('toggle-switch--rainbow')
-    syncRainbowGradient()
     rainbowLabelRow.append(rainbowLabelText, rainbowToggle)
-    rainbowWrap.append(rainbowLabelRow, paletteRow)
+    rainbowWrap.append(rainbowLabelRow, paletteRow, palettePickerWrap)
 
     const languageWrap = document.createElement('div')
     languageWrap.className = 'control-slider'

@@ -1106,12 +1106,12 @@ button:focus-visible {
   background-color: var(--accent);
 }
 
-/* Matches BombVault's Settings.tsx accent picker layout exactly (jdp: "der
-   Farbpicker sieht ganz anders aus, er soll aussehen wie in BV"): the
-   rectangular native colour input, a small muted "Presets:" label, the
-   preset swatches, wrapping together on narrow widths - then the reset
-   badge, pinned to the far right whenever there's room via margin-left:
-   auto, wrapping onto its own trailing position otherwise. */
+/* The presets row: a small muted "Presets:" label, the preset swatches,
+   wrapping together on narrow widths - then the reset badge, pinned to the
+   far right whenever there's room via margin-left: auto, wrapping onto its
+   own trailing position otherwise. The actual colour picker (a real,
+   permanently embedded SV square + hue bar, .glim-picker) sits ABOVE this
+   row - see appearanceSettings.ts and GlimStone's reference/colorPicker.ts. */
 .accent-row {
   display: flex;
   flex-wrap: wrap;
@@ -1146,17 +1146,11 @@ button:focus-visible {
    are two different kinds of control and don't need to share one size, they
    each just need to be consistent WITHIN their own kind (GlimStone's
    "Badges" rule - jdp: "ich will insgesamt im Design immer Standardgrößen").
-
-   .accent-custom-input (the native <input type="color">) joins this SAME
-   selector group - jdp: "Die farbpicker farbfläche soll nicht größer sein
-   als die andere. soll exakt gleich aussehen". It used to be its own bigger
-   rectangle sized off BombVault's literal h-8 w-14 pixels, which read as a
-   mismatched control size sitting next to the presets; here it's just one
-   more circle in the row, indistinguishable in size or shape from every
-   preset beside it. */
+   Plain flat <button>s, not native <input type="color"> - each swatch only
+   SELECTS a value; the one shared/embedded .glim-picker does the editing
+   (GlimStone's colour-picker layout rule). */
 .accent-swatch,
-.palette-swatch,
-.accent-custom-input {
+.palette-swatch {
   appearance: none;
   width: var(--swatch-size);
   height: var(--swatch-size);
@@ -1169,37 +1163,12 @@ button:focus-visible {
 }
 
 .accent-swatch:hover,
-.palette-swatch:hover,
-.accent-custom-input:hover {
+.palette-swatch:hover {
   transform: scale(1.1);
 }
 
 .accent-swatch--active {
   border-color: var(--carbon-text);
-}
-
-/* The native swatch fill sits inside the same 2px border as every other
-   swatch, so it must be flush (no native padding) and share the same
-   radius - otherwise a square patch of colour peeks out past the circular
-   border on the corners. Covers BOTH native <input type="color"> swatches:
-   the accent picker's own .accent-custom-input, and each rainbow palette
-   position (also an <input type="color">, class .palette-swatch, since
-   appearanceSettings.ts moved off the earlier one-shared-hidden-input
-   approach to eight real, always-present inputs). */
-.accent-custom-input::-webkit-color-swatch-wrapper,
-.palette-swatch::-webkit-color-swatch-wrapper {
-  padding: 0;
-  border-radius: var(--radius-pill);
-}
-.accent-custom-input::-webkit-color-swatch,
-.palette-swatch::-webkit-color-swatch {
-  border: none;
-  border-radius: var(--radius-pill);
-}
-.accent-custom-input::-moz-color-swatch,
-.palette-swatch::-moz-color-swatch {
-  border: none;
-  border-radius: var(--radius-pill);
 }
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
@@ -1262,21 +1231,6 @@ button:focus-visible {
 }
 .toggle-switch--on:hover {
   background-color: var(--accent);
-}
-/* Rainbow mode's own ON track (jdp: "der toggle des rainbowmodes [ist] ganz
-   hässlich") previews the actual palette as a real spectrum gradient
-   instead of the flat --accent fill every other "on" switch uses - a flat
-   fill here was indistinguishable from the Shape/Theme rows' own "on"
-   colour right above it and said nothing about what the mode does.
-   CannonadeCommand's own precedent (its share-progress bar in rainbow mode,
-   CannonadeCommand.Shares.css) reserves this same technique for the one
-   control that IS the rainbow feature - every other badge still takes a
-   single flat jewel colour, unchanged. --rainbow-gradient is written by
-   appearanceSettings.ts's syncRainbowGradient() from the LIVE (possibly
-   user-edited) palette, so the switch always shows what will actually
-   apply; the flat fallback only shows before that first JS write. */
-.toggle-switch--rainbow.toggle-switch--on {
-  background-image: var(--rainbow-gradient);
 }
 .toggle-switch-knob {
   position: absolute;
