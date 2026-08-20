@@ -169,6 +169,10 @@ export function toggleSwitch(label: string, initial: boolean, onChange: (checked
 export interface DropdownOption<T extends string> {
   value: T
   label: string
+  /** Rendered as its own element with an explicit gap before the label (jdp:
+   *  "der Text ist zu nah an den Flaggen") - a single space character
+   *  between an emoji glyph and text doesn't read as a real gap. */
+  flag?: string
 }
 
 /**
@@ -209,8 +213,24 @@ export function customDropdown<T extends string>(
   let current = initial
   let isOpen = false
 
-  function currentLabel(): string {
-    return options.find((o) => o.value === current)?.label ?? ''
+  function currentOption(): DropdownOption<T> | undefined {
+    return options.find((o) => o.value === current)
+  }
+
+  /** Fills `el` with the option's content - a separate flag span (its own
+   *  CSS gap from the label) when the option carries one, plain text otherwise. */
+  function fillOptionContent(el: HTMLElement, opt: DropdownOption<T>): void {
+    el.innerHTML = ''
+    if (opt.flag) {
+      const flagSpan = document.createElement('span')
+      flagSpan.className = 'dropdown-option-flag'
+      flagSpan.textContent = opt.flag
+      const labelSpan = document.createElement('span')
+      labelSpan.textContent = opt.label
+      el.append(flagSpan, labelSpan)
+    } else {
+      el.textContent = opt.label
+    }
   }
 
   function renderOptions(): void {
@@ -219,12 +239,13 @@ export function customDropdown<T extends string>(
       const row = document.createElement('button')
       row.type = 'button'
       row.className = 'dropdown-option' + (opt.value === current ? ' dropdown-option--active' : '')
-      row.textContent = opt.label
+      fillOptionContent(row, opt)
       row.setAttribute('role', 'option')
       row.setAttribute('aria-selected', String(opt.value === current))
       row.addEventListener('click', () => {
         current = opt.value
-        trigger.textContent = currentLabel()
+        const selected = currentOption()
+        if (selected) fillOptionContent(trigger, selected)
         renderOptions()
         closeList()
         onChange(current)
@@ -252,7 +273,8 @@ export function customDropdown<T extends string>(
     if (isOpen && event.key === 'Escape') closeList()
   })
 
-  trigger.textContent = currentLabel()
+  const initialOption = currentOption()
+  if (initialOption) fillOptionContent(trigger, initialOption)
   renderOptions()
   wrap.append(trigger, listbox)
   return wrap

@@ -1253,13 +1253,19 @@ button:focus-visible {
   width: 100%;
   display: flex;
   align-items: center;
+  /* A real gap between the flag glyph and the label (jdp: "der Text ist zu
+     nah an den Flaggen") - a single space character in a plain text string
+     doesn't read as a gap the way a flex gap does. */
+  gap: 0.6rem;
   text-align: start;
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
   color: var(--carbon-text);
   font: inherit;
-  font-size: var(--text-body);
-  /* Bumped again - jdp: still reads as cramped even after the first pass. */
+  /* Bumped past the app-wide --text-body override too (jdp, repeated: still
+     reads as small) - a literal size specific to this control rather than
+     another shared-token bump. */
+  font-size: 1rem;
   padding: 1.1rem 1.2rem;
 }
 .dropdown-trigger:hover {
@@ -1281,14 +1287,21 @@ button:focus-visible {
 }
 
 .dropdown-option {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   width: 100%;
   text-align: start;
   background-color: transparent;
   color: var(--carbon-text-sub);
   border-radius: var(--radius-control);
   padding: 0.9rem 1rem;
-  font-size: var(--text-body);
+  font-size: 1rem;
+}
+
+.dropdown-option-flag,
+.dropdown-trigger .dropdown-option-flag {
+  flex-shrink: 0;
 }
 .dropdown-option:hover {
   background-color: var(--carbon-hover);

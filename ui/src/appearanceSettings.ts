@@ -232,7 +232,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     // sanctioned deviation from GlimStone's own plain-<select> default.
     const languageOptions = LOCALES.map((locale) => ({
       value: locale.code,
-      label: `${flagEmoji(locale.flag)} ${locale.label}`,
+      label: locale.label,
+      flag: flagEmoji(locale.flag),
     }))
     const languageDropdown = customDropdown(languageOptions, currentLocale(), (value) => {
       void setLocale(value)
