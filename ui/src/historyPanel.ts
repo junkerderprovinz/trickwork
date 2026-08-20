@@ -5,8 +5,6 @@
 // it applies across every one of the cards below it, not tucked inside any
 // single one of them.
 
-import { applyHueVars } from './controlWidgets'
-import { subscribeRainbow } from './design/appearance'
 import { iconRedo, iconUndo } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
@@ -33,22 +31,11 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
   undoButton.addEventListener('click', () => store.undo())
   redoButton.addEventListener('click', () => store.redo())
 
-  // Undo/Redo are a two-member set (jdp: "die ganzen badges und
-  // schaltflächen werden nicht eingefärbt") - same pattern as
-  // exportPanel.ts's format row: applied once, re-synced on toggle since
-  // neither button is ever torn down and rebuilt.
-  function syncRainbow(): void {
-    ;[undoButton, redoButton].forEach((button, index) => {
-      const applied = applyHueVars(button, index)
-      button.classList.toggle('glim-hue', applied)
-      // .glim-tint-badge, not .glim-tint - this is a compact circular
-      // badge, not a list row (jdp: "die ganzen icon badges sind immer
-      // noch schwach eingefärbt, die sollen normal kräftig eingefärbt sein").
-      button.classList.toggle('glim-tint-badge', applied)
-    })
-  }
-  syncRainbow()
-  subscribeRainbow(syncRainbow)
+  // No rainbow wiring here any more (jdp rejected the idle badge wash this
+  // fed - see controlWidgets.ts's iconToggleButton). Undo/Redo have no
+  // persisted checked state to colour once "clicked" either, unlike a real
+  // toggle - a momentary action button has nowhere honest to show a rainbow
+  // position at all, so it just stays a plain neutral badge.
 
   // The log window (jdp: "ein kleines Protokollfenster") - a small scrollable
   // list of the recent, human-readable actions each commitOptionsSnapshot()

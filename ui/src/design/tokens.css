@@ -533,27 +533,35 @@ body {
    row. Use `.glim-tint` for a row where colour-at-rest is the point (a
    list, so an all-idle list doesn't read as blank); use
    `.glim-tint-hover` for a row of equal-weight actions where the colour
-   is a nice-to-discover accent, not the primary signal. */
+   is a nice-to-discover accent, not the primary signal. The reveal itself
+   reads the stronger --item-hue-badge tier (50%), not the list-row
+   --item-hue-wash (16%) - a hover reveal is a deliberate, momentary, one-
+   at-a-time state, closer to a badge's own "clearly coloured" bar than a
+   list's "don't overwhelm a whole column of these" one (jdp: "die export
+   buttons sollen bei mouseover kräftig eingefärbt werden"). */
 [data-rainbow] .glim-tint-hover {
   box-shadow: none;
 }
 [data-rainbow] .glim-tint-hover:hover,
 [data-rainbow] .glim-tint-hover:focus-visible {
-  box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+  box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }
 
 /* .glim-tint-badge: the SAME wash mechanism as .glim-tint, but at the
    stronger --item-hue-badge tier (see appearance.ts's hueVars) - for a
-   compact circular badge (an icon toggle, an undo/redo/zoom action) rather
-   than a list row. A badge is small and isolated with nothing beside it to
-   reinforce the colour by repetition, so .glim-tint's own 16% (calibrated
-   for a dense list, see its own comment above) reads as barely-tinted grey
-   once shrunk to badge size. Use `.glim-tint` for rows; `.glim-tint-badge`
-   for badges - they're visually different enough to need their own alpha,
-   not a shared one. A badge with its own solid checked/active fill (reading
-   `--accent` directly, e.g. an icon-toggle's `--active` class) needs no
-   `.glim-active` override here the way `.glim-tint` has one: layering this
-   wash on top of an already-solid same-hue background is a no-op. */
+   compact circular badge that needs colour AT REST because it has no
+   checked/active state of its own to fall back on. NOT for a real TOGGLE
+   badge (icon-toggle-button and friends): those carry ONLY .glim-hue,
+   unconditionally, and stay uncoloured until checked - the component's own
+   `--active { background-color: var(--accent) }` rule already picks the
+   position colour up once it's needed, and washing the idle state on top
+   was tried twice (this class, and the plainer .glim-tint before it) and
+   rejected both times by a real adopting app (design-language.md's rainbow
+   section has the full story). Reach for this class on a badge that
+   genuinely has no active state to read `--accent` through - a badge is
+   small and isolated with nothing beside it to reinforce the colour by
+   repetition, so .glim-tint's own 16% (calibrated for a dense list, see
+   its own comment above) would read as barely-tinted grey at badge size. */
 [data-rainbow] .glim-tint-badge {
   box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }

@@ -9,6 +9,19 @@ export interface GlyphMetrics {
   char: string
   /** Fraction of the glyph's em-box covered by "ink" (0 = fully blank, 1 = fully covered). */
   inkCoverage: number
+  /**
+   * How many times this character appeared in the SOURCE charset array
+   * (buildFontWidthTable dedupes for measurement, but keeps the count) - not
+   * a property of the glyph itself, so a bare GlyphMeasurer never sets this
+   * (optional, defaults to 1 wherever absent); buildFontWidthTable always
+   * fills it in for real. mapLuminanceToChar gives a character `weight`
+   * consecutive rank slots instead of one, so a charset that repeats a
+   * character claims a proportionally wider luminance band - ASCGen2's own
+   * weighting mechanic (Variables.cs's DefaultRamps, a plain string where
+   * repetition IS the weighting), reproduced here on top of TrickWork's own
+   * measured-ink-coverage ranking rather than ASCGen2's hand-picked order.
+   */
+  weight?: number
 }
 
 /** Glyph metrics for a character set at a specific font, sorted ascending by inkCoverage. */

@@ -22,6 +22,11 @@ const CHARSET_PRESET_KEYS: Record<CharsetPresetKey, TranslationKey> = {
   binary: 'controls.charsetPresetBinary',
 }
 
+// Mirrors state.ts's own initial options.columns - the double-click-to-
+// reset value for the Width slider (jdp: "die ganzen schieberegler soll
+// man mit doppelklick auf den reglerknopf zurücksetzen können").
+const DEFAULT_COLUMNS = 120
+
 const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontMonoSystem', family: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
   { key: 'controls.fontMonoAlt', family: 'Consolas, "Courier New", monospace' },
@@ -55,6 +60,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
       1,
       () => store.commitOptionsSnapshot(t('history.entryWidth')),
       0,
+      DEFAULT_COLUMNS,
     )
 
     const charsetWrap = document.createElement('div')
@@ -245,6 +251,11 @@ export function numberSlider(
   // value - so it just colours its own thumb via .glim-hue (the thumb's
   // CSS already reads var(--accent)), no wash/tint needed.
   rainbowIndex?: number,
+  // Double-click the thumb to snap back to this value (jdp: "die ganzen
+  // schieberegler soll man mit doppelklick auf den reglerknopf
+  // zurücksetzen können"). Defaults to `initial` (a no-op reset) for a
+  // caller that doesn't pass one - every real call site below does.
+  defaultValue: number = initial,
 ): HTMLElement {
   const wrapper = document.createElement('label')
   wrapper.className = 'control-slider'
@@ -283,6 +294,18 @@ export function numberSlider(
   input.addEventListener('input', () => {
     valueText.textContent = input.value
     onChange(Number(input.value))
+  })
+
+  // A dblclick on the thumb fires two 'input'-less pointer events in most
+  // browsers - no drag occurred, so commitGestureStart() above never ran -
+  // hence its own explicit onBeforeChange() call here rather than relying
+  // on that path.
+  input.addEventListener('dblclick', () => {
+    if (Number(input.value) === defaultValue) return
+    onBeforeChange?.()
+    input.value = String(defaultValue)
+    valueText.textContent = input.value
+    onChange(defaultValue)
   })
 
   wrapper.append(row, input)

@@ -1,4 +1,4 @@
-import type { FontWidthTable, RGB } from './types'
+import type { FontWidthTable, GlyphMetrics, RGB } from './types'
 
 export function computeBlockLuminance(
   imageData: ImageData,
@@ -60,80 +60,90 @@ export function computeBlockAverageColor(
 }
 
 /**
- * Picks the glyph whose ink coverage best matches the block's darkness.
- * Luminance 0 (black) wants the highest-ink glyph; luminance 1 (white)
- * wants the lowest-ink glyph.
+ * Picks a glyph by RANK, not by nearest measured value: table.entries is
+ * sorted ascending by inkCoverage (lightest first), and each entry claims
+ * `weight` consecutive rank slots (default 1) instead of exactly one -
+ * mirroring ASCGen2's own DefaultRamps mechanic (Variables.cs), where a
+ * character repeated N times in the ramp string literally occupies N of the
+ * string's index positions and so covers a proportionally wider luminance
+ * band once ValuesToFixedWidthTextConverter.cs's own `ramp[round((x/255) *
+ * (length-1))]` picks by straight linear index. Ranking here is still by
+ * real MEASURED ink coverage (font-aware, more accurate than ASCGen2's
+ * hand-picked ordering) - only the SELECTION step (rank vs. nearest-value)
+ * changes, so this is ASCGen2's "type it more, it shows up more" weighting
+ * (jdp: "je öfter man das gleiche Zeichen eingetragen hat, desto mehr wurde
+ * es gewichtet") layered on top of TrickWork's own accuracy, not a wholesale
+ * revert to ASCGen2's simpler scheme. A charset with every character
+ * appearing exactly once (weight 1 throughout) reduces to the exact same
+ * plain rank-by-position ASCGen2 itself uses.
  *
- * The target is interpolated into the table's OWN coverage range instead of
- * being treated as an absolute 0..1 coverage. Measured ink coverage is the
- * fraction of a 2x-font-size cell that a glyph actually inks, which for real
- * fonts and charsets lands in roughly 0..0.12 — nowhere near 1. Using
- * (1 - luminance) directly as the target made everything below luminance ~0.9
- * snap to the single densest glyph, so images came out as one solid block.
+ * Luminance 0 (black) wants the highest-ink glyph (the far/dark end of the
+ * sorted, weight-expanded rank space); luminance 1 (white) wants the
+ * lowest-ink glyph (the near/light end).
  */
+function pickRankedEntry(
+  luminance: number,
+  table: FontWidthTable,
+): GlyphMetrics {
+  const entries = table.entries
+  const first = entries[0]
+  if (!first) {
+    throw new Error('pickRankedEntry: font width table has no entries')
+  }
+
+  let totalWeight = 0
+  for (const entry of entries) {
+    totalWeight += entry.weight ?? 1
+  }
+
+  const targetRank = Math.round((1 - luminance) * (totalWeight - 1))
+  let cursor = 0
+  for (const entry of entries) {
+    const weight = entry.weight ?? 1
+    if (targetRank < cursor + weight) {
+      return entry
+    }
+    cursor += weight
+  }
+  // Only reachable via floating-point rounding at the very top edge -
+  // the darkest (last, highest-rank) entry is the correct clamp.
+  return entries[entries.length - 1] ?? first
+}
+
 export function mapLuminanceToChar(
   luminance: number,
   table: FontWidthTable,
 ): string {
-  let best = table.entries[0]
-  if (!best) {
-    throw new Error('mapLuminanceToChar: font width table has no entries')
-  }
-
-  // buildFontWidthTable sorts ascending, but scan for the extremes anyway so
-  // a hand-built table in any order still spreads across its full range.
-  let lo = best.inkCoverage
-  let hi = best.inkCoverage
-  for (const entry of table.entries) {
-    if (entry.inkCoverage < lo) lo = entry.inkCoverage
-    if (entry.inkCoverage > hi) hi = entry.inkCoverage
-  }
-  const targetCoverage = hi === lo ? lo : lo + (1 - luminance) * (hi - lo)
-
-  let bestDistance = Math.abs(best.inkCoverage - targetCoverage)
-  for (const entry of table.entries) {
-    const distance = Math.abs(entry.inkCoverage - targetCoverage)
-    if (distance < bestDistance) {
-      best = entry
-      bestDistance = distance
-    }
-  }
-  return best.char
+  return pickRankedEntry(luminance, table).char
 }
 
 /**
- * Same selection as mapLuminanceToChar, but also reports the "achieved"
- * luminance of the glyph actually picked (the inverse of the interpolation
- * above) so a caller can diffuse the difference to neighbouring cells —
- * Floyd-Steinberg dithering needs this error, mapLuminanceToChar's plain
- * char-only return doesn't carry it. Kept as a separate function rather than
- * changing mapLuminanceToChar's signature, since every existing call site and
- * test expects a bare string back.
+ * Same RANK-based selection as mapLuminanceToChar, but also reports the
+ * "achieved" luminance of the glyph actually picked so a caller can diffuse
+ * the difference to neighbouring cells — Floyd-Steinberg dithering needs
+ * this error, mapLuminanceToChar's plain char-only return doesn't carry it.
+ * Kept as a separate function rather than changing mapLuminanceToChar's
+ * signature, since every existing call site and test expects a bare string
+ * back.
+ *
+ * Deliberately NOT rank-based itself: the error dithering diffuses is a
+ * PHOTOMETRIC one (how far the glyph's true rendered darkness missed the
+ * target), so it's computed from the picked glyph's own real measured
+ * inkCoverage, normalized against the table's actual coverage range - using
+ * the glyph's RANK position instead would diffuse a positional error that
+ * has nothing to do with what actually got rendered.
  */
 export function mapLuminanceToCharWithAchieved(
   luminance: number,
   table: FontWidthTable,
 ): { char: string; achievedLuminance: number } {
-  let best = table.entries[0]
-  if (!best) {
-    throw new Error('mapLuminanceToCharWithAchieved: font width table has no entries')
-  }
+  const best = pickRankedEntry(luminance, table)
 
   let lo = best.inkCoverage
   let hi = best.inkCoverage
   for (const entry of table.entries) {
     if (entry.inkCoverage < lo) lo = entry.inkCoverage
     if (entry.inkCoverage > hi) hi = entry.inkCoverage
-  }
-  const targetCoverage = hi === lo ? lo : lo + (1 - luminance) * (hi - lo)
-
-  let bestDistance = Math.abs(best.inkCoverage - targetCoverage)
-  for (const entry of table.entries) {
-    const distance = Math.abs(entry.inkCoverage - targetCoverage)
-    if (distance < bestDistance) {
-      best = entry
-      bestDistance = distance
-    }
   }
 
   // hi === lo means every glyph has identical coverage - there is no error to

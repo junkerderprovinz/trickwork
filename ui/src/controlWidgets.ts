@@ -154,17 +154,19 @@ export function iconToggleButton(
   // horizontal/vertical) a distinct index. .glim-hue redefines --accent for
   // this button UNCONDITIONALLY (not just while checked), so the checked
   // fill (.icon-toggle-button--active reads var(--accent)) resolves to
-  // THIS button's own position. .glim-tint-badge washes the BADGE's own
-  // background - the stronger badge-specific tier, not the plain .glim-tint
-  // queue.ts's rows use (jdp: "die ganzen icon badges sind immer noch
-  // schwach eingefärbt, die sollen normal kräftig eingefärbt sein" - a
-  // compact isolated badge needs more of the wash than a dense list of rows
-  // does to read as clearly coloured). The glyph itself stays neutral, NOT
-  // also recoloured (jdp: "die icons sollen nicht eingefärbt werden, nur
-  // die badges also der hintergrund" - an earlier round tried colouring the
-  // glyph too via .glim-hue-icon and it read as one colour too many).
-  // Checked additionally adds .glim-active, which lets the badge's own
-  // background-fill CSS pick up --accent for the fill itself.
+  // THIS button's own position. No wash at rest any more - two rounds in a
+  // row tried a background tint on the idle badge (first .glim-tint, then
+  // the stronger .glim-tint-badge) and jdp rejected both ("die iconbadges
+  // sollen nicht eingefärbt sein und erst wenn man sie klickt. diese halb
+  // abgedunkelt eingefärbt sein gefällt mir nicht"). .glim-hue alone (no
+  // .glim-tint-badge) is a no-op at rest - .icon-toggle-button's own idle
+  // background-color doesn't read --accent, so nothing shows until CHECKED
+  // flips it to the --active rule below, which does. The glyph itself stays
+  // neutral, NOT also recoloured (jdp: "die icons sollen nicht eingefärbt
+  // werden, nur die badges also der hintergrund" - an earlier round tried
+  // colouring the glyph too via .glim-hue-icon and it read as one colour
+  // too many). Checked additionally adds .glim-active, which lets the
+  // badge's own background-fill CSS pick up --accent for the fill itself.
   rainbowIndex?: number,
 ): HTMLButtonElement {
   const btn = document.createElement('button')
@@ -175,7 +177,7 @@ export function iconToggleButton(
   btn.setAttribute('aria-label', label)
 
   if (rainbowIndex !== undefined && applyHueVars(btn, rainbowIndex)) {
-    btn.classList.add('glim-hue', 'glim-tint-badge')
+    btn.classList.add('glim-hue')
   }
 
   let checked = initial

@@ -13,6 +13,12 @@ const SHARPEN_METHODS: { value: SharpenMethod; key: TranslationKey }[] = [
   { value: 'unsharp', key: 'controls.sharpenUnsharp' },
 ]
 
+// Mirrors state.ts's own initial options.brightness/contrast - the double-
+// click-to-reset value for these sliders (jdp: "die ganzen schieberegler
+// soll man mit doppelklick auf den reglerknopf zurücksetzen können").
+const DEFAULT_BRIGHTNESS = 0
+const DEFAULT_CONTRAST = 0
+
 /** The Filters card: tonal operations (invert/dither/sharpen) plus colour output, matching ASCGen2's Edit > Output submenu. */
 export function mountFiltersPanel(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
@@ -54,6 +60,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       0.05,
       () => store.commitOptionsSnapshot(t('history.entryBrightness')),
       0,
+      DEFAULT_BRIGHTNESS,
     )
 
     const contrast = numberSlider(
@@ -67,6 +74,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       0.05,
       () => store.commitOptionsSnapshot(t('history.entryContrast')),
       1,
+      DEFAULT_CONTRAST,
     )
 
     const toggleRow = document.createElement('div')

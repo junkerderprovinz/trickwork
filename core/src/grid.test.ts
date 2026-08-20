@@ -20,11 +20,14 @@ function makeImageData(pixels: number[][]): ImageData {
   return { data, width, height, colorSpace: 'srgb' } as ImageData
 }
 
+// Ascending by inkCoverage, matching buildFontWidthTable's own contract -
+// mapLuminanceToChar picks by rank/position now, not nearest value, so a
+// hand-built table has to declare its entries in the right order.
 const table: FontWidthTable = {
   font: { family: 'monospace', sizePx: 16 },
   entries: [
-    { char: '@', inkCoverage: 1 },
     { char: ' ', inkCoverage: 0 },
+    { char: '@', inkCoverage: 1 },
   ],
 }
 

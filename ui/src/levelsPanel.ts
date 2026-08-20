@@ -144,6 +144,28 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   wireGestureUndo(whiteInput)
   wireGestureUndo(gammaInput)
 
+  // Double-click a handle to snap just that point back to IDENTITY_LEVELS'
+  // own value (jdp: "die ganzen schieberegler soll man mit doppelklick auf
+  // den reglerknopf zurücksetzen können") - the existing Reset button above
+  // resets all three at once; this is the same gesture numberSlider's own
+  // sliders got, applied per-handle here since Levels has three independent
+  // points rather than one value.
+  blackInput.addEventListener('dblclick', () => {
+    if (levelsOf(store).black === IDENTITY_LEVELS.black) return
+    store.commitOptionsSnapshot(t('history.entryLevels'))
+    commit({ black: IDENTITY_LEVELS.black })
+  })
+  whiteInput.addEventListener('dblclick', () => {
+    if (levelsOf(store).white === IDENTITY_LEVELS.white) return
+    store.commitOptionsSnapshot(t('history.entryLevels'))
+    commit({ white: IDENTITY_LEVELS.white })
+  })
+  gammaInput.addEventListener('dblclick', () => {
+    if (levelsOf(store).gamma === IDENTITY_LEVELS.gamma) return
+    store.commitOptionsSnapshot(t('history.entryLevels'))
+    commit({ gamma: IDENTITY_LEVELS.gamma })
+  })
+
   blackInput.addEventListener('input', () => {
     const white = levelsOf(store).white
     commit({ black: Math.min(Number(blackInput.value), white - 1) })

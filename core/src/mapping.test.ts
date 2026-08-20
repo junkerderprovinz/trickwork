@@ -55,14 +55,18 @@ describe('computeBlockLuminance', () => {
 })
 
 describe('mapLuminanceToChar', () => {
+  // Ascending by inkCoverage, matching buildFontWidthTable's own contract -
+  // mapLuminanceToChar picks by RANK (position in this array, each entry
+  // claiming `weight` consecutive slots) rather than nearest value, so
+  // unlike the old nearest-value algorithm, array ORDER now matters.
   const table: FontWidthTable = {
     font: { family: 'monospace', sizePx: 16 },
     entries: [
-      { char: '@', inkCoverage: 0.9 }, // darkest ink = should map to darkest luminance
-      { char: '#', inkCoverage: 0.6 },
-      { char: '*', inkCoverage: 0.4 },
-      { char: '.', inkCoverage: 0.1 },
       { char: ' ', inkCoverage: 0 }, // no ink = should map to brightest luminance
+      { char: '.', inkCoverage: 0.1 },
+      { char: '*', inkCoverage: 0.4 },
+      { char: '#', inkCoverage: 0.6 },
+      { char: '@', inkCoverage: 0.9 }, // darkest ink = should map to darkest luminance
     ],
   }
 
@@ -74,18 +78,20 @@ describe('mapLuminanceToChar', () => {
     expect(mapLuminanceToChar(1, table)).toBe(' ')
   })
 
-  it('maps mid luminance to a mid-coverage glyph', () => {
-    // The target is interpolated into the table's own range (0 .. 0.9), so
-    // luminance 0.5 -> 0 + 0.5 * 0.9 = 0.45 -> nearest is '*' (0.4).
+  it('maps mid luminance to a mid-rank glyph', () => {
+    // 5 entries, all weight 1 (default) -> totalWeight 5. luminance 0.5 ->
+    // targetRank = round((1 - 0.5) * 4) = 2 -> the middle entry, '*'.
     expect(mapLuminanceToChar(0.5, table)).toBe('*')
   })
 
-  // Regression guard for the ink-coverage scale mismatch: a real, canvas-measured
-  // table's coverage values are a small fraction of the glyph cell (~0 .. 0.12),
-  // not a 0..1 spread. Treating (1 - luminance) as an absolute coverage target
-  // collapsed every mid-tone onto the densest glyph, so whole images rendered as
-  // a solid block of '@'. Every previous test used a synthetic full-range table,
-  // which is exactly why the bug stayed invisible.
+  // Regression guard for an ink-coverage scale mismatch this table's own
+  // synthetic 0..0.9 spread never exercised: a real, canvas-measured table's
+  // coverage values are a small fraction of the glyph cell (~0 .. 0.12), not
+  // a 0..1 spread. The selection algorithm has since moved from nearest-VALUE
+  // (where that mismatch mattered) to rank-by-POSITION (mapLuminanceToChar's
+  // own doc comment) - rank is scale-invariant, so this specific failure mode
+  // can no longer recur, but the realistic-range fixture stays as a guard
+  // against the historical bug's SYMPTOM (everything collapsing to one glyph).
   describe('with a realistically compressed coverage range', () => {
     const realistic: FontWidthTable = {
       font: { family: 'monospace', sizePx: 16 },
@@ -113,7 +119,9 @@ describe('mapLuminanceToChar', () => {
       const picked = [0, 0.3, 0.5, 0.7, 1].map((luminance) =>
         mapLuminanceToChar(luminance, realistic),
       )
-      expect(picked).toEqual(['@', '=', '+', ':', ' '])
+      // 9 entries, totalWeight 9 -> targetRank = round((1 - luminance) * 8).
+      // 0->8('@'), 0.3->round(5.6)=6('%'), 0.5->4('+'), 0.7->round(2.4)=2(':'), 1->0(' ').
+      expect(picked).toEqual(['@', '%', '+', ':', ' '])
       expect(new Set(picked).size).toBe(5)
     })
 
@@ -124,7 +132,13 @@ describe('mapLuminanceToChar', () => {
     })
   })
 
-  it('falls back to a single glyph when every entry has the same coverage', () => {
+  it('still varies by RANK across tied coverage, unlike the old nearest-value algorithm', () => {
+    // Both entries measure identically (0.03) - a nearest-VALUE search could
+    // never tell them apart and always returned the first (see mapping.ts's
+    // git history), but rank-based selection doesn't need a coverage
+    // difference to distinguish positions: 'a' is rank 0 (lightest slot),
+    // 'b' is rank 1 (darkest slot), exactly as ASCGen2's own plain-string
+    // ramp would treat two adjacent identical characters.
     const flat: FontWidthTable = {
       font: { family: 'monospace', sizePx: 16 },
       entries: [
@@ -132,8 +146,46 @@ describe('mapLuminanceToChar', () => {
         { char: 'b', inkCoverage: 0.03 },
       ],
     }
-    expect(mapLuminanceToChar(0, flat)).toBe('a')
+    expect(mapLuminanceToChar(0, flat)).toBe('b')
     expect(mapLuminanceToChar(1, flat)).toBe('a')
+  })
+
+  describe('with a repeated character (weight > 1)', () => {
+    // ASCGen2's own weighting mechanic (Variables.cs's DefaultRamps repeat a
+    // character to weight it in a plain linear-index ramp string) - here
+    // '.' appears 5x in the source charset, 1x each for ' ' and '@', so it
+    // should claim 5 of the 7 total rank slots (jdp: "je öfter man das
+    // gleiche Zeichen eingetragen hat, desto mehr wurde es gewichtet").
+    const weighted: FontWidthTable = {
+      font: { family: 'monospace', sizePx: 16 },
+      entries: [
+        { char: ' ', inkCoverage: 0, weight: 1 },
+        { char: '.', inkCoverage: 0.2, weight: 5 },
+        { char: '@', inkCoverage: 0.9, weight: 1 },
+      ],
+    }
+
+    it('gives the repeated entry a proportionally wider luminance band', () => {
+      const picks = Array.from({ length: 7 }, (_, rank) =>
+        mapLuminanceToChar(1 - rank / 6, weighted),
+      )
+      expect(picks).toEqual([' ', '.', '.', '.', '.', '.', '@'])
+    })
+
+    it('an entry with no weight set behaves as weight 1', () => {
+      const unweighted: FontWidthTable = {
+        font: { family: 'monospace', sizePx: 16 },
+        entries: [
+          { char: ' ', inkCoverage: 0 },
+          { char: '.', inkCoverage: 0.2 },
+          { char: '@', inkCoverage: 0.9 },
+        ],
+      }
+      // totalWeight 3 (not 7) -> targetRank = round((1 - luminance) * 2).
+      expect(mapLuminanceToChar(1, unweighted)).toBe(' ')
+      expect(mapLuminanceToChar(0.5, unweighted)).toBe('.')
+      expect(mapLuminanceToChar(0, unweighted)).toBe('@')
+    })
   })
 })
 
@@ -187,12 +239,14 @@ describe('computeBlockAverageColor', () => {
 })
 
 describe('mapLuminanceToCharWithAchieved', () => {
+  // Ascending by inkCoverage - see mapLuminanceToChar's own table above for
+  // why order matters now.
   const table: FontWidthTable = {
     font: { family: 'monospace', sizePx: 16 },
     entries: [
-      { char: '@', inkCoverage: 0.9 },
-      { char: '*', inkCoverage: 0.4 },
       { char: ' ', inkCoverage: 0 },
+      { char: '*', inkCoverage: 0.4 },
+      { char: '@', inkCoverage: 0.9 },
     ],
   }
 
@@ -200,16 +254,20 @@ describe('mapLuminanceToCharWithAchieved', () => {
     expect(mapLuminanceToCharWithAchieved(0.5, table).char).toBe(mapLuminanceToChar(0.5, table))
   })
 
-  it('reports zero achieved error when the exact target coverage is hit', () => {
-    // luminance 0 -> targetCoverage = 0.9 (the table's own max) -> picks '@'
-    // exactly, so the achieved luminance must equal the target: 0 error.
+  it('reports zero achieved error when the picked glyph sits at the table\'s own extreme', () => {
+    // luminance 0 -> targetRank = round(1 * 2) = 2 -> picks '@', the entry
+    // AT the table's own max coverage (0.9) - achieved luminance must equal
+    // the target exactly: 0 error.
     const { achievedLuminance } = mapLuminanceToCharWithAchieved(0, table)
     expect(achievedLuminance).toBeCloseTo(0, 5)
   })
 
-  it('reports nonzero achieved error when the best glyph only approximates the target', () => {
-    // luminance 0.5 -> targetCoverage = 0 + 0.5*0.9 = 0.45 -> nearest is '*' (0.4),
-    // whose achieved luminance is 1 - (0.4-0)/0.9 = 0.5555... - not exactly 0.5.
+  it('reports nonzero achieved error when the picked glyph only approximates the target', () => {
+    // luminance 0.5 -> targetRank = round(0.5 * 2) = 1 -> picks '*' (0.4),
+    // whose achieved luminance is 1 - (0.4-0)/0.9 = 0.5555... - not exactly
+    // 0.5, since rank position and real measured coverage aren't the same
+    // axis (that's the whole point - see mapLuminanceToCharWithAchieved's
+    // own doc comment on why achieved error stays coverage-based).
     const { char, achievedLuminance } = mapLuminanceToCharWithAchieved(0.5, table)
     expect(char).toBe('*')
     expect(achievedLuminance).not.toBeCloseTo(0.5, 3)

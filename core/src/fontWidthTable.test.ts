@@ -53,4 +53,14 @@ describe('buildFontWidthTable', () => {
     )
     expect(table.entries).toHaveLength(2)
   })
+
+  it('carries occurrence counts forward as weight, for mapLuminanceToChar', () => {
+    const table = buildFontWidthTable(
+      ['.', '.', '.', '@', ' ', ' '],
+      { family: 'monospace', sizePx: 16 },
+      fakeMeasure,
+    )
+    const byChar = Object.fromEntries(table.entries.map((e) => [e.char, e.weight]))
+    expect(byChar).toEqual({ ' ': 2, '.': 3, '@': 1 })
+  })
 })

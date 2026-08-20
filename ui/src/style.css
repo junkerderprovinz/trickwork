@@ -546,14 +546,20 @@ canvas.preview-canvas[width="0"] {
 }
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
-   solche Badges") - --badge-sm, the same stage the accent-row swatches
-   and reset badge read from. Lives in the Export card's own eyebrow row
-   now (jdp: "der Copy button der im vorschaufenster ist soll ins export
-   menü wandern"), pinned to the trailing edge via margin-left: auto -
-   same convention as the reset badges in appearanceSettings.ts. */
+   solche Badges") - lives inside the Export card's own format-button row
+   now (jdp: "den zwischenablage button [...] in die reihe der anderen
+   buttons integrieren"), pinned to the trailing edge via margin-left: auto.
+   --badge-md, not --badge-sm: the four format buttons beside it render at
+   ~34px tall (base button padding + text content, no fixed height of their
+   own), so a --badge-sm (26.25px) circle sat visibly smaller than its row-
+   mates and flush to the row's top edge instead of centred among them
+   (jdp: "der zwischenablage button hat nicht die richtige größe") - see
+   .export-format-row button below, which now gives the FORMAT buttons an
+   explicit --badge-md height too, so every button in this row is the exact
+   same height regardless of whether it holds an icon or text. */
 .preview-copy-button {
-  width: var(--badge-sm);
-  height: var(--badge-sm);
+  width: var(--badge-md);
+  height: var(--badge-md);
   padding: 0;
   margin-left: auto;
   display: inline-flex;
@@ -566,8 +572,8 @@ canvas.preview-canvas[width="0"] {
   border-radius: var(--radius-pill);
 }
 .preview-copy-button .control-icon {
-  width: 15px;
-  height: 15px;
+  width: 19px;
+  height: 19px;
 }
 .preview-copy-button--copied {
   background-color: var(--status-ok-bg);
@@ -1073,9 +1079,22 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* An explicit --badge-md height, not the base button rule's own padding-
+   plus-content sizing - these otherwise rendered a couple pixels taller
+   than the copy badge beside them (34px vs. its 26.25px, see
+   .preview-copy-button's own comment) once the two were meant to look like
+   one continuous row of same-sized controls. display:flex + centering
+   replaces the base rule's plain text-align: center now that height is
+   fixed rather than padding-derived, so a single line of text still sits
+   dead centre instead of drifting toward whichever side line-height rounds
+   to. */
 .export-format-row button {
   flex: 1;
   min-width: 4.5rem;
+  height: var(--badge-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* The Copy badge joined this row (jdp: "den zwischenablage button [...]

@@ -9,8 +9,6 @@ import {
   type CellSize,
   type FontWidthTable,
 } from 'trickwork-core'
-import { applyHueVars } from './controlWidgets'
-import { subscribeRainbow } from './design/appearance'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -54,20 +52,11 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   zoomRow.appendChild(zoomCluster)
   container.appendChild(zoomRow)
 
-  // Zoom out/in are a two-member set (jdp: "die ganzen badges und
-  // schaltflächen werden nicht eingefärbt").
-  function syncRainbow(): void {
-    ;[zoomOutButton, zoomInButton].forEach((button, index) => {
-      const applied = applyHueVars(button, index)
-      button.classList.toggle('glim-hue', applied)
-      // .glim-tint-badge, not .glim-tint - this is a compact circular
-      // badge, not a list row (jdp: "die ganzen icon badges sind immer
-      // noch schwach eingefärbt, die sollen normal kräftig eingefärbt sein").
-      button.classList.toggle('glim-tint-badge', applied)
-    })
-  }
-  syncRainbow()
-  subscribeRainbow(syncRainbow)
+  // No rainbow wiring here any more (jdp rejected the idle badge wash this
+  // fed - see controlWidgets.ts's iconToggleButton). Zoom out/in have no
+  // persisted checked state either - a momentary action button has nowhere
+  // honest to show a rainbow position, so it just stays a plain neutral
+  // badge.
 
   function applyLabels(): void {
     eyebrow.textContent = t('preview.eyebrow')
