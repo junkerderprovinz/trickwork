@@ -167,6 +167,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'Export anulat.',
   'presets.imported': 'Setări importate.',
   'presets.importInvalid': 'Acest fișier nu este o presetare TrickWork validă.',
+  'cards.reorderHandle': 'Trage pentru a reordona',
 }
 
 export default dict

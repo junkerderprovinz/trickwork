@@ -167,6 +167,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'Dışa aktarma iptal edildi.',
   'presets.imported': 'Ayarlar içe aktarıldı.',
   'presets.importInvalid': 'Bu dosya geçerli bir TrickWork ön ayarı değil.',
+  'cards.reorderHandle': 'Yeniden sıralamak için sürükleyin',
 }
 
 export default dict

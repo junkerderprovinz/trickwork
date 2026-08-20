@@ -178,6 +178,8 @@ export const en = {
   'presets.exportCancelled': 'Export cancelled.',
   'presets.imported': 'Settings imported.',
   'presets.importInvalid': 'That file is not a valid TrickWork preset.',
+
+  'cards.reorderHandle': 'Drag to reorder',
 }
 
 export type TranslationKey = keyof typeof en
@@ -350,6 +352,8 @@ export const de: Translations = {
   'presets.exportCancelled': 'Export abgebrochen.',
   'presets.imported': 'Einstellungen importiert.',
   'presets.importInvalid': 'Diese Datei ist keine gültige TrickWork-Vorlage.',
+
+  'cards.reorderHandle': 'Zum Umsortieren ziehen',
 }
 
 export interface LocaleInfo {

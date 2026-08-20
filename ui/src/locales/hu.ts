@@ -167,6 +167,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'Exportálás megszakítva.',
   'presets.imported': 'Beállítások importálva.',
   'presets.importInvalid': 'Ez a fájl nem érvényes TrickWork-előbeállítás.',
+  'cards.reorderHandle': 'Húzza az átrendezéshez',
 }
 
 export default dict

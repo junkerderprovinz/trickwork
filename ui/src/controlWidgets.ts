@@ -152,19 +152,15 @@ export function iconToggleButton(
   // Opt-in only, same rule as segmentedRow's own rainbowBaseIndex - the
   // caller assigns each button in its own logical set (e.g. Flip
   // horizontal/vertical) a distinct index. .glim-hue redefines --accent for
-  // this button UNCONDITIONALLY (not just while checked) - .glim-hue-icon's
-  // own CSS rule only recolours the glyph once something has already
-  // redefined --accent for it to read; without .glim-hue always present,
-  // the glyph fell back to the page's single global accent instead of this
-  // button's own position (a real bug, caught by inspecting computed
-  // styles - every icon showed the same colour instead of eight different
-  // ones). .glim-tint washes the BADGE itself the same way (jdp: "bei den
-  // ganzen icons soll der badge eingefärbt sein, wie das icon" - GlimStone
-  // previously only documented the glyph-recolour half for an icon-only
-  // badge). Checked additionally adds .glim-active, which excludes the
-  // glyph-recolour rule (already filled, an icon painted the same colour
-  // would vanish into its own background) and lets the badge's own
-  // background-fill CSS pick up --accent for the fill itself.
+  // this button UNCONDITIONALLY (not just while checked), so the checked
+  // fill (.icon-toggle-button--active reads var(--accent)) resolves to
+  // THIS button's own position. .glim-tint washes the BADGE's own
+  // background the same way queue.ts's rows do - the glyph itself stays
+  // neutral, NOT also recoloured (jdp: "die icons sollen nicht eingefärbt
+  // werden, nur die badges also der hintergrund" - an earlier round tried
+  // colouring the glyph too via .glim-hue-icon and it read as one colour
+  // too many). Checked additionally adds .glim-active, which lets the
+  // badge's own background-fill CSS pick up --accent for the fill itself.
   rainbowIndex?: number,
 ): HTMLButtonElement {
   const btn = document.createElement('button')
@@ -175,7 +171,7 @@ export function iconToggleButton(
   btn.setAttribute('aria-label', label)
 
   if (rainbowIndex !== undefined && applyHueVars(btn, rainbowIndex)) {
-    btn.classList.add('glim-hue', 'glim-hue-icon', 'glim-tint')
+    btn.classList.add('glim-hue', 'glim-tint')
   }
 
   let checked = initial

@@ -122,11 +122,18 @@ html, body {
    present list of recent actions (historyPanel.ts's renderLog), most recent
    on top. A fixed max-height with its own scroll, not the card's own, so a
    long session's log never grows the whole sidecard. */
+/* A fixed height, not max-height - jdp: "das Verlauf-Fenster soll immer
+   gleich groß sein und nicht sich erst füllen und größer werden, wenn was
+   passiert ist". max-height let the card visibly grow from the single
+   "No changes yet" line up to the cap as entries appeared, shifting
+   everything below it on the page each time. Height is now reserved
+   upfront regardless of content; overflow-y still scrolls once entries
+   exceed it. */
 .history-log {
   list-style: none;
   margin: 0.5rem 0 0;
   padding: 0;
-  max-height: 8.5rem;
+  height: 8.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -273,12 +280,52 @@ html, body {
   padding: 0.6rem 0.75rem;
 }
 
-/* One card per section (rule 1: never nest cards). */
+/* One card per section (rule 1: never nest cards). position: relative
+   anchors .card-drag-handle (cardReorder.ts) in the corner - only the six
+   Convert-page sidecards actually get a handle appended, but the rule is
+   harmless on every other .glim-section too. */
 .glim-section {
+  position: relative;
   padding: 1rem 1.125rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+/* The sidecard drag handle (cardReorder.ts, jdp: "die cards sollen auch per
+   drag and drop nach wunsch anordenbar sein") - pinned to the card's own
+   top-right corner, furniture until hovered (same convention as the info
+   icon: opacity .5 at rest, 1 on hover/focus) rather than a filled badge,
+   since it isn't "activity" (rule 3), just a grip. */
+.card-drag-handle {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  color: var(--carbon-text-muted);
+  opacity: 0.5;
+  cursor: grab;
+}
+.card-drag-handle:hover,
+.card-drag-handle:focus-visible {
+  opacity: 1;
+  color: var(--carbon-text);
+}
+.card-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* The card currently being picked up - dimmed in place so its own drop
+   target (the gap it's about to land in) reads clearly among the others
+   sliding out of the way. */
+.card-dragging {
+  opacity: 0.4;
 }
 
 /* The controls panel each Convert-page sidecard mounts its rows into
@@ -1020,6 +1067,17 @@ button:focus-visible {
 .export-format-row button {
   flex: 1;
   min-width: 4.5rem;
+}
+
+/* The Copy badge joined this row (jdp: "den zwischenablage button [...]
+   in die reihe der anderen buttons integrieren") but stays its own fixed
+   icon-badge size - without this override the generic rule above (aimed
+   at the four text format buttons) stretched it into a 4.5rem-wide pill
+   instead of a small circle. Higher specificity wins over the rule above
+   (two classes vs. one class + element). */
+.export-format-row .preview-copy-button {
+  flex: none;
+  min-width: 0;
 }
 
 .export-batch-button {

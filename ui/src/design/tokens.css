@@ -511,6 +511,25 @@ body {
   box-shadow: inset 0 0 0 999px var(--item-hue-soft);
 }
 
+/* .glim-tint-hover: the SAME rest-quiet/hover-reveals behaviour as reactive
+   mode above, but as a per-ELEMENT choice, independent of the user's own
+   on/reactive setting - some rows (a set of equal-weight action buttons,
+   not a persistent selection) read as noisy fully washed at rest even
+   under `on` (jdp: "die buttons die inaktiv sind sollen nicht eingefärbt
+   sein, beim mouseover sollen sie eingefärbt werden"), yet the app isn't
+   asking its USER to opt into reactive mode globally just for this one
+   row. Use `.glim-tint` for a row where colour-at-rest is the point (a
+   list, so an all-idle list doesn't read as blank); use
+   `.glim-tint-hover` for a row of equal-weight actions where the colour
+   is a nice-to-discover accent, not the primary signal. */
+[data-rainbow] .glim-tint-hover {
+  box-shadow: none;
+}
+[data-rainbow] .glim-tint-hover:hover,
+[data-rainbow] .glim-tint-hover:focus-visible {
+  box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+
 /* Reactive: the palette rests. Everything stays quiet until hovered or
    active — the reading that still obeys "colour marks activity" when a
    whole list would otherwise light up at once. */

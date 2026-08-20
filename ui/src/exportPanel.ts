@@ -31,17 +31,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('span')
   eyebrow.className = 'glim-eyebrow'
   const eyebrowInfo = infoIcon('')
-  // Moved here from the Preview card (jdp: "der Copy button der im
-  // vorschaufenster ist soll ins export menü wandern") - copying the
-  // active item's plain text to the clipboard IS an export, just to the
-  // clipboard instead of a file; it belongs beside the other export
-  // actions, not floating over the canvas. Pinned to the row's trailing
-  // edge via margin-left: auto (same convention as the reset badges).
-  const copyButton = document.createElement('button')
-  copyButton.type = 'button'
-  copyButton.className = 'preview-copy-button'
-  copyButton.innerHTML = iconCopy()
-  eyebrowRow.append(eyebrow, eyebrowInfo, copyButton)
+  eyebrowRow.append(eyebrow, eyebrowInfo)
   container.appendChild(eyebrowRow)
 
   const panel = document.createElement('div')
@@ -50,6 +40,18 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   const summary = document.createElement('p')
   summary.className = 'export-summary'
 
+  // Moved here from the Preview card (jdp: "der Copy button der im
+  // vorschaufenster ist soll ins export menü wandern"), then INTO this
+  // same row as the format buttons rather than sitting apart in the
+  // eyebrow (jdp: "den zwischenablage button [...] in die reihe der
+  // anderen buttons integrieren") - copying plain text to the clipboard
+  // IS an export, just to the clipboard instead of a file. Pinned to the
+  // row's trailing edge via margin-left: auto.
+  const copyButton = document.createElement('button')
+  copyButton.type = 'button'
+  copyButton.className = 'preview-copy-button'
+  copyButton.innerHTML = iconCopy()
+
   const formatRow = document.createElement('div')
   formatRow.className = 'export-format-row'
   const formatButtons: { format: ExportFormat; button: HTMLButtonElement }[] = []
@@ -57,13 +59,19 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
     const button = document.createElement('button')
     button.textContent = format.toUpperCase()
     button.addEventListener('click', () => void exportActive(store, format, summary))
-    // The four formats are an equal-member set (jdp: "die ganzen badges und
-    // schaltflächen werden nicht eingefärbt") - each owns a fixed rainbow
-    // position, applied once at mount and re-applied on toggle (these
-    // buttons are never rebuilt the way a panel's own build() is).
-    if (applyHueVars(button, index)) button.classList.add('glim-hue', 'glim-tint')
     formatRow.appendChild(button)
     formatButtons.push({ format, button })
+  })
+  formatRow.appendChild(copyButton)
+  // The four formats plus Copy are an equal-weight ACTION set, not a
+  // persistent selection (jdp: "die buttons die inaktiv sind sollen nicht
+  // eingefärbt sein, beim mouseover sollen sie eingefärbt werden") - each
+  // owns a fixed rainbow position, but .glim-tint-hover keeps them quiet
+  // at rest and reveals the wash only on hover/focus, applied once at
+  // mount and re-applied on toggle (these buttons are never torn down the
+  // way a panel's own build() would be).
+  ;[...formatButtons.map((f) => f.button), copyButton].forEach((button, index) => {
+    if (applyHueVars(button, index)) button.classList.add('glim-hue', 'glim-tint-hover')
   })
   panel.appendChild(formatRow)
 
@@ -131,10 +139,10 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   // edit or a mode toggle (applyHueVars() itself is idempotent and a no-op
   // once rainbow is off, so this is safe to call unconditionally).
   function syncRainbow(): void {
-    formatButtons.forEach(({ button }, index) => {
+    ;[...formatButtons.map((f) => f.button), copyButton].forEach((button, index) => {
       const applied = applyHueVars(button, index)
       button.classList.toggle('glim-hue', applied)
-      button.classList.toggle('glim-tint', applied)
+      button.classList.toggle('glim-tint-hover', applied)
     })
   }
   subscribeRainbow(syncRainbow)

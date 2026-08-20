@@ -167,6 +167,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'Đã hủy xuất.',
   'presets.imported': 'Đã nhập cài đặt.',
   'presets.importInvalid': 'Tệp này không phải là cài đặt sẵn TrickWork hợp lệ.',
+  'cards.reorderHandle': 'Kéo để sắp xếp lại',
 }
 
 export default dict

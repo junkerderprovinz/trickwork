@@ -166,6 +166,7 @@ const dict: Translations = {
   'presets.exportCancelled': '내보내기가 취소되었습니다.',
   'presets.imported': '설정을 가져왔습니다.',
   'presets.importInvalid': '이 파일은 유효한 TrickWork 프리셋이 아닙니다.',
+  'cards.reorderHandle': '드래그하여 순서 변경',
 }
 
 export default dict

@@ -167,6 +167,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'Vienti peruutettu.',
   'presets.imported': 'Asetukset tuotu.',
   'presets.importInvalid': 'Tämä tiedosto ei ole kelvollinen TrickWork-esiasetus.',
+  'cards.reorderHandle': 'Vedä järjestääksesi uudelleen',
 }
 
 export default dict

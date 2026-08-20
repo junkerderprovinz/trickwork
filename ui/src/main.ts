@@ -15,6 +15,7 @@ import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
+import { makeReorderable } from './cardReorder'
 import { iconAppearance, iconBack } from './icons'
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
@@ -102,7 +103,20 @@ const transformCard = section()
 const filtersCard = section()
 const queueCard = section()
 const exportCard = section()
-secondary.append(historyCard, adjustCard, transformCard, filtersCard, queueCard, exportCard)
+// Default order: History moved down to sit directly above Queue (jdp: "die
+// card soll weiter unten sein, über der warteschlange card") - it used to
+// sit first since it applies across every card below it, but that reasoning
+// didn't need it to be the very FIRST card specifically. makeReorderable()
+// below lets a saved order override this default entirely.
+secondary.append(adjustCard, transformCard, filtersCard, historyCard, queueCard, exportCard)
+makeReorderable(secondary, [
+  { id: 'adjust', el: adjustCard },
+  { id: 'transform', el: transformCard },
+  { id: 'filters', el: filtersCard },
+  { id: 'history', el: historyCard },
+  { id: 'queue', el: queueCard },
+  { id: 'export', el: exportCard },
+])
 
 convertView.append(primary, secondary)
 body.appendChild(convertView)

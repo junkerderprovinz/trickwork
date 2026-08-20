@@ -136,6 +136,15 @@ export function iconCheck(): string {
   return controlSvg(`<path d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
 }
 
+// The standard six-dot grip glyph - a sidecard's own drag handle (cardReorder.ts).
+export function iconGrip(): string {
+  return controlSvg(
+    [7, 13]
+      .flatMap((x) => [4, 10, 16].map((y) => `<circle cx="${x}" cy="${y}" r="1.3" fill="currentColor" />`))
+      .join(''),
+  )
+}
+
 // Standard 8-tooth cog - Appearance/settings, identical concept to BV/KL's own Settings glyph.
 export function iconAppearance(): string {
   return svg(

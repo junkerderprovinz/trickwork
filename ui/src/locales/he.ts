@@ -166,6 +166,7 @@ const dict: Translations = {
   'presets.exportCancelled': 'הייצוא בוטל.',
   'presets.imported': 'ההגדרות יובאו.',
   'presets.importInvalid': 'קובץ זה אינו הגדרה קבועה מראש תקפה של TrickWork.',
+  'cards.reorderHandle': 'גרור לסידור מחדש',
 }
 
 export default dict
