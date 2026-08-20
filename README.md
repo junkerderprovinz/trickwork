@@ -1,6 +1,9 @@
-<!-- Banner goes here once the logo exists — see docs/superpowers/specs/2026-08-18-ascii-supergenerator-design.md §8. -->
-
-<h1 align="center">TrickWork</h1>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/trickwork-banner-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/trickwork-banner.png" alt="TrickWork" width="100%">
+  </picture>
+</p>
 
 <p align="center">
   <a href="https://github.com/junkerderprovinz/trickwork/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/junkerderprovinz/trickwork/ci.yml?branch=main&label=CI&style=for-the-badge&logo=githubactions&logoColor=white" alt="CI" height="36"></a>&nbsp;
