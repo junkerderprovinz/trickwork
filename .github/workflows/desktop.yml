@@ -51,7 +51,14 @@ jobs:
       # images#11754), so install it explicitly rather than depend on it.
       - name: Install NSIS
         if: runner.os == 'Windows'
-        run: choco install nsis -y
+        run: |
+          choco install nsis -y
+          # choco updates the machine PATH, but that change doesn't reach
+          # this already-running job process - wails build's own NSIS
+          # invocation silently degrades to "Warning: Cannot create
+          # installer: makensis not found" without this (confirmed against
+          # a real run: NSIS installed fine, PATH just never got there).
+          echo "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
