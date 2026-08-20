@@ -90,6 +90,12 @@ function hsvToHex(h: number, s: number, v: number): string {
   return `#${f(r)}${f(g)}${f(b)}`;
 }
 
+/** normalizeHex accepts "2f6feb" or "#2F6FEB", returns "#rrggbb" lowercase, or null if invalid. */
+function normalizeHex(value: string): string | null {
+  const trimmed = value.trim().replace(/^#/, '');
+  return /^[0-9a-f]{6}$/i.test(trimmed) ? `#${trimmed.toLowerCase()}` : null;
+}
+
 /**
  * Builds an always-visible saturation/value square + hue bar. `onChange`
  * fires with a 6-digit lowercase hex string on every drag update (mouse and
@@ -211,8 +217,34 @@ export function openColorPickerPopover(
 
   const panel = document.createElement('div');
   panel.className = 'glim-picker-popover';
-  const picker = colorPicker(initialHex, onChange);
-  panel.appendChild(picker.el);
+
+  // The hex field beside the picker (jdp: "das hex feld fehlt im
+  // colorpicker") - CannonadeCommand's own `cc-set-hexin` pairs with
+  // `inlinePicker()` everywhere it appears; a picker with no way to type or
+  // read back an exact value is missing half of what "a colour field"
+  // means. Bidirectional: dragging the picker updates the hex text,
+  // typing a valid 6-digit hex re-syncs the picker's own dot positions.
+  const hexInput = document.createElement('input');
+  hexInput.type = 'text';
+  hexInput.className = 'glim-picker-hex';
+  hexInput.maxLength = 7;
+  hexInput.spellcheck = false;
+  hexInput.value = initialHex;
+  hexInput.setAttribute('aria-label', 'Hex');
+
+  const picker = colorPicker(initialHex, (hex) => {
+    hexInput.value = hex;
+    onChange(hex);
+  });
+
+  hexInput.addEventListener('input', () => {
+    const normalized = normalizeHex(hexInput.value);
+    if (!normalized) return;
+    picker.setValue(normalized);
+    onChange(normalized);
+  });
+
+  panel.append(picker.el, hexInput);
   document.body.appendChild(panel);
 
   function position(): void {

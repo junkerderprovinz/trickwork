@@ -8,6 +8,7 @@ import {
   applyRainbow,
   cacheAppearance,
   rainbowState,
+  subscribeRainbow,
   type Shape,
 } from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
@@ -86,6 +87,12 @@ export function mountAppearanceSettings(container: HTMLElement): void {
   function build(): void {
     panel.innerHTML = ''
 
+    // Rainbow now covers the Settings tab's own selectors too (jdp: "die
+    // schaltflächen und toggles im settingstab" sind nicht eingefärbt) -
+    // only the ACTIVE segment of each row owns a position (see
+    // controlWidgets.ts's segmentedRow), so this reads as a subtle accent
+    // shift on the current choice, not a self-referential wash across the
+    // very controls that configure the mode.
     const shapeRow = segmentedRow(
       t('appearance.shape'),
       SHAPES.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
@@ -95,6 +102,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
         applyShape(shape)
         persist()
       },
+      undefined,
+      0,
     )
 
     const themeRow = segmentedRow(
@@ -106,6 +115,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
         applyTheme(theme)
         persist()
       },
+      undefined,
+      0,
     )
 
     // The custom-colour trigger is a flat swatch, same size/shape as every
@@ -309,4 +320,12 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
   build()
   subscribeLocale(build)
+  // Shape/Theme's own rainbow colouring is baked in at build() time (segmentedRow
+  // reads rainbowColor() once, not reactively) - toggling the mode, or editing
+  // the palette, has to rebuild this panel too. See transformPanel.ts for the
+  // same pattern; a palette-popover drag stays smooth despite this because the
+  // popover itself lives outside `panel` (appended to document.body), so a
+  // panel.innerHTML='' rebuild never touches the DOM the drag is actually
+  // manipulating.
+  subscribeRainbow(build)
 }

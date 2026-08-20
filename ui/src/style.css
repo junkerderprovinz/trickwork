@@ -486,18 +486,21 @@ canvas.preview-canvas[width="0"] {
 .preview-zoom-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.3rem;
   margin-top: -0.25rem;
 }
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
    solche Badges") - --badge-sm, the same stage the accent-row swatches
-   and reset badge read from. */
+   and reset badge read from. Lives in the Export card's own eyebrow row
+   now (jdp: "der Copy button der im vorschaufenster ist soll ins export
+   menü wandern"), pinned to the trailing edge via margin-left: auto -
+   same convention as the reset badges in appearanceSettings.ts. */
 .preview-copy-button {
   width: var(--badge-sm);
   height: var(--badge-sm);
   padding: 0;
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1084,10 +1087,20 @@ button:focus-visible {
   justify-content: center;
   text-align: center;
   background-color: transparent;
-  /* One line, always - a long label (German "Unscharf maskieren" vs. short
-     "0°") must never make this row taller than a sibling card's row of the
-     same --radius-control/padding rhythm; title="" on the button carries
-     the full text when it truncates. */
+}
+
+/* One line, always - a long label (German "Unscharf maskieren" vs. short
+   "0°") must never make this row taller than a sibling card's row of the
+   same --radius-control/padding rhythm, and must never overflow the
+   button's own bounds either. text-overflow: ellipsis doesn't reliably
+   apply to a flex CONTAINER's own direct text node (.segmented-button is
+   display:flex) - it needs a genuine block-level child, hence this span.
+   min-width: 0 overrides the flex default (min-width: auto, which refuses
+   to shrink a flex item below its content size) so the ellipsis can
+   actually engage instead of pushing the button wider. data-tip on the
+   button carries the full text when it truncates. */
+.segmented-button-label {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

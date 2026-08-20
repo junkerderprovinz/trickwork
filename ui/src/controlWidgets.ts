@@ -78,15 +78,27 @@ export function segmentedRow<T extends string>(
       btn.type = 'button'
       const isActive = choice.value === active
       btn.className = 'segmented-button' + (isActive ? ' segmented-button--active' : '')
-      btn.textContent = choice.label
-      if (rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
-        btn.classList.add('glim-hue', 'glim-tint')
-        if (isActive) btn.classList.add('glim-active')
+      // A truncating text-overflow needs a genuine block-level child - it
+      // doesn't reliably apply to a flex container's own direct text node
+      // (jdp: "unscharf maskieren der text läuft aus der Schaltfläche
+      // hinaus" - .segmented-button is display:flex, and text-overflow:
+      // ellipsis on the flex container itself silently did nothing, so a
+      // long label just overflowed the button's bounds instead of
+      // truncating). The label lives in its own span; the button stays a
+      // pure flex container with no overflow rule of its own.
+      const labelSpan = document.createElement('span')
+      labelSpan.className = 'segmented-button-label'
+      labelSpan.textContent = choice.label
+      btn.appendChild(labelSpan)
+      // Only the ACTIVE segment owns a rainbow position - jdp: "bei den
+      // Auswahlbalken soll nur der aktiv ausgewählte Option eingefärbt
+      // sein, die inaktive nicht". Unlike a list (queue.ts), where every
+      // row needs its own wash so an all-idle list isn't blank, a
+      // selector's own fill already says which one is picked - washing
+      // the REST too is noise the selection state doesn't need.
+      if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
+        btn.classList.add('glim-hue', 'glim-active')
       }
-      // The CSS forces one line + ellipsis so a long label (e.g. German
-      // "Unscharf maskieren") never wraps and makes this row taller than a
-      // short-label row (e.g. Rotate's "0°/90°/180°/270°") in a sibling card
-      // of the same width.
       btn.addEventListener('click', () => {
         if (choice.value === active) return
         onBeforeChange?.(choice.value)
@@ -107,9 +119,11 @@ export function segmentedRow<T extends string>(
       // scrollWidth/clientWidth would both read 0 (equal, "not truncated")
       // at that point regardless of the real eventual layout - the same
       // measure-before-layout trap levelsPanel.ts's histogram canvas hit
-      // earlier this session.
+      // earlier this session. Measured on the LABEL span, not the button -
+      // the button itself never overflows (it clips), only the span's own
+      // untruncated text metric does.
       requestAnimationFrame(() => {
-        if (btn.isConnected && btn.scrollWidth > btn.clientWidth) {
+        if (labelSpan.isConnected && labelSpan.scrollWidth > labelSpan.clientWidth) {
           btn.setAttribute('data-tip', choice.label)
         }
       })
@@ -144,7 +158,10 @@ export function iconToggleButton(
   // the glyph fell back to the page's single global accent instead of this
   // button's own position (a real bug, caught by inspecting computed
   // styles - every icon showed the same colour instead of eight different
-  // ones). Checked additionally adds .glim-active, which both excludes the
+  // ones). .glim-tint washes the BADGE itself the same way (jdp: "bei den
+  // ganzen icons soll der badge eingefärbt sein, wie das icon" - GlimStone
+  // previously only documented the glyph-recolour half for an icon-only
+  // badge). Checked additionally adds .glim-active, which excludes the
   // glyph-recolour rule (already filled, an icon painted the same colour
   // would vanish into its own background) and lets the badge's own
   // background-fill CSS pick up --accent for the fill itself.
@@ -158,7 +175,7 @@ export function iconToggleButton(
   btn.setAttribute('aria-label', label)
 
   if (rainbowIndex !== undefined && applyHueVars(btn, rainbowIndex)) {
-    btn.classList.add('glim-hue', 'glim-hue-icon')
+    btn.classList.add('glim-hue', 'glim-hue-icon', 'glim-tint')
   }
 
   let checked = initial

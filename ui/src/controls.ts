@@ -1,4 +1,6 @@
 import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
+import { applyHueVars } from './controlWidgets'
+import { subscribeRainbow } from './design/appearance'
 import { enableSelectScroll } from './design/selectScroll'
 import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
@@ -52,6 +54,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
       },
       1,
       () => store.commitOptionsSnapshot(t('history.entryWidth')),
+      0,
     )
 
     const charsetWrap = document.createElement('div')
@@ -206,6 +209,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
   // state.ts's subscribeHistory doc comment for why this is a SEPARATE
   // channel from store.subscribe (a plain drag must never trigger this).
   store.subscribeHistory(build)
+  // See transformPanel.ts for why: rainbowColor() is read once at build()
+  // time, so toggling the mode has to rebuild this panel too.
+  subscribeRainbow(build)
 }
 
 function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
@@ -233,6 +239,12 @@ export function numberSlider(
   onChange: (value: number) => void,
   step = 1,
   onBeforeChange?: () => void,
+  // Opt-in only, same rule as segmentedRow's own rainbowBaseIndex (jdp:
+  // "die Schieberegler sind nicht im rainbowmode"). A slider has no
+  // "inactive member" the way a selector does - it's always showing some
+  // value - so it just colours its own thumb via .glim-hue (the thumb's
+  // CSS already reads var(--accent)), no wash/tint needed.
+  rainbowIndex?: number,
 ): HTMLElement {
   const wrapper = document.createElement('label')
   wrapper.className = 'control-slider'
@@ -252,6 +264,9 @@ export function numberSlider(
   input.max = String(max)
   input.step = String(step)
   input.value = String(initial)
+  if (rainbowIndex !== undefined && applyHueVars(input, rainbowIndex)) {
+    input.classList.add('glim-hue')
+  }
 
   let committedThisGesture = false
   function commitGestureStart(): void {

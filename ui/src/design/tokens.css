@@ -401,10 +401,14 @@ body {
 /* The floating popover openColorPickerPopover() renders the picker into -
    a fixed-position panel, own elevated surface (same recipe as .glim-card:
    one raised level, one hairline, one shadow), sized to the picker's own
-   natural width rather than stretching to whatever's beneath it. */
+   natural width rather than stretching to whatever's beneath it. Column
+   flex: the picker itself, then the hex field below it. */
 .glim-picker-popover {
   position: fixed;
   z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 0.75rem;
   background-color: var(--carbon-surface);
   border-radius: var(--radius-card);
@@ -412,6 +416,29 @@ body {
 }
 .glim-picker-popover .glim-picker {
   width: 13.75rem;
+}
+
+/* The hex field beside the picker (CannonadeCommand's own cc-set-hexin) -
+   a plain borderless filled field (rule 14), monospace so every hex digit
+   lines up, uppercase-styled via letter-spacing/text-transform rather than
+   forcing the stored value's own case. */
+.glim-picker-hex {
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text);
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.glim-picker-hex:focus {
+  outline: none;
+  background-color: var(--carbon-hover);
 }
 
 /* ---------------------------------------------------------------------------

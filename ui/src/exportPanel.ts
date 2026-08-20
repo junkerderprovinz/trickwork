@@ -14,10 +14,13 @@ import { downloadBlob } from './download'
 import { applyHueVars } from './controlWidgets'
 import { subscribeRainbow } from './design/appearance'
 import { infoIcon } from './design/tooltip'
+import { iconCheck, iconCopy } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
 
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
+
+const COPIED_FEEDBACK_MS = 1500
 
 export function mountExportPanel(container: HTMLElement, store: Store): void {
   // Eyebrow + info icon share a row (GlimStone rule 8: explanations live in
@@ -28,7 +31,17 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('span')
   eyebrow.className = 'glim-eyebrow'
   const eyebrowInfo = infoIcon('')
-  eyebrowRow.append(eyebrow, eyebrowInfo)
+  // Moved here from the Preview card (jdp: "der Copy button der im
+  // vorschaufenster ist soll ins export menü wandern") - copying the
+  // active item's plain text to the clipboard IS an export, just to the
+  // clipboard instead of a file; it belongs beside the other export
+  // actions, not floating over the canvas. Pinned to the row's trailing
+  // edge via margin-left: auto (same convention as the reset badges).
+  const copyButton = document.createElement('button')
+  copyButton.type = 'button'
+  copyButton.className = 'preview-copy-button'
+  copyButton.innerHTML = iconCopy()
+  eyebrowRow.append(eyebrow, eyebrowInfo, copyButton)
   container.appendChild(eyebrowRow)
 
   const panel = document.createElement('div')
@@ -62,6 +75,8 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   panel.appendChild(summary)
   container.appendChild(panel)
 
+  let copiedFeedbackTimer: ReturnType<typeof setTimeout> | null = null
+
   function applyLabels(): void {
     eyebrow.textContent = t('export.eyebrow')
     for (const { format, button } of formatButtons) {
@@ -75,9 +90,41 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
     batchButton.textContent = t('export.batchButton')
     eyebrowInfo.setAttribute('data-tip', t('controls.colorTxtNote'))
     eyebrowInfo.setAttribute('aria-label', t('controls.colorTxtNote'))
+    // Skipped while the "Copied!" feedback is showing - reapplying the
+    // normal label mid-timeout would cut the feedback short on a locale
+    // switch (rare, but a full rebuild elsewhere in the app can trigger
+    // this callback at any time).
+    if (!copiedFeedbackTimer) {
+      copyButton.title = t('preview.copy')
+      copyButton.setAttribute('aria-label', t('preview.copy'))
+    }
   }
   applyLabels()
   subscribeLocale(applyLabels)
+
+  copyButton.addEventListener('click', () => {
+    const state = store.getState()
+    const item = state.items.find((i) => i.id === state.activeItemId)
+    if (!item) return
+    void buildOutput(item, store, 'txt')
+      .then((blob) => blob.text())
+      .then((text) => navigator.clipboard.writeText(text))
+      .then(() => {
+        if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
+        copyButton.innerHTML = iconCheck()
+        copyButton.classList.add('preview-copy-button--copied')
+        const copiedLabel = t('preview.copied')
+        copyButton.title = copiedLabel
+        copyButton.setAttribute('aria-label', copiedLabel)
+        copiedFeedbackTimer = setTimeout(() => {
+          copiedFeedbackTimer = null
+          copyButton.innerHTML = iconCopy()
+          copyButton.classList.remove('preview-copy-button--copied')
+          copyButton.title = t('preview.copy')
+          copyButton.setAttribute('aria-label', t('preview.copy'))
+        }, COPIED_FEEDBACK_MS)
+      })
+  })
 
   // Unlike a panel with its own build(), these buttons are created once and
   // never torn down - re-applying the hue vars is what picks up a palette

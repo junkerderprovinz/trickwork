@@ -6,18 +6,13 @@ import {
   createCanvasWidthMeasurer,
   measureCellSize,
   renderGridToCanvas,
-  toText,
   type CellSize,
   type FontWidthTable,
-  type Grid,
 } from 'trickwork-core'
 import { applyHueVars } from './controlWidgets'
 import { subscribeRainbow } from './design/appearance'
-import { iconCheck, iconCopy } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
-
-const COPIED_FEEDBACK_MS = 1500
 
 const MIN_ZOOM = 10
 const MAX_ZOOM = 400
@@ -39,15 +34,6 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   // now", matching ASCGen2's own Zoom In/Out buttons on its preview widget.
   let zoomPct = DEFAULT_ZOOM
 
-  // Icon badge, not text (jdp: "der Badge soll ein Badge mit Symbol sein,
-  // nicht mit Text" - a general rule now, see icons.ts's iconCopy()),
-  // pinned to the FAR RIGHT of the row (jdp: "der Badge soll auch ganz
-  // rechts sein") - the zoom cluster sits on the left instead.
-  const copyButton = document.createElement('button')
-  copyButton.type = 'button'
-  copyButton.className = 'preview-copy-button'
-  copyButton.innerHTML = iconCopy()
-
   const zoomCluster = document.createElement('div')
   zoomCluster.className = 'preview-zoom-cluster'
   const zoomOutButton = document.createElement('button')
@@ -65,13 +51,11 @@ export function mountPreview(container: HTMLElement, store: Store): void {
 
   const zoomRow = document.createElement('div')
   zoomRow.className = 'preview-zoom-row'
-  zoomRow.append(zoomCluster, copyButton)
+  zoomRow.appendChild(zoomCluster)
   container.appendChild(zoomRow)
 
   // Zoom out/in are a two-member set (jdp: "die ganzen badges und
-  // schaltflächen werden nicht eingefärbt") - copyButton stays on the
-  // single accent, it's the only one of its kind on the page (GlimStone's
-  // own rule: a lone unique control never owns a position).
+  // schaltflächen werden nicht eingefärbt").
   function syncRainbow(): void {
     ;[zoomOutButton, zoomInButton].forEach((button, index) => {
       const applied = applyHueVars(button, index)
@@ -82,46 +66,15 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   syncRainbow()
   subscribeRainbow(syncRainbow)
 
-  let copiedFeedbackTimer: ReturnType<typeof setTimeout> | null = null
-
   function applyLabels(): void {
     eyebrow.textContent = t('preview.eyebrow')
     empty.textContent = t('preview.empty')
     zoomOutButton.setAttribute('aria-label', t('preview.zoomOut'))
     zoomInButton.setAttribute('aria-label', t('preview.zoomIn'))
     zoomLabel.title = t('preview.zoomReset')
-    // Skipped while the "Copied!" feedback is showing - reapplying the
-    // normal label mid-timeout would cut the feedback short on a locale
-    // switch (rare, but a full rebuild elsewhere in the app can trigger
-    // this callback at any time).
-    if (!copiedFeedbackTimer) {
-      copyButton.title = t('preview.copy')
-      copyButton.setAttribute('aria-label', t('preview.copy'))
-    }
   }
   applyLabels()
   subscribeLocale(applyLabels)
-
-  let lastGrid: Grid | null = null
-
-  copyButton.addEventListener('click', () => {
-    if (!lastGrid) return
-    void navigator.clipboard.writeText(toText(lastGrid)).then(() => {
-      if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
-      copyButton.innerHTML = iconCheck()
-      copyButton.classList.add('preview-copy-button--copied')
-      const copiedLabel = t('preview.copied')
-      copyButton.title = copiedLabel
-      copyButton.setAttribute('aria-label', copiedLabel)
-      copiedFeedbackTimer = setTimeout(() => {
-        copiedFeedbackTimer = null
-        copyButton.innerHTML = iconCopy()
-        copyButton.classList.remove('preview-copy-button--copied')
-        copyButton.title = t('preview.copy')
-        copyButton.setAttribute('aria-label', t('preview.copy'))
-      }, COPIED_FEEDBACK_MS)
-    })
-  })
 
   const canvasWrap = document.createElement('div')
   canvasWrap.className = 'preview-canvas-wrap'
@@ -229,7 +182,6 @@ export function mountPreview(container: HTMLElement, store: Store): void {
       canvasWrap.style.display = 'none'
       zoomRow.style.display = 'none'
       lastImageId = null
-      lastGrid = null
       return
     }
     empty.style.display = 'none'
@@ -251,7 +203,6 @@ export function mountPreview(container: HTMLElement, store: Store): void {
 
     const transformed = applyImageFilters(activeItem.imageData, state.options)
     const grid = assembleGrid(transformed, cachedTable, state.options)
-    lastGrid = grid
 
     const columns = grid[0]?.length ?? 0
     const rows = grid.length

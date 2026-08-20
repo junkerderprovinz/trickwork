@@ -53,6 +53,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       },
       0.05,
       () => store.commitOptionsSnapshot(t('history.entryBrightness')),
+      0,
     )
 
     const contrast = numberSlider(
@@ -65,6 +66,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       },
       0.05,
       () => store.commitOptionsSnapshot(t('history.entryContrast')),
+      1,
     )
 
     const toggleRow = document.createElement('div')
