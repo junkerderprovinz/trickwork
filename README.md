@@ -83,15 +83,15 @@ export — and nothing since has replaced it. TrickWork is that combination, reb
 ## 2. Screenshots
 
 <p align="center">
-  <img src=".github/assets/screenshot-empty.png" alt="TrickWork — empty state, ready to accept an image" width="90%">
-  <br><em>Drop an image or click to browse — the whole layout is one screen, no menus to dig through.</em>
+  <img src=".github/assets/screenshot-dark.png" alt="TrickWork in dark mode — a converted image, live preview and export options" width="90%">
+  <br><em>Dark mode — every slider updates the live preview instantly; export the active image or the whole queue at once.</em>
 </p>
 
 <br>
 
 <p align="center">
-  <img src=".github/assets/screenshot-loaded.png" alt="TrickWork — a converted image, live preview and export options" width="90%">
-  <br><em>Live preview updates as you move any slider; export the active image or the whole queue at once.</em>
+  <img src=".github/assets/screenshot-light.png" alt="TrickWork in light mode — the same conversion, light theme" width="90%">
+  <br><em>Light mode, the same working layout — theme, shape and accent are all yours to pick in Settings.</em>
 </p>
 
 <br>
@@ -110,8 +110,10 @@ export — and nothing since has replaced it. TrickWork is that combination, reb
   out in the UI rather than silently looking different from the preview), and a rendered **PNG** image, which
   is the one format that can faithfully reproduce a proportional-font look since it draws the characters onto
   a canvas itself instead of relying on the viewer's own font rendering.
-- **Four built-in character sets** — a short `standard` ramp, a long `detailed` ramp, Unicode `blocks`, or
-  your own custom character string.
+- **Ten built-in character sets** — nine of them are ASCII Gen 2's own original ramps, fetched and verified
+  byte-for-byte against its real 2011 source, weighting mechanic included: repeat a character in the ramp and
+  it claims proportionally more of the brightness range, exactly like the original. Plus a bonus 70-character
+  `detailed` ramp for extra tonal range, or type your own custom character string — repeats and all.
 - **Four font choices, no bundled font files** — two monospace, two proportional, all resolving to fonts
   already installed on your system.
 - **Automatic downscaling** for very large source images, so the live-preview loop stays fast — the UI marks
