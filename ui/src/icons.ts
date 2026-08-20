@@ -72,14 +72,18 @@ export function iconColor(): string {
   )
 }
 
-// An arrow rising into a receiving tray - the dropzone's own icon, sized up
-// from the toolbar glyphs (36px) since it's the sole visual anchor of a
-// genuinely inviting drop target, not a small aside next to text.
+// A plain image-placeholder glyph (frame + sun + mountain line) - the
+// dropzone's own icon, sized up from the toolbar glyphs (40px) since it's
+// the sole visual anchor of a genuinely inviting drop target. Replaces the
+// original upload-arrow-into-a-tray design (jdp: "ein schöneres,
+// minimalistisches Icon") - this reads immediately as "an image", the
+// universal broken-image/photo-placeholder glyph, rather than a generic
+// upload action that could apply to any file type.
 export function iconUpload(): string {
-  return `<svg width="36" height="36" viewBox="0 0 20 20" fill="none" aria-hidden="true">` +
-    `<path d="M10 3v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />` +
-    `<path d="M5.5 8.5 10 4l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
-    `<path d="M3.5 14.5v1.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
+  return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">` +
+    `<rect x="2.75" y="4.75" width="18.5" height="14.5" rx="2.5" stroke="currentColor" stroke-width="1.3" />` +
+    `<circle cx="8.25" cy="10" r="1.5" stroke="currentColor" stroke-width="1.3" />` +
+    `<path d="M4.25 16.5 9 11.75l3.5 3.5 2.75-2.75L19.75 16.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
     `</svg>`
 }
 

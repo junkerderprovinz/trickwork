@@ -142,6 +142,13 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     function renderSwatches(): void {
       accentRow.innerHTML = ''
+      // Custom picker FIRST, THEN the presets (jdp, second pass: "das
+      // Farbpicker-Feld soll als erstes kommen, dann mit Abstand die
+      // anderen, sonst erkennt man es nicht") - appending it after the
+      // preset loop (the first attempt) put it in 6th position, where it
+      // was frequently the same colour as the Sunflower preset and
+      // impossible to tell apart from a sixth preset swatch.
+      accentRow.appendChild(customInput)
       for (const preset of ACCENTS) {
         const presetLabel = ACCENT_KEYS[preset.name] ? t(ACCENT_KEYS[preset.name] as TranslationKey) : preset.name
         const btn = document.createElement('button')
@@ -159,7 +166,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
         })
         accentRow.appendChild(btn)
       }
-      accentRow.append(customInput, resetBtn)
+      accentRow.appendChild(resetBtn)
     }
     renderSwatches()
 

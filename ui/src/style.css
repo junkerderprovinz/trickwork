@@ -1,5 +1,37 @@
 @import './design/tokens.css';
 
+/* Named badge-size stages (GlimStone's own "Badges" section, rule: "sizes
+   are named stages with one canonical source, not per-instance values" -
+   design-language.md). TrickWork had been doing exactly the thing that rule
+   warns against: every small icon control picked its own literal rem value
+   (1.5rem swatches, 1.6rem copy/zoom, 2.35rem toggles, 3rem settings) with
+   no shared source, which is how a reset badge ends up visibly smaller than
+   the swatches beside it (jdp: "ich will insgesamt im Design immer
+   Standardgrößen und nicht zig verschiedene Größen aller Elemente"). Three
+   stages, matching the doc's own "small/medium/large is usually enough":
+   sm for compact action badges (swatches, reset, copy, zoom), md for the
+   icon-toggle/history buttons (also .segmented-button's own height), lg for
+   the single corner Settings badge. */
+:root {
+  --badge-sm: 1.75rem;
+  --badge-md: 2.35rem;
+  --badge-lg: 3rem;
+  /* A deliberate, noted TrickWork-specific override of GlimStone's own
+     --text-body token (0.875rem/14px) - jdp compared control/label text
+     directly against BombVault twice and still found TrickWork's smaller
+     even after the earlier dense->body role-mapping fix landed.
+     BombVault's own most-compared control, its persistent sidebar nav
+     (which is also where its language picker lives), renders at a literal
+     15px (Sidebar.tsx's own arbitrary text-[15px], not even BombVault's
+     own --text-body) - not something to push into GlimStone's shared
+     token value itself, since that 15px is BombVault's own undocumented
+     inconsistency (its internal audit already flagged it), not a
+     deliberate reference point the other sibling apps should also adopt
+     without their own stakeholders weighing in. One override point, not
+     patched into every individual rule that reads --text-body. */
+  --text-body: 0.9375rem;
+}
+
 html, body {
   margin: 0;
   height: 100%;
@@ -61,8 +93,8 @@ html, body {
   appearance: none;
   border: none;
   cursor: pointer;
-  width: 2.35rem;
-  height: 2.35rem;
+  width: var(--badge-md);
+  height: var(--badge-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -125,8 +157,8 @@ html, body {
   border: none;
   cursor: pointer;
   flex-shrink: 0;
-  width: 3rem;
-  height: 3rem;
+  width: var(--badge-lg);
+  height: var(--badge-lg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -386,17 +418,17 @@ html, body {
   transition: background-color 120ms ease, color 120ms ease;
 }
 
+/* No badge/circle background (jdp: "Dropzone Icon ohne Badgehintergrund") -
+   a bare glyph, matching the info icon's "furniture, not a control" framing
+   rather than reading as its own clickable action distinct from the zone
+   it sits inside. */
 .dropzone-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
   flex-shrink: 0;
-  border-radius: var(--radius-pill);
-  background-color: var(--carbon-surface3);
-  color: var(--carbon-text);
-  transition: background-color 120ms ease, color 120ms ease;
+  color: var(--carbon-text-sub);
+  transition: color 120ms ease;
 }
 
 .dropzone:hover {
@@ -409,8 +441,7 @@ html, body {
 }
 
 .dropzone--active .dropzone-icon {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
+  color: var(--accent);
 }
 
 /* ---------------------------------------------------------------------
@@ -472,10 +503,11 @@ canvas.preview-canvas[width="0"] {
 }
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
-   solche Badges") - same compact sizing as the zoom buttons beside it. */
+   solche Badges") - --badge-sm, the same stage the accent-row swatches
+   and reset badge read from. */
 .preview-copy-button {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: var(--badge-sm);
+  height: var(--badge-sm);
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -484,8 +516,8 @@ canvas.preview-canvas[width="0"] {
   color: var(--carbon-text-sub);
 }
 .preview-copy-button .control-icon {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
 }
 .preview-copy-button--copied {
   background-color: var(--status-ok-bg);
@@ -499,8 +531,8 @@ canvas.preview-canvas[width="0"] {
 }
 
 .preview-zoom-button {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: var(--badge-sm);
+  height: var(--badge-sm);
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -821,16 +853,17 @@ input.levels-handle-input::-moz-range-thumb {
    control), but wrong here (each icon is its OWN independent toggle, a
    set of controls, not one). Each button now carries its own idle tile
    background instead, with a real gap between them, and matches
-   .segmented-button's own height (2.35rem) so a Rotate row and a Flip row
-   in the same card read as the same size control, not two different ones. */
+   .segmented-button's own height (--badge-md) so a Rotate row and a Flip
+   row in the same card read as the same size control, not two different
+   ones. */
 .icon-toggle-row {
   display: flex;
   gap: 0.5rem;
 }
 
 .icon-toggle-button {
-  width: 2.35rem;
-  height: 2.35rem;
+  width: var(--badge-md);
+  height: var(--badge-md);
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -1038,11 +1071,11 @@ button:focus-visible {
 .segmented-button {
   flex: 1;
   min-width: 0;
-  /* Matches .icon-toggle-button's own 2.35rem height - a Rotate row and a
-     Flip row sitting in the same card (or Sharpen and the invert/dither/
-     color row in Filters) used to be visibly different heights, the other
-     half of the "kleben aneinander" complaint. */
-  min-height: 2.35rem;
+  /* Matches --badge-md (.icon-toggle-button/.history-button's own stage) -
+     a Rotate row and a Flip row sitting in the same card (or Sharpen and
+     the invert/dither/color row in Filters) used to be visibly different
+     heights, the other half of the "kleben aneinander" complaint. */
+  min-height: var(--badge-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1070,16 +1103,23 @@ button:focus-visible {
   background-color: var(--accent);
 }
 
-/* One row: preset swatches, the custom colour picker, and the reset badge -
-   all the same 1.5rem size (jdp: "alle Farbfelder gleich groß machen...
-   der Farbpicker in die gleiche Zeile... auch gleich groß"), reset pinned to
-   the far right. Documented as the canonical accent-row pattern in
-   GlimStone (design-language.md, "The user-owned axes"). */
+/* One row: the custom colour picker FIRST, a visible gap, then the preset
+   swatches, then the reset badge pinned to the far right - all --badge-sm
+   (jdp, second pass: "das Farbpicker-Feld soll als erstes kommen, dann mit
+   Abstand die anderen, sonst erkennt man es nicht" - buried among five
+   identically-styled presets, the custom picker was unrecognisable as
+   anything other than a sixth preset). Documented as the canonical
+   accent-row pattern in GlimStone (design-language.md, "The user-owned
+   axes"). */
 .accent-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+}
+
+.accent-row .accent-custom-input {
+  margin-right: 0.75rem;
 }
 
 .accent-row .accent-reset-button {
@@ -1093,13 +1133,15 @@ button:focus-visible {
    goes one step further and makes them follow it (jdp: "die Farbfelder
    sollen der Form folgen", CannonadeCommand's own precedent for a shape-
    reactive swatch: border-radius: var(--cc-b-radius)). --radius-pill is
-   used directly, uncapped - a 999px radius on a 24px box is already a
-   perfect circle, no min() needed the way a taller element requires. This
-   same class now also sizes the native colour input and the reset badge
-   (below), so all three read as one consistent row of equally-sized controls. */
+   used directly, uncapped - --badge-sm is small enough that a 999px radius
+   is already a perfect circle, no min() needed the way a taller element
+   requires. This same class also sizes the native colour input and the
+   reset badge (below), all three reading --badge-sm from the one shared
+   token (GlimStone's "Badges" rule: named stages, not per-instance
+   literals - jdp: "ich will insgesamt im Design immer Standardgrößen"). */
 .accent-swatch {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--badge-sm);
+  height: var(--badge-sm);
   padding: 0;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
@@ -1162,8 +1204,8 @@ button:focus-visible {
 }
 
 .palette-swatch {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--badge-sm);
+  height: var(--badge-sm);
   border-radius: var(--radius-pill);
   flex-shrink: 0;
 }
