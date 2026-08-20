@@ -161,8 +161,26 @@ test('the character set field is plain, freely editable text - no click-to-delet
   // affordance involved.
   await charsetField.press('Backspace')
   await charsetField.blur()
-  // On blur the field redraws from the deduped canonical charset ("@%").
+  // On blur the field redraws from whatever was actually committed ("@%").
   await expect(charsetField).toHaveValue('@%')
+})
+
+test('typing the same character more than once keeps every repeat, not just one', async ({ page }) => {
+  await page.goto('/')
+
+  // mapLuminanceToChar (core/src/mapping.ts) ranks by weighted position now
+  // - a repeated character claims proportionally more of the luminance
+  // range, ASCGen2's own weighting mechanic (jdp: "je öfter man das gleiche
+  // Zeichen eingetragen hat, desto mehr wurde es gewichtet"). An earlier
+  // revision of commitCharsetField (controls.ts) deduped the field to its
+  // distinct characters on every keystroke, which silently discarded that
+  // weighting the moment a user typed a single repeat anywhere.
+  const charsetField = page.getByLabel('Character set', { exact: true })
+  await charsetField.click()
+  await charsetField.press('Control+a')
+  await charsetField.pressSequentially(' .aaa@')
+  await charsetField.blur()
+  await expect(charsetField).toHaveValue(' .aaa@')
 })
 
 test('a closed select answers the mouse wheel without opening', async ({ page }) => {

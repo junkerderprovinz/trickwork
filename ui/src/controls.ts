@@ -131,19 +131,26 @@ export function mountControls(container: HTMLElement, store: Store): void {
     }
     syncCharsetFieldDisplay()
 
-    // Extracts the live set of unique characters from whatever the user has
-    // typed and pushes it straight to the store - Array.from iterates by
-    // code point, so an astral character (emoji) stays one entry instead of
-    // splitting into two lone surrogates. Newlines are the textarea's own
-    // wrapping mechanism, not a real ramp character, so they're dropped.
+    // Extracts the live characters from whatever the user has typed and
+    // pushes it straight to the store - Array.from iterates by code point,
+    // so an astral character (emoji) stays one entry instead of splitting
+    // into two lone surrogates. Newlines are the textarea's own wrapping
+    // mechanism, not a real ramp character, so they're dropped.
+    //
+    // REPEATS ARE KEPT, not deduped to a unique set - an earlier revision
+    // of this function collapsed the field to its distinct characters on
+    // every keystroke, which was harmless back when mapLuminanceToChar
+    // (core/src/mapping.ts) picked by nearest measured value and a repeat
+    // was genuinely dead weight. It ranks by weighted POSITION now (jdp:
+    // "je öfter man das gleiche Zeichen eingetragen hat, desto mehr wurde
+    // es gewichtet"), so deduping here would silently throw the user's own
+    // weighting away the moment they typed a single extra character
+    // anywhere in the field - exactly the feature this field exists to
+    // control.
     function commitCharsetField(): void {
-      const seen: string[] = []
-      for (const ch of Array.from(charsetField.value)) {
-        if (ch === '\n' || ch === '\r') continue
-        if (!seen.includes(ch)) seen.push(ch)
-      }
-      if (seen.length === 0) return // never commit an empty charset
-      store.setState({ options: { ...store.getState().options, charset: seen } })
+      const chars = Array.from(charsetField.value).filter((ch) => ch !== '\n' && ch !== '\r')
+      if (chars.length === 0) return // never commit an empty charset
+      store.setState({ options: { ...store.getState().options, charset: chars } })
       syncCharsetSelect()
     }
 
