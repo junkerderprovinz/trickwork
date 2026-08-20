@@ -42,7 +42,7 @@ const __dir = dirname(fileURLToPath(import.meta.url));
 
 // ---- content + styling -----------------------------------------------------
 const NAME = "TrickWork";
-const CLAIM = "Every image, one character at a time.";
+const CLAIM = "Worth 1,000 words? We use way more.";
 const W = 1600, H = 500;
 const LOGO_FILE = "logo.svg";
 // The logo's own viewBox is 223.97 x 76.87 (a wide ribbon, not a square coin) -
