@@ -151,7 +151,11 @@ test('the character set field is plain, freely editable text - no click-to-delet
   await charsetField.click()
   await charsetField.press('Control+a')
   await charsetField.pressSequentially('@%#')
-  await expect(presetSelect).toHaveValue('custom')
+  // No "Custom" option exists anymore (jdp: not needed once the whole
+  // charset is directly editable) - a charset matching no preset just
+  // leaves the dropdown showing no selection at all (selectedIndex = -1,
+  // which reads back as the empty string).
+  await expect(presetSelect).toHaveValue('')
 
   // Backspacing removes a character the normal way too, no click-to-delete
   // affordance involved.
@@ -164,7 +168,10 @@ test('the character set field is plain, freely editable text - no click-to-delet
 test('a closed select answers the mouse wheel without opening', async ({ page }) => {
   await page.goto('/')
 
-  const fontSelect = page.getByLabel('Font')
+  // exact: true matters here - the new Font info-icon's own aria-label
+  // (controls.rtfNote) contains the substring "font" too, which a loose
+  // getByLabel('Font') match now also picks up.
+  const fontSelect = page.getByLabel('Font', { exact: true })
   const before = await fontSelect.inputValue()
   await fontSelect.hover()
   await page.mouse.wheel(0, 100)
@@ -206,7 +213,11 @@ test('switching language updates the badge label and every card, including ones 
 
   const badge = settingsBadge(page)
   await badge.click()
-  await page.getByLabel('Language').selectOption('de')
+  // A custom button+listbox dropdown now, not a native <select> (jdp: "das
+  // Feld ist zu klein und die Dropdownliste viel zu kompakt, siehe BV") -
+  // open it, then click the option by its visible name.
+  await page.getByRole('button', { name: 'Language', exact: true }).click()
+  await page.getByRole('option', { name: 'Deutsch' }).click()
 
   // "Settings" -> "Einstellungen" is a genuinely distinct string between the
   // two languages - real positive proof the switch propagated to the badge.
@@ -396,19 +407,21 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
 test('rainbow mode gives each queue row its own hue, and the language picker shows flags', async ({ page }) => {
   await page.goto('/')
 
-  // The language <select>'s own OPTIONS carry a flag-emoji prefix (a native
-  // <option> can't hold an image/CSS background, see GlimStone's
-  // design-language.md) - the closed select shows the selected option's own
-  // text, flag included, with no extra wiring needed.
+  // The custom language dropdown's own OPTIONS carry a flag-emoji prefix (a
+  // plain <option> can't hold an image/CSS background, and this control
+  // isn't a native <select> at all anymore - see GlimStone's
+  // design-language.md and controlWidgets.ts's customDropdown).
   await settingsBadge(page).click()
-  const languageSelect = page.getByLabel('Language')
-  const firstOptionText = await languageSelect.locator('option').first().textContent()
+  await page.getByRole('button', { name: 'Language', exact: true }).click()
+  const firstOptionText = await page.getByRole('option').first().textContent()
   // A flag emoji is two "regional indicator symbol" codepoints, both well
   // outside the Basic Multilingual Plane (> 0xFFFF) - a plain label
   // wouldn't have any character in that range at all.
   expect(Array.from(firstOptionText ?? '').some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(true)
+  await page.keyboard.press('Escape')
 
-  await page.getByRole('button', { name: 'On', exact: true }).click()
+  // A genuine switch now (role="switch"), not a segmented Off/On button pair.
+  await page.getByRole('switch', { name: 'Rainbow' }).click()
   await settingsBadge(page).click()
 
   const fileInput = page.locator('input[type="file"][accept="image/*"]')

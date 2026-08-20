@@ -15,6 +15,7 @@
 // anywhere else draws a brand new one.
 
 import type { CropSpec } from 'trickwork-core'
+import { infoIcon } from './design/infoBubble'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -75,9 +76,15 @@ function hitCorner(point: Point, rect: PixelRect): Corner | null {
 }
 
 export function mountCropPanel(container: HTMLElement, store: Store): void {
-  const eyebrow = document.createElement('div')
+  // Eyebrow + info icon share a row (GlimStone rule 8) - the drag-to-crop
+  // hint used to be an always-visible paragraph in the footer.
+  const eyebrowRow = document.createElement('div')
+  eyebrowRow.className = 'eyebrow-row'
+  const eyebrow = document.createElement('span')
   eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
+  const eyebrowInfo = infoIcon('')
+  eyebrowRow.append(eyebrow, eyebrowInfo)
+  container.appendChild(eyebrowRow)
 
   const empty = document.createElement('div')
   empty.className = 'preview-empty glim-well'
@@ -97,12 +104,10 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
 
   const footer = document.createElement('div')
   footer.className = 'crop-footer'
-  const hint = document.createElement('p')
-  hint.className = 'controls-note'
   const clearButton = document.createElement('button')
   clearButton.type = 'button'
   clearButton.className = 'crop-clear-button'
-  footer.append(hint, clearButton)
+  footer.append(clearButton)
   container.appendChild(footer)
 
   const ctx = canvas.getContext('2d')
@@ -333,7 +338,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
   function applyLabels(): void {
     eyebrow.textContent = t('crop.eyebrow')
     empty.textContent = t('preview.empty')
-    hint.textContent = t('crop.hint')
+    eyebrowInfo.setAttribute('aria-label', t('crop.hint'))
     clearButton.textContent = t('crop.clearButton')
   }
   applyLabels()

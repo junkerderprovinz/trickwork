@@ -1,5 +1,6 @@
 import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
 import { enableSelectScroll } from './design/selectScroll'
+import { infoIcon } from './design/infoBubble'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
@@ -53,30 +54,6 @@ export function mountControls(container: HTMLElement, store: Store): void {
       () => store.commitOptionsSnapshot(),
     )
 
-    const brightness = numberSlider(
-      t('controls.brightness'),
-      -1,
-      1,
-      options.brightness,
-      (value) => {
-        store.setState({ options: { ...store.getState().options, brightness: value } })
-      },
-      0.05,
-      () => store.commitOptionsSnapshot(),
-    )
-
-    const contrast = numberSlider(
-      t('controls.contrast'),
-      -1,
-      1,
-      options.contrast,
-      (value) => {
-        store.setState({ options: { ...store.getState().options, contrast: value } })
-      },
-      0.05,
-      () => store.commitOptionsSnapshot(),
-    )
-
     const charsetWrap = document.createElement('div')
     charsetWrap.className = 'control-slider'
     const charsetLabelText = document.createElement('span')
@@ -90,10 +67,13 @@ export function mountControls(container: HTMLElement, store: Store): void {
       opt.textContent = t(CHARSET_PRESET_KEYS[key])
       charsetSelect.appendChild(opt)
     }
-    const customOpt = document.createElement('option')
-    customOpt.value = 'custom'
-    customOpt.textContent = t('controls.charsetPresetCustom')
-    charsetSelect.appendChild(customOpt)
+    // No "Custom" option anymore (jdp: "benutzerdefiniert braucht es nicht,
+    // weil alles editierbar ist") - with the free-text field below, "custom"
+    // isn't a state a user ever picks, only one the field can drift into by
+    // being edited, so it isn't offered as a selectable choice at all. When
+    // the current charset matches no preset, syncCharsetSelect() below just
+    // leaves the dropdown showing no selection (selectedIndex = -1) rather
+    // than inventing an option for that state.
     // Distinct from the textarea's own aria-label below - both used to say
     // plain "Character set", which gave a screen reader (and any test
     // locator by accessible name) two same-named controls with no way to
@@ -120,7 +100,13 @@ export function mountControls(container: HTMLElement, store: Store): void {
       const preset = (Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]).find((key) =>
         arraysEqual(CHARSET_PRESETS[key], current.charset),
       )
-      charsetSelect.value = preset ?? 'custom'
+      if (preset) {
+        charsetSelect.value = preset
+      } else {
+        // No option represents "custom" - selectedIndex = -1 is the native
+        // way to show a <select> with nothing selected at all.
+        charsetSelect.selectedIndex = -1
+      }
     }
     syncCharsetSelect()
 
@@ -170,7 +156,6 @@ export function mountControls(container: HTMLElement, store: Store): void {
 
     charsetSelect.addEventListener('change', () => {
       const key = charsetSelect.value
-      if (key === 'custom') return // nothing to apply yet - edited via the field below
       store.commitOptionsSnapshot()
       store.setState({
         options: { ...store.getState().options, charset: [...CHARSET_PRESETS[key as CharsetPresetKey]] },
@@ -178,12 +163,23 @@ export function mountControls(container: HTMLElement, store: Store): void {
       syncCharsetFieldDisplay()
     })
 
-    const fontLabel = document.createElement('label')
+    // A plain <div>, not a <label> - the info icon below sits in the same
+    // row as the label text, and an implicit <label>'s accessible-name
+    // computation would pull the icon's own aria-label into the SELECT's
+    // computed name too. fontSelect gets an explicit aria-label instead
+    // (same defensive pattern charsetSelect already uses), so nothing here
+    // depends on DOM wrapping for its accessible name.
+    const fontLabel = document.createElement('div')
     fontLabel.className = 'control-slider'
+    const fontLabelRow = document.createElement('div')
+    fontLabelRow.className = 'control-slider-label-row'
     const fontLabelText = document.createElement('span')
     fontLabelText.textContent = t('controls.font')
-    fontLabel.appendChild(fontLabelText)
+    const fontInfo = infoIcon(t('controls.rtfNote'))
+    fontLabelRow.append(fontLabelText, fontInfo)
+    fontLabel.appendChild(fontLabelRow)
     const fontSelect = document.createElement('select')
+    fontSelect.setAttribute('aria-label', t('controls.font'))
     for (const choice of FONT_CHOICES) {
       const opt = document.createElement('option')
       opt.value = choice.family
@@ -200,11 +196,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     fontLabel.appendChild(fontSelect)
     enableSelectScroll(fontSelect)
 
-    const rtfNote = document.createElement('p')
-    rtfNote.className = 'controls-note'
-    rtfNote.textContent = t('controls.rtfNote')
-
-    panel.append(columns, brightness, contrast, charsetWrap, fontLabel, rtfNote)
+    panel.append(columns, charsetWrap, fontLabel)
   }
 
   build()

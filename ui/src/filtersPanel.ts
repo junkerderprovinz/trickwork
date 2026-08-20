@@ -1,5 +1,6 @@
 import type { SharpenMethod } from 'trickwork-core'
 import { iconToggleButton, segmentedRow } from './controlWidgets'
+import { numberSlider } from './controls'
 import { iconColor, iconDither, iconInvert } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import { mountLevelsPanel } from './levelsPanel'
@@ -35,6 +36,35 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
     eyebrow.textContent = t('tabs.filters')
     panel.innerHTML = ''
     const options = store.getState().options
+
+    // Moved here from the Adjust card, directly under Levels in the same
+    // card (jdp: "Die Regler von Helligkeit und Kontrast sollen unter das
+    // Tonwertkorrektur, in die gleiche Card") - ASCGen2's own tab order was
+    // already Levels before Brightness/Contrast/Dither, so this is the first
+    // time TrickWork's own layout actually matches it end to end.
+    const brightness = numberSlider(
+      t('controls.brightness'),
+      -1,
+      1,
+      options.brightness,
+      (value) => {
+        store.setState({ options: { ...store.getState().options, brightness: value } })
+      },
+      0.05,
+      () => store.commitOptionsSnapshot(),
+    )
+
+    const contrast = numberSlider(
+      t('controls.contrast'),
+      -1,
+      1,
+      options.contrast,
+      (value) => {
+        store.setState({ options: { ...store.getState().options, contrast: value } })
+      },
+      0.05,
+      () => store.commitOptionsSnapshot(),
+    )
 
     const toggleRow = document.createElement('div')
     toggleRow.className = 'icon-toggle-row'
@@ -80,7 +110,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       () => store.commitOptionsSnapshot(),
     )
 
-    panel.append(toggleRow, sharpenRow)
+    panel.append(brightness, contrast, toggleRow, sharpenRow)
   }
 
   build()

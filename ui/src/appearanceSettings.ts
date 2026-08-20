@@ -1,6 +1,7 @@
 import {
   SHAPES,
   ACCENTS,
+  RAINBOW,
   DEFAULT_ACCENT,
   applyShape,
   applyAccent,
@@ -10,9 +11,8 @@ import {
   type Shape,
 } from './design/appearance'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
-import { enableSelectScroll } from './design/selectScroll'
 import { flagEmoji } from './design/flagEmoji'
-import { segmentedRow } from './controlWidgets'
+import { customDropdown, segmentedRow, toggleSwitch } from './controlWidgets'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
@@ -161,47 +161,67 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     accentWrap.append(accentLabel, swatchRow, accentControlsRow)
 
-    // Off/on, the same segmented-row shape as Shape/Theme above - the Queue
-    // is where it actually shows (design-language.md: "a download row owns
-    // a colour"), each item getting its own palette position instead of
-    // sharing the single accent.
-    const rainbowRow = segmentedRow(
-      t('appearance.rainbow'),
-      [
-        { value: 'off', label: t('appearance.rainbowOff') },
-        { value: 'on', label: t('appearance.rainbowOn') },
-      ],
-      rainbowOn ? 'on' : 'off',
-      (value) => {
-        rainbowOn = value === 'on'
-        applyRainbow({ on: rainbowOn })
-        persist()
-      },
-    )
+    // A genuine sliding switch now, not a segmented Off/On pair (jdp: "soll
+    // ein Toggle sein, der auch der Form folgt") - GlimStone's own
+    // "Switches" section treats this as a distinct component. The Queue is
+    // still where the mode does its real work (design-language.md: "a
+    // download row owns a colour"), but toggling it here previously changed
+    // nothing VISIBLE in Settings itself (jdp: "ein zu schalten ändert
+    // nichts") - the palette row right below now gives it something to show
+    // immediately, without needing an image loaded first.
+    const rainbowWrap = document.createElement('div')
+    rainbowWrap.className = 'control-slider'
+    const rainbowLabelRow = document.createElement('div')
+    rainbowLabelRow.className = 'control-slider-row'
+    const rainbowLabelText = document.createElement('span')
+    rainbowLabelText.textContent = t('appearance.rainbow')
 
-    const languageWrap = document.createElement('label')
+    const paletteRow = document.createElement('div')
+    paletteRow.className = 'palette-swatch-row'
+    paletteRow.setAttribute('role', 'group')
+    paletteRow.setAttribute('aria-label', t('appearance.rainbowPalette'))
+    for (const hex of RAINBOW) {
+      const sw = document.createElement('span')
+      sw.className = 'palette-swatch'
+      sw.style.backgroundColor = hex
+      paletteRow.appendChild(sw)
+    }
+    // Switched off, not hidden (GlimStone's own Switches rule: "a control
+    // that disappears never teaches anyone what the mode does") - dimmed
+    // instead, the same treatment CannonadeCommand gives its own dependent
+    // rainbow sub-controls while the mode is off.
+    function syncPaletteDim(): void {
+      paletteRow.style.opacity = rainbowOn ? '1' : '0.45'
+    }
+    syncPaletteDim()
+
+    const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
+      rainbowOn = checked
+      applyRainbow({ on: rainbowOn })
+      persist()
+      syncPaletteDim()
+    })
+    rainbowLabelRow.append(rainbowLabelText, rainbowToggle)
+    rainbowWrap.append(rainbowLabelRow, paletteRow)
+
+    const languageWrap = document.createElement('div')
     languageWrap.className = 'control-slider'
     const languageLabel = document.createElement('span')
     languageLabel.textContent = t('appearance.language')
-    const languageSelect = document.createElement('select')
-    for (const locale of LOCALES) {
-      const opt = document.createElement('option')
-      opt.value = locale.code
-      // Flag-emoji-prefixed, per GlimStone's own documented answer for a
-      // native <select> (design-language.md, "The user-owned axes" >
-      // Language) - an <option> can only ever hold plain text, so this is
-      // the flag without a custom-built dropdown.
-      opt.textContent = `${flagEmoji(locale.flag)} ${locale.label}`
-      languageSelect.appendChild(opt)
-    }
-    languageSelect.value = currentLocale()
-    languageSelect.addEventListener('change', () => {
-      void setLocale(languageSelect.value)
-    })
-    languageWrap.append(languageLabel, languageSelect)
-    enableSelectScroll(languageSelect)
+    // A custom button+listbox dropdown, not a native <select> (jdp: "das
+    // Feld ist zu klein und die Dropdownliste viel zu kompakt, siehe BV") -
+    // see controlWidgets.ts's customDropdown() doc comment for why this is a
+    // sanctioned deviation from GlimStone's own plain-<select> default.
+    const languageOptions = LOCALES.map((locale) => ({
+      value: locale.code,
+      label: `${flagEmoji(locale.flag)} ${locale.label}`,
+    }))
+    const languageDropdown = customDropdown(languageOptions, currentLocale(), (value) => {
+      void setLocale(value)
+    }, t('appearance.language'))
+    languageWrap.append(languageLabel, languageDropdown)
 
-    panel.append(shapeRow, themeRow, accentWrap, rainbowRow, languageWrap)
+    panel.append(shapeRow, themeRow, accentWrap, rainbowWrap, languageWrap)
   }
 
   build()

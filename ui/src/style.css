@@ -223,6 +223,51 @@ html, body {
   letter-spacing: 0.1em;
 }
 
+/* An eyebrow that also carries an info icon (crop.ts, exportPanel.ts) -
+   .glim-eyebrow itself stays a plain <span> so its own text-transform/
+   letter-spacing rule above is untouched; this just adds the flex row
+   around it. */
+.eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* A label row that also carries a trailing info icon (controls.ts's Font
+   field) - a plain flex row, deliberately NOT a <label>, so the icon's own
+   aria-label can never leak into a wrapped control's accessible name. */
+.control-slider-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* The (i) info bubble trigger (GlimStone rule 8) - neutral, never the
+   accent (design-language.md: "the icon is furniture; the accent means
+   activity"). Text lives entirely in the shared .glim-bubble it opens
+   (design/infoBubble.ts), never printed beside it. */
+.info-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--carbon-surface3);
+  color: var(--carbon-text-muted);
+  font-size: 0.65rem;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+}
+.info-icon:hover,
+.info-icon:focus-visible {
+  background-color: var(--carbon-hover);
+  color: var(--carbon-text);
+}
+
 /* ---------------------------------------------------------------------
    Crop — ASCGen2's WidgetImage selection tool: drag a rectangle on the
    source image to restrict conversion to that region. The selection reads
@@ -258,12 +303,8 @@ html, body {
 .crop-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 0.5rem;
-}
-
-.crop-footer .controls-note {
-  padding-top: 0;
 }
 
 .crop-clear-button {
@@ -339,15 +380,17 @@ html, body {
 }
 
 .preview-canvas-wrap {
-  /* Hug the canvas's own size (max-content) rather than stretching to the
-     full card width — a smaller-than-card canvas would otherwise leave a
-     block of this wrap's own background sitting empty beside it.
+  /* Always the full card width (jdp: "die weiße Fläche soll die ganze
+     Breite der Card ausfüllen, egal wie groß das ASCII ist") - a smaller-
+     than-card canvas used to leave the wrap only as wide as the canvas
+     itself, showing the card's own grey background beside it. overflow:
+     auto still gives real horizontal AND vertical scrollbars once the
+     canvas (zoomed in, or just a wide grid) exceeds this width/max-height.
      Background is a fixed white, not a theme token, on purpose: the
      working canvas simulates the printed/plain-text page the export
      actually produces, so it stays white even while the rest of the app
      is in dark mode - matching ASCGen2's own default output look. */
-  width: max-content;
-  max-width: 100%;
+  width: 100%;
   overflow: auto;
   border-radius: var(--radius-control);
   background-color: #fff;
@@ -375,9 +418,21 @@ canvas.preview-canvas[width="0"] {
 .preview-zoom-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 0.3rem;
   margin-top: -0.25rem;
+}
+
+.preview-copy-button {
+  padding: 0.2rem 0.6rem;
+  font-size: var(--text-caption);
+  background-color: var(--carbon-surface2);
+}
+
+.preview-zoom-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .preview-zoom-button {
@@ -564,14 +619,18 @@ input[type="text"]:focus-visible {
   background-color: #fff;
 }
 
-/* A literal black-to-white gradient band under the histogram - the same
-   visual cue ASCGen2's/Photoshop's own Levels dialog uses so the black/
-   gamma/white handles read immediately as points along a tonal range,
-   not just three unlabeled triangles on a flat grey bar. */
+/* A fixed, neutral mid-grey track, not the black-to-white gradient this
+   session added and then reversed (jdp: "die Regler sieht man kaum, dieser
+   Verlauf soll weg") - the near-black and near-white ends of that gradient
+   buried the very handles that were supposed to sit on top of them, the
+   opposite of what it was meant to do. Fixed rather than a theme token
+   (--carbon-surface3 goes near-white in light mode, which would repeat the
+   exact same problem for the white handle) - same "absolute point, not
+   theme-reactive" reasoning the three handle colours below already use. */
 .levels-track {
   position: relative;
   height: 22px;
-  background: linear-gradient(to right, #000, #fff);
+  background: #787878;
 }
 
 .levels-handle-input {
@@ -634,7 +693,8 @@ input.levels-handle-input::-moz-range-thumb {
   color: #1a1a1a;
 }
 .levels-handle-input--gamma {
-  color: #8d8d8d;
+  color: #d8d8d8;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.55));
 }
 .levels-handle-input--white {
   color: #ffffff;
@@ -685,16 +745,19 @@ input.levels-handle-input::-moz-range-thumb {
 
 /* Icon-only toggle buttons - replaced the earlier checkbox+text rows
    entirely (jdp: icons INSTEAD of checkboxes and text, not alongside).
-   Sits in the same well-and-segments family as .segmented-row: a shared
-   inset well holding equal-sized square buttons, active state is an
-   accent fill (GlimStone rule: colour marks activity), never a checkmark. */
+   Second pass: the original shared-well treatment (one inset background
+   behind all the buttons, each transparent at rest) made independent
+   toggles read as fused into one blob with no boundary between them (jdp:
+   "die Bearbeitungsicons kleben immer aneinander") - that shared-well look
+   is right for .segmented-row (an EXCLUSIVE choice among options, one
+   control), but wrong here (each icon is its OWN independent toggle, a
+   set of controls, not one). Each button now carries its own idle tile
+   background instead, with a real gap between them, and matches
+   .segmented-button's own height (2.35rem) so a Rotate row and a Flip row
+   in the same card read as the same size control, not two different ones. */
 .icon-toggle-row {
   display: flex;
-  gap: 0.35rem;
-  padding: 0.2rem;
-  background-color: var(--carbon-surface2);
-  border-radius: var(--radius-control);
-  width: fit-content;
+  gap: 0.5rem;
 }
 
 .icon-toggle-button {
@@ -704,7 +767,7 @@ input.levels-handle-input::-moz-range-thumb {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   border-radius: var(--radius-control);
 }
@@ -903,6 +966,14 @@ button:focus-visible {
 .segmented-button {
   flex: 1;
   min-width: 0;
+  /* Matches .icon-toggle-button's own 2.35rem height - a Rotate row and a
+     Flip row sitting in the same card (or Sharpen and the invert/dither/
+     color row in Filters) used to be visibly different heights, the other
+     half of the "kleben aneinander" complaint. */
+  min-height: 2.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   background-color: transparent;
   /* One line, always - a long label (German "Unscharf maskieren" vs. short
@@ -933,14 +1004,20 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
-/* Circle swatches with a border-colour highlight on the active preset,
-   mirroring BombVault's Settings.tsx accent picker exactly (border, not a
-   box-shadow ring) so the control reads the same across sibling apps. */
+/* Swatches with a border-colour highlight on the active preset, mirroring
+   BombVault's Settings.tsx accent picker (border, not a box-shadow ring) so
+   the control reads the same across sibling apps - BombVault itself has no
+   shape engine yet, so its own swatches are permanently circular; TrickWork
+   goes one step further and makes them follow it (jdp: "die Farbfelder
+   sollen der Form folgen", CannonadeCommand's own precedent for a shape-
+   reactive swatch: border-radius: var(--cc-b-radius)). --radius-pill is
+   used directly, uncapped - a 999px radius on a 24px box is already a
+   perfect circle, no min() needed the way a taller element requires. */
 .accent-swatch {
   width: 1.5rem;
   height: 1.5rem;
   padding: 0;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   border: 2px solid var(--carbon-border);
   cursor: pointer;
   transition: transform 120ms ease, border-color 120ms ease;
@@ -990,6 +1067,121 @@ button:focus-visible {
 
 .accent-reset-button:hover {
   background: none;
+  color: var(--carbon-text);
+}
+
+/* The rainbow palette preview row - same 1.5rem sizing as .accent-swatch
+   for visual consistency between TrickWork's two swatch rows, static (not
+   buttons - a preview of the fixed 8-colour palette, not an editable one),
+   shape-following for the same reason .accent-swatch is. */
+.palette-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  transition: opacity 150ms ease;
+}
+
+.palette-swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+/* A genuine sliding switch (controlWidgets.ts's toggleSwitch) - GlimStone's
+   "Switches" section as its own component, not a segmented Off/On pair.
+   Track and knob both cap --radius-pill against their own height (the same
+   min() technique the range thumb above uses), so Round keeps the classic
+   pill+circle look while Soft/Square progressively square it off. */
+.toggle-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 1.5rem;
+  padding: 0;
+  background-color: var(--carbon-surface3);
+  border-radius: min(var(--radius-pill), 50%);
+  transition: background-color 150ms ease;
+}
+.toggle-switch:hover {
+  background-color: var(--carbon-surface3);
+}
+.toggle-switch--on {
+  background-color: var(--accent);
+}
+.toggle-switch--on:hover {
+  background-color: var(--accent);
+}
+.toggle-switch-knob {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  background-color: #fff;
+  border-radius: min(var(--radius-pill), 50%);
+  transition: left 150ms ease;
+}
+.toggle-switch--on .toggle-switch-knob {
+  left: 1.4375rem;
+}
+
+/* A custom button+listbox dropdown (controlWidgets.ts's customDropdown) -
+   the language picker's own field+list, roomier than a native <select> can
+   ever be given (jdp: "das Feld ist zu klein und die Dropdownliste viel zu
+   kompakt, siehe BV"). Positioned absolutely off its own wrapper so opening
+   it never pushes later Settings content down. */
+.dropdown-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: start;
+  background-color: var(--carbon-surface2);
+  border-radius: var(--radius-control);
+  color: var(--carbon-text);
+  font: inherit;
+  font-size: var(--text-body);
+  padding: 0.85rem 1rem;
+}
+.dropdown-trigger:hover {
+  background-color: var(--carbon-hover);
+}
+
+.dropdown-listbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 40;
+  max-height: 16rem;
+  overflow-y: auto;
+  background-color: var(--carbon-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation), var(--hairline);
+  padding: 0.35rem;
+}
+
+.dropdown-option {
+  display: block;
+  width: 100%;
+  text-align: start;
+  background-color: transparent;
+  color: var(--carbon-text-sub);
+  border-radius: var(--radius-control);
+  padding: 0.75rem 0.85rem;
+  font-size: var(--text-body);
+}
+.dropdown-option:hover {
+  background-color: var(--carbon-hover);
+  color: var(--carbon-text);
+}
+.dropdown-option--active {
+  background-color: var(--carbon-surface3);
   color: var(--carbon-text);
 }
 

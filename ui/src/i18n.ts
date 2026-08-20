@@ -38,6 +38,8 @@ export const en = {
   'preview.zoomOut': 'Zoom out',
   'preview.zoomIn': 'Zoom in',
   'preview.zoomReset': 'Reset zoom to 100%',
+  'preview.copy': 'Copy to clipboard',
+  'preview.copied': 'Copied!',
 
   'controls.eyebrow': 'Controls',
   'controls.width': 'Width (columns)',
@@ -55,7 +57,6 @@ export const en = {
   'controls.charsetPresetSymbols': 'Symbols',
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binary',
-  'controls.charsetPresetCustom': 'Custom',
   'controls.font': 'Font',
   'controls.fontMonoSystem': 'Monospace (system)',
   'controls.fontMonoAlt': 'Monospace (alt)',
@@ -127,8 +128,7 @@ export const en = {
   'appearance.accentRed': 'Red',
   'appearance.accentPurple': 'Purple',
   'appearance.rainbow': 'Rainbow',
-  'appearance.rainbowOff': 'Off',
-  'appearance.rainbowOn': 'On',
+  'appearance.rainbowPalette': 'Rainbow palette',
   'appearance.resetToDefault': 'Reset to default',
   'appearance.language': 'Language',
 
@@ -171,6 +171,8 @@ export const de: Translations = {
   'preview.zoomOut': 'Verkleinern',
   'preview.zoomIn': 'Vergrößern',
   'preview.zoomReset': 'Zoom auf 100 % zurücksetzen',
+  'preview.copy': 'In Zwischenablage kopieren',
+  'preview.copied': 'Kopiert!',
 
   'controls.eyebrow': 'Regler',
   'controls.width': 'Breite (Spalten)',
@@ -188,7 +190,6 @@ export const de: Translations = {
   'controls.charsetPresetSymbols': 'Symbole',
   'controls.charsetPresetMinimal': 'Minimal',
   'controls.charsetPresetBinary': 'Binär',
-  'controls.charsetPresetCustom': 'Benutzerdefiniert',
   'controls.font': 'Schriftart',
   'controls.fontMonoSystem': 'Monospace (System)',
   'controls.fontMonoAlt': 'Monospace (alternativ)',
@@ -260,8 +261,7 @@ export const de: Translations = {
   'appearance.accentRed': 'Rot',
   'appearance.accentPurple': 'Lila',
   'appearance.rainbow': 'Regenbogen',
-  'appearance.rainbowOff': 'Aus',
-  'appearance.rainbowOn': 'An',
+  'appearance.rainbowPalette': 'Regenbogen-Palette',
   'appearance.resetToDefault': 'Auf Standard zurücksetzen',
   'appearance.language': 'Sprache',
 

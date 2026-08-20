@@ -6,11 +6,15 @@ import {
   createCanvasWidthMeasurer,
   measureCellSize,
   renderGridToCanvas,
+  toText,
   type CellSize,
   type FontWidthTable,
+  type Grid,
 } from 'trickwork-core'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
+
+const COPIED_FEEDBACK_MS = 1500
 
 const MIN_ZOOM = 10
 const MAX_ZOOM = 400
@@ -32,8 +36,16 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   // now", matching ASCGen2's own Zoom In/Out buttons on its preview widget.
   let zoomPct = DEFAULT_ZOOM
 
-  const zoomRow = document.createElement('div')
-  zoomRow.className = 'preview-zoom-row'
+  // Copy sits on the opposite end of the same row from zoom (jdp: "bitte füg
+  // einen Kopieren Button hinzu") - the zoom cluster keeps its own internal
+  // grouping so the row reads as two independent controls, not four buttons
+  // all fighting for the same alignment.
+  const copyButton = document.createElement('button')
+  copyButton.type = 'button'
+  copyButton.className = 'preview-copy-button'
+
+  const zoomCluster = document.createElement('div')
+  zoomCluster.className = 'preview-zoom-cluster'
   const zoomOutButton = document.createElement('button')
   zoomOutButton.type = 'button'
   zoomOutButton.className = 'preview-zoom-button'
@@ -45,8 +57,14 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   zoomInButton.type = 'button'
   zoomInButton.className = 'preview-zoom-button'
   zoomInButton.textContent = '+'
-  zoomRow.append(zoomOutButton, zoomLabel, zoomInButton)
+  zoomCluster.append(zoomOutButton, zoomLabel, zoomInButton)
+
+  const zoomRow = document.createElement('div')
+  zoomRow.className = 'preview-zoom-row'
+  zoomRow.append(copyButton, zoomCluster)
   container.appendChild(zoomRow)
+
+  let copiedFeedbackTimer: ReturnType<typeof setTimeout> | null = null
 
   function applyLabels(): void {
     eyebrow.textContent = t('preview.eyebrow')
@@ -54,9 +72,28 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     zoomOutButton.setAttribute('aria-label', t('preview.zoomOut'))
     zoomInButton.setAttribute('aria-label', t('preview.zoomIn'))
     zoomLabel.title = t('preview.zoomReset')
+    // Skipped while the "Copied!" feedback is showing - reapplying the
+    // normal label mid-timeout would cut the feedback short on a locale
+    // switch (rare, but a full rebuild elsewhere in the app can trigger
+    // this callback at any time).
+    if (!copiedFeedbackTimer) copyButton.textContent = t('preview.copy')
   }
   applyLabels()
   subscribeLocale(applyLabels)
+
+  let lastGrid: Grid | null = null
+
+  copyButton.addEventListener('click', () => {
+    if (!lastGrid) return
+    void navigator.clipboard.writeText(toText(lastGrid)).then(() => {
+      if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
+      copyButton.textContent = t('preview.copied')
+      copiedFeedbackTimer = setTimeout(() => {
+        copiedFeedbackTimer = null
+        copyButton.textContent = t('preview.copy')
+      }, COPIED_FEEDBACK_MS)
+    })
+  })
 
   const canvasWrap = document.createElement('div')
   canvasWrap.className = 'preview-canvas-wrap'
@@ -164,6 +201,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
       canvasWrap.style.display = 'none'
       zoomRow.style.display = 'none'
       lastImageId = null
+      lastGrid = null
       return
     }
     empty.style.display = 'none'
@@ -185,6 +223,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
 
     const transformed = applyImageFilters(activeItem.imageData, state.options)
     const grid = assembleGrid(transformed, cachedTable, state.options)
+    lastGrid = grid
 
     const columns = grid[0]?.length ?? 0
     const rows = grid.length

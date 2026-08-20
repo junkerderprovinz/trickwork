@@ -174,12 +174,19 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     const max = Math.max(1, ...lastHistogram)
     const barWidth = width / 256
     ctx.fillStyle = cssVar('--accent') || '#FCC419'
+    // log1p, not sqrt: a real photo's histogram has a handful of tall peaks
+    // and a long tail of much smaller counts - sqrt still compressed the
+    // peaks so hard relative to the tail that most buckets rounded to a 1px
+    // sliver invisible against the white background, reading as "only a few
+    // individual bars" instead of ASCGen2's own continuous mountain-range
+    // silhouette (jdp, comparing the two directly). log1p compresses the
+    // peak far more aggressively, giving the tail proportionally much more
+    // visible height - the same scaling a real histogram widget uses.
+    const logMax = Math.log1p(max)
     for (let bucket = 0; bucket < 256; bucket++) {
       const count = lastHistogram[bucket] ?? 0
       if (count === 0) continue
-      // sqrt compresses tall spikes so smaller buckets next to them stay
-      // visible, the same reason most histogram widgets don't plot linearly.
-      const barHeight = Math.max(1, Math.round((Math.sqrt(count / max) * height)))
+      const barHeight = Math.max(2, Math.round((Math.log1p(count) / logMax) * height))
       ctx.fillRect(bucket * barWidth, height - barHeight, Math.max(1, barWidth), barHeight)
     }
   }

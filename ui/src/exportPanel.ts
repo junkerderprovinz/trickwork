@@ -11,15 +11,23 @@ import {
   toXHTML,
 } from 'trickwork-core'
 import { downloadBlob } from './download'
+import { infoIcon } from './design/infoBubble'
 import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
 
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
 
 export function mountExportPanel(container: HTMLElement, store: Store): void {
-  const eyebrow = document.createElement('div')
+  // Eyebrow + info icon share a row (GlimStone rule 8: explanations live in
+  // a bubble, not printed under the control) - the TXT-carries-no-colour
+  // caveat used to be an always-visible paragraph under the button row.
+  const eyebrowRow = document.createElement('div')
+  eyebrowRow.className = 'eyebrow-row'
+  const eyebrow = document.createElement('span')
   eyebrow.className = 'glim-eyebrow'
-  container.appendChild(eyebrow)
+  const eyebrowInfo = infoIcon('')
+  eyebrowRow.append(eyebrow, eyebrowInfo)
+  container.appendChild(eyebrowRow)
 
   const panel = document.createElement('div')
   panel.className = 'export-panel'
@@ -44,10 +52,6 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   batchButton.addEventListener('click', () => void exportAllAsText(store, summary))
   panel.appendChild(batchButton)
 
-  const colorNote = document.createElement('p')
-  colorNote.className = 'controls-note'
-  panel.appendChild(colorNote)
-
   panel.appendChild(summary)
   container.appendChild(panel)
 
@@ -62,7 +66,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
       button.title = label
     }
     batchButton.textContent = t('export.batchButton')
-    colorNote.textContent = t('controls.colorTxtNote')
+    eyebrowInfo.setAttribute('aria-label', t('controls.colorTxtNote'))
   }
   applyLabels()
   subscribeLocale(applyLabels)
