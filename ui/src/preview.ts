@@ -11,6 +11,8 @@ import {
   type FontWidthTable,
   type Grid,
 } from 'trickwork-core'
+import { applyHueVars } from './controlWidgets'
+import { subscribeRainbow } from './design/appearance'
 import { iconCheck, iconCopy } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
@@ -65,6 +67,20 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   zoomRow.className = 'preview-zoom-row'
   zoomRow.append(zoomCluster, copyButton)
   container.appendChild(zoomRow)
+
+  // Zoom out/in are a two-member set (jdp: "die ganzen badges und
+  // schaltflächen werden nicht eingefärbt") - copyButton stays on the
+  // single accent, it's the only one of its kind on the page (GlimStone's
+  // own rule: a lone unique control never owns a position).
+  function syncRainbow(): void {
+    ;[zoomOutButton, zoomInButton].forEach((button, index) => {
+      const applied = applyHueVars(button, index)
+      button.classList.toggle('glim-hue', applied)
+      button.classList.toggle('glim-tint', applied)
+    })
+  }
+  syncRainbow()
+  subscribeRainbow(syncRainbow)
 
   let copiedFeedbackTimer: ReturnType<typeof setTimeout> | null = null
 

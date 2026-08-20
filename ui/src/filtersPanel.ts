@@ -1,6 +1,7 @@
 import type { SharpenMethod } from 'trickwork-core'
 import { iconToggleButton, segmentedRow } from './controlWidgets'
 import { numberSlider } from './controls'
+import { subscribeRainbow } from './design/appearance'
 import { iconColor, iconDither, iconInvert } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import { mountLevelsPanel } from './levelsPanel'
@@ -77,6 +78,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, invert: checked } })
       },
       () => store.commitOptionsSnapshot(t('history.entryInvert')),
+      0,
     )
     const dither = iconToggleButton(
       t('controls.dither'),
@@ -86,6 +88,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, dither: checked } })
       },
       () => store.commitOptionsSnapshot(t('history.entryDither')),
+      1,
     )
     const color = iconToggleButton(
       t('controls.color'),
@@ -95,6 +98,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, color: checked } })
       },
       () => store.commitOptionsSnapshot(t('history.entryColor')),
+      2,
     )
     toggleRow.append(invert, dither, color)
     // The "TXT never carries colour" caveat lives in the Export tab instead,
@@ -108,6 +112,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, sharpen: value } })
       },
       () => store.commitOptionsSnapshot(t('history.entrySharpen')),
+      0,
     )
 
     panel.append(brightness, contrast, toggleRow, sharpenRow)
@@ -119,4 +124,7 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
   // redo changes them from outside this panel. levelsPanel.ts wires its own
   // history subscription separately (it isn't rebuilt by this build()).
   store.subscribeHistory(build)
+  // See transformPanel.ts for why: rainbowColor() is read once at build()
+  // time, so toggling the mode in Settings has to rebuild this panel too.
+  subscribeRainbow(build)
 }

@@ -1,5 +1,6 @@
 import type { Rotation } from 'trickwork-core'
 import { iconToggleButton, segmentedRow } from './controlWidgets'
+import { subscribeRainbow } from './design/appearance'
 import { iconFlipHorizontal, iconFlipVertical } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
@@ -34,6 +35,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
         store.setState({ options: { ...store.getState().options, rotate: Number(value) as Rotation } })
       },
       (value) => store.commitOptionsSnapshot(t('history.entryRotated', { deg: value })),
+      0,
     )
 
     const flipRow = document.createElement('div')
@@ -47,6 +49,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
         store.setState({ options: { ...store.getState().options, flipHorizontal: checked } })
       },
       () => store.commitOptionsSnapshot(t('history.entryFlipHorizontal')),
+      0,
     )
     const flipV = iconToggleButton(
       t('controls.flipVertical'),
@@ -56,6 +59,7 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
         store.setState({ options: { ...store.getState().options, flipVertical: checked } })
       },
       () => store.commitOptionsSnapshot(t('history.entryFlipVertical')),
+      1,
     )
     flipRow.append(flipH, flipV)
 
@@ -68,4 +72,11 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
   // changes them from outside this panel, without rebuilding on every
   // regular options change (that would break mid-drag interactions elsewhere).
   store.subscribeHistory(build)
+  // Rainbow indices are baked in at build() time (segmentedRow/
+  // iconToggleButton read rainbowColor() once, not reactively) - toggling
+  // the mode in Settings has to rebuild this panel too, same reason
+  // queue.ts subscribes (jdp: "die ganzen badges und schaltflächen werden
+  // nicht eingefärbt" - Rotate/Flip are exactly the kind of equal-member
+  // set the rainbow engine is meant to cover, not just the queue).
+  subscribeRainbow(build)
 }

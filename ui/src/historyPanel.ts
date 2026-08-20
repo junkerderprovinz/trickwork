@@ -5,6 +5,8 @@
 // it applies across every one of the cards below it, not tucked inside any
 // single one of them.
 
+import { applyHueVars } from './controlWidgets'
+import { subscribeRainbow } from './design/appearance'
 import { iconRedo, iconUndo } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
@@ -30,6 +32,20 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
 
   undoButton.addEventListener('click', () => store.undo())
   redoButton.addEventListener('click', () => store.redo())
+
+  // Undo/Redo are a two-member set (jdp: "die ganzen badges und
+  // schaltflächen werden nicht eingefärbt") - same pattern as
+  // exportPanel.ts's format row: applied once, re-synced on toggle since
+  // neither button is ever torn down and rebuilt.
+  function syncRainbow(): void {
+    ;[undoButton, redoButton].forEach((button, index) => {
+      const applied = applyHueVars(button, index)
+      button.classList.toggle('glim-hue', applied)
+      button.classList.toggle('glim-tint', applied)
+    })
+  }
+  syncRainbow()
+  subscribeRainbow(syncRainbow)
 
   // The log window (jdp: "ein kleines Protokollfenster") - a small scrollable
   // list of the recent, human-readable actions each commitOptionsSnapshot()

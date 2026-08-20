@@ -8,6 +8,28 @@
 // via its own subscribeLocale callback rather than these widgets trying to
 // patch their own text in place.
 
+import { hueVars, rainbowColor } from './design/appearance'
+
+/**
+ * Sets the --item-hue* custom properties an element needs to own a rainbow
+ * position (design-language.md: "WHAT MAY OWN A POSITION: anything that is
+ * one member of a SET whose members are all equal ... a segment of a
+ * segmented control" - a lone unique control, like the Settings badge,
+ * keeps the single accent instead). Returns whether a hue was actually
+ * applied (false when rainbow is off), so a caller can skip adding its own
+ * .glim-hue/.glim-hue-icon/.glim-tint classes when there's nothing to key
+ * them off. Mirrors queue.ts's own inline pattern - the one existing
+ * rainbow consumer before this file's callers opted in too.
+ */
+export function applyHueVars(el: HTMLElement, index: number): boolean {
+  const hue = rainbowColor(index)
+  if (!hue) return false
+  for (const [prop, value] of Object.entries(hueVars(hue))) {
+    el.style.setProperty(prop, value)
+  }
+  return true
+}
+
 /**
  * `onBeforeChange`, when given, fires exactly once per click, right before
  * `onChange` - the undo/redo call sites (transformPanel.ts/filtersPanel.ts)
@@ -25,6 +47,14 @@ export function segmentedRow<T extends string>(
   initial: T,
   onChange: (value: T) => void,
   onBeforeChange?: (value: T) => void,
+  // Opt-in only (jdp: "die ganzen badges und schaltflächen werden nicht
+  // eingefärbt") - each choice becomes its own rainbow position starting at
+  // this index when given, matching queue.ts's row-owns-a-colour pattern.
+  // Omitted entirely by Shape/Theme (appearanceSettings.ts): those are the
+  // OTHER user-owned axes, not activity, and recolouring the very controls
+  // that configure rainbow with rainbow itself reads as a confusing
+  // self-reference rather than a feature.
+  rainbowBaseIndex?: number,
 ): HTMLElement {
   const wrap = document.createElement('div')
   wrap.className = 'control-slider'
@@ -43,11 +73,16 @@ export function segmentedRow<T extends string>(
 
   function render(): void {
     row.innerHTML = ''
-    for (const choice of choices) {
+    choices.forEach((choice, index) => {
       const btn = document.createElement('button')
       btn.type = 'button'
-      btn.className = 'segmented-button' + (choice.value === active ? ' segmented-button--active' : '')
+      const isActive = choice.value === active
+      btn.className = 'segmented-button' + (isActive ? ' segmented-button--active' : '')
       btn.textContent = choice.label
+      if (rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
+        btn.classList.add('glim-hue', 'glim-tint')
+        if (isActive) btn.classList.add('glim-active')
+      }
       // The CSS forces one line + ellipsis so a long label (e.g. German
       // "Unscharf maskieren") never wraps and makes this row taller than a
       // short-label row (e.g. Rotate's "0°/90°/180°/270°") in a sibling card
@@ -78,7 +113,7 @@ export function segmentedRow<T extends string>(
           btn.setAttribute('data-tip', choice.label)
         }
       })
-    }
+    })
   }
   render()
 
@@ -100,6 +135,20 @@ export function iconToggleButton(
   initial: boolean,
   onChange: (checked: boolean) => void,
   onBeforeChange?: () => void,
+  // Opt-in only, same rule as segmentedRow's own rainbowBaseIndex - the
+  // caller assigns each button in its own logical set (e.g. Flip
+  // horizontal/vertical) a distinct index. .glim-hue redefines --accent for
+  // this button UNCONDITIONALLY (not just while checked) - .glim-hue-icon's
+  // own CSS rule only recolours the glyph once something has already
+  // redefined --accent for it to read; without .glim-hue always present,
+  // the glyph fell back to the page's single global accent instead of this
+  // button's own position (a real bug, caught by inspecting computed
+  // styles - every icon showed the same colour instead of eight different
+  // ones). Checked additionally adds .glim-active, which both excludes the
+  // glyph-recolour rule (already filled, an icon painted the same colour
+  // would vanish into its own background) and lets the badge's own
+  // background-fill CSS pick up --accent for the fill itself.
+  rainbowIndex?: number,
 ): HTMLButtonElement {
   const btn = document.createElement('button')
   btn.type = 'button'
@@ -108,10 +157,17 @@ export function iconToggleButton(
   btn.title = label
   btn.setAttribute('aria-label', label)
 
+  if (rainbowIndex !== undefined && applyHueVars(btn, rainbowIndex)) {
+    btn.classList.add('glim-hue', 'glim-hue-icon')
+  }
+
   let checked = initial
   function applyState(): void {
     btn.classList.toggle('icon-toggle-button--active', checked)
     btn.setAttribute('aria-pressed', String(checked))
+    if (rainbowIndex !== undefined) {
+      btn.classList.toggle('glim-active', checked)
+    }
   }
   applyState()
 

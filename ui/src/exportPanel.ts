@@ -11,6 +11,8 @@ import {
   toXHTML,
 } from 'trickwork-core'
 import { downloadBlob } from './download'
+import { applyHueVars } from './controlWidgets'
+import { subscribeRainbow } from './design/appearance'
 import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
@@ -38,13 +40,18 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   const formatRow = document.createElement('div')
   formatRow.className = 'export-format-row'
   const formatButtons: { format: ExportFormat; button: HTMLButtonElement }[] = []
-  for (const format of ['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]) {
+  ;(['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]).forEach((format, index) => {
     const button = document.createElement('button')
     button.textContent = format.toUpperCase()
     button.addEventListener('click', () => void exportActive(store, format, summary))
+    // The four formats are an equal-member set (jdp: "die ganzen badges und
+    // schaltflächen werden nicht eingefärbt") - each owns a fixed rainbow
+    // position, applied once at mount and re-applied on toggle (these
+    // buttons are never rebuilt the way a panel's own build() is).
+    if (applyHueVars(button, index)) button.classList.add('glim-hue', 'glim-tint')
     formatRow.appendChild(button)
     formatButtons.push({ format, button })
-  }
+  })
   panel.appendChild(formatRow)
 
   const batchButton = document.createElement('button')
@@ -71,6 +78,19 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   }
   applyLabels()
   subscribeLocale(applyLabels)
+
+  // Unlike a panel with its own build(), these buttons are created once and
+  // never torn down - re-applying the hue vars is what picks up a palette
+  // edit or a mode toggle (applyHueVars() itself is idempotent and a no-op
+  // once rainbow is off, so this is safe to call unconditionally).
+  function syncRainbow(): void {
+    formatButtons.forEach(({ button }, index) => {
+      const applied = applyHueVars(button, index)
+      button.classList.toggle('glim-hue', applied)
+      button.classList.toggle('glim-tint', applied)
+    })
+  }
+  subscribeRainbow(syncRainbow)
 }
 
 async function buildOutput(item: BatchItem, store: Store, format: ExportFormat): Promise<Blob> {
