@@ -150,6 +150,7 @@ const dict: Translations = {
   'appearance.light': 'Világos',
   'appearance.system': 'Rendszer',
   'appearance.accent': 'Kiemelőszín',
+  'appearance.accentPresets': 'Előbeállítások',
   'appearance.accentSunflower': 'Napraforgó',
   'appearance.accentBlue': 'Kék',
   'appearance.accentGreen': 'Zöld',

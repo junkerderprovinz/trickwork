@@ -150,6 +150,7 @@ const dict: Translations = {
   'appearance.light': 'Vaalea',
   'appearance.system': 'Järjestelmä',
   'appearance.accent': 'Korostusväri',
+  'appearance.accentPresets': 'Esiasetukset',
   'appearance.accentSunflower': 'Auringonkukka',
   'appearance.accentBlue': 'Sininen',
   'appearance.accentGreen': 'Vihreä',

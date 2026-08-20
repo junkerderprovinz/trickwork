@@ -150,6 +150,7 @@ const dict: Translations = {
   'appearance.light': 'Ανοιχτό',
   'appearance.system': 'Σύστημα',
   'appearance.accent': 'Χρώμα έμφασης',
+  'appearance.accentPresets': 'Προεπιλογές',
   'appearance.accentSunflower': 'Ηλίανθος',
   'appearance.accentBlue': 'Μπλε',
   'appearance.accentGreen': 'Πράσινο',

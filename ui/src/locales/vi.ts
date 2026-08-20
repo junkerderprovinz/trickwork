@@ -150,6 +150,7 @@ const dict: Translations = {
   'appearance.light': 'Sáng',
   'appearance.system': 'Hệ thống',
   'appearance.accent': 'Màu nhấn',
+  'appearance.accentPresets': 'Cài đặt sẵn',
   'appearance.accentSunflower': 'Hoa hướng dương',
   'appearance.accentBlue': 'Xanh dương',
   'appearance.accentGreen': 'Xanh lá',

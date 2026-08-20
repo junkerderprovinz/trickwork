@@ -149,6 +149,7 @@ const dict: Translations = {
   'appearance.light': 'สว่าง',
   'appearance.system': 'ตามระบบ',
   'appearance.accent': 'สีเน้น',
+  'appearance.accentPresets': 'พรีเซ็ต',
   'appearance.accentSunflower': 'ทานตะวัน',
   'appearance.accentBlue': 'น้ำเงิน',
   'appearance.accentGreen': 'เขียว',

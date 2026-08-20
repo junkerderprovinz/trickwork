@@ -9,13 +9,17 @@
    the swatches beside it (jdp: "ich will insgesamt im Design immer
    Standardgrößen und nicht zig verschiedene Größen aller Elemente"). Three
    stages, matching the doc's own "small/medium/large is usually enough":
-   sm for compact action badges (swatches, reset, copy, zoom), md for the
-   icon-toggle/history buttons (also .segmented-button's own height), lg for
-   the single corner Settings badge. */
+   sm for compact action badges (reset, copy, zoom), md for the icon-toggle/
+   history buttons (also .segmented-button's own height), lg for the single
+   corner Settings badge. --swatch-size is its own, separate token for pure
+   colour swatches (accent presets, rainbow palette) - a swatch and an icon
+   badge are two different kinds of control; each stays internally
+   consistent without needing to match the other's size. */
 :root {
   --badge-sm: 1.75rem;
   --badge-md: 2.35rem;
   --badge-lg: 3rem;
+  --swatch-size: 1.5rem;
   /* A deliberate, noted TrickWork-specific override of GlimStone's own
      --text-body token (0.875rem/14px) - jdp compared control/label text
      directly against BombVault twice and still found TrickWork's smaller
@@ -1094,45 +1098,75 @@ button:focus-visible {
   background-color: var(--accent);
 }
 
-/* One row: the custom colour picker FIRST, a visible gap, then the preset
-   swatches, then the reset badge pinned to the far right - all --badge-sm
-   (jdp, second pass: "das Farbpicker-Feld soll als erstes kommen, dann mit
-   Abstand die anderen, sonst erkennt man es nicht" - buried among five
-   identically-styled presets, the custom picker was unrecognisable as
-   anything other than a sixth preset). Documented as the canonical
-   accent-row pattern in GlimStone (design-language.md, "The user-owned
-   axes"). */
+/* Matches BombVault's Settings.tsx accent picker layout exactly (jdp: "der
+   Farbpicker sieht ganz anders aus, er soll aussehen wie in BV"): the
+   rectangular native colour input, a small muted "Presets:" label, the
+   preset swatches, wrapping together on narrow widths - then the reset
+   badge, pinned to the far right whenever there's room via margin-left:
+   auto, wrapping onto its own trailing position otherwise. */
 .accent-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
-.accent-row .accent-custom-input {
-  margin-right: 0.75rem;
-}
-
-.accent-row .accent-reset-button {
+.icon-reset-badge {
   margin-left: auto;
 }
 
+.accent-presets-label {
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+  white-space: nowrap;
+}
+
+.accent-swatch-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* The native colour input, sized and shaped like BombVault's own (h-8 w-14 -
+   a rectangle, not squeezed into the swatches' own circular badge size). */
+.accent-custom-input {
+  appearance: none;
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 2rem;
+  padding: 0.125rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  cursor: pointer;
+}
+.accent-custom-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.accent-custom-input::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius-control) - 0.125rem);
+}
+.accent-custom-input::-moz-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius-control) - 0.125rem);
+}
+
 /* Swatches with a border-colour highlight on the active preset, mirroring
-   BombVault's Settings.tsx accent picker (border, not a box-shadow ring) so
-   the control reads the same across sibling apps - BombVault itself has no
-   shape engine yet, so its own swatches are permanently circular; TrickWork
-   goes one step further and makes them follow it (jdp: "die Farbfelder
-   sollen der Form folgen", CannonadeCommand's own precedent for a shape-
-   reactive swatch: border-radius: var(--cc-b-radius)). --radius-pill is
-   used directly, uncapped - --badge-sm is small enough that a 999px radius
-   is already a perfect circle, no min() needed the way a taller element
-   requires. This same class also sizes the native colour input and the
-   reset badge (below), all three reading --badge-sm from the one shared
-   token (GlimStone's "Badges" rule: named stages, not per-instance
-   literals - jdp: "ich will insgesamt im Design immer Standardgrößen"). */
-.accent-swatch {
-  width: var(--badge-sm);
-  height: var(--badge-sm);
+   BombVault's own technique exactly (border, not a box-shadow ring) -
+   BombVault itself has no shape engine yet, so its own swatches are
+   permanently circular; TrickWork goes one step further and makes them
+   follow it (jdp: "die Farbfelder sollen der Form folgen", CannonadeCommand's
+   own precedent for a shape-reactive swatch: border-radius: var(--cc-b-
+   radius)). --swatch-size is its own token, deliberately separate from the
+   icon-badge stages (--badge-sm/md/lg) - a colour swatch and an icon badge
+   are two different kinds of control and don't need to share one size, they
+   each just need to be consistent WITHIN their own kind (GlimStone's
+   "Badges" rule - jdp: "ich will insgesamt im Design immer Standardgrößen"). */
+.accent-swatch,
+.palette-swatch {
+  width: var(--swatch-size);
+  height: var(--swatch-size);
   padding: 0;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
@@ -1141,7 +1175,8 @@ button:focus-visible {
   transition: transform 120ms ease, border-color 120ms ease;
 }
 
-.accent-swatch:hover {
+.accent-swatch:hover,
+.palette-swatch:hover {
   transform: scale(1.1);
 }
 
@@ -1149,26 +1184,13 @@ button:focus-visible {
   border-color: var(--carbon-text);
 }
 
-.accent-custom-input {
-  appearance: none;
-  background: none;
-}
-.accent-custom-input::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-.accent-custom-input::-webkit-color-swatch {
-  border: none;
-  border-radius: inherit;
-}
-.accent-custom-input::-moz-color-swatch {
-  border: none;
-  border-radius: inherit;
-}
-
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
-   solche Badges") - matching .icon-toggle-button's own neutral/hover
-   treatment instead of the plain-text link look this used to have. */
-.accent-reset-button {
+   solche Badges") - shared by the Accent reset AND the Rainbow palette
+   reset, both --badge-sm like every other icon badge in the app. */
+.icon-reset-badge {
+  width: var(--badge-sm);
+  height: var(--badge-sm);
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1177,28 +1199,38 @@ button:focus-visible {
   border: none;
 }
 
-.accent-reset-button:hover {
-  transform: none;
+.icon-reset-badge:hover {
   background-color: var(--carbon-hover);
   color: var(--carbon-text);
 }
 
-/* The rainbow palette preview row - same 1.5rem sizing as .accent-swatch
-   for visual consistency between TrickWork's two swatch rows, static (not
-   buttons - a preview of the fixed 8-colour palette, not an editable one),
-   shape-following for the same reason .accent-swatch is. */
+/* The rainbow palette - editable now (jdp: "die Farben des Rainbowmodes
+   sollen auch bearbeitbar sein, daher brauchen wir dort auch einen Reset
+   Button"), each swatch a real <button> opening the shared native colour
+   input declared in appearanceSettings.ts, same border/hover treatment and
+   --swatch-size as the accent presets above. Dimmed (not hidden) and
+   pointer-events: none while rainbow mode itself is off, matching
+   CannonadeCommand's own treatment of its dependent rainbow sub-controls. */
 .palette-swatch-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   transition: opacity 150ms ease;
 }
 
-.palette-swatch {
-  width: var(--badge-sm);
-  height: var(--badge-sm);
-  border-radius: var(--radius-pill);
-  flex-shrink: 0;
+/* The shared hidden native colour input the palette swatches open on click -
+   never visible itself, only its own native OS picker UI is. */
+.palette-color-input {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* A genuine sliding switch (controlWidgets.ts's toggleSwitch) - GlimStone's

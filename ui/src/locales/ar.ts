@@ -149,6 +149,7 @@ const dict: Translations = {
   'appearance.light': 'فاتح',
   'appearance.system': 'النظام',
   'appearance.accent': 'لون التمييز',
+  'appearance.accentPresets': 'الإعدادات المسبقة',
   'appearance.accentSunflower': 'عباد الشمس',
   'appearance.accentBlue': 'أزرق',
   'appearance.accentGreen': 'أخضر',

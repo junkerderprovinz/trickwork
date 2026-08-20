@@ -150,6 +150,7 @@ const dict: Translations = {
   'appearance.light': 'Светлая',
   'appearance.system': 'Системная',
   'appearance.accent': 'Акцент',
+  'appearance.accentPresets': 'Пресеты',
   'appearance.accentSunflower': 'Подсолнух',
   'appearance.accentBlue': 'Синий',
   'appearance.accentGreen': 'Зелёный',

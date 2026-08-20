@@ -67,11 +67,45 @@ export function mountAppearanceSettings(container: HTMLElement): void {
   let accent = cached.accent && HEX_RE.test(cached.accent) ? cached.accent : ''
   let theme: ThemePref = cachedThemePref()
   let rainbowOn = rainbowState().on
+  // The rainbow palette itself (jdp: "die Farben des Rainbowmodes sollen
+  // auch bearbeitbar sein") - seeded from whatever's already cached
+  // (usablePalette() in design/appearance.ts already falls back to RAINBOW
+  // if the cached array is missing or the wrong length), copied so editing
+  // it never mutates the shared RAINBOW default array in place.
+  let palette: string[] = [...rainbowState().palette]
 
   function persist(): void {
     cacheAppearance(shape, accent, rainbowState())
     cacheTheme(theme)
   }
+
+  // One shared hidden colour input, reused for whichever palette swatch is
+  // currently being edited - a real native colour picker per swatch would
+  // mean eight always-present <input type="color"> elements for a feature
+  // only one is ever open at a time.
+  const paletteColorInput = document.createElement('input')
+  paletteColorInput.type = 'color'
+  paletteColorInput.className = 'palette-color-input'
+  paletteColorInput.setAttribute('aria-hidden', 'true')
+  paletteColorInput.tabIndex = -1
+  document.body.appendChild(paletteColorInput)
+  let editingIndex: number | null = null
+  // Declared here, assigned inside build() - the closure below needs to call
+  // whichever build() produced most recently (a locale switch rebuilds the
+  // whole panel, including a fresh renderPalette), not a stale one captured
+  // at mount time.
+  let renderPalette: () => void = () => {}
+  paletteColorInput.addEventListener('input', () => {
+    if (editingIndex === null) return
+    palette[editingIndex] = paletteColorInput.value
+    // Spread the CURRENT rainbow state first, not just {palette} - applyRainbow
+    // merges onto RAINBOW_OFF's defaults, so passing palette alone would
+    // silently reset on/reactive/rotate/seed back to off every time a colour
+    // is edited (the same trap the toggle handler below has to avoid too).
+    applyRainbow({ ...rainbowState(), palette: [...palette] })
+    persist()
+    renderPalette()
+  })
 
   // Rebuilding the whole panel on a locale switch is simpler and more robust
   // than patching five different label sites in place (same reasoning as
@@ -101,14 +135,17 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       },
     )
 
-    // One row now, not swatches-then-a-separate-controls-row below (jdp:
-    // "der Farbpicker soll in die gleiche Zeile wie die Farbfelder und auch
-    // gleich groß sein" - matches BombVault's own accent picker layout).
-    // Every element in this row shares the SAME 1.5rem swatch size
-    // (accent-swatch class, even on the native colour input and the reset
-    // button) - a size mismatch between the picker/swatches/reset was
-    // jdp's other direct complaint ("alle Farbfelder gleich groß machen").
-    // Documented as the canonical accent-row pattern in GlimStone.
+    // Matches BombVault's Settings.tsx accent picker exactly (jdp: "der
+    // Farbpicker sieht ganz anders aus, er soll aussehen wie in BV") - a
+    // rectangular native colour input (BV's own h-8 w-14, not squeezed into
+    // the same square as the swatches), a small muted "Presets:" label,
+    // then the five circular preset swatches with a border-colour highlight
+    // on whichever one is active (BV's own technique, not a fill - "die
+    // Voreingestellten Farben sollen gekennzeichnet werden wie in BV").
+    // Reset is still an icon badge (GlimStone's own "icons not text for
+    // small action badges" rule), at --badge-sm like every other icon
+    // badge in the app, not swatch-sized - a colour swatch and an icon
+    // badge are two different things and don't need to share one size.
     const accentWrap = document.createElement('div')
     accentWrap.className = 'control-slider'
     const accentLabel = document.createElement('span')
@@ -119,16 +156,20 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     const customInput = document.createElement('input')
     customInput.type = 'color'
-    customInput.className = 'accent-swatch accent-custom-input'
+    customInput.className = 'accent-custom-input'
     customInput.setAttribute('aria-label', t('appearance.accent'))
     customInput.value = accent || DEFAULT_ACCENT
 
+    const presetsLabel = document.createElement('span')
+    presetsLabel.className = 'accent-presets-label'
+    presetsLabel.textContent = `${t('appearance.accentPresets')}:`
+
+    const swatchGroup = document.createElement('div')
+    swatchGroup.className = 'accent-swatch-group'
+
     const resetBtn = document.createElement('button')
     resetBtn.type = 'button'
-    // Icon badge, not text (jdp: "immer Symbole statt Texte für solche
-    // Badges verwenden" - a general rule now, see icons.ts's iconReset()
-    // and the same treatment on the preview Copy badge below).
-    resetBtn.className = 'accent-swatch accent-reset-button'
+    resetBtn.className = 'icon-reset-badge'
     resetBtn.innerHTML = iconReset()
     resetBtn.title = t('appearance.resetToDefault')
     resetBtn.setAttribute('aria-label', t('appearance.resetToDefault'))
@@ -141,21 +182,14 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     })
 
     function renderSwatches(): void {
-      accentRow.innerHTML = ''
-      // Custom picker FIRST, THEN the presets (jdp, second pass: "das
-      // Farbpicker-Feld soll als erstes kommen, dann mit Abstand die
-      // anderen, sonst erkennt man es nicht") - appending it after the
-      // preset loop (the first attempt) put it in 6th position, where it
-      // was frequently the same colour as the Sunflower preset and
-      // impossible to tell apart from a sixth preset swatch.
-      accentRow.appendChild(customInput)
+      swatchGroup.innerHTML = ''
       for (const preset of ACCENTS) {
         const presetLabel = ACCENT_KEYS[preset.name] ? t(ACCENT_KEYS[preset.name] as TranslationKey) : preset.name
         const btn = document.createElement('button')
         btn.type = 'button'
         btn.className = 'accent-swatch' + (accent === preset.hex ? ' accent-swatch--active' : '')
         btn.style.backgroundColor = preset.hex
-        btn.title = presetLabel
+        btn.setAttribute('data-tip', presetLabel)
         btn.setAttribute('aria-label', presetLabel)
         btn.addEventListener('click', () => {
           accent = preset.hex
@@ -164,9 +198,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
           customInput.value = accent
           renderSwatches()
         })
-        accentRow.appendChild(btn)
+        swatchGroup.appendChild(btn)
       }
-      accentRow.appendChild(resetBtn)
     }
     renderSwatches()
 
@@ -177,6 +210,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       renderSwatches()
     })
 
+    accentRow.append(customInput, presetsLabel, swatchGroup, resetBtn)
     accentWrap.append(accentLabel, accentRow)
 
     // A genuine sliding switch now, not a segmented Off/On pair (jdp: "soll
@@ -198,24 +232,62 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     paletteRow.className = 'palette-swatch-row'
     paletteRow.setAttribute('role', 'group')
     paletteRow.setAttribute('aria-label', t('appearance.rainbowPalette'))
-    for (const hex of RAINBOW) {
-      const sw = document.createElement('span')
-      sw.className = 'palette-swatch'
-      sw.style.backgroundColor = hex
-      paletteRow.appendChild(sw)
+
+    const paletteResetBtn = document.createElement('button')
+    paletteResetBtn.type = 'button'
+    paletteResetBtn.className = 'icon-reset-badge'
+    paletteResetBtn.innerHTML = iconReset()
+    paletteResetBtn.title = t('appearance.resetToDefault')
+    paletteResetBtn.setAttribute('aria-label', t('appearance.resetToDefault'))
+    paletteResetBtn.addEventListener('click', () => {
+      palette = [...RAINBOW]
+      applyRainbow({ ...rainbowState(), palette: [...palette] })
+      persist()
+      renderPalette()
+    })
+
+    // Each swatch is clickable now (jdp: "die Farben des Rainbowmodes sollen
+    // auch bearbeitbar sein, daher brauchen wir dort auch einen Reset
+    // Button") - opens the shared native colour input declared above,
+    // matching CannonadeCommand's own precedent of an editable rainbow
+    // palette (an inline picker there; a native <input type="color"> here,
+    // same functional outcome with far less code to maintain).
+    renderPalette = function renderPaletteImpl(): void {
+      paletteRow.innerHTML = ''
+      palette.forEach((hex, index) => {
+        const sw = document.createElement('button')
+        sw.type = 'button'
+        sw.className = 'palette-swatch'
+        sw.style.backgroundColor = hex
+        sw.setAttribute('data-tip', hex)
+        sw.setAttribute('aria-label', hex)
+        sw.addEventListener('click', () => {
+          editingIndex = index
+          paletteColorInput.value = hex
+          paletteColorInput.click()
+        })
+        paletteRow.appendChild(sw)
+      })
+      paletteRow.appendChild(paletteResetBtn)
     }
+    renderPalette()
+
     // Switched off, not hidden (GlimStone's own Switches rule: "a control
     // that disappears never teaches anyone what the mode does") - dimmed
     // instead, the same treatment CannonadeCommand gives its own dependent
     // rainbow sub-controls while the mode is off.
     function syncPaletteDim(): void {
       paletteRow.style.opacity = rainbowOn ? '1' : '0.45'
+      paletteRow.style.pointerEvents = rainbowOn ? '' : 'none'
     }
     syncPaletteDim()
 
     const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
       rainbowOn = checked
-      applyRainbow({ on: rainbowOn })
+      // Spread the current state, not just {on} - see paletteColorInput's
+      // own listener above for why (this exact call used to silently wipe
+      // any custom palette back to the RAINBOW default on every toggle).
+      applyRainbow({ ...rainbowState(), on: rainbowOn })
       persist()
       syncPaletteDim()
     })

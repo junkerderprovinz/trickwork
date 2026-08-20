@@ -149,6 +149,7 @@ const dict: Translations = {
   'appearance.light': 'בהיר',
   'appearance.system': 'מערכת',
   'appearance.accent': 'צבע הדגשה',
+  'appearance.accentPresets': 'הגדרות קבועות מראש',
   'appearance.accentSunflower': 'חמנית',
   'appearance.accentBlue': 'כחול',
   'appearance.accentGreen': 'ירוק',

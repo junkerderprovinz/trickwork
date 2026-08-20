@@ -148,6 +148,7 @@ const dict: Translations = {
   'appearance.light': '浅色',
   'appearance.system': '跟随系统',
   'appearance.accent': '强调色',
+  'appearance.accentPresets': '预设',
   'appearance.accentSunflower': '向日葵黄',
   'appearance.accentBlue': '蓝色',
   'appearance.accentGreen': '绿色',

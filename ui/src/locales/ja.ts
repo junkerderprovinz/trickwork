@@ -149,6 +149,7 @@ const dict: Translations = {
   'appearance.light': 'ライト',
   'appearance.system': 'システム',
   'appearance.accent': 'アクセント',
+  'appearance.accentPresets': 'プリセット',
   'appearance.accentSunflower': 'サンフラワー',
   'appearance.accentBlue': 'ブルー',
   'appearance.accentGreen': 'グリーン',
