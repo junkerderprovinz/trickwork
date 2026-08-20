@@ -398,6 +398,22 @@ body {
   pointer-events: none;
 }
 
+/* The floating popover openColorPickerPopover() renders the picker into -
+   a fixed-position panel, own elevated surface (same recipe as .glim-card:
+   one raised level, one hairline, one shadow), sized to the picker's own
+   natural width rather than stretching to whatever's beneath it. */
+.glim-picker-popover {
+  position: fixed;
+  z-index: 2147483647;
+  padding: 0.75rem;
+  background-color: var(--carbon-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation);
+}
+.glim-picker-popover .glim-picker {
+  width: 13.75rem;
+}
+
 /* ---------------------------------------------------------------------------
    Rainbow — the accent in its plural form. See docs/design-language.md for
    the full explanation and the three traps. Pair with reference/appearance.ts

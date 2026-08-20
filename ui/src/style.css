@@ -1187,6 +1187,20 @@ button:focus-visible {
   border-radius: min(var(--radius-pill), 50%);
 }
 
+/* Every other icon-badge in the app (.preview-copy-button .control-icon,
+   .settings-badge svg) pins its glyph's CSS size explicitly - this one
+   never got that rule and relied on the raw width="19" height="19" HTML
+   attributes alone. Inside a flex container that's fragile: a replaced
+   element (an SVG) with no CSS width/height of its own can have its
+   auto-computed flex-basis shrink to a sliver instead of its intrinsic
+   size (jdp: "die reset buttion habe kein icon mehr" - it was still
+   there, just squashed to ~2px wide). */
+.icon-reset-badge .control-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
 .icon-reset-badge:hover {
   background-color: var(--carbon-hover);
   color: var(--carbon-text);

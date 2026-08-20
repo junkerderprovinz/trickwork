@@ -1,9 +1,13 @@
 // The colour picker engine (design-language.md, "The colour engine" →
-// picker section). A PERMANENTLY EMBEDDED saturation/value square + hue
-// bar, drawn entirely in the page's own DOM - never a native
-// `<input type="color">`. Extracted from CannonadeCommand's own
-// inlinePicker(), the reference an adopting app should match rather than
-// build its own variant of.
+// picker section). A saturation/value square + hue bar, drawn entirely in
+// the page's own DOM - never a native `<input type="color">`. Extracted
+// from CannonadeCommand's own inlinePicker(), the reference an adopting
+// app should match rather than build its own variant of. Two ways to show
+// it: `colorPicker()` returns the bare, permanently-embeddable widget;
+// `openColorPickerPopover()` (below) wraps it in a floating panel anchored
+// to a trigger element - the recommended default for a compact settings
+// card, where embedding it permanently grows the card every time one is
+// added.
 //
 // Why this exists instead of `<input type="color">`: a native colour input
 // hands control to the browser/OS, which can (and on many setups does)
@@ -15,7 +19,7 @@
 // input is also functionally unverifiable in Playwright - its picker
 // surface is outside the page's own DOM, so no automated check can ever
 // prove it opens, let alone that it opens the RIGHT way. This component
-// has neither problem: it's real, styleable, always-visible DOM.
+// has neither problem: it's real, styleable DOM either way.
 //
 // Framework-free, like appearance.ts/selectScroll.ts/tooltip.ts: talks
 // only to the elements it's given and returns plain DOM nodes.
@@ -175,4 +179,82 @@ export function colorPicker(initialHex: string, onChange: (hex: string) => void)
     },
     getValue: () => hsvToHex(state.h, state.s, state.v),
   };
+}
+
+export interface ColorPickerPopoverHandle {
+  /** Closes the popover programmatically (also happens automatically on
+   *  outside click, Escape, scroll, or resize). */
+  close: () => void;
+}
+
+let openPopover: { el: HTMLDivElement; close: () => void } | null = null;
+
+/**
+ * Opens the picker as a floating popover anchored below `trigger` instead
+ * of embedding it permanently in the layout - the default for a compact
+ * settings panel, where a permanently-embedded picker grows the
+ * surrounding card every time one is added (jdp, adopting this in a
+ * compact settings card: "der Farbpicker soll per schwebendem Fenster
+ * erscheinen, nicht fix in der card sein"). Reserve the bare
+ * `colorPicker()` for a page with genuinely dedicated, permanent space for
+ * exactly one control (CannonadeCommand's own settings PAGE, not a card).
+ * Only ONE popover is ever open at a time - opening a new one closes
+ * whichever was already open, matching how a native `<select>` only ever
+ * has one open dropdown.
+ */
+export function openColorPickerPopover(
+  trigger: HTMLElement,
+  initialHex: string,
+  onChange: (hex: string) => void,
+): ColorPickerPopoverHandle {
+  openPopover?.close();
+
+  const panel = document.createElement('div');
+  panel.className = 'glim-picker-popover';
+  const picker = colorPicker(initialHex, onChange);
+  panel.appendChild(picker.el);
+  document.body.appendChild(panel);
+
+  function position(): void {
+    const rect = trigger.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth || window.innerWidth;
+    const vh = document.documentElement.clientHeight || window.innerHeight;
+    const width = panel.offsetWidth;
+    const height = panel.offsetHeight;
+    const left = Math.max(8, Math.min(vw - 8 - width, rect.left));
+    const fitsBelow = rect.bottom + 8 + height <= vh;
+    const top = fitsBelow ? rect.bottom + 8 : Math.max(8, rect.top - 8 - height);
+    panel.style.left = `${left}px`;
+    panel.style.top = `${top}px`;
+  }
+  position();
+
+  function close(): void {
+    panel.remove();
+    document.removeEventListener('pointerdown', onPointerDown, true);
+    document.removeEventListener('keydown', onKeyDown);
+    window.removeEventListener('scroll', close, true);
+    window.removeEventListener('resize', close);
+    if (openPopover?.el === panel) openPopover = null;
+  }
+  // Capture phase, and excludes the trigger itself - a second click on the
+  // trigger re-opens fresh (via the caller's own click handler) rather
+  // than being swallowed here first.
+  function onPointerDown(event: PointerEvent): void {
+    const target = event.target;
+    if (target instanceof Node && (panel.contains(target) || trigger.contains(target))) return;
+    close();
+  }
+  function onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') close();
+  }
+  document.addEventListener('pointerdown', onPointerDown, true);
+  document.addEventListener('keydown', onKeyDown);
+  // A fixed-position popover de-anchors from its trigger on scroll/resize -
+  // simplest correct behaviour is to close it, same as the tooltip bubble.
+  window.addEventListener('scroll', close, true);
+  window.addEventListener('resize', close);
+
+  openPopover = { el: panel, close };
+  return { close };
 }
