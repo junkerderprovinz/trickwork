@@ -9,17 +9,22 @@
    the swatches beside it (jdp: "ich will insgesamt im Design immer
    Standardgrößen und nicht zig verschiedene Größen aller Elemente"). Three
    stages, matching the doc's own "small/medium/large is usually enough":
-   sm for compact action badges (reset, copy, zoom), md for the icon-toggle/
-   history buttons (also .segmented-button's own height), lg for the single
-   corner Settings badge. --swatch-size is its own, separate token for pure
-   colour swatches (accent presets, rainbow palette) - a swatch and an icon
-   badge are two different kinds of control; each stays internally
-   consistent without needing to match the other's size. */
+   sm for compact action badges (copy, zoom), md for the icon-toggle/history
+   buttons (also .segmented-button's own height), lg for the single corner
+   Settings badge. --swatch-size used to be its own, separate 1.5rem token
+   for pure colour swatches (accent presets, rainbow palette), on the theory
+   that a swatch and an icon badge are different enough kinds of control to
+   not need matching sizes - jdp came back wanting them visually identical
+   to the horizontal selector's own badges ("die farbfelder... so hoch...
+   wie die badges der horizontalen selektoren", "die resetbadges dann
+   natürlich auch"), so it's now a plain alias for --badge-md rather than
+   its own value; the accent/palette reset badges (.icon-reset-badge) read
+   --badge-md directly for the same reason, no longer --badge-sm. */
 :root {
   --badge-sm: 1.75rem;
   --badge-md: 2.35rem;
   --badge-lg: 3rem;
-  --swatch-size: 1.5rem;
+  --swatch-size: var(--badge-md);
   /* A deliberate, noted TrickWork-specific override of GlimStone's own
      --text-body token (0.875rem/14px) - jdp compared control/label text
      directly against BombVault twice and still found TrickWork's smaller
@@ -102,7 +107,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
@@ -159,8 +164,11 @@ html, body {
 }
 
 /* GlimStone's own "Badges" register: an icon-only/single-glyph badge is the
-   "circle" register (min(--radius-pill, 50%)), not "rounded" (--radius-
-   control) - that second one is for rectangular text-bearing controls. This
+   "circle" register (border-radius: var(--radius-pill), the raw token - the
+   browser's own corner-overflow scaling already caps it to a true circle,
+   see tokens.css's own comment for why a manual min(…, 50%) cap is wrong),
+   not "rounded" (--radius-control) - that second one is for rectangular
+   text-bearing controls. This
    used to say the opposite ("Square, not the pill") and rendered as a
    rounded square instead of a true circle in Round shape mode - jdp: "Der
    Rund form modus macht die badges nicht richtig rund". Opens Settings as
@@ -177,7 +185,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   transition: background-color 120ms ease, color 120ms ease;
@@ -555,7 +563,7 @@ canvas.preview-canvas[width="0"] {
   color: var(--carbon-text-sub);
   /* Overrides the base button rule's --radius-control (a rectangular-
      control radius) - an icon-only badge is GlimStone's "circle" register. */
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
 }
 .preview-copy-button .control-icon {
   width: 15px;
@@ -581,7 +589,7 @@ canvas.preview-canvas[width="0"] {
   justify-content: center;
   line-height: 1;
   background-color: var(--carbon-surface2);
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
 }
 
 .preview-zoom-label {
@@ -627,10 +635,11 @@ canvas.preview-canvas[width="0"] {
 }
 
 /* Range: neutral filled track, accent thumb — activity lives in the thumb.
-   The thumb's radius comes from the shape engine (min-capped against its own
-   size the same way a compact badge caps --radius-pill), so Square makes it
-   a square handle and Soft makes it a rounded-rect one, not a permanent
-   circle regardless of the app's chosen shape. */
+   The thumb's radius comes from the shape engine's raw --radius-pill token
+   (the browser's own corner-overflow scaling already caps a 16×16 square
+   thumb to a true circle - no min(…, 50%) needed, see tokens.css), so
+   Square makes it a square handle and Soft makes it a rounded-rect one, not
+   a permanent circle regardless of the app's chosen shape. */
 input[type="range"] {
   appearance: none;
   width: 100%;
@@ -653,7 +662,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 16px;
   height: 16px;
   margin-top: -4.5px;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   background: var(--accent);
   box-shadow: 0 0 0 3px var(--carbon-bg);
   cursor: pointer;
@@ -662,7 +671,7 @@ input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border: none;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   background: var(--accent);
   box-shadow: 0 0 0 3px var(--carbon-bg);
   cursor: pointer;
@@ -913,7 +922,7 @@ input.levels-handle-input::-moz-range-thumb {
   justify-content: center;
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
 }
 
 .icon-toggle-button:hover {
@@ -1138,8 +1147,16 @@ button:focus-visible {
   /* Matches --badge-md (.icon-toggle-button/.history-button's own stage) -
      a Rotate row and a Flip row sitting in the same card (or Sharpen and
      the invert/dither/color row in Filters) used to be visibly different
-     heights, the other half of the "kleben aneinander" complaint. */
-  min-height: var(--badge-md);
+     heights, the other half of the "kleben aneinander" complaint. An
+     explicit height, not min-height: the base button rule's own padding
+     pushed the rendered height a couple pixels past the min-height floor,
+     so this was 37px next to .icon-toggle-button's/the swatches' exact
+     35.25px - close, but not the "pixel-identical, regardless of the
+     underlying element" GlimStone's own Badges rule asks for (jdp: "die
+     ganzen farbfelder... so hoch... wie die badges der horizontalen
+     selektoren" only holds if the selector's OWN badge is exactly that
+     height too). */
+  height: var(--badge-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1212,14 +1229,15 @@ button:focus-visible {
    permanently circular; TrickWork goes one step further and makes them
    follow it (jdp: "die Farbfelder sollen der Form folgen", CannonadeCommand's
    own precedent for a shape-reactive swatch: border-radius: var(--cc-b-
-   radius)). --swatch-size is its own token, deliberately separate from the
-   icon-badge stages (--badge-sm/md/lg) - a colour swatch and an icon badge
-   are two different kinds of control and don't need to share one size, they
-   each just need to be consistent WITHIN their own kind (GlimStone's
-   "Badges" rule - jdp: "ich will insgesamt im Design immer Standardgrößen").
-   Plain flat <button>s, not native <input type="color"> - each swatch only
-   SELECTS a value; the one shared/embedded .glim-picker does the editing
-   (GlimStone's colour-picker layout rule). */
+   radius)). --swatch-size reads the --badge-md stage directly (jdp: "die
+   ganzen farbfelder... so groß machen, dass sie so hoch sind wie die
+   badges der horizontalen selektoren") - swatches used to sit at their own
+   smaller 1.5rem value, a size no other control in the app shared, which is
+   exactly the "don't need to match" call this comment used to defend and
+   jdp explicitly reversed. Plain flat <button>s, not native
+   <input type="color"> - each swatch only SELECTS a value; the one
+   shared/embedded .glim-picker does the editing (GlimStone's colour-picker
+   layout rule). */
 .accent-swatch,
 .palette-swatch {
   appearance: none;
@@ -1244,10 +1262,13 @@ button:focus-visible {
 
 /* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
    solche Badges") - shared by the Accent reset AND the Rainbow palette
-   reset, both --badge-sm like every other icon badge in the app. */
+   reset. --badge-md, not --badge-sm: these sit right beside the accent/
+   palette swatches in the same row, and jdp asked for the swatches to grow
+   to --badge-md and the reset badges to follow suit in the same breath
+   ("die resetbadges dann natürlich auch"). */
 .icon-reset-badge {
-  width: var(--badge-sm);
-  height: var(--badge-sm);
+  width: var(--badge-md);
+  height: var(--badge-md);
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -1255,7 +1276,7 @@ button:focus-visible {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
   border: none;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
 }
 
 /* Every other icon-badge in the app (.preview-copy-button .control-icon,
@@ -1265,10 +1286,15 @@ button:focus-visible {
    element (an SVG) with no CSS width/height of its own can have its
    auto-computed flex-basis shrink to a sliver instead of its intrinsic
    size (jdp: "die reset buttion habe kein icon mehr" - it was still
-   there, just squashed to ~2px wide). */
+   there, just squashed to ~2px wide). 19px, not the smaller 15px this
+   used to read at now that the badge itself grew to --badge-md - the
+   glyph-to-badge ratio otherwise shrinks and the icon reads as lost
+   inside the bigger circle; 19px matches every OTHER --badge-md icon's
+   own natural, un-overridden controlSvg() size (icon-toggle-button,
+   history-button). */
 .icon-reset-badge .control-icon {
-  width: 15px;
-  height: 15px;
+  width: 19px;
+  height: 19px;
   flex-shrink: 0;
 }
 
@@ -1295,9 +1321,16 @@ button:focus-visible {
 
 /* A genuine sliding switch (controlWidgets.ts's toggleSwitch) - GlimStone's
    "Switches" section as its own component, not a segmented Off/On pair.
-   Track and knob both cap --radius-pill against their own height (the same
-   min() technique the range thumb above uses), so Round keeps the classic
-   pill+circle look while Soft/Square progressively square it off. */
+   Track and knob both read the raw --radius-pill token directly - Round
+   keeps the classic pill+circle look while Soft/Square progressively square
+   it off. The track used to cap it with min(var(--radius-pill), 50%),
+   which is wrong on a NON-square box like this one (2.75rem × 1.5rem):
+   50% resolves per-axis (50% width horizontally, 50% height vertically)
+   before the border-radius overflow algorithm ever runs, hard-coding two
+   different corner radii and rendering as a visible ellipse instead of a
+   pill (jdp: "der toggle... ist in der runden form einstellung
+   elliptisch"). The raw token alone is correct on both the square knob and
+   the non-square track - see tokens.css's own comment for why. */
 .toggle-switch {
   position: relative;
   flex-shrink: 0;
@@ -1305,7 +1338,7 @@ button:focus-visible {
   height: 1.5rem;
   padding: 0;
   background-color: var(--carbon-surface3);
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   transition: background-color 150ms ease;
 }
 .toggle-switch:hover {
@@ -1324,7 +1357,7 @@ button:focus-visible {
   width: 1.125rem;
   height: 1.125rem;
   background-color: #fff;
-  border-radius: min(var(--radius-pill), 50%);
+  border-radius: var(--radius-pill);
   transition: left 150ms ease;
 }
 .toggle-switch--on .toggle-switch-knob {

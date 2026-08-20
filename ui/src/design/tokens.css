@@ -19,10 +19,22 @@
    changes cards, buttons, tabs, inputs, pills, badges and toggles together.
    A single exception is the thing that ends up looking broken.
 
-   On a very short element (a compact badge), border-radius: var(--radius-pill)
-   applied literally over-rounds past half the element's own height and reads
-   as a pointed lozenge instead of a pill. Cap it against the element instead
-   of using the raw token: border-radius: min(var(--radius-pill), 50%). */
+   Use the raw token everywhere, even on a short element (a compact badge) or
+   a non-square one (a switch track): border-radius: var(--radius-pill). The
+   browser's own corner-overflow algorithm scales an oversized radius down to
+   fit the box, using ONE shared factor across all four corners - that's what
+   turns a huge value like 9999px into a true circle on a square element and
+   a true stadium (semicircular ends) on a rectangular one, with no capping
+   needed. Do NOT write border-radius: min(var(--radius-pill), 50%) as a
+   manual cap: 50% resolves per-AXIS (50% of width horizontally, 50% of
+   height vertically) before the overflow algorithm ever runs, so on anything
+   non-square it bakes in two different corner radii up front and renders as
+   a visible ELLIPSE instead of a pill - this exact bug shipped in an
+   adopting app's own rainbow-mode switch (a 44×24 track rendered as an oval,
+   not a pill; jdp: "der toggle... ist in der runden form einstellung
+   elliptisch"). Verified empirically (a live 220×120 test box), not just
+   reasoned about: min(9999px, 50%) renders a visible ellipse, the raw
+   9999px alone renders a correct stadium, on the exact same non-square box. */
 :root {
   --radius-card: 1rem;
   --radius-control: 0.625rem;
@@ -528,6 +540,29 @@ body {
 [data-rainbow] .glim-tint-hover:hover,
 [data-rainbow] .glim-tint-hover:focus-visible {
   box-shadow: inset 0 0 0 999px var(--item-hue-wash);
+}
+
+/* .glim-tint-badge: the SAME wash mechanism as .glim-tint, but at the
+   stronger --item-hue-badge tier (see appearance.ts's hueVars) - for a
+   compact circular badge (an icon toggle, an undo/redo/zoom action) rather
+   than a list row. A badge is small and isolated with nothing beside it to
+   reinforce the colour by repetition, so .glim-tint's own 16% (calibrated
+   for a dense list, see its own comment above) reads as barely-tinted grey
+   once shrunk to badge size. Use `.glim-tint` for rows; `.glim-tint-badge`
+   for badges - they're visually different enough to need their own alpha,
+   not a shared one. A badge with its own solid checked/active fill (reading
+   `--accent` directly, e.g. an icon-toggle's `--active` class) needs no
+   `.glim-active` override here the way `.glim-tint` has one: layering this
+   wash on top of an already-solid same-hue background is a no-op. */
+[data-rainbow] .glim-tint-badge {
+  box-shadow: inset 0 0 0 999px var(--item-hue-badge);
+}
+[data-rainbow='reactive'] .glim-tint-badge {
+  box-shadow: none;
+}
+[data-rainbow='reactive'] .glim-tint-badge:hover,
+[data-rainbow='reactive'] .glim-tint-badge:focus-within {
+  box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }
 
 /* Reactive: the palette rests. Everything stays quiet until hovered or

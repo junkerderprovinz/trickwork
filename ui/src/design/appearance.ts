@@ -200,6 +200,16 @@ export function hueVars(hex: string | undefined): Record<string, string> {
     // new floor - still short of 22%'s "colour chart" territory, but no
     // longer indistinguishable from the ground colour at a glance.
     '--item-hue-wash': `rgba(${r}, ${g}, ${b}, 0.16)`,
+    // A compact circular badge (an icon toggle, an undo/redo/zoom action) has
+    // no neighbouring row to reinforce the colour by repetition the way a
+    // list does, and reads as barely-tinted grey at the wash's own 16% once
+    // shrunk to badge size (jdp, adopting app: "die ganzen icon badges sind
+    // immer noch schwach eingefärbt, die sollen normal kräftig eingefärbt
+    // sein"). This tier is deliberately separate from the wash above rather
+    // than just raising it - a list row's own 16% is calibrated for a
+    // DIFFERENT reason (rule above: dense/at-scale is exactly where subtlety
+    // matters) and must stay put.
+    '--item-hue-badge': `rgba(${r}, ${g}, ${b}, 0.5)`,
     // The focus ring follows the position too. A gold ring around a teal tab
     // is the one place the single accent leaks back into the plural mode, and
     // it is the most visible one, because it only ever appears on the element

@@ -41,7 +41,10 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
     ;[undoButton, redoButton].forEach((button, index) => {
       const applied = applyHueVars(button, index)
       button.classList.toggle('glim-hue', applied)
-      button.classList.toggle('glim-tint', applied)
+      // .glim-tint-badge, not .glim-tint - this is a compact circular
+      // badge, not a list row (jdp: "die ganzen icon badges sind immer
+      // noch schwach eingefärbt, die sollen normal kräftig eingefärbt sein").
+      button.classList.toggle('glim-tint-badge', applied)
     })
   }
   syncRainbow()
