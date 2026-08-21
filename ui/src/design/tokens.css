@@ -289,12 +289,56 @@ body {
    it, viewport-clamped, flips above the trigger when opening below would
    clip the viewport's bottom edge (.glim-bubble--above), a small arrow
    that tracks the trigger's real position even when the bubble itself has
-   been clamped off-centre. No transition - an instant display toggle reads
-   as more responsive than even a very short fade for something this small
-   and this frequently triggered. Matches CannonadeCommand's own reference
+   been clamped off-centre. Matches CannonadeCommand's own reference
    implementation pixel-for-pixel (its #cc-tipfloat) - previously this
    class had its own bespoke, JS-free styling with none of the above, which
-   read as visibly inconsistent against a sibling app using the real thing. */
+   read as visibly inconsistent against a sibling app using the real thing.
+
+   CORRECTED (cross-app info-bubble standardisation, BombVault as the
+   reference implementation): every property below except the position/
+   clamp/arrow mechanics and z-index was quietly wrong here - background,
+   shadow, padding, font-size and white-space had all drifted from what
+   every real adopting app actually ships. `background-color` was
+   `--carbon-surface2` (the WELL tone - inputs, tracks) instead of
+   `--carbon-surface` (the one raised surface `.glim-card` itself uses -
+   a bubble is a floating card, not a sunken well). `box-shadow` was a
+   bespoke flat `0 8px 24px rgba(0,0,0,.55)` instead of this file's own
+   `var(--elevation), var(--hairline)` pair - the same one-elevation-
+   one-hairline recipe `.glim-card`/`.glim-toast` already use, so the
+   bubble was the one surface in the whole language missing its hairline.
+   `padding` was `9px 12px` instead of the tighter `7px 10px` a small,
+   frequently-triggered bubble actually reads better at. `font-size` was a
+   hardcoded `12.5px` even though this very file's own type-scale comment
+   above (`--text-caption` "covers... the info bubble's text") already
+   claimed this rule read that token - it never did; fixed by actually
+   pointing it at `var(--text-caption)` (11px), so the comment stops
+   contradicting the rule beneath it. `white-space` was `pre-line`
+   (preserves literal newlines in the tip string); every real tip is a
+   single wrapped sentence, so `normal` is correct - an adopting app that
+   relies on the old `pre-line` behaviour for a genuinely multi-line tip
+   should compose that from more than one `data-tip` call rather than
+   embedding `\n` in the string. `border-radius` simplified from
+   `min(var(--radius-control), 10px)` to the plain token - the two have
+   never actually differed under any of the three shipped shapes
+   (round/soft/square all stay at or under 10px already), so the `min()`
+   guard was inert defensive code, not a real value. The arrow's own
+   `border-color` below is updated to match the corrected background so it
+   still reads as a continuous shape with the bubble it points from.
+
+   Also corrected: this comment used to claim "no transition - an instant
+   display toggle reads as more responsive than even a very short fade" -
+   that was already wrong the day it was written, contradicted by this
+   same file's own `.glim-fade`/`glim-fade-in` (further down) and by
+   design-language.md's motion-engine section, which always said the info
+   bubble gets a 110ms fade. The bubble's own CSS never had a transition
+   because `.glim-fade` is a SEPARATE opt-in animation class - correct,
+   just undocumented here - and `reference/tooltip.ts` never actually
+   applied that class to its shared bubble element, so in the one place
+   that mattered the toggle really was instant, exactly as this comment
+   said. Both halves are fixed together: `tooltip.ts`'s `bubbleEl()` now
+   carries `glim-fade` too, and this comment stops claiming there's no
+   transition. See design-language.md's "The tooltip and info bubble" for
+   the reasoning on why the fade is short (110ms) rather than absent. */
 .glim-bubble {
   position: fixed;
   z-index: 2147483647;
@@ -302,19 +346,19 @@ body {
   width: max-content;
   max-width: 280px;
   pointer-events: none;
-  background-color: var(--carbon-surface2);
+  background-color: var(--carbon-surface);
   color: var(--carbon-text);
   border: none;
-  border-radius: min(var(--radius-control), 10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
-  padding: 9px 12px;
-  font-size: 12.5px;
+  border-radius: var(--radius-control);
+  box-shadow: var(--elevation), var(--hairline);
+  padding: 7px 10px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   letter-spacing: normal;
   text-transform: none;
   font-weight: 400;
   text-align: start;
-  white-space: pre-line;
+  white-space: normal;
 }
 .glim-bubble::before {
   content: '';
@@ -326,19 +370,25 @@ body {
   height: 0;
   border-style: solid;
   border-width: 0 6px 6px 6px;
-  border-color: transparent transparent var(--carbon-surface2) transparent;
+  border-color: transparent transparent var(--carbon-surface) transparent;
 }
 .glim-bubble--above::before {
   top: auto;
   bottom: -6px;
   border-width: 6px 6px 0 6px;
-  border-color: var(--carbon-surface2) transparent transparent transparent;
+  border-color: var(--carbon-surface) transparent transparent transparent;
 }
 
 /* The "(i)" trigger (reference/tooltip.ts's infoIcon()) - a bare stroke-only
    SVG glyph, never a filled badge (rule 3: the accent means activity, and a
    background fill on furniture like this reads as a control it isn't).
-   Opacity carries the hover/focus state instead of a colour or fill change. */
+   Opacity carries the hover/focus state instead of a colour or fill change.
+   `border-radius` is new (cross-app info-bubble standardisation) - it does
+   nothing visually at rest (the icon has no fill or border of its own to
+   round), but it matters the moment `:focus-visible` below draws a real
+   outline: browsers shape an element's focus ring to its own border-radius,
+   so without this the ring would trace a square box around a circular
+   glyph. */
 .glim-info-icon {
   display: inline-flex;
   align-items: center;
@@ -346,6 +396,7 @@ body {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
+  border-radius: var(--radius-pill);
   color: var(--carbon-text-muted);
   opacity: .8;
   cursor: help;
@@ -355,10 +406,30 @@ body {
   height: 15px;
   display: block;
 }
-.glim-info-icon:hover,
+/* CORRECTED (accessibility fix, cross-app info-bubble standardisation):
+   this used to be one combined `:hover, :focus-visible` rule that set
+   `outline: none` - actively REMOVING the keyboard focus indicator from an
+   otherwise fully borderless glyph. That's a real WCAG 2.2 SC 2.4.7
+   regression, not a style choice: a keyboard user tabbing to this icon had
+   no way to tell it was focused at all, since opacity alone (.8 -> 1) reads
+   as identical to plain hover and isn't a reliable focus signal on its own.
+   Split into two rules so hover keeps the language's normal "never a
+   border" rule (rule 5) while :focus-visible gets a REAL 2px solid
+   `--focus-ring` outline, 2px offset - the exact same treatment this
+   file's own base `:focus-visible` rule (further down) already gives every
+   ordinary button and link, so a keyboard user sees ONE consistent focus
+   language across the whole app, this glyph included. This is the design
+   language's one deliberate, sole exception to "never a border line" (rule
+   5, and see design-language.md's "The tooltip and info bubble" for the
+   full reasoning) - mouse/hover interaction never shows a border here,
+   only a keyboard focus does. */
+.glim-info-icon:hover {
+  opacity: 1;
+}
 .glim-info-icon:focus-visible {
   opacity: 1;
-  outline: none;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ---------------------------------------------------------------------------

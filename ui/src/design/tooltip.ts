@@ -16,7 +16,15 @@ function bubbleEl(): HTMLDivElement {
   if (!el) {
     el = document.createElement('div');
     el.id = BUBBLE_ID;
-    el.className = 'glim-bubble';
+    // `glim-fade` (cross-app info-bubble standardisation) - a 110ms
+    // opacity fade on open, matching design-language.md's motion-engine
+    // section (it always claimed the info bubble gets 110ms flat; this
+    // shared engine just never actually applied the class before). The
+    // browser restarts a CSS animation on an element that re-enters
+    // rendering after `display: none`, so toggling `el.style.display`
+    // below is enough to replay the fade every time - no need to
+    // remove/re-add the class per show().
+    el.className = 'glim-bubble glim-fade';
     el.style.display = 'none';
     document.body.appendChild(el);
   }
@@ -111,6 +119,15 @@ export function wireTooltips(): void {
   // capture so an inner scrollable container's scroll is caught too, not
   // just the window's own.
   window.addEventListener('scroll', hide, true);
+  // Escape closes it WITHOUT moving focus away from the trigger (cross-app
+  // info-bubble standardisation) - a keyboard user reading a tip covering
+  // nearby content can dismiss it and keep working from the same control,
+  // rather than having to tab away just to make it go away. This was
+  // missing entirely before: the only way to close via keyboard was to
+  // blur the trigger.
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && currentTrigger) hide();
+  });
 }
 
 /**
@@ -122,8 +139,16 @@ export function wireTooltips(): void {
 export function infoIcon(text: string): HTMLSpanElement {
   const span = document.createElement('span');
   span.className = 'glim-info-icon';
+  // Glyph corrected to the real production markup (cross-app info-bubble
+  // standardisation, BombVault as the reference implementation): outer
+  // ring r7.1/stroke-width1.2 -> r7/1.3, dot r1.05 at cy4.7 -> r0.9 at
+  // cy4.6, and the stem changed from a FILLED rounded rect
+  // (x7.05 y6.8 width1.9 height5 rx.95) to a round-capped STROKED path
+  // (`M8 7v4.4`, stroke-width 1.3) - same three-piece "i" (ring, dot,
+  // stem), same currentColor-only look, just the exact numbers a real
+  // adopting app ships rather than an approximation of them.
   span.innerHTML =
-    '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="4.7" r="1.05" fill="currentColor"/><rect x="7.05" y="6.8" width="1.9" height="5" rx=".95" fill="currentColor"/></svg>';
+    '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="4.6" r="0.9" fill="currentColor"/><path d="M8 7v4.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
   span.setAttribute('data-tip', text);
   span.setAttribute('aria-label', text);
   span.tabIndex = 0;
