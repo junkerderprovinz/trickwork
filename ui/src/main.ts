@@ -16,6 +16,7 @@ import { mountAppearanceSettings } from './appearanceSettings'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
+import { brandLogo } from './brandLogo'
 import { iconAppearance, iconBack } from './icons'
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
@@ -54,19 +55,18 @@ const header = document.createElement('header')
 header.className = 'app-header'
 app.appendChild(header)
 
+// The tagline that used to sit under the name is gone (jdp: "der untertitel
+// der jetzt drinnen steht entfernen") - the logo now carries the brand
+// identity instead, sitting beside the name rather than a line below it.
 const brand = document.createElement('div')
 brand.className = 'app-brand'
+const brandLogoWrap = document.createElement('span')
+brandLogoWrap.innerHTML = brandLogo()
 const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
-const brandTagline = document.createElement('span')
-brandTagline.className = 'app-brand-tagline'
-brand.append(brandName, brandTagline)
+brand.append(brandLogoWrap, brandName)
 header.appendChild(brand)
-subscribeLocale(() => {
-  brandTagline.textContent = t('app.tagline')
-})
-brandTagline.textContent = t('app.tagline')
 
 // Undo/redo used to live here too, but moved into its own card at the top
 // of the secondary column (jdp: "in einer seitlichen Card") - see

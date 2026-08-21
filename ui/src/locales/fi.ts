@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': 'Kuvasta ASCII-taiteeksi',
-
   'tabs.adjust': 'Säädä',
   'tabs.transform': 'Muunnos',
   'tabs.filters': 'Suodattimet',

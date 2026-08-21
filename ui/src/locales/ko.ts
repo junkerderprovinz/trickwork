@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': '이미지를 ASCII 아트로',
-
   'tabs.adjust': '조정',
   'tabs.transform': '변형',
   'tabs.filters': '필터',

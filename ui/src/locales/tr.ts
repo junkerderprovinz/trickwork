@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': "Görüntüden ASCII sanatına",
-
   'tabs.adjust': 'Ayarla',
   'tabs.transform': 'Dönüştür',
   'tabs.filters': 'Filtreler',

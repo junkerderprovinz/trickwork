@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': 'Imagem para arte ASCII',
-
   'tabs.adjust': 'Ajustar',
   'tabs.transform': 'Transformar',
   'tabs.filters': 'Filtros',

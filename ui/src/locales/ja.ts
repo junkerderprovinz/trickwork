@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': '画像をASCIIアートに',
-
   'tabs.adjust': '調整',
   'tabs.transform': '変形',
   'tabs.filters': 'フィルター',

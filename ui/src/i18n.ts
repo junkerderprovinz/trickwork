@@ -12,8 +12,6 @@
 // a visitor who reads one language never downloads the other 24 (a prior
 // project's main bundle grew ~150kB from eager-importing every locale).
 export const en = {
-  'app.tagline': 'Image to ASCII art',
-
   'tabs.adjust': 'Adjust',
   'tabs.transform': 'Transform',
   'tabs.filters': 'Filters',
@@ -186,8 +184,6 @@ export type TranslationKey = keyof typeof en
 export type Translations = Partial<Record<TranslationKey, string>>
 
 export const de: Translations = {
-  'app.tagline': 'Bild zu ASCII-Kunst',
-
   'tabs.adjust': 'Anpassen',
   'tabs.transform': 'Transformation',
   'tabs.filters': 'Filter',

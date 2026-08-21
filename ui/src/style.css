@@ -66,16 +66,30 @@ html, body {
    --------------------------------------------------------------------- */
 .app-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1.25rem 1.5rem 0;
 }
 
+/* Logo beside the name now, not a tagline stacked underneath it (jdp: "das
+   logo bitte auch in das ui integrieren, der untertitel... entfernen") -
+   row instead of the old column layout, vertically centred against the
+   logo's own height rather than baseline-aligned against short text alone. */
 .app-brand {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* The logo's own viewBox (223.97 x 76.87) is a wide ribbon, not a square
+   mark - height-constrained so it scales to a sensible header size and
+   lets width follow the real aspect ratio, same approach the README
+   banner generator uses. */
+.app-brand-logo {
+  height: 2.35rem;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .app-brand-name {
@@ -83,11 +97,6 @@ html, body {
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--carbon-text);
-}
-
-.app-brand-tagline {
-  font-size: var(--text-caption);
-  color: var(--carbon-text-muted);
 }
 
 /* Undo/redo - now a card of its own (historyPanel.ts) rather than header

@@ -2,8 +2,6 @@
 import type { Translations } from '../i18n'
 
 const dict: Translations = {
-  'app.tagline': 'Εικόνα σε ASCII τέχνη',
-
   'tabs.adjust': 'Προσαρμογή',
   'tabs.transform': 'Μετασχηματισμός',
   'tabs.filters': 'Φίλτρα',
