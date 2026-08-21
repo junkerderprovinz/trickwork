@@ -57,19 +57,30 @@ html, body {
 }
 
 /* ---------------------------------------------------------------------
-   Header — brand top-left, the Settings badge top-right. A deliberate
+   Header — brand centred, the Settings badge top-right. A deliberate
    exception to GlimStone's own sidebar pattern (design-language.md, "The
    sidebar"): TrickWork has exactly two destinations, not a multi-page
    dashboard, so the documented lightweight alternative (a small square
    badge instead of a full left rail) is the right call here, not the rail
    itself. Recorded as an exception in the vault project note too.
    --------------------------------------------------------------------- */
+/* Three columns, the outer two an equal 1fr each - not flex+space-between,
+   which pushed the brand flush left with empty space only on the right
+   (jdp: "das logo in der ui bitte zentriert"). An empty left spacer
+   (main.ts's headerSpacer) mirrors the Settings badge's own column width,
+   so the middle "auto" column - the brand - lands genuinely centred in the
+   header regardless of the badge's own size, not just centred in whatever
+   space happened to be left over after left-aligning it. */
 .app-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 1.25rem 1.5rem 0;
+}
+
+.app-header .settings-badge {
+  justify-self: end;
 }
 
 /* Logo beside the name now, not a tagline stacked underneath it (jdp: "das

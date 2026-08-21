@@ -55,6 +55,14 @@ const header = document.createElement('header')
 header.className = 'app-header'
 app.appendChild(header)
 
+// A left spacer with no content, matched against the Settings badge on the
+// right by the CSS grid's own equal 1fr columns - this is what actually
+// CENTERS the brand (jdp: "das logo in der ui bitte zentriert") regardless
+// of the badge's own width, rather than just left-aligning it beside empty
+// space on the right. See .app-header's own comment in style.css.
+const headerSpacer = document.createElement('div')
+header.appendChild(headerSpacer)
+
 // The tagline that used to sit under the name is gone (jdp: "der untertitel
 // der jetzt drinnen steht entfernen") - the logo now carries the brand
 // identity instead, sitting beside the name rather than a line below it.
