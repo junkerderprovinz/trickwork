@@ -11,6 +11,7 @@
     "e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "dependencies": {
+    "noto-color-emoji-flags": "^1.0.0",
     "trickwork-core": "*"
   },
   "devDependencies": {

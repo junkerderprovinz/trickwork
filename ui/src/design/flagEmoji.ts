@@ -4,10 +4,13 @@
 // defeats the whole point of using a plain <select> for a dozens-of-entries
 // language list. The regional-indicator emoji sequence needs nothing beyond
 // string concatenation - macOS/Linux/iOS/Android render it as an actual
-// flag glyph; Windows renders the same codepoints as a compact two-letter
-// tag instead (a deliberate, long-standing Microsoft emoji-font policy, not
-// a bug here) - still legible and still distinguishes entries, just not
-// pictorial there.
+// flag glyph; Windows' own text font renders the same codepoints as a
+// compact two-letter tag instead (a deliberate, long-standing Microsoft
+// emoji-font policy, not a bug here). TrickWork's language picker is a
+// custom listbox (controlWidgets.ts), not a native <select>, so it can and
+// does paper over that gap with a dedicated flag webfont on Windows too
+// (style.css's '.dropdown-option-flag', jdp: "Echte Flaggen erzwingen") -
+// this function's own output is unchanged either way, just plain codepoints.
 //
 // Framework-free, like appearance.ts/selectScroll.ts: pure string in,
 // string out.

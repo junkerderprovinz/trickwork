@@ -1,5 +1,14 @@
 @import './design/tokens.css';
 
+/* Noto Color Emoji subset, flag glyphs only (~800KB WOFF2, OFL-1.1 licensed -
+   derived from Google's Noto Color Emoji, see package.json). Windows'
+   Segoe UI Emoji deliberately omits flag glyphs (flagEmoji.ts's own comment
+   explains why - a long-standing Microsoft policy), rendering the regional-
+   indicator pairs as a bare two-letter tag instead; this font carries real
+   COLR-vector flag glyphs so the language picker shows actual flags there
+   too (jdp: "Echte Flaggen erzwingen"), same as macOS/Linux always did. */
+@import 'noto-color-emoji-flags';
+
 /* Named badge-size stages (GlimStone's own "Badges" section, rule: "sizes
    are named stages with one canonical source, not per-instance values" -
    design-language.md). TrickWork had been doing exactly the thing that rule
@@ -1466,6 +1475,10 @@ button:focus-visible {
 .dropdown-option-flag,
 .dropdown-trigger .dropdown-option-flag {
   flex-shrink: 0;
+  /* 'Noto Color Emoji Flags' first, imported above - real flag glyphs on
+     Windows/Chromium too, not just the two-letter fallback the page's own
+     Segoe UI text font would otherwise show for these codepoints. */
+  font-family: 'Noto Color Emoji Flags', "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 .dropdown-option:hover {
   background-color: var(--carbon-hover);
