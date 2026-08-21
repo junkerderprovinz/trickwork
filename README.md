@@ -172,9 +172,9 @@ Open `http://localhost:3210/`. No environment variables, no volumes — that's t
 ## 8. Desktop app
 
 A Wails wrapper around the exact same engine and UI the container serves. Each [release](https://github.com/junkerderprovinz/trickwork/releases)
-carries a real installer per platform: an NSIS installer (`.exe`) on Windows, a `.dmg` on macOS. Linux has no
-equivalent single-file installer convention, so it ships as a plain self-contained binary — `chmod +x` and
-run. To build it yourself right now, see [Development](#9-development) below.
+carries a portable, no-install download per platform: a 64-bit `.exe` on Windows, a `.dmg` on macOS, a plain
+binary on Linux — download, `chmod +x` if needed, and run. To build it yourself right now, see
+[Development](#9-development) below.
 
 <br>
 
