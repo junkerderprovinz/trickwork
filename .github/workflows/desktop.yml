@@ -44,8 +44,14 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      # Kept in step with desktop/go.mod's own wails/v2 version - Renovate
+      # bumps the go.mod library dependency automatically but has no config
+      # to also catch this `go install ...@vX` pin (it's a shell string in a
+      # workflow file, not a go.mod entry), so a Renovate library bump alone
+      # would otherwise silently leave the CLI on an older version than the
+      # library it's generating bindings against.
       - name: Install Wails CLI
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
 
       # GitHub Actions runs `run:` steps under pwsh by default on windows-latest,
       # not bash - `rm -rf` is a bash-ism with no pwsh equivalent flag, so this
