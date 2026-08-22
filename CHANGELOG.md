@@ -2,6 +2,16 @@
 
 All notable changes to TrickWork are documented here.
 
+## 1.1.0 — 2026-08-22
+
+### ✨ Added
+
+- A Height (rows) slider beside Width (columns), with an aspect-ratio lock toggle next to it. Locked (the default) keeps height following width and the source image's own proportions automatically, exactly as every version before this one already did. Unlocked turns Height into a real, independent control.
+
+### ⚡ Improved
+
+- The container image now also mirrors to Docker Hub (`junkerderprovinz/trickwork`), alongside GHCR.
+
 ## 1.0.0 — 2026-08-21
 
 The first public release. TrickWork turns images into proportional-font-aware ASCII art - a rebuild of the abandoned ASCGen2, with characters picked by how much visual "ink" they actually cover at your chosen font instead of by brightness alone.
