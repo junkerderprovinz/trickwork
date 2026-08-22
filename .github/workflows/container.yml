@@ -58,10 +58,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Docker Hub mirror - active only once DOCKERHUB_USERNAME (variable) and
+      # DOCKERHUB_TOKEN (secret) are set together; otherwise skipped (GHCR-only).
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request' && vars.DOCKERHUB_USERNAME != ''
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - uses: docker/metadata-action@v6
         id: meta
         with:
-          images: ghcr.io/junkerderprovinz/trickwork
+          images: |
+            ghcr.io/junkerderprovinz/trickwork
+            name=docker.io/${{ vars.DOCKERHUB_USERNAME }}/trickwork,enable=${{ vars.DOCKERHUB_USERNAME != '' }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=sha-,format=short
