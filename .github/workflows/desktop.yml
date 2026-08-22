@@ -18,7 +18,11 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             slug: windows-amd64
-            extra: ""
+            # -nsis builds BOTH TrickWork.exe (portable) AND a real NSIS
+            # installer in the same build/bin/ output (jdp: "können wir auch
+            # ein windows installer anbieten?" - alongside the portable exe,
+            # not instead of it - see the attach job's Package step below).
+            extra: "-nsis"
           - os: macos-latest
             platform: darwin/universal
             slug: macos-universal
@@ -43,6 +47,22 @@ jobs:
       - name: Install Linux system deps
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      # -nsis (above) shells out to makensis to produce a real Windows
+      # installer alongside the portable exe - windows-latest has
+      # historically carried NSIS preinstalled, but that's an implicit
+      # runner-image detail GitHub has already dropped once for a newer
+      # image (actions/runner-images#11754), so install it explicitly.
+      - name: Install NSIS
+        if: runner.os == 'Windows'
+        run: |
+          choco install nsis -y
+          # choco updates the machine PATH, but that change doesn't reach
+          # this already-running job process - wails build's own NSIS
+          # invocation silently degrades to "Warning: Cannot create
+          # installer: makensis not found" without this (confirmed against
+          # a real run: NSIS installed fine, PATH just never got there).
+          echo "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       # Kept in step with desktop/go.mod's own wails/v2 version - Renovate
       # bumps the go.mod library dependency automatically but has no config
@@ -105,23 +125,26 @@ jobs:
         with:
           path: bundles
 
-      # One file per platform, named for the tag - not a zip of the raw build
-      # output. Windows ships as a portable, no-install .exe (jdp: "Die
-      # Desktopversion soll portable sein und ohne installation nutzbar
-      # sein... bei windows eine 64 bit version" - reverses the earlier NSIS
-      # installer decision; windows/amd64 in the build matrix above already
-      # is the 64-bit build, so nothing changes there, just what ships).
-      # macOS's .dmg is Apple's own drag-to-Applications convention, not an
-      # installer wizard with registry/service side effects, so it stays.
-      # Linux has no single-file installer convention either, so its own
-      # "installation file" is the raw self-contained binary (chmod +x &&
-      # run) - already portable, unchanged.
+      # One file per platform/option, named for the tag - not a zip of the
+      # raw build output. Windows ships TWO options side by side (jdp:
+      # "können wir auch ein windows installer anbieten?" - the portable exe
+      # stays, an NSIS installer is offered alongside it, not instead of
+      # it): download-and-run for anyone who wants no install step, or a
+      # real installer (Start Menu entry, uninstaller) for anyone who
+      # prefers that. macOS's .dmg is Apple's own drag-to-Applications
+      # convention, not an installer wizard with registry/service side
+      # effects, so it stays as the one option there. Linux has no
+      # single-file installer convention either, so its own "installation
+      # file" is the raw self-contained binary (chmod +x && run) - already
+      # portable, unchanged.
       - name: Package
         run: |
           set -eu
           mkdir -p dist
           cp bundles/trickwork-windows-amd64/TrickWork.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-portable.exe"
+          cp bundles/trickwork-windows-amd64/*-installer.exe \
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
             "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
           cp bundles/trickwork-linux-amd64/TrickWork \

@@ -175,14 +175,15 @@ Open `http://localhost:3210/`. No environment variables, no volumes — that's t
 
 A Wails wrapper around the exact same engine and UI the container serves. Each [release](https://github.com/junkerderprovinz/trickwork/releases)
 carries a portable, no-install download per platform: a 64-bit `.exe` on Windows, a `.dmg` on macOS, a plain
-binary on Linux — download, `chmod +x` if needed, and run. To build it yourself right now, see
-[Development](#9-development) below.
+binary on Linux — download, `chmod +x` if needed, and run. Windows also gets a real installer alongside the
+portable `.exe`, for anyone who'd rather have a Start Menu entry and an uninstaller than a bare download. To
+build it yourself right now, see [Development](#9-development) below.
 
-**Windows may show a "Windows protected your PC" SmartScreen prompt** the first time you run the `.exe` — this
-is Microsoft's reputation check for freshly-downloaded, unsigned executables, not a sign anything is wrong.
-Click **More info**, then **Run anyway**. The warning fades on its own as more people download and run this
-exact build without incident; there's no faster free workaround, and code-signing (the only way to remove it
-immediately) isn't currently in place for this project.
+**Windows may show a "Windows protected your PC" SmartScreen prompt** the first time you run either the
+portable `.exe` or the installer — this is Microsoft's reputation check for freshly-downloaded, unsigned
+executables, not a sign anything is wrong. Click **More info**, then **Run anyway**. The warning fades on its
+own as more people download and run this exact build without incident; there's no faster free workaround, and
+code-signing (the only way to remove it immediately) isn't currently in place for this project.
 
 <br>
 
