@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Bredde ændret',
 
+  'history.entryHeight': 'Højde ændret',
+
+  'history.entryAspectLocked': 'Billedformat låst',
+
   'history.entryCharsetEdited': 'Tegnsæt redigeret',
 
   'history.entryCharsetPreset': 'Tegnsæt: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Indstillinger',
   'controls.width': 'Bredde (kolonner)',
+  'controls.height': 'Højde (rækker)',
+  'controls.aspectLocked': 'Billedformat låst - højde følger bredde',
+  'controls.aspectUnlocked': 'Billedformat låst op - højde er uafhængig',
   'controls.brightness': 'Lysstyrke',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Tegnsæt',

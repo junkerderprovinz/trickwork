@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'تم تغيير العرض',
 
+  'history.entryHeight': 'تم تغيير الارتفاع',
+
+  'history.entryAspectLocked': 'تم قفل نسبة العرض إلى الارتفاع',
+
   'history.entryCharsetEdited': 'تم تعديل مجموعة الأحرف',
 
   'history.entryCharsetPreset': 'مجموعة الأحرف: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'الإعدادات',
   'controls.width': 'العرض (أعمدة)',
+  'controls.height': 'الارتفاع (صفوف)',
+  'controls.aspectLocked': 'نسبة العرض إلى الارتفاع مقفلة - يتبع الارتفاع العرض',
+  'controls.aspectUnlocked': 'نسبة العرض إلى الارتفاع غير مقفلة - الارتفاع مستقل',
   'controls.brightness': 'السطوع',
   'controls.contrast': 'التباين',
   'controls.charset': 'مجموعة الأحرف',

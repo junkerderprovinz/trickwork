@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': '宽度已更改',
 
+  'history.entryHeight': '高度已更改',
+
+  'history.entryAspectLocked': '宽高比已锁定',
+
   'history.entryCharsetEdited': '字符集已编辑',
 
   'history.entryCharsetPreset': '字符集：{preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': '控制项',
   'controls.width': '宽度(列数)',
+  'controls.height': '高度(行数)',
+  'controls.aspectLocked': '宽高比已锁定 - 高度跟随宽度',
+  'controls.aspectUnlocked': '宽高比已解锁 - 高度独立',
   'controls.brightness': '亮度',
   'controls.contrast': '对比度',
   'controls.charset': '字符集',

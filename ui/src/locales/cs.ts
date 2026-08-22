@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Šířka změněna',
 
+  'history.entryHeight': 'Výška změněna',
+
+  'history.entryAspectLocked': 'Poměr stran uzamčen',
+
   'history.entryCharsetEdited': 'Znaková sada upravena',
 
   'history.entryCharsetPreset': 'Znaková sada: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Ovládání',
   'controls.width': 'Šířka (sloupce)',
+  'controls.height': 'Výška (řádky)',
+  'controls.aspectLocked': 'Poměr stran uzamčen - výška sleduje šířku',
+  'controls.aspectUnlocked': 'Poměr stran odemčen - výška je nezávislá',
   'controls.brightness': 'Jas',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Znaková sada',

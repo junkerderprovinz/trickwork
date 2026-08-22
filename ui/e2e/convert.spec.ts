@@ -456,3 +456,56 @@ test('rainbow mode gives each queue row its own hue, and the language picker sho
   expect(hue1).not.toBe('')
   expect(hue0).not.toBe(hue1)
 })
+
+test('height slider follows width while locked, and becomes independent once unlocked', async ({ page }) => {
+  await page.goto('/')
+
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png')) // 16x16, square
+
+  const widthSlider = page
+    .locator('.control-slider', { hasText: 'Width (columns)' })
+    .locator('input[type="range"]')
+  const heightSlider = page
+    .locator('.control-slider', { hasText: 'Height (rows)' })
+    .locator('input[type="range"]')
+  // Scoped to its own wrapper, not by accessible name - the lock toggle's
+  // name swaps between locked/unlocked (same reason the Settings badge is
+  // never located by name either), and .icon-toggle-button alone would also
+  // match Flip/Invert/Dither/Color elsewhere on the page.
+  const lockToggle = page.locator('.control-slider-with-toggle .icon-toggle-button')
+
+  // Locked by default: a 16x16 (square) source at the default 120 columns
+  // auto-derives to 60 rows (CELL_ASPECT_COMPENSATION=2 halves it), and the
+  // slider itself isn't draggable yet.
+  await expect(heightSlider).toHaveValue('60')
+  await expect(heightSlider).toBeDisabled()
+  await expect(lockToggle).toHaveAttribute('aria-pressed', 'true')
+
+  // Still locked: dragging Width alone has to move Height's OWN displayed
+  // value live, with no click on Height itself - this is the one behaviour
+  // that can't be proven by reading the store, only by watching the second
+  // slider's <input> update on screen.
+  await widthSlider.focus()
+  await widthSlider.fill('60') // half the default width, same square source -> half the rows too
+  await expect(heightSlider).toHaveValue('30')
+
+  // Unlock: Height becomes a real, independent control.
+  await lockToggle.click()
+  await expect(lockToggle).toHaveAttribute('aria-pressed', 'false')
+  await expect(heightSlider).toBeEnabled()
+  await heightSlider.focus()
+  await heightSlider.fill('99')
+  await expect(heightSlider).toHaveValue('99')
+
+  // Widening again while unlocked must NOT touch the now-independent Height.
+  await widthSlider.fill('200')
+  await expect(heightSlider).toHaveValue('99')
+
+  // Re-lock: discards the manual override and snaps back to the auto value
+  // for whatever Width currently is (200 columns, same square source -> 100).
+  await lockToggle.click()
+  await expect(lockToggle).toHaveAttribute('aria-pressed', 'true')
+  await expect(heightSlider).toBeDisabled()
+  await expect(heightSlider).toHaveValue('100')
+})

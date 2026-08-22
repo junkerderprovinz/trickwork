@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Lățime modificată',
 
+  'history.entryHeight': 'Înălțime modificată',
+
+  'history.entryAspectLocked': 'Raport de aspect blocat',
+
   'history.entryCharsetEdited': 'Set de caractere editat',
 
   'history.entryCharsetPreset': 'Set de caractere: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Comenzi',
   'controls.width': 'Lățime (coloane)',
+  'controls.height': 'Înălțime (rânduri)',
+  'controls.aspectLocked': 'Raport de aspect blocat - înălțimea urmează lățimea',
+  'controls.aspectUnlocked': 'Raport de aspect deblocat - înălțimea este independentă',
   'controls.brightness': 'Luminozitate',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Set de caractere',

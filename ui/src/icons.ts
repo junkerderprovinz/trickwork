@@ -65,6 +65,24 @@ export function iconDither(): string {
   )
 }
 
+// A closed padlock - the aspect-ratio lock in its LOCKED state (Height
+// follows Width automatically).
+export function iconLockClosed(): string {
+  return controlSvg(
+    `<rect x="4.5" y="9" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
+      `<path d="M7 9V6.5a3 3 0 0 1 6 0V9" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" />`,
+  )
+}
+
+// Same shackle, swung open - the UNLOCKED state (Height is a real
+// independent slider).
+export function iconLockOpen(): string {
+  return controlSvg(
+    `<rect x="4.5" y="9" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
+      `<path d="M7 9V6.5a3 3 0 0 1 5.7-1.3" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" />`,
+  )
+}
+
 // A paint droplet - color output.
 export function iconColor(): string {
   return controlSvg(

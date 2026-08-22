@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': '幅を変更しました',
 
+  'history.entryHeight': '高さを変更しました',
+
+  'history.entryAspectLocked': 'アスペクト比をロックしました',
+
   'history.entryCharsetEdited': '文字セットを編集しました',
 
   'history.entryCharsetPreset': '文字セット: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'コントロール',
   'controls.width': '幅(列数)',
+  'controls.height': '高さ(行数)',
+  'controls.aspectLocked': 'アスペクト比がロックされています - 高さは幅に連動します',
+  'controls.aspectUnlocked': 'アスペクト比のロックが解除されています - 高さは独立しています',
   'controls.brightness': '明るさ',
   'controls.contrast': 'コントラスト',
   'controls.charset': '文字セット',

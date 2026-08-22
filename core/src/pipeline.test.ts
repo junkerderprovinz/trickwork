@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { applyImageFilters } from './pipeline'
+import { applyImageFilters, effectiveDimensions } from './pipeline'
 import type { MappingOptions } from './types'
 
 function makeImageData(pixels: number[][]): ImageData {
@@ -114,5 +114,37 @@ describe('applyImageFilters', () => {
     const out = applyImageFilters(img, baseOptions)
     expect(out.width).toBe(2)
     expect(pixel0(out)).toBe(10)
+  })
+})
+
+describe('effectiveDimensions', () => {
+  it('matches applyImageFilters\'s own output size for a crop, without touching any pixels', () => {
+    const img = makeImageData([
+      [10, 20, 30, 40],
+      [50, 60, 70, 80],
+    ])
+    const options: MappingOptions = {
+      ...baseOptions,
+      crop: { x: 0.25, y: 0, width: 0.5, height: 1 },
+    }
+    const real = applyImageFilters(img, options)
+    const predicted = effectiveDimensions(img.width, img.height, options)
+    expect(predicted).toEqual({ width: real.width, height: real.height })
+  })
+
+  it('matches applyImageFilters\'s own output size for a 90-degree rotate (width/height swap)', () => {
+    const img = makeImageData([[10, 20, 30]]) // 3x1
+    const options: MappingOptions = { ...baseOptions, rotate: 90 }
+    const real = applyImageFilters(img, options)
+    const predicted = effectiveDimensions(img.width, img.height, options)
+    expect(predicted).toEqual({ width: real.width, height: real.height })
+  })
+
+  it('a 180-degree rotate keeps width/height unchanged', () => {
+    expect(effectiveDimensions(10, 6, { rotate: 180 })).toEqual({ width: 10, height: 6 })
+  })
+
+  it('is a no-op when crop and rotate are both absent', () => {
+    expect(effectiveDimensions(10, 6, {})).toEqual({ width: 10, height: 6 })
   })
 })

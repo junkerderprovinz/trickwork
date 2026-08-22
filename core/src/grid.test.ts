@@ -1,6 +1,6 @@
 // core/src/grid.test.ts
 import { describe, expect, it } from 'vitest'
-import { assembleGrid } from './grid'
+import { assembleGrid, computeAutoRows } from './grid'
 import type { FontWidthTable, MappingOptions } from './types'
 
 function makeImageData(pixels: number[][]): ImageData {
@@ -47,6 +47,25 @@ describe('assembleGrid', () => {
     const grid = assembleGrid(img, table, options)
     expect(grid).toHaveLength(1) // 4x2 image, 2 columns -> 2px-wide blocks -> 1 row
     expect(grid[0]).toHaveLength(2)
+  })
+
+  it('an explicit rows value overrides the aspect-ratio-matched auto row count', () => {
+    const img = makeImageData([
+      [0, 0, 255, 255],
+      [0, 0, 255, 255],
+    ])
+    const options: MappingOptions = {
+      columns: 2,
+      rows: 5,
+      brightness: 0,
+      contrast: 0,
+      charset: ['@', ' '],
+      font: { family: 'monospace', sizePx: 16 },
+    }
+    // Without the override this would auto-derive to 1 row (see the test
+    // above, same image/columns) - the explicit value has to win outright.
+    const grid = assembleGrid(img, table, options)
+    expect(grid).toHaveLength(5)
   })
 
   it('maps a dark block to the dark glyph and a bright block to the blank glyph', () => {
@@ -182,5 +201,17 @@ describe('assembleGrid', () => {
     const grid = assembleGrid(img, table, options)
     expect(grid).toHaveLength(1)
     expect(grid[0]).toHaveLength(3)
+  })
+})
+
+describe('computeAutoRows', () => {
+  it("matches assembleGrid's own auto row count for the same inputs", () => {
+    // 400x200 source, 100 columns -> 4px-wide blocks -> 8px-tall blocks
+    // (CELL_ASPECT_COMPENSATION) -> 200/8 = 25 rows.
+    expect(computeAutoRows(400, 200, 100)).toBe(25)
+  })
+
+  it('never returns fewer than 1 row, even for an extremely wide, short source', () => {
+    expect(computeAutoRows(10000, 1, 400)).toBe(1)
   })
 })

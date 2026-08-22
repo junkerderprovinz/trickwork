@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Largura alterada',
 
+  'history.entryHeight': 'Altura alterada',
+
+  'history.entryAspectLocked': 'Proporção bloqueada',
+
   'history.entryCharsetEdited': 'Conjunto de caracteres editado',
 
   'history.entryCharsetPreset': 'Conjunto de caracteres: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Controles',
   'controls.width': 'Largura (colunas)',
+  'controls.height': 'Altura (linhas)',
+  'controls.aspectLocked': 'Proporção bloqueada - a altura segue a largura',
+  'controls.aspectUnlocked': 'Proporção desbloqueada - a altura é independente',
   'controls.brightness': 'Brilho',
   'controls.contrast': 'Contraste',
   'controls.charset': 'Conjunto de caracteres',

@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Breedte gewijzigd',
 
+  'history.entryHeight': 'Hoogte gewijzigd',
+
+  'history.entryAspectLocked': 'Beeldverhouding vergrendeld',
+
   'history.entryCharsetEdited': 'Tekenset bewerkt',
 
   'history.entryCharsetPreset': 'Tekenset: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Instellingen',
   'controls.width': 'Breedte (kolommen)',
+  'controls.height': 'Hoogte (rijen)',
+  'controls.aspectLocked': 'Beeldverhouding vergrendeld - hoogte volgt breedte',
+  'controls.aspectUnlocked': 'Beeldverhouding ontgrendeld - hoogte is onafhankelijk',
   'controls.brightness': 'Helderheid',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Tekenset',

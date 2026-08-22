@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'เปลี่ยนความกว้างแล้ว',
 
+  'history.entryHeight': 'เปลี่ยนความสูงแล้ว',
+
+  'history.entryAspectLocked': 'ล็อกอัตราส่วนภาพแล้ว',
+
   'history.entryCharsetEdited': 'แก้ไขชุดอักขระแล้ว',
 
   'history.entryCharsetPreset': 'ชุดอักขระ: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'ตัวควบคุม',
   'controls.width': 'ความกว้าง (คอลัมน์)',
+  'controls.height': 'ความสูง (แถว)',
+  'controls.aspectLocked': 'ล็อกอัตราส่วนภาพแล้ว - ความสูงตามความกว้าง',
+  'controls.aspectUnlocked': 'ปลดล็อกอัตราส่วนภาพแล้ว - ความสูงเป็นอิสระ',
   'controls.brightness': 'ความสว่าง',
   'controls.contrast': 'ความคมชัด',
   'controls.charset': 'ชุดอักขระ',

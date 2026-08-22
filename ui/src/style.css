@@ -712,6 +712,37 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* The Height slider while the aspect-ratio lock holds it to an auto value -
+   still shows the live number, just not draggable. A flat neutral thumb
+   (not --accent) reads as "not an editable control right now" at a glance. */
+input[type="range"]:disabled {
+  cursor: not-allowed;
+}
+input[type="range"]:disabled::-webkit-slider-thumb {
+  background: var(--carbon-text-muted);
+  cursor: not-allowed;
+}
+input[type="range"]:disabled::-moz-range-thumb {
+  background: var(--carbon-text-muted);
+  cursor: not-allowed;
+}
+
+/* Width's slider stays full-width; Height's shares its row with the
+   aspect-ratio lock toggle beside it, vertically centred against the whole
+   two-row (label + track) control rather than either row alone. */
+.control-slider-with-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.control-slider-with-toggle .control-slider {
+  flex: 1;
+  min-width: 0;
+}
+.control-slider-with-toggle .icon-toggle-button {
+  flex-shrink: 0;
+}
+
 /* Form fields: borderless and filled (rule 14), focus is a brightness
    step rather than a ring. */
 select,

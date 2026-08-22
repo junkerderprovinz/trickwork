@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Szélesség megváltozott',
 
+  'history.entryHeight': 'Magasság megváltozott',
+
+  'history.entryAspectLocked': 'Méretarány zárolva',
+
   'history.entryCharsetEdited': 'Karakterkészlet szerkesztve',
 
   'history.entryCharsetPreset': 'Karakterkészlet: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Beállítások',
   'controls.width': 'Szélesség (oszlopok)',
+  'controls.height': 'Magasság (sorok)',
+  'controls.aspectLocked': 'Méretarány zárolva - a magasság követi a szélességet',
+  'controls.aspectUnlocked': 'Méretarány feloldva - a magasság független',
   'controls.brightness': 'Fényerő',
   'controls.contrast': 'Kontraszt',
   'controls.charset': 'Karakterkészlet',

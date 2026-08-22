@@ -55,6 +55,7 @@ function validateOptions(value: unknown): MappingOptions | null {
     font: { family: font.family, sizePx: font.sizePx },
   }
 
+  if (isFiniteNumber(v.rows) && v.rows > 0) options.rows = v.rows
   if (typeof v.color === 'boolean') options.color = v.color
   if (typeof v.dither === 'boolean') options.dither = v.dither
   if (v.rotate === 0 || v.rotate === 90 || v.rotate === 180 || v.rotate === 270) options.rotate = v.rotate

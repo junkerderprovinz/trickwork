@@ -19,6 +19,37 @@ import type { MappingOptions } from './types'
  * internally by each filter (see filters.ts), so calling this with an
  * all-default options object is cheap - just a single ImageData clone.
  */
+/**
+ * The width/height cropImage()/rotateImage() (via applyImageFilters above)
+ * would produce for this options object, without doing any pixel work -
+ * dimensions only, mirroring their exact rounding/clamping so this never
+ * drifts from what the real pipeline actually produces. Used by the UI to
+ * predict the aspect-ratio-matched row count live while dragging the width
+ * slider, where running the full pixel pipeline on every 'input' tick would
+ * be wasted work - the prediction is cosmetic only (assembleGrid always
+ * recomputes the real row count itself when MappingOptions.rows is unset).
+ */
+export function effectiveDimensions(
+  width: number,
+  height: number,
+  options: Pick<MappingOptions, 'crop' | 'rotate'>,
+): { width: number; height: number } {
+  let w = width
+  let h = height
+  if (options.crop) {
+    const x = Math.round(Math.min(1, Math.max(0, options.crop.x)) * w)
+    const y = Math.round(Math.min(1, Math.max(0, options.crop.y)) * h)
+    const requestedW = Math.max(1, Math.round(Math.min(1, Math.max(0, options.crop.width)) * w))
+    const requestedH = Math.max(1, Math.round(Math.min(1, Math.max(0, options.crop.height)) * h))
+    w = Math.max(1, Math.min(requestedW, w - x))
+    h = Math.max(1, Math.min(requestedH, h - y))
+  }
+  if (options.rotate === 90 || options.rotate === 270) {
+    ;[w, h] = [h, w]
+  }
+  return { width: w, height: h }
+}
+
 export function applyImageFilters(imageData: ImageData, options: MappingOptions): ImageData {
   let result = imageData
   if (options.crop) {

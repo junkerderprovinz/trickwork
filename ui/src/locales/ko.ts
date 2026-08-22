@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': '너비 변경됨',
 
+  'history.entryHeight': '높이 변경됨',
+
+  'history.entryAspectLocked': '가로세로 비율 잠김',
+
   'history.entryCharsetEdited': '문자 세트 편집됨',
 
   'history.entryCharsetPreset': '문자 세트: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': '설정',
   'controls.width': '너비(열)',
+  'controls.height': '높이(행)',
+  'controls.aspectLocked': '가로세로 비율 잠김 - 높이가 너비를 따름',
+  'controls.aspectUnlocked': '가로세로 비율 잠금 해제됨 - 높이가 독립적임',
   'controls.brightness': '밝기',
   'controls.contrast': '대비',
   'controls.charset': '문자 세트',

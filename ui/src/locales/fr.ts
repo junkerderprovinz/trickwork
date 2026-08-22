@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Largeur modifiée',
 
+  'history.entryHeight': 'Hauteur modifiée',
+
+  'history.entryAspectLocked': "Ratio d'aspect verrouillé",
+
   'history.entryCharsetEdited': 'Jeu de caractères modifié',
 
   'history.entryCharsetPreset': 'Jeu de caractères : {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Réglages',
   'controls.width': 'Largeur (colonnes)',
+  'controls.height': 'Hauteur (lignes)',
+  'controls.aspectLocked': "Ratio d'aspect verrouillé - la hauteur suit la largeur",
+  'controls.aspectUnlocked': "Ratio d'aspect déverrouillé - la hauteur est indépendante",
   'controls.brightness': 'Luminosité',
   'controls.contrast': 'Contraste',
   'controls.charset': 'Jeu de caractères',

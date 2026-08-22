@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Szerokość zmieniona',
 
+  'history.entryHeight': 'Wysokość zmieniona',
+
+  'history.entryAspectLocked': 'Proporcje zablokowane',
+
   'history.entryCharsetEdited': 'Zestaw znaków edytowany',
 
   'history.entryCharsetPreset': 'Zestaw znaków: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Ustawienia',
   'controls.width': 'Szerokość (kolumny)',
+  'controls.height': 'Wysokość (wiersze)',
+  'controls.aspectLocked': 'Proporcje zablokowane - wysokość podąża za szerokością',
+  'controls.aspectUnlocked': 'Proporcje odblokowane - wysokość jest niezależna',
   'controls.brightness': 'Jasność',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Zestaw znaków',

@@ -25,6 +25,10 @@ export const en = {
 
   'history.entryWidth': 'Width changed',
 
+  'history.entryHeight': 'Height changed',
+
+  'history.entryAspectLocked': 'Aspect ratio locked',
+
   'history.entryCharsetEdited': 'Charset edited',
 
   'history.entryCharsetPreset': 'Charset: {preset}',
@@ -79,6 +83,9 @@ export const en = {
 
   'controls.eyebrow': 'Controls',
   'controls.width': 'Width (columns)',
+  'controls.height': 'Height (rows)',
+  'controls.aspectLocked': 'Aspect ratio locked - height follows width',
+  'controls.aspectUnlocked': 'Aspect ratio unlocked - height is independent',
   'controls.brightness': 'Brightness',
   'controls.contrast': 'Contrast',
   'controls.charset': 'Character set',
@@ -197,6 +204,10 @@ export const de: Translations = {
 
   'history.entryWidth': 'Breite geändert',
 
+  'history.entryHeight': 'Höhe geändert',
+
+  'history.entryAspectLocked': 'Seitenverhältnis gesperrt',
+
   'history.entryCharsetEdited': 'Zeichensatz bearbeitet',
 
   'history.entryCharsetPreset': 'Zeichensatz: {preset}',
@@ -251,6 +262,9 @@ export const de: Translations = {
 
   'controls.eyebrow': 'Regler',
   'controls.width': 'Breite (Spalten)',
+  'controls.height': 'Höhe (Zeilen)',
+  'controls.aspectLocked': 'Seitenverhältnis gesperrt - Höhe folgt der Breite',
+  'controls.aspectUnlocked': 'Seitenverhältnis entsperrt - Höhe ist unabhängig',
   'controls.brightness': 'Helligkeit',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Zeichensatz',

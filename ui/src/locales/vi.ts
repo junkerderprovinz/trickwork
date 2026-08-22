@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Đã thay đổi chiều rộng',
 
+  'history.entryHeight': 'Đã thay đổi chiều cao',
+
+  'history.entryAspectLocked': 'Đã khóa tỷ lệ khung hình',
+
   'history.entryCharsetEdited': 'Đã chỉnh sửa bộ ký tự',
 
   'history.entryCharsetPreset': 'Bộ ký tự: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Điều khiển',
   'controls.width': 'Chiều rộng (cột)',
+  'controls.height': 'Chiều cao (hàng)',
+  'controls.aspectLocked': 'Tỷ lệ khung hình đã khóa - chiều cao theo chiều rộng',
+  'controls.aspectUnlocked': 'Tỷ lệ khung hình đã mở khóa - chiều cao độc lập',
   'controls.brightness': 'Độ sáng',
   'controls.contrast': 'Độ tương phản',
   'controls.charset': 'Bộ ký tự',

@@ -30,6 +30,20 @@ const DITHER_BELOW_RIGHT = 1 / 16
  */
 export const CELL_ASPECT_COMPENSATION = 2
 
+/**
+ * The row count that keeps the output matching the source image's own
+ * proportions at the given column count - the same formula assembleGrid
+ * itself falls back to whenever MappingOptions.rows is omitted. Exported so
+ * the UI's aspect-ratio lock (controls.ts) can show/derive the same value
+ * without re-deriving the formula a second time and risking it drifting out
+ * of step with the one grid sampling actually uses.
+ */
+export function computeAutoRows(sourceWidth: number, sourceHeight: number, columns: number): number {
+  const blockW = sourceWidth / Math.max(1, columns)
+  const blockH = blockW * CELL_ASPECT_COMPENSATION
+  return Math.max(1, Math.round(sourceHeight / blockH))
+}
+
 export function assembleGrid(
   imageData: ImageData,
   table: FontWidthTable,
@@ -39,7 +53,10 @@ export function assembleGrid(
   const columns = Math.max(1, options.columns)
   const blockW = width / columns
   const blockH = blockW * CELL_ASPECT_COMPENSATION
-  const rows = Math.max(1, Math.round(height / blockH))
+  const rows =
+    options.rows !== undefined
+      ? Math.max(1, Math.round(options.rows))
+      : computeAutoRows(width, height, columns)
 
   // One accumulator per cell, only allocated when dithering is on. A cell's
   // diffused error can arrive from its left, top-left, top, or top-right

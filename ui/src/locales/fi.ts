@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Leveys muutettu',
 
+  'history.entryHeight': 'Korkeus muutettu',
+
+  'history.entryAspectLocked': 'Kuvasuhde lukittu',
+
   'history.entryCharsetEdited': 'Merkistöä muokattu',
 
   'history.entryCharsetPreset': 'Merkistö: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Säädöt',
   'controls.width': 'Leveys (sarakkeet)',
+  'controls.height': 'Korkeus (rivit)',
+  'controls.aspectLocked': 'Kuvasuhde lukittu - korkeus seuraa leveyttä',
+  'controls.aspectUnlocked': 'Kuvasuhteen lukitus avattu - korkeus on riippumaton',
   'controls.brightness': 'Kirkkaus',
   'controls.contrast': 'Kontrasti',
   'controls.charset': 'Merkistö',

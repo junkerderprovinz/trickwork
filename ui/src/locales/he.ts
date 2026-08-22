@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'הרוחב השתנה',
 
+  'history.entryHeight': 'הגובה השתנה',
+
+  'history.entryAspectLocked': 'יחס הממדים ננעל',
+
   'history.entryCharsetEdited': 'ערכת התווים נערכה',
 
   'history.entryCharsetPreset': 'ערכת תווים: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'בקרות',
   'controls.width': 'רוחב (עמודות)',
+  'controls.height': 'גובה (שורות)',
+  'controls.aspectLocked': 'יחס הממדים נעול - הגובה עוקב אחר הרוחב',
+  'controls.aspectUnlocked': 'יחס הממדים פתוח - הגובה בלתי תלוי',
   'controls.brightness': 'בהירות',
   'controls.contrast': 'ניגודיות',
   'controls.charset': 'ערכת תווים',

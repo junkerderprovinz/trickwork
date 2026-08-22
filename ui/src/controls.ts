@@ -1,8 +1,15 @@
-import { CHARSET_PRESETS, type CharsetPresetKey } from 'trickwork-core'
-import { applyHueVars } from './controlWidgets'
+import {
+  CELL_ASPECT_COMPENSATION,
+  CHARSET_PRESETS,
+  computeAutoRows,
+  effectiveDimensions,
+  type CharsetPresetKey,
+} from 'trickwork-core'
+import { applyHueVars, iconToggleButton } from './controlWidgets'
 import { subscribeRainbow } from './design/appearance'
 import { enableSelectScroll } from './design/selectScroll'
 import { infoIcon } from './design/tooltip'
+import { iconLockClosed, iconLockOpen } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
@@ -27,6 +34,29 @@ const CHARSET_PRESET_KEYS: Record<CharsetPresetKey, TranslationKey> = {
 // man mit doppelklick auf den reglerknopf zurücksetzen können").
 const DEFAULT_COLUMNS = 120
 
+// Shown for the Height slider only before any image has been loaded yet
+// (computeDisplayRows below has nothing to derive an aspect ratio from at
+// that point) - matches what a 1:1 image at DEFAULT_COLUMNS would auto-
+// compute, via the same CELL_ASPECT_COMPENSATION real generation uses.
+const DEFAULT_ROWS_FALLBACK = Math.round(DEFAULT_COLUMNS / CELL_ASPECT_COMPENSATION)
+
+/**
+ * The row count the Height slider should currently show: MappingOptions.rows
+ * itself once the user has set an explicit override (unlocked), otherwise the
+ * same aspect-ratio-matched value assembleGrid would auto-derive for the
+ * active image at the given column count - computed via effectiveDimensions
+ * (crop/rotate math only, no pixel work) rather than running the full
+ * applyImageFilters pipeline just to read its output size.
+ */
+function computeDisplayRows(store: Store, columns: number): number {
+  const state = store.getState()
+  if (state.options.rows !== undefined) return state.options.rows
+  const activeItem = state.items.find((item) => item.id === state.activeItemId)
+  if (!activeItem?.imageData) return DEFAULT_ROWS_FALLBACK
+  const { width, height } = effectiveDimensions(activeItem.imageData.width, activeItem.imageData.height, state.options)
+  return computeAutoRows(width, height, columns)
+}
+
 const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontMonoSystem', family: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
   { key: 'controls.fontMonoAlt', family: 'Consolas, "Courier New", monospace' },
@@ -44,6 +74,16 @@ export function mountControls(container: HTMLElement, store: Store): void {
   panel.className = 'controls'
   container.appendChild(panel)
 
+  // Outside build() so it survives a rebuild (locale switch, undo/redo,
+  // rainbow toggle) - only the lock toggle itself changes it. Locked is the
+  // default (jdp never asked for unlocked-by-default, and it matches every
+  // release before this one, where height always followed width implicitly).
+  // Deliberately NOT part of MappingOptions: it's a UI editing mode, not a
+  // generation parameter - "rows: undefined" already means "auto, locked to
+  // width" on its own (see computeDisplayRows), so locked/unlocked is fully
+  // derivable from whether rows is set. No separate flag to keep in sync.
+  let aspectLocked = true
+
   function build(): void {
     eyebrow.textContent = t('controls.eyebrow')
     panel.innerHTML = ''
@@ -56,12 +96,71 @@ export function mountControls(container: HTMLElement, store: Store): void {
       options.columns,
       (value) => {
         store.setState({ options: { ...store.getState().options, columns: value } })
+        // Locked: rows stays undefined (still auto) - only the Height
+        // slider's OWN displayed number needs to track the new width live,
+        // without the full-panel rebuild a store.subscribe would cause on
+        // every drag tick (see numberSlider's own gesture-based undo
+        // comment for why that matters here too).
+        if (aspectLocked) syncRowsDisplay(computeDisplayRows(store, value))
       },
       1,
       () => store.commitOptionsSnapshot(t('history.entryWidth')),
       0,
       DEFAULT_COLUMNS,
     )
+
+    // A plain sibling row, NOT nested inside numberSlider's own <label> -
+    // that wrapper exists so clicking the row helps focus its <input>, and a
+    // <button> living inside the same <label> would receive stray forwarded
+    // clicks meant for the range input (the implicit label/control
+    // association HTML gives every <label>). Keeping the toggle as a sibling
+    // avoids that entirely, at the cost of the toggle sitting beside the
+    // whole Height control rather than inline with just its label text.
+    const rowsWrap = document.createElement('div')
+    rowsWrap.className = 'control-slider-with-toggle'
+    const rows = numberSlider(
+      t('controls.height'),
+      5,
+      200,
+      computeDisplayRows(store, options.columns),
+      (value) => {
+        store.setState({ options: { ...store.getState().options, rows: value } })
+      },
+      1,
+      () => store.commitOptionsSnapshot(t('history.entryHeight')),
+      0,
+      computeDisplayRows(store, options.columns),
+    )
+    const rowsInput = rows.querySelector('input') as HTMLInputElement
+    const rowsValueText = rows.querySelector('.control-slider-value') as HTMLElement
+    rowsInput.disabled = aspectLocked
+
+    function syncRowsDisplay(value: number): void {
+      rowsInput.value = String(value)
+      rowsValueText.textContent = String(value)
+    }
+
+    const lockToggle = iconToggleButton(
+      t(aspectLocked ? 'controls.aspectLocked' : 'controls.aspectUnlocked'),
+      aspectLocked ? iconLockClosed() : iconLockOpen(),
+      aspectLocked,
+      (checked) => {
+        aspectLocked = checked
+        if (aspectLocked) {
+          // Locking discards any explicit override and goes back to
+          // matching the image's own proportions - the same "auto" state
+          // rows started in, not just freezing wherever it happened to be.
+          // Omits the key entirely rather than setting it to `undefined` -
+          // exactOptionalPropertyTypes treats those as different (same trap
+          // GlimStone's own appearance.ts hit and documented).
+          store.commitOptionsSnapshot(t('history.entryAspectLocked'))
+          const { rows: _rows, ...withoutRows } = store.getState().options
+          store.setState({ options: withoutRows })
+        }
+        build()
+      },
+    )
+    rowsWrap.append(rows, lockToggle)
 
     const charsetWrap = document.createElement('div')
     charsetWrap.className = 'control-slider'
@@ -212,7 +311,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     fontLabel.appendChild(fontSelect)
     enableSelectScroll(fontSelect)
 
-    panel.append(columns, charsetWrap, fontLabel)
+    panel.append(columns, rowsWrap, charsetWrap, fontLabel)
   }
 
   build()

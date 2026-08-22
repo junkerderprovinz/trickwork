@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Genişlik değiştirildi',
 
+  'history.entryHeight': 'Yükseklik değiştirildi',
+
+  'history.entryAspectLocked': 'En boy oranı kilitlendi',
+
   'history.entryCharsetEdited': 'Karakter kümesi düzenlendi',
 
   'history.entryCharsetPreset': 'Karakter kümesi: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Kontroller',
   'controls.width': 'Genişlik (sütun)',
+  'controls.height': 'Yükseklik (satır)',
+  'controls.aspectLocked': 'En boy oranı kilitli - yükseklik genişliği takip eder',
+  'controls.aspectUnlocked': 'En boy oranı kilidi açık - yükseklik bağımsız',
   'controls.brightness': 'Parlaklık',
   'controls.contrast': 'Kontrast',
   'controls.charset': 'Karakter kümesi',

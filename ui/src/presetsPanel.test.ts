@@ -23,6 +23,7 @@ describe('parsePresetFile', () => {
   it('accepts optional fields when present and well-typed', () => {
     const full = {
       ...VALID_OPTIONS,
+      rows: 45,
       color: true,
       dither: true,
       rotate: 90,
@@ -34,6 +35,11 @@ describe('parsePresetFile', () => {
     }
     const result = parsePresetFile(preset(full))
     expect(result).toEqual(full)
+  })
+
+  it('ignores a non-positive rows value instead of rejecting the whole preset (falls back to auto)', () => {
+    const result = parsePresetFile(preset({ ...VALID_OPTIONS, rows: 0 }))
+    expect(result).toEqual(VALID_OPTIONS)
   })
 
   it('rejects invalid JSON entirely', () => {

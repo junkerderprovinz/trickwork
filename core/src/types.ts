@@ -86,6 +86,15 @@ export interface CropSpec {
 
 export interface MappingOptions {
   columns: number
+  /**
+   * Explicit row count, overriding the aspect-ratio-matched auto value
+   * grid.ts's computeAutoRows() would otherwise derive from columns + the
+   * source image's own dimensions. Omitted (the default) means "auto" -
+   * the UI's aspect-ratio lock toggle controls whether this is set at all,
+   * not a separate boolean flag, so "locked" and "no override yet" are the
+   * same state instead of two that could disagree.
+   */
+  rows?: number
   brightness: number // -1..1, additive
   contrast: number // -1..1, multiplicative around 0.5 midpoint
   charset: string[] // darkest-to-lightest is NOT required; buildFontWidthTable re-sorts by measured coverage

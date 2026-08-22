@@ -15,6 +15,10 @@ const dict: Translations = {
 
   'history.entryWidth': 'Το πλάτος άλλαξε',
 
+  'history.entryHeight': 'Το ύψος άλλαξε',
+
+  'history.entryAspectLocked': 'Η αναλογία διαστάσεων κλειδώθηκε',
+
   'history.entryCharsetEdited': 'Το σύνολο χαρακτήρων επεξεργάστηκε',
 
   'history.entryCharsetPreset': 'Σύνολο χαρακτήρων: {preset}',
@@ -69,6 +73,9 @@ const dict: Translations = {
 
   'controls.eyebrow': 'Ρυθμίσεις',
   'controls.width': 'Πλάτος (στήλες)',
+  'controls.height': 'Ύψος (γραμμές)',
+  'controls.aspectLocked': 'Η αναλογία διαστάσεων είναι κλειδωμένη - το ύψος ακολουθεί το πλάτος',
+  'controls.aspectUnlocked': 'Η αναλογία διαστάσεων ξεκλειδώθηκε - το ύψος είναι ανεξάρτητο',
   'controls.brightness': 'Φωτεινότητα',
   'controls.contrast': 'Αντίθεση',
   'controls.charset': 'Σύνολο χαρακτήρων',
