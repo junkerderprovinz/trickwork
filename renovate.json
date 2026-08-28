@@ -1,3 +1,10 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Keep @types/node on the major the CI workflows actually run, so the typechecker cannot accept APIs the runtime does not have. Raise this bound together with node-version in ci.yml and desktop.yml.",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<25"
+    }
+  ]
 }
