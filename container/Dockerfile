@@ -1,6 +1,6 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 ARG NODE_VERSION=24
-ARG GO_VERSION=1.27
+ARG GO_VERSION=1.27@sha256:4013ae0f9e7994f8535c58c811f8f863fbed38b72e0d51e6592156f758d66146
 
 FROM node:${NODE_VERSION}-slim AS client
 WORKDIR /app
