@@ -2,7 +2,7 @@ module github.com/junkerderprovinz/trickwork/desktop
 
 go 1.26
 
-toolchain go1.27.0
+toolchain go1.27.1
 
 require (
 	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
