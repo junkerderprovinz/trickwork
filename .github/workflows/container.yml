@@ -67,14 +67,62 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Is the tag being built the newest release in this repo?
+      #
+      # This answers the second half of the question the `latest` line below
+      # asks. Gating `latest` on a tag alone would let a re-cut of an older
+      # version drag `latest` backwards onto it, which is exactly what happened
+      # on 2026-09-02, so the highest version has to win as well.
+      #
+      # checkout brings no tags with it, so they are fetched here rather than
+      # assumed. `sort -V` compares versions instead of strings, which is why
+      # v1.10.0 beats v1.9.0.
+      - name: Is this the newest release tag?
+        id: newest
+        if: github.ref_type == 'tag'
+        run: |
+          git fetch --tags --force --quiet
+          newest=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -1)
+          echo "this tag: ${GITHUB_REF_NAME}"
+          echo "newest:   ${newest}"
+          if [ "$newest" = "${GITHUB_REF_NAME}" ]; then
+            echo "is_newest=true" >> "$GITHUB_OUTPUT"
+            echo "-> this build moves :latest"
+          else
+            echo "is_newest=false" >> "$GITHUB_OUTPUT"
+            echo "-> this build leaves :latest where it is"
+          fi
+
       - uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
         id: meta
         with:
           images: |
             ghcr.io/junkerderprovinz/trickwork
             name=docker.io/${{ vars.DOCKERHUB_USERNAME }}/trickwork,enable=${{ vars.DOCKERHUB_USERNAME != '' }}
+          # `latest` means "the newest released version", and nothing else.
+          #
+          # It used to mean "the tip of the default branch". Those are not the
+          # same thing: on 2026-09-14 a 23-commit merge to main handed an
+          # unreleased build to everyone pulling `latest` before any release
+          # existed, and the first bug report against it arrived before the
+          # release notes did. So a tag build sets `latest`, and only when that
+          # tag is the newest release (see the step above). The two conditions
+          # guard opposite accidents: the tag condition keeps unreleased code
+          # off `latest`, and the newest condition keeps an old re-cut version
+          # from pulling `latest` back to it.
+          #
+          # The tip of the default branch gets `edge` instead. It is still
+          # built, still pushed and still pullable, but nobody lands on it
+          # without asking for it by name.
+          #
+          # {{major}} and {{major}}.{{minor}} below stay sharp on purpose: they
+          # follow whichever tag built last, so re-cutting an old version moves
+          # `1` back with it. That is right for a normal forward release and
+          # wrong only while folding an old version, which is rare enough to
+          # sort out by hand afterwards.
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=edge,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ github.ref_type == 'tag' && steps.newest.outputs.is_newest == 'true' }}
             type=sha,prefix=sha-,format=short
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
