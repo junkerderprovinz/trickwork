@@ -10,6 +10,10 @@
 
 const BUBBLE_ID = 'glim-bubble';
 let currentTrigger: Element | null = null;
+// Whether the last input was a pointer rather than a key. Focus that follows a
+// press is a side effect (the click itself, or a dialog handing focus back to
+// its opener), so it must not open the bubble; see react/useTipBubble.tsx.
+let pointerWasLast = false;
 
 function bubbleEl(): HTMLDivElement {
   let el = document.getElementById(BUBBLE_ID) as HTMLDivElement | null;
@@ -84,6 +88,7 @@ export function wireTooltips(): void {
   wired = true;
 
   function over(event: Event): void {
+    if (event.type === 'focusin' && pointerWasLast) return;
     const target = event.target;
     if (!(target instanceof Element)) return;
     const trigger = target.closest('[data-tip], [title]');
@@ -114,7 +119,15 @@ export function wireTooltips(): void {
   document.addEventListener('focusin', over);
   document.addEventListener('focusout', out);
   // A press means the person is acting, not reading - hide immediately.
-  document.addEventListener('pointerdown', hide, true);
+  document.addEventListener(
+    'pointerdown',
+    () => {
+      pointerWasLast = true;
+      hide();
+    },
+    true,
+  );
+  document.addEventListener('keydown', () => (pointerWasLast = false), true);
   // Any scroll de-anchors the fixed-position bubble from its trigger -
   // capture so an inner scrollable container's scroll is caught too, not
   // just the window's own.

@@ -2,6 +2,12 @@
 
 All notable changes to TrickWork are documented here.
 
+## Unreleased
+
+### 🐛 Fixed
+
+- A tooltip no longer opens when focus arrives from a click, or when a dialog hands focus back to the control that opened it, so it cannot stay on the page where the pointer no longer is. Keyboard focus still opens it. The tooltip engine is the one from GlimStone 2.6.1.
+
 ## 1.1.0 — 2026-08-22
 
 ### ✨ Added
