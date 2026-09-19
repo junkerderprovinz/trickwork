@@ -7,9 +7,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// App exposes Go-side methods to the frontend via Wails bindings, so the
-// desktop build can offer a native save dialog instead of a browser download
-// prompt when exporting (spec §4 "desktop/").
+// App exposes Go methods to the frontend through Wails bindings, so the
+// desktop build exports through a native save dialog instead of a browser
+// download.
 type App struct {
 	ctx context.Context
 }
@@ -33,7 +33,7 @@ func (a *App) SaveExport(suggestedFilename string, data []byte) (string, error) 
 		return "", err
 	}
 	if path == "" {
-		return "", nil // user cancelled
+		return "", nil
 	}
 	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return "", err

@@ -9,20 +9,11 @@ import (
 	"github.com/junkerderprovinz/trickwork/webembed"
 )
 
-// withCacheControl closes a real gap: Go's stock http.FileServer over an
-// embed.FS sets neither Last-Modified (embed.FS reports the zero Time,
-// which http.ServeContent's own doc says it skips the header for) nor
-// ETag (never a FileServer feature to begin with) nor Cache-Control - a
-// browser gets literally no caching guidance at all. In that vacuum a
-// browser is free to apply its own heuristic caching to a repeat visit
-// (a still-open tab, a bookmark, a bfcache restore) and keep showing a
-// version from before the LATEST redeploy indefinitely, with no signal
-// telling it otherwise - a real, repeated user report ("still doesn't
-// work" across several independently-verified server-side fixes) traced
-// to exactly this. Vite's own build already content-hashes every file
-// under /assets/ (a new hash on any content change), so those are safe
-// to cache forever; index.html - the one file that decides which hashed
-// assets get loaded next - must never be cached at all.
+// withCacheControl adds the caching headers that http.FileServer over an
+// embed.FS never sends (no Last-Modified, ETag or Cache-Control), without
+// which a browser may keep showing a build from before the last redeploy.
+// Vite content-hashes everything under /assets/, so those are cached for
+// good; index.html picks the hashed assets and is revalidated every time.
 func withCacheControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/assets/") {

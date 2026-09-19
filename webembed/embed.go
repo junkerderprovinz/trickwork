@@ -1,7 +1,6 @@
-// Package webembed holds the single embedded copy of the built ui/ bundle.
-// webembed/dist is not committed to source control - it is populated by
-// copying ui/dist here immediately before a Go build that needs it (see
-// container/Dockerfile's COPY step and desktop/README.md's build step).
+// Package webembed holds the embedded copy of the built ui/ bundle.
+// webembed/dist is not committed; the container and desktop builds copy
+// ui/dist here before compiling.
 package webembed
 
 import (
