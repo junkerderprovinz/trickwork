@@ -1,52 +1,32 @@
-/* ===========================================================================
-   GlimStone — reference tokens and utility classes
-   ---------------------------------------------------------------------------
-   Framework-free: no Tailwind, no build step required. Copy the parts an
-   adopting app needs — see docs/design-language.md, "Adopting GlimStone in
-   another app". If the app uses Tailwind v4, pair this with
-   tailwind-theme.css for the @theme utility mapping.
+/* GlimStone reference tokens and utility classes. No Tailwind and no build
+   step; copy the parts an app needs (docs/design-language.md, "Adopting
+   GlimStone in another app"), and pair it with tailwind-theme.css under
+   Tailwind v4.
 
-   Clean-by-rule (what keeps it calm):
+   What keeps it calm:
      · one raised surface level; never a card inside a card
-     · one hero per page — everything else is quiet
+     · one hero per page; everything else is quiet
      · the accent marks activity only: active nav, primary action, progress
-     · four state hues total (accent / green / red / neutral), never more
-     · hierarchy comes from type size and colour step, not from borders
-   =========================================================================== */
+     · four state hues in total (accent, green, red, neutral)
+     · hierarchy comes from type size and colour step, not from borders */
 
-/* Shape is one knob for the whole app. Every rounded corner reads one of
-   these three tokens and nothing hard-codes a radius, so switching the shape
+/* Every rounded corner reads one of these three tokens, so switching the shape
    changes cards, buttons, tabs, inputs, pills, badges and toggles together.
-   A single exception is the thing that ends up looking broken.
 
-   Use the raw token everywhere, even on a short element (a compact badge) or
-   a non-square one (a switch track): border-radius: var(--radius-pill). The
-   browser's own corner-overflow algorithm scales an oversized radius down to
-   fit the box, using ONE shared factor across all four corners - that's what
-   turns a huge value like 9999px into a true circle on a square element and
-   a true stadium (semicircular ends) on a rectangular one, with no capping
-   needed. Do NOT write border-radius: min(var(--radius-pill), 50%) as a
-   manual cap: 50% resolves per-AXIS (50% of width horizontally, 50% of
-   height vertically) before the overflow algorithm ever runs, so on anything
-   non-square it bakes in two different corner radii up front and renders as
-   a visible ELLIPSE instead of a pill - this exact bug shipped in an
-   adopting app's own rainbow-mode switch (a 44×24 track rendered as an oval,
-   not a pill; jdp: "der toggle... ist in der runden form einstellung
-   elliptisch"). Verified empirically (a live 220×120 test box), not just
-   reasoned about: min(9999px, 50%) renders a visible ellipse, the raw
-   9999px alone renders a correct stadium, on the exact same non-square box. */
+   Use the raw token even on a short or non-square element. The browser scales
+   an oversized radius down with one factor for all four corners, so 9999px
+   gives a circle on a square and a stadium on a rectangle. A cap such as
+   min(var(--radius-pill), 50%) resolves per axis first and renders an
+   ellipse. */
 :root {
   --radius-card: 1rem;
   --radius-control: 0.625rem;
   --radius-pill: 9999px;
 
-  /* The type scale: a fixed reference table, not an engine — nobody sets
-     their own type scale. --text-caption covers three treatments of the
-     same size (plain caption, .glim-eyebrow's uppercase label, the info
-     bubble's text) — the treatment carries the distinction, not the size.
-     A page's one hero figure and any brand-wordmark instance are
-     deliberately NOT part of this scale — see docs/design-language.md,
-     "The type scale". */
+  /* The type scale, a fixed table. --text-caption serves a plain caption,
+     .glim-eyebrow's uppercase label and the info bubble; the treatment carries
+     the distinction. A page's hero figure and a brand wordmark are outside the
+     scale (docs/design-language.md, "The type scale"). */
   --text-heading: 1.25rem;  /* 20px */
   --text-body: 0.875rem;    /* 14px */
   --text-dense: 0.75rem;    /* 12px */
@@ -69,10 +49,8 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Ground and surfaces — IBM Carbon's neutral greys. Not a warm near-black:
-     that reads as brown next to any sibling app that already agreed on this
-     palette. A design language shared across apps has to share its ground
-     first. */
+  /* Ground and surfaces: IBM Carbon's neutral greys. A warm near-black reads
+     as brown next to a sibling app on this palette. */
   --carbon-bg:         #161616;
   --carbon-sidebar:    #262626;
   --carbon-surface:    #262626;
@@ -81,21 +59,20 @@
   --carbon-hover:      #353535;
   --carbon-border:     #393939;
 
-  /* Text ramp — three steps, the last still legible at 11px. */
+  /* Text ramp: three steps, the last still legible at 11px. */
   --carbon-text:       #f4f4f4;
   --carbon-text-sub:   #c6c6c6;
   --carbon-text-muted: #8d8d8d;
   --sidebar-text:      #e0e0e0;
 
-  /* Activity, and nothing else. The default is every sibling app's own
-     default accent, so a fresh install of any of them looks like the same
-     product; it is a setting, and the picker is one page away. */
+  /* Activity, and nothing else. Every sibling app opens with this accent, so
+     a fresh install of any of them looks like the same product. */
   --accent:            #FCC419;
   --accent-contrast:   #161616;
   --accent-soft:       rgba(252, 196, 25, 0.14);
 
-  /* Four state hues, Carbon's dark support tones. Paused reuses neutral
-     on purpose — its label and its resume control carry the difference. */
+  /* Four state hues, Carbon's dark support tones. Paused reuses neutral; its
+     label and its resume control carry the difference. */
   --status-info-text:    #FCC419;
   --status-info-bg:      rgba(252, 196, 25, 0.13);
   --status-info-solid:   #FCC419;
@@ -116,21 +93,16 @@
   --status-neutral-bg:   rgba(255, 255, 255, 0.05);
   --status-neutral-solid: #8d8d8d;
 
-  /* One elevation, one hairline. Neutral black, not a warm one: a brown
-     shadow under a grey card is visible and reads as a colour cast. */
+  /* One elevation, one hairline. The shadow is neutral black, since a brown
+     one under a grey card reads as a colour cast. */
   --elevation: 0 1px 2px rgba(0, 0, 0, .40), 0 18px 40px -24px rgba(0, 0, 0, .85);
   --hairline: inset 0 1px 0 rgba(255, 255, 255, .045);
   --focus-ring: rgba(252, 196, 25, .55);
 }
 
-/* System default (rule: theme defaults to system, not a hard-coded dark) —
-   applies the light ramp when the OS prefers light AND no explicit
-   data-theme override is set. Without this block, an app that never sets
-   data-theme is unconditionally dark regardless of the OS, which is exactly
-   the "opens dark on a light-mode OS nobody asked for" mistake the design
-   language warns against. Values are intentionally identical to
-   [data-theme="light"] below — same tier structure as the explicit
-   override, just gated on the media query instead of the attribute. */
+/* The theme follows the system: the light ramp applies when the OS prefers
+   light and no data-theme is set. The values match [data-theme="light"]
+   below. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
@@ -178,11 +150,7 @@
   }
 }
 
-/* :root[data-theme="dark"] wins over the media query in both directions
-   (rule already covered by the ":root, [data-theme=dark]" selector above),
-   so an explicit dark override stays dark even under a light-preferring OS.
-   [data-theme="light"] below is the mirror: explicit light even under a
-   dark-preferring OS. */
+/* An explicit data-theme wins over the OS preference in both directions. */
 [data-theme="light"] {
   color-scheme: light;
 
@@ -232,14 +200,10 @@
   --focus-ring: rgba(142, 106, 0, .5);
 }
 
-/* Base document styling. The font stack ends in system-ui/sans-serif rather
-   than a fixed list of named fonts on purpose: a browser missing a glyph in
-   the first-choice font falls back per character to whatever the OS already
-   has installed for that script, so this list does not need every script's
-   font named to render correctly (see docs/design-language.md, "Non-Latin
-   scripts"). The base letter-spacing is a Latin-kerning assumption and reads
-   as crowding on CJK, which is set in full-width cells that don't kern the
-   same way — scoped back to normal for it below. */
+/* The font stack ends in system-ui and sans-serif, and the browser falls back
+   per character to a font the OS has for each script (docs/design-language.md,
+   "Non-Latin scripts"). The negative letter-spacing suits Latin and crowds CJK,
+   which is set in full-width cells, so CJK gets normal spacing. */
 body {
   margin: 0;
   background-color: var(--carbon-bg);
@@ -283,62 +247,13 @@ body {
   font-feature-settings: "tnum" 1, "zero" 1;
 }
 
-/* The tooltip and info bubble (rule 8), one shared engine for both -
-   reference/tooltip.ts. Render at body level (position measured from the
-   trigger element in JS) so no scroll container, card or table can clip
-   it, viewport-clamped, flips above the trigger when opening below would
-   clip the viewport's bottom edge (.glim-bubble--above), a small arrow
-   that tracks the trigger's real position even when the bubble itself has
-   been clamped off-centre. Matches CannonadeCommand's own reference
-   implementation pixel-for-pixel (its #cc-tipfloat) - previously this
-   class had its own bespoke, JS-free styling with none of the above, which
-   read as visibly inconsistent against a sibling app using the real thing.
-
-   CORRECTED (cross-app info-bubble standardisation, BombVault as the
-   reference implementation): every property below except the position/
-   clamp/arrow mechanics and z-index was quietly wrong here - background,
-   shadow, padding, font-size and white-space had all drifted from what
-   every real adopting app actually ships. `background-color` was
-   `--carbon-surface2` (the WELL tone - inputs, tracks) instead of
-   `--carbon-surface` (the one raised surface `.glim-card` itself uses -
-   a bubble is a floating card, not a sunken well). `box-shadow` was a
-   bespoke flat `0 8px 24px rgba(0,0,0,.55)` instead of this file's own
-   `var(--elevation), var(--hairline)` pair - the same one-elevation-
-   one-hairline recipe `.glim-card`/`.glim-toast` already use, so the
-   bubble was the one surface in the whole language missing its hairline.
-   `padding` was `9px 12px` instead of the tighter `7px 10px` a small,
-   frequently-triggered bubble actually reads better at. `font-size` was a
-   hardcoded `12.5px` even though this very file's own type-scale comment
-   above (`--text-caption` "covers... the info bubble's text") already
-   claimed this rule read that token - it never did; fixed by actually
-   pointing it at `var(--text-caption)` (11px), so the comment stops
-   contradicting the rule beneath it. `white-space` was `pre-line`
-   (preserves literal newlines in the tip string); every real tip is a
-   single wrapped sentence, so `normal` is correct - an adopting app that
-   relies on the old `pre-line` behaviour for a genuinely multi-line tip
-   should compose that from more than one `data-tip` call rather than
-   embedding `\n` in the string. `border-radius` simplified from
-   `min(var(--radius-control), 10px)` to the plain token - the two have
-   never actually differed under any of the three shipped shapes
-   (round/soft/square all stay at or under 10px already), so the `min()`
-   guard was inert defensive code, not a real value. The arrow's own
-   `border-color` below is updated to match the corrected background so it
-   still reads as a continuous shape with the bubble it points from.
-
-   Also corrected: this comment used to claim "no transition - an instant
-   display toggle reads as more responsive than even a very short fade" -
-   that was already wrong the day it was written, contradicted by this
-   same file's own `.glim-fade`/`glim-fade-in` (further down) and by
-   design-language.md's motion-engine section, which always said the info
-   bubble gets a 110ms fade. The bubble's own CSS never had a transition
-   because `.glim-fade` is a SEPARATE opt-in animation class - correct,
-   just undocumented here - and `reference/tooltip.ts` never actually
-   applied that class to its shared bubble element, so in the one place
-   that mattered the toggle really was instant, exactly as this comment
-   said. Both halves are fixed together: `tooltip.ts`'s `bubbleEl()` now
-   carries `glim-fade` too, and this comment stops claiming there's no
-   transition. See design-language.md's "The tooltip and info bubble" for
-   the reasoning on why the fade is short (110ms) rather than absent. */
+/* The tooltip and info bubble (rule 8), placed by reference/tooltip.ts at
+   body level so no scroll container, card or table clips it. It is clamped
+   into the viewport, flips above the trigger when below would clip
+   (.glim-bubble--above), and its arrow follows the trigger when the bubble is
+   clamped off-centre. A bubble is a floating card, so it takes the raised
+   surface with the card's elevation and hairline. The 110ms fade comes from
+   the separate `.glim-fade` class. */
 .glim-bubble {
   position: fixed;
   z-index: 2147483647;
@@ -379,16 +294,9 @@ body {
   border-color: var(--carbon-surface) transparent transparent transparent;
 }
 
-/* The "(i)" trigger (reference/tooltip.ts's infoIcon()) - a bare stroke-only
-   SVG glyph, never a filled badge (rule 3: the accent means activity, and a
-   background fill on furniture like this reads as a control it isn't).
-   Opacity carries the hover/focus state instead of a colour or fill change.
-   `border-radius` is new (cross-app info-bubble standardisation) - it does
-   nothing visually at rest (the icon has no fill or border of its own to
-   round), but it matters the moment `:focus-visible` below draws a real
-   outline: browsers shape an element's focus ring to its own border-radius,
-   so without this the ring would trace a square box around a circular
-   glyph. */
+/* The "(i)" trigger (reference/tooltip.ts's infoIcon()): a bare stroked glyph,
+   never a filled badge, since a fill would read as a control. Opacity carries
+   hover and focus. The radius shapes the focus ring around the round glyph. */
 .glim-info-icon {
   display: inline-flex;
   align-items: center;
@@ -406,23 +314,8 @@ body {
   height: 15px;
   display: block;
 }
-/* CORRECTED (accessibility fix, cross-app info-bubble standardisation):
-   this used to be one combined `:hover, :focus-visible` rule that set
-   `outline: none` - actively REMOVING the keyboard focus indicator from an
-   otherwise fully borderless glyph. That's a real WCAG 2.2 SC 2.4.7
-   regression, not a style choice: a keyboard user tabbing to this icon had
-   no way to tell it was focused at all, since opacity alone (.8 -> 1) reads
-   as identical to plain hover and isn't a reliable focus signal on its own.
-   Split into two rules so hover keeps the language's normal "never a
-   border" rule (rule 5) while :focus-visible gets a REAL 2px solid
-   `--focus-ring` outline, 2px offset - the exact same treatment this
-   file's own base `:focus-visible` rule (further down) already gives every
-   ordinary button and link, so a keyboard user sees ONE consistent focus
-   language across the whole app, this glyph included. This is the design
-   language's one deliberate, sole exception to "never a border line" (rule
-   5, and see design-language.md's "The tooltip and info bubble" for the
-   full reasoning) - mouse/hover interaction never shows a border here,
-   only a keyboard focus does. */
+/* Opacity alone does not show keyboard focus (WCAG 2.2 SC 2.4.7), so focus
+   gets the same outline as every other control; hover draws no line. */
 .glim-info-icon:hover {
   opacity: 1;
 }
@@ -432,14 +325,9 @@ body {
   outline-offset: 2px;
 }
 
-/* ---------------------------------------------------------------------------
-   The colour picker — a PERMANENTLY EMBEDDED saturation/value square + hue
-   bar, real DOM the app owns, never a native `<input type="color">` (which
-   hands off to a browser/OS surface outside the page - jdp, building CC:
-   "ich will das Farbwählfeld fest integriert"). Pair with
-   reference/colorPicker.ts for the JS side. Sized against --radius-control
-   (a real 2D control, not a badge) so it follows the shape engine like any
-   other rectangular field. */
+/* The colour picker (reference/colorPicker.ts): a saturation/value square and
+   a hue bar in the page's own DOM. It is a rectangular field, so it follows
+   --radius-control. */
 .glim-picker {
   width: 100%;
   min-width: 0;
@@ -481,11 +369,8 @@ body {
   pointer-events: none;
 }
 
-/* The floating popover openColorPickerPopover() renders the picker into -
-   a fixed-position panel, own elevated surface (same recipe as .glim-card:
-   one raised level, one hairline, one shadow), sized to the picker's own
-   natural width rather than stretching to whatever's beneath it. Column
-   flex: the picker itself, then the hex field below it. */
+/* The panel openColorPickerPopover() renders into: a fixed, raised surface
+   sized to the picker, with the hex field below it. */
 .glim-picker-popover {
   position: fixed;
   z-index: 2147483647;
@@ -501,10 +386,8 @@ body {
   width: 13.75rem;
 }
 
-/* The hex field beside the picker (CannonadeCommand's own cc-set-hexin) -
-   a plain borderless filled field (rule 14), monospace so every hex digit
-   lines up, uppercase-styled via letter-spacing/text-transform rather than
-   forcing the stored value's own case. */
+/* The hex field: a borderless filled field (rule 14), monospace so the digits
+   line up, and uppercase by style rather than by changing the stored value. */
 .glim-picker-hex {
   appearance: none;
   width: 100%;
@@ -524,63 +407,40 @@ body {
   background-color: var(--carbon-hover);
 }
 
-/* ---------------------------------------------------------------------------
-   Rainbow — the accent in its plural form. See docs/design-language.md for
-   the full explanation and the three traps. Pair with reference/appearance.ts
-   for the JS side (hueVars, applyRainbow).
+/* Rainbow, the accent in its plural form (docs/design-language.md; the JS side
+   is hueVars and applyRainbow in reference/appearance.ts). An element that owns
+   a palette position sets --item-hue and carries .glim-hue, and these rules
+   redefine --accent for its subtree, so components need not know the mode.
 
-   An element that owns a palette position sets --item-hue on itself and
-   carries .glim-hue. These rules redefine --accent for that subtree, which is
-   all it takes: every component already paints activity with var(--accent),
-   so nothing below has to know the mode exists.
-
-   WHAT MAY OWN A POSITION: anything that is one member of a SET whose members
-   are all equal — a nav item, a list row, a tab, a filter chip, a segment of
-   a segmented control. Anything that is the only one of its kind on the page
-   keeps the single accent. The four state hues are never rainbowed — green
-   still means finished.
-   --------------------------------------------------------------------------- */
+   A position belongs to one member of a set of equals: a nav item, a list row,
+   a tab, a filter chip, a segment. The only one of its kind on a page keeps the
+   single accent, and the four state hues are never rainbowed. */
 [data-rainbow] .glim-hue {
   --accent: var(--item-hue);
   --accent-contrast: var(--item-hue-ink);
   --accent-soft: var(--item-hue-soft);
-  /* The focus ring is part of the position, not the theme: drawn directly
-     around the element that owns the colour. Reactive mode deliberately does
-     not reset this — the ring only ever paints while the element has focus,
-     and focus already brings the hue back via :focus-within below. */
+  /* Reactive mode leaves this alone: the ring only paints on focus, which
+     brings the hue back through :focus-within. */
   --focus-ring: var(--item-hue-ring);
 }
 
-/* Opt-in: the element's glyph takes the hue too. A download row owns a
-   colour but its action icons must stay quiet, hence the second class. The
-   active item is excluded: it's FILLED with the hue already, so an icon
-   painted the same colour would vanish into its own background. */
+/* The element's glyph takes the hue too; a separate class because a row's
+   action icons stay quiet. The active item is filled with the hue, where an
+   icon in the same colour would vanish. */
 [data-rainbow] .glim-hue-icon:not(.glim-active) svg {
   color: var(--accent);
 }
 
-/* Opt-in: the row is WASHED with its hue rather than ruled with an edge line.
-   Without this, a list row only shows colour through its progress fill,
-   which turns green on completion (rule 4) — on a list of finished items the
-   palette would show nothing. The wash is an inset shadow, not a background,
-   so the row's own hover tint still reads through it at 16% alpha. */
+/* The row is washed with its hue rather than ruled with an edge line, since a
+   progress fill turns green on completion (rule 4) and a finished list would
+   show no palette. An inset shadow rather than a background, so the row's
+   hover tint reads through the 16% wash. */
 [data-rainbow] .glim-tint {
   box-shadow: inset 0 0 0 999px var(--item-hue-wash);
 }
-/* The active/selected member of the set gets the stronger soft tint instead
-   of the plain wash - `[data-rainbow]` (bare attribute) matches BOTH `on`
-   and `reactive`, so this single rule covers both. Bug found via a real
-   adopting app (TrickWork): before this rule existed, `.glim-tint`'s own
-   box-shadow declaration always won the cascade against an app's own
-   `.active`-style rule (attribute+class beats a single class), even though
-   that rule was already resolving `--accent-soft` to the right colour via
-   `.glim-hue` above it - the ACTIVE row's highlight silently collapsed to
-   the same flat wash as every other row, in every adopting app that never
-   itself carried `.glim-active`. An adopting app's own "this one is
-   selected" class must ALSO carry `.glim-active` (not only its app-specific
-   equivalent) for this composition to engage - see design-language.md.
-   Higher specificity than the plain .glim-tint rule above by design, so it
-   wins regardless of source order. */
+/* The selected member gets the stronger soft tint, in both `on` and
+   `reactive`. `.glim-tint` outranks an app's own single-class `.active` rule,
+   so the selected element has to carry `.glim-active` as well. */
 [data-rainbow] .glim-tint.glim-active {
   box-shadow: inset 0 0 0 999px var(--item-hue-soft);
 }
@@ -594,22 +454,11 @@ body {
   box-shadow: inset 0 0 0 999px var(--item-hue-soft);
 }
 
-/* .glim-tint-hover: the SAME rest-quiet/hover-reveals behaviour as reactive
-   mode above, but as a per-ELEMENT choice, independent of the user's own
-   on/reactive setting - some rows (a set of equal-weight action buttons,
-   not a persistent selection) read as noisy fully washed at rest even
-   under `on` (jdp: "die buttons die inaktiv sind sollen nicht eingefärbt
-   sein, beim mouseover sollen sie eingefärbt werden"), yet the app isn't
-   asking its USER to opt into reactive mode globally just for this one
-   row. Use `.glim-tint` for a row where colour-at-rest is the point (a
-   list, so an all-idle list doesn't read as blank); use
-   `.glim-tint-hover` for a row of equal-weight actions where the colour
-   is a nice-to-discover accent, not the primary signal. The reveal itself
-   reads the stronger --item-hue-badge tier (50%), not the list-row
-   --item-hue-wash (16%) - a hover reveal is a deliberate, momentary, one-
-   at-a-time state, closer to a badge's own "clearly coloured" bar than a
-   list's "don't overwhelm a whole column of these" one (jdp: "die export
-   buttons sollen bei mouseover kräftig eingefärbt werden"). */
+/* Reactive behaviour for one element whatever the user's setting: quiet at
+   rest, coloured on hover. Use it for a row of equal-weight actions, and
+   `.glim-tint` where colour at rest is the point, as in a list. A hover
+   reveal is one element at a time, so it takes the 50% badge tier rather
+   than the 16% list wash. */
 [data-rainbow] .glim-tint-hover {
   box-shadow: none;
 }
@@ -618,21 +467,10 @@ body {
   box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }
 
-/* .glim-tint-badge: the SAME wash mechanism as .glim-tint, but at the
-   stronger --item-hue-badge tier (see appearance.ts's hueVars) - for a
-   compact circular badge that needs colour AT REST because it has no
-   checked/active state of its own to fall back on. NOT for a real TOGGLE
-   badge (icon-toggle-button and friends): those carry ONLY .glim-hue,
-   unconditionally, and stay uncoloured until checked - the component's own
-   `--active { background-color: var(--accent) }` rule already picks the
-   position colour up once it's needed, and washing the idle state on top
-   was tried twice (this class, and the plainer .glim-tint before it) and
-   rejected both times by a real adopting app (design-language.md's rainbow
-   section has the full story). Reach for this class on a badge that
-   genuinely has no active state to read `--accent` through - a badge is
-   small and isolated with nothing beside it to reinforce the colour by
-   repetition, so .glim-tint's own 16% (calibrated for a dense list, see
-   its own comment above) would read as barely-tinted grey at badge size. */
+/* The wash at the 50% badge tier, for a small badge that needs colour at rest
+   and has no active state to show `--accent` through; 16% reads as grey at
+   that size. A toggle badge carries only .glim-hue and stays uncoloured until
+   checked (design-language.md, the rainbow section). */
 [data-rainbow] .glim-tint-badge {
   box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }
@@ -644,9 +482,8 @@ body {
   box-shadow: inset 0 0 0 999px var(--item-hue-badge);
 }
 
-/* Reactive: the palette rests. Everything stays quiet until hovered or
-   active — the reading that still obeys "colour marks activity" when a
-   whole list would otherwise light up at once. */
+/* Reactive: the palette rests until an element is hovered or active, so
+   colour still marks activity when a whole list would otherwise light up. */
 [data-rainbow='reactive'] .glim-hue {
   --accent: var(--carbon-text-muted);
   --accent-contrast: var(--carbon-bg);
@@ -705,17 +542,13 @@ body {
   .glim-page-enter { animation: glim-page-in 280ms cubic-bezier(.2, .6, .2, 1) both; }
   .glim-toast { animation: glim-toast-in 220ms cubic-bezier(.2, .6, .2, 1) both; }
   .glim-live { animation: glim-pulse 2s ease-in-out infinite; }
-  /* Short on purpose: a bubble that fades in slowly reads as lag, because the
-     pointer is already there waiting for it. */
+  /* Short, because the pointer is already waiting for the bubble. */
   .glim-fade { animation: glim-fade-in 110ms ease both; }
 }
 @media (prefers-reduced-motion: reduce) {
   .glim-page-enter { animation: glim-fade-in 180ms ease both; }
   .glim-toast { animation: glim-fade-in 160ms ease both; }
-  /* An infinite animation gets a true stop here, not a slower version: a
-     one-shot 110-280ms entrance is a poor match for what reduced-motion
-     exists to prevent, but a 2s-forever pulse is exactly it. Still fully
-     opaque, not hidden -- "this is live" has to keep reading from colour and
-     position alone once the motion is gone. */
+  /* An infinite animation stops outright, fully opaque, so "this is live"
+     reads from colour and position. */
   .glim-live { animation: none; opacity: 1; }
 }

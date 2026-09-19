@@ -1,32 +1,25 @@
 // Appearance is the set of looks the user owns: how rounded the interface is,
-// and what colour it uses for activity — one accent, or a palette handed out
-// by position. All of it is applied to the document root, so every component
-// picks it up through the tokens it already reads, and nothing has to be told
-// about the change.
+// and what colour it uses for activity, either one accent or a palette handed
+// out by position. All of it is applied to the document root, so every
+// component picks it up through the tokens it already reads.
 //
-// This file stays free of any UI framework on purpose: it's the piece an
-// adopting app copies wholesale, and a design language shouldn't arrive with
-// a framework attached. A React app wraps it in a small hook; anything else
-// calls the functions directly.
+// The file has no framework dependency, since an adopting app copies it whole;
+// a React app wraps it in a small hook.
 
 export type Shape = 'round' | 'soft' | 'square';
 
 export const SHAPES: Shape[] = ['round', 'soft', 'square'];
 
 /**
- * The built-in accent. Empty in settings means this.
- *
- * This is every adopting app's shared default, not a colour any one of them
- * owns: apps that share a design language but open in different colours by
- * default are a family only on paper.
+ * The built-in accent, shared by every adopting app so the family opens in one
+ * colour. Empty in settings means this.
  */
 export const DEFAULT_ACCENT = '#FCC419';
 
 /**
- * ACCENTS are the presets offered in the picker — the same five across every
- * adopting app, in the same order, so someone who set "Blue" in one app finds
- * the same blue in the next. A free colour field sits beside them, so this
- * list is a shortcut, not a restriction.
+ * The accent presets, the same five in the same order in every adopting app,
+ * so "Blue" in one app is the same blue in the next. The picker allows any
+ * colour; this list is a shortcut.
  */
 export const ACCENTS: { name: string; hex: string }[] = [
   { name: 'Sunflower', hex: '#FCC419' },
@@ -37,17 +30,14 @@ export const ACCENTS: { name: string; hex: string }[] = [
 ];
 
 /**
- * RAINBOW is the default palette: a full turn of the wheel, but tuned to the
- * same warm, slightly dusty register as the accent presets, so switching the
- * mode on changes how much colour there is, not which family it belongs to.
- * The length is fixed — colours are handed out by position, so a palette
- * that could grow would re-colour every existing row the moment one was
- * added.
+ * The default palette: a full turn of the wheel in the same register as the
+ * accent presets. The length is fixed, because colours are handed out by
+ * position and a longer palette would recolour every existing row.
  */
 export const RAINBOW: string[] = [
   '#FF8389', // red 30
   '#FF832B', // orange 40
-  '#FCC419', // sunflower — the default accent, so one row always matches it
+  '#FCC419', // sunflower, the default accent, so one row always matches it
   '#6FDC8C', // green 30
   '#3DDBD9', // teal 30
   '#1D99F3', // blue
@@ -73,18 +63,16 @@ export const RAINBOW_OFF: RainbowState = {
   palette: RAINBOW,
 };
 
-/** applyShape sets the attribute the radius tokens key off. */
+/** Sets the attribute the radius tokens key off. */
 export function applyShape(shape: Shape | string | undefined): void {
   const s = SHAPES.includes(shape as Shape) ? (shape as Shape) : 'round';
   document.documentElement.setAttribute('data-shape', s);
 }
 
 /**
- * applyAccent overrides the accent tokens, or clears the override so the
- * theme's own gold comes back. The contrast colour is computed rather than
- * configured: a light accent with white text on it is unreadable, and asking
- * the user to pick a second colour to fix the first one is not a setting, it
- * is a trap.
+ * Overrides the accent tokens, or clears the override so the theme's gold comes
+ * back. The contrast colour is computed, so a light accent never gets white
+ * text.
  */
 export function applyAccent(hex: string | undefined): void {
   const root = document.documentElement.style;
@@ -100,20 +88,14 @@ export function applyAccent(hex: string | undefined): void {
   root.setProperty('--accent-soft', `rgba(${r}, ${g}, ${b}, 0.14)`);
 }
 
-// ---------------------------------------------------------------------------
-// Rainbow
-//
-// The live state is module-level because it is a property of the document,
-// not of any one component: the sidebar and the download list must agree on
-// which colour position three is, and they never meet in the tree. Readers
-// subscribe instead of being handed a prop through six intermediate
-// components.
-// ---------------------------------------------------------------------------
+// The rainbow state belongs to the document, not a component: the sidebar and a
+// list far away in the tree must agree on which colour position three is, so
+// readers subscribe.
 
 let state: RainbowState = RAINBOW_OFF;
 const listeners = new Set<() => void>();
 
-/** rainbowState is the current snapshot. Stable identity between changes. */
+/** The current snapshot, with a stable identity between changes. */
 export function rainbowState(): RainbowState {
   return state;
 }
@@ -124,10 +106,9 @@ export function subscribeRainbow(fn: () => void): () => void {
 }
 
 /**
- * applyRainbow stores the new state, mirrors it onto the document root and
- * wakes the readers. The custom properties are set even when the mode is off
- * so that a stylesheet can reference `--rb-3` without having to know; the
- * `data-rainbow` attribute is what actually turns the look on.
+ * Stores the new state, mirrors it onto the document root and wakes the
+ * readers. The `--rb-N` properties are set even when the mode is off; the
+ * `data-rainbow` attribute is what turns the look on.
  */
 export function applyRainbow(next: Partial<RainbowState> | undefined): void {
   const merged: RainbowState = { ...RAINBOW_OFF, ...next };
@@ -146,9 +127,8 @@ export function applyRainbow(next: Partial<RainbowState> | undefined): void {
 }
 
 /**
- * rainbowAt is the colour at a position, rotation applied. It answers even
- * when the mode is off, because a settings page has to show the palette it
- * is editing.
+ * The colour at a position, rotation applied. It answers even when the mode is
+ * off, because a settings page shows the palette it edits.
  */
 export function rainbowAt(i: number): string {
   const p = state.palette;
@@ -156,33 +136,28 @@ export function rainbowAt(i: number): string {
   const n = ((Math.trunc(i) % p.length) + p.length) % p.length;
   const color = p[(n + off) % p.length];
   if (color === undefined) {
-    // Unreachable in practice: usablePalette() never lets state.palette go
-    // empty, but the index is computed via modulo, which TS can't verify.
+    // usablePalette never leaves the palette empty; this narrows the type.
     throw new Error('rainbowAt: palette is empty');
   }
   return color;
 }
 
 /**
- * rainbowColor is what a component asks for: the colour this item should
- * use, or undefined when the mode is off and the single accent applies.
- * Returning undefined rather than the accent keeps the accent in CSS, where
- * a theme change still reaches it.
+ * The colour an item should use, or undefined when the mode is off. Undefined
+ * rather than the accent keeps the accent in CSS, where a theme change reaches
+ * it.
  */
 export function rainbowColor(i: number): string | undefined {
   return state.on ? rainbowAt(i) : undefined;
 }
 
 /**
- * hueVars are the inline custom properties an element carrying a palette
- * position sets on itself. The matching `.glim-hue` rules in tokens.css
- * decide whether the hue is shown at rest or held back until hover, so a
- * component only has to say which colour it owns, never which mode is
- * active.
+ * The inline custom properties an element with a palette position sets on
+ * itself. The `.glim-hue` rules in tokens.css decide whether the hue shows at
+ * rest or on hover, so a component names its colour and never the mode.
  *
- * The class and these properties always travel together: `.glim-hue` with no
- * `--item-hue` under it would resolve the accent to nothing. Hand out both
- * from one call in the adopting app's own component layer.
+ * The class and these properties travel together: `.glim-hue` with no
+ * `--item-hue` under it resolves the accent to nothing.
  */
 export function hueVars(hex: string | undefined): Record<string, string> {
   if (!valid(hex)) return {};
@@ -191,37 +166,20 @@ export function hueVars(hex: string | undefined): Record<string, string> {
     '--item-hue': hex,
     '--item-hue-ink': contrastOn(hex),
     '--item-hue-soft': `rgba(${r}, ${g}, ${b}, 0.22)`,
-    // The wash covers a whole row, so it sits below the soft tint - but not
-    // as far below as the original 7% figure: three independent adopting-app
-    // reports said the mode "does nothing" at that strength, and measuring
-    // the actual rendered colour confirmed the mechanism was wiring
-    // correctly (the values genuinely differed row to row) while staying
-    // under the threshold a person registers as "this changed." 16% is the
-    // new floor - still short of 22%'s "colour chart" territory, but no
-    // longer indistinguishable from the ground colour at a glance.
+    // The wash covers a whole row, so it sits below the soft tint. Below 16%
+    // people could not tell the rows apart from the ground.
     '--item-hue-wash': `rgba(${r}, ${g}, ${b}, 0.16)`,
-    // A compact circular badge (an icon toggle, an undo/redo/zoom action) has
-    // no neighbouring row to reinforce the colour by repetition the way a
-    // list does, and reads as barely-tinted grey at the wash's own 16% once
-    // shrunk to badge size (jdp, adopting app: "die ganzen icon badges sind
-    // immer noch schwach eingefärbt, die sollen normal kräftig eingefärbt
-    // sein"). This tier is deliberately separate from the wash above rather
-    // than just raising it - a list row's own 16% is calibrated for a
-    // DIFFERENT reason (rule above: dense/at-scale is exactly where subtlety
-    // matters) and must stay put.
+    // A small circular badge has no neighbouring rows to repeat its colour and
+    // reads as grey at the wash's 16%, so it gets its own tier.
     '--item-hue-badge': `rgba(${r}, ${g}, ${b}, 0.5)`,
-    // The focus ring follows the position too. A gold ring around a teal tab
-    // is the one place the single accent leaks back into the plural mode, and
-    // it is the most visible one, because it only ever appears on the element
-    // the keyboard is standing on.
+    // Without this a gold focus ring would sit around a teal tab.
     '--item-hue-ring': `rgba(${r}, ${g}, ${b}, 0.55)`,
   };
 }
 
 /**
- * rainbowFromSettings maps a server's flat fields onto the state this module
- * keeps. The parameter is structural rather than an imported type so this
- * file can be lifted into an adopting app unchanged.
+ * Maps a server's flat fields onto the state this module keeps. The parameter
+ * is structural so this file can be copied into an app unchanged.
  */
 export function rainbowFromSettings(s: {
   rainbow?: boolean;
@@ -239,18 +197,17 @@ export function rainbowFromSettings(s: {
   };
 }
 
-/** A palette is taken only in full — see the matching rule on the server. */
+/** A palette is taken only in full, matching the rule on the server. */
 function usablePalette(p: string[] | undefined): string[] {
   if (!p || p.length !== RAINBOW.length || !p.every(valid)) return RAINBOW;
   return p;
 }
 
-/** contrastOn is black or white, whichever is readable on the given colour. */
+/** Black or white, whichever is readable on the given colour. */
 export function contrastOn(hex: string): string {
   if (!valid(hex)) return '#FFFFFF';
   const { r, g, b } = parse(hex);
-  // Carbon's own ink, not a warm near-black: on a yellow accent a
-  // brown-tinted black reads as a smudge.
+  // Carbon's own ink: on a yellow accent a brown-tinted black reads as a smudge.
   return luminance(r, g, b) > 0.55 ? '#161616' : '#FFFFFF';
 }
 
@@ -264,10 +221,8 @@ function parse(hex: string): { r: number; g: number; b: number } {
 }
 
 /**
- * luminance is the perceptual brightness used to decide black or white on
- * top. The sRGB channels are linearised first, because the raw values
- * overstate how bright blue is and understate green, which is exactly the
- * case that produces unreadable buttons.
+ * Relative luminance, used to pick black or white on top. The channels are
+ * linearised first because raw sRGB overstates blue and understates green.
  */
 function luminance(r: number, g: number, b: number): number {
   const lin = (c: number) => {
@@ -277,13 +232,9 @@ function luminance(r: number, g: number, b: number): number {
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
-/**
- * Appearance is mirrored into localStorage purely so the first paint after a
- * reload is already right. The server (or wherever settings actually live)
- * stays the source of truth; this only avoids a flash of the default look
- * while they are being fetched. Each adopting app should use its own cache
- * key — this default is just a starting point.
- */
+// Appearance is mirrored into localStorage only so the first paint after a
+// reload is right; wherever settings live stays the source of truth. Each app
+// should use its own key.
 const CACHE = 'glim-appearance';
 
 interface Cached {
@@ -294,13 +245,12 @@ interface Cached {
 
 export function cacheAppearance(shape: string, accent: string, rainbow?: RainbowState): void {
   try {
-    // Built with a conditional spread, not `{ shape, accent, rainbow }`, so
-    // that under exactOptionalPropertyTypes the key is omitted entirely
-    // when there's no rainbow state rather than present-but-undefined.
+    // The conditional spread omits the key under exactOptionalPropertyTypes
+    // instead of storing it as undefined.
     const payload: Cached = { shape, accent, ...(rainbow !== undefined ? { rainbow } : {}) };
     localStorage.setItem(CACHE, JSON.stringify(payload));
   } catch {
-    // A browser with storage disabled simply pays one flash per load.
+    // With storage disabled the default look flashes once per load.
   }
 }
 

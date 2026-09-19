@@ -1,12 +1,6 @@
-// GlimStone's appearance.ts owns shape/accent/rainbow, but ships no theme
-// function at all — theme is a pure tokens.css concern (the data-theme
-// attribute), left for each adopting app to wire up. Per
-// docs/design-language.md: an unset data-theme follows prefers-color-scheme
-// via a media query already in tokens.css, and an explicit "dark"/"light"
-// overrides it in either direction. Because the follow-the-OS behaviour
-// lives entirely in CSS, "system" needs no matchMedia listener here — the
-// browser re-evaluates the media query on its own whenever the OS setting
-// changes.
+// GlimStone's appearance.ts has no theme function; the theme is the data-theme
+// attribute that tokens.css reads. Without the attribute a media query follows
+// prefers-color-scheme, so "system" needs no matchMedia listener.
 
 export type ThemePref = 'dark' | 'light' | 'system'
 
@@ -27,7 +21,7 @@ export function cacheTheme(pref: ThemePref): void {
   try {
     localStorage.setItem(CACHE_KEY, pref)
   } catch {
-    // A browser with storage disabled simply pays one flash per load.
+    // With storage disabled the default theme flashes once per load.
   }
 }
 
