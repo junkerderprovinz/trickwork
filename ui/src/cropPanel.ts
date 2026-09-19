@@ -1,18 +1,6 @@
-// ui/src/cropPanel.ts
-//
-// ASCGen2's WidgetImage selection tool (click-drag a rectangle on the loaded
-// source image to restrict conversion to just that region) - the one
-// genuine ASCGen2 feature TrickWork had no equivalent for at all, since
-// nothing previously showed the SOURCE image anywhere (only the converted
-// ASCII output, in preview.ts). Sits between Import and Preview in the
-// primary column: import -> optionally crop the source -> see the result.
-//
-// A second pass added corner-resize and interior-move on top of the
-// original draw-a-fresh-rectangle-every-time behaviour (jdp: "man soll
-// Breite und Höhe verschieben können") - dragging now branches three ways
-// depending on where the gesture starts relative to the EXISTING selection:
-// a corner resizes it (opposite corner stays fixed), the interior moves it,
-// anywhere else draws a brand new one.
+// ASCGen2's selection tool: drag a rectangle on the source image to convert
+// only that region. A drag from a corner resizes the selection, one from
+// inside moves it, and one anywhere else draws a new one.
 
 import type { CropSpec } from 'trickwork-core'
 import { infoIcon } from './design/tooltip'
@@ -21,11 +9,8 @@ import type { Store } from './state'
 
 const DISPLAY_MAX_WIDTH = 360
 const DISPLAY_MAX_HEIGHT = 320
-// A small source image (an icon, a tiny screenshot) would otherwise render
-// at its own native size - a 16x16 source makes for a 16x16 crop canvas,
-// practically impossible to drag a selection on. Upscale up to MAX_UPSCALE
-// so it stays a genuinely usable target, capped so a pathological 1x1 image
-// doesn't blow up into something absurd.
+// A small image is upscaled so a selection can still be dragged on it, by at
+// most MAX_UPSCALE.
 const MIN_DISPLAY_DIMENSION = 200
 const MAX_UPSCALE = 10
 const MIN_DRAG_PX = 8
@@ -76,8 +61,7 @@ function hitCorner(point: Point, rect: PixelRect): Corner | null {
 }
 
 export function mountCropPanel(container: HTMLElement, store: Store): void {
-  // Eyebrow + info icon share a row (GlimStone rule 8) - the drag-to-crop
-  // hint used to be an always-visible paragraph in the footer.
+  // The drag-to-crop hint lives in an info bubble beside the eyebrow.
   const eyebrowRow = document.createElement('div')
   eyebrowRow.className = 'eyebrow-row'
   const eyebrow = document.createElement('span')
@@ -136,10 +120,8 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
   }
 
   function positionOverlay(rect: PixelRect): void {
-    // 'block', not '' - the CSS class's own default is display:none (so the
-    // overlay starts hidden with no JS needed), and setting an inline style
-    // to '' only REMOVES an inline override, falling straight back to that
-    // same display:none rather than showing the element.
+    // 'block' rather than '', which would fall back to the class's
+    // display: none.
     overlay.style.display = rect.width > 0 && rect.height > 0 ? 'block' : 'none'
     overlay.style.left = `${rect.x}px`
     overlay.style.top = `${rect.y}px`
@@ -147,7 +129,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     overlay.style.height = `${rect.height}px`
   }
 
-  /** Draws the overlay from the STORED crop (normalized) - the resting state between drags. */
+  /** Draws the overlay from the stored crop, the resting state between drags. */
   function drawStoredOverlay(): void {
     const crop = currentCrop()
     clearButton.style.display = crop ? '' : 'none'
@@ -182,15 +164,10 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
 
     offscreen.width = imageData.width
     offscreen.height = imageData.height
-    // Non-null assertions, matching preview.ts's own render() - both were
-    // already checked non-null right after getContext('2d') above, but
-    // TS's control-flow narrowing doesn't carry into a nested closure
-    // called later.
+    // Both were checked above, but the narrowing does not reach this closure.
     offCtx!.putImageData(imageData, 0, 0)
     ctx!.clearRect(0, 0, canvas.width, canvas.height)
-    // A tiny source image gets upscaled (see computeDisplayScale) - crisp
-    // nearest-neighbor pixels there make individual source pixels legible
-    // for cropping; the default smoothing would just blur them together.
+    // Nearest-neighbour upscaling keeps single source pixels legible.
     ctx!.imageSmoothingEnabled = scale <= 1
     ctx!.drawImage(offscreen, 0, 0, canvas.width, canvas.height)
 
@@ -227,9 +204,8 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
 
   let dragging = false
   let dragMode: DragMode = 'new'
-  // 'new': the fixed start corner. 'resize': the fixed OPPOSITE corner
-  // (the one not being dragged). 'move': the point grabbed inside the
-  // selection, to measure the drag delta from.
+  // 'new': the fixed start corner. 'resize': the fixed opposite corner.
+  // 'move': the point grabbed inside the selection.
   let dragAnchor: Point = { x: 0, y: 0 }
   let dragOriginalRect: PixelRect | null = null
   let pendingRect: PixelRect | null = null
@@ -280,8 +256,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
       const y = Math.max(0, Math.min(canvas.height - dragOriginalRect.height, dragOriginalRect.y + dy))
       rect = { x, y, width: dragOriginalRect.width, height: dragOriginalRect.height }
     } else {
-      // 'new' and 'resize' both work the same way geometrically: a
-      // rectangle spanning from a fixed anchor point to the current pointer.
+      // 'new' and 'resize' both span from the fixed anchor to the pointer.
       const x = Math.min(dragAnchor.x, point.x)
       const y = Math.min(dragAnchor.y, point.y)
       rect = { x, y, width: Math.abs(point.x - dragAnchor.x), height: Math.abs(point.y - dragAnchor.y) }
@@ -299,9 +274,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     const rect = pendingRect
     pendingRect = null
     if (!rect || rect.width < MIN_DRAG_PX || rect.height < MIN_DRAG_PX) {
-      // Too small to be a deliberate selection/resize (a stray click, or a
-      // near-zero drag) - leave whatever crop was already stored alone
-      // rather than committing an accidental sliver.
+      // A stray click or a tiny drag keeps the stored crop.
       drawStoredOverlay()
       return
     }
@@ -327,12 +300,8 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     drawStoredOverlay()
   })
 
-  function render(): void {
-    drawSource()
-  }
-  store.subscribe(render)
-  // Re-syncs the overlay after an undo/redo/preset-import changes `crop`
-  // from outside this panel's own drag handling - see state.ts.
+  store.subscribe(drawSource)
+  // Re-syncs the overlay after an undo, redo or preset import.
   store.subscribeHistory(drawStoredOverlay)
 
   function applyLabels(): void {
@@ -345,5 +314,5 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
   applyLabels()
   subscribeLocale(applyLabels)
 
-  render()
+  drawSource()
 }

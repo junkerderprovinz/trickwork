@@ -1,9 +1,4 @@
-// ui/src/historyPanel.ts
-//
-// Undo/redo, moved here from the header (jdp: "die Pfeile sollen in einer
-// seitlichen Card Platz finden") - sits first in the secondary column since
-// it applies across every one of the cards below it, not tucked inside any
-// single one of them.
+// The History sidecard: undo, redo and a log of the recent changes.
 
 import { iconRedo, iconUndo } from './icons'
 import { subscribeLocale, t } from './i18n'
@@ -31,17 +26,11 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
   undoButton.addEventListener('click', () => store.undo())
   redoButton.addEventListener('click', () => store.redo())
 
-  // No rainbow wiring here any more (jdp rejected the idle badge wash this
-  // fed - see controlWidgets.ts's iconToggleButton). Undo/Redo have no
-  // persisted checked state to colour once "clicked" either, unlike a real
-  // toggle - a momentary action button has nowhere honest to show a rainbow
-  // position at all, so it just stays a plain neutral badge.
+  // Undo and redo are momentary actions with no checked state, so they get no
+  // rainbow colour.
 
-  // The log window (jdp: "ein kleines Protokollfenster") - a small scrollable
-  // list of the recent, human-readable actions each commitOptionsSnapshot()
-  // call site now labels (see state.ts's HistoryEntry). Most recent on top;
-  // the underlying stack is already capped (HISTORY_LIMIT in state.ts), so
-  // this only needs its own fixed height, not its own separate cap.
+  // Most recent first. The stack is capped at HISTORY_LIMIT, so the log only
+  // needs a fixed height.
   const log = document.createElement('ul')
   log.className = 'history-log'
   container.appendChild(log)

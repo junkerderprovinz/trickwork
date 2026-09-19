@@ -17,11 +17,7 @@ export interface AppState {
   options: MappingOptions
 }
 
-// A history entry pairs a snapshot with the human-readable action that
-// produced it (jdp: "kleines Protokollfenster" - a small log of recent
-// changes, not just a bare undo/redo count). state.ts stays i18n-free like
-// the rest of it, so `label` arrives pre-translated from the widget layer
-// (controls.ts/transformPanel.ts/etc.), which already calls t() anyway.
+// The store has no i18n, so `label` arrives translated from the widget layer.
 export interface HistoryEntry {
   options: MappingOptions
   label: string
@@ -29,19 +25,16 @@ export interface HistoryEntry {
 
 export type Listener = (state: AppState) => void
 
-// crypto.randomUUID() is secure-context only, and the container is served over
-// plain http:// on a LAN host (http://tower:3210), where it is undefined — the
-// first dropped file would throw. Queue ids only need to be unique per page
-// load, so generate them locally.
+// crypto.randomUUID() exists only in a secure context, and the container is
+// served over plain http on the LAN. Queue ids only need to be unique per page
+// load.
 let idCounter = 0
 function nextId(): string {
   return `item-${Date.now()}-${idCounter++}`
 }
 
-// Undo/redo covers `options` only (the generation-affecting adjustments a
-// user is actively tuning), never `items`/`activeItemId` - reverting "which
-// image is loaded" isn't what a user reaches for Ctrl+Z expecting. Capped so
-// a long editing session can't grow this unboundedly.
+// Undo covers `options` only; nobody expects Ctrl+Z to change which image is
+// loaded.
 const HISTORY_LIMIT = 50
 
 export function createStore() {
@@ -57,16 +50,11 @@ export function createStore() {
     },
   }
   const listeners = new Set<Listener>()
-  // A second, narrower channel: every control widget (controls.ts,
-  // transformPanel.ts, filtersPanel.ts, levelsPanel.ts) owns its OWN local
-  // DOM state (a slider's value, a segmented row's active button) and only
-  // pushes changes TO the store - it never reads the store back except at
-  // mount time, so a plain setState (e.g. mid-drag, on every 'input' tick)
-  // intentionally does NOT touch this. undo()/redo() are the one case where
-  // `options` changes from OUTSIDE the widget that's displaying it, so
-  // widgets subscribe here specifically to re-sync their displayed value
-  // after a history jump, without rebuilding on every live drag tick (which
-  // would yank focus out from under whatever the user is actively dragging).
+  // Widgets keep their own DOM state and only push changes to the store, so
+  // setState leaves them alone. Undo, redo and a preset import change options
+  // from outside the widget showing them, and this channel lets widgets
+  // re-sync then without rebuilding on every drag tick, which would steal
+  // focus from the drag.
   const historyListeners = new Set<() => void>()
   let past: HistoryEntry[] = []
   let future: HistoryEntry[] = []
@@ -84,22 +72,16 @@ export function createStore() {
     notify()
   }
 
-  // Called once per discrete user gesture, BEFORE the change it's about to
-  // make - the widget layer (controlWidgets.ts/controls.ts/levelsPanel.ts)
-  // decides what "one gesture" means (a single click, or a whole drag from
-  // pointerdown to blur) and calls this exactly once per gesture, right
-  // before applying the new value via setState.
+  // Called once per gesture, a click or a whole drag, before the new value is
+  // applied.
   function commitOptionsSnapshot(label: string) {
     past = [...past.slice(-(HISTORY_LIMIT - 1)), { options: state.options, label }]
     future = []
     notify()
   }
 
-  // For a whole-options replacement from OUTSIDE any single widget's own
-  // editing (presetsPanel.ts's import) - same "undoable + resync every
-  // widget's displayed value" contract as undo()/redo() below, since a
-  // preset swap is exactly as external to e.g. the rotate segmented row as
-  // an undo jump is.
+  // Replaces all options from outside the widgets, undoable and re-synced
+  // like an undo.
   function replaceOptions(next: MappingOptions, label: string) {
     commitOptionsSnapshot(label)
     state = { ...state, options: next }
@@ -177,8 +159,7 @@ export function createStore() {
     redo,
     canUndo: () => past.length > 0,
     canRedo: () => future.length > 0,
-    // Oldest first, matching push order - historyPanel.ts's log window slices
-    // from the end and reverses for a most-recent-first display.
+    // Oldest first.
     historyLog: () => past.map((entry) => entry.label),
   }
 }

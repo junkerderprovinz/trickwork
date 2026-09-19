@@ -1,11 +1,6 @@
-// ui/src/i18n.parity.test.ts
-//
-// The one thing that catches a missing locale key: locale modules are typed
-// as Partial<Record<TranslationKey, string>>, so a missing key passes both
-// `tsc --noEmit` and `vite build` silently (BombVault burned this exact gap
-// once - see the translate-all-locales-immediately convention). This asserts
-// every locale's key set is IDENTICAL to en's, both directions - not just "no
-// missing keys" but also "no stray keys a rename left behind".
+// Locale modules are typed as Partial<Record<TranslationKey, string>>, so a
+// missing key passes tsc and vite build. This checks that every locale has
+// exactly en's keys, none missing and none left over from a rename.
 
 import { describe, expect, it } from 'vitest'
 import { de, en, LOCALES, type Translations } from './i18n'

@@ -1,13 +1,6 @@
-// ui/src/brandLogo.ts
-//
-// The header wordmark logo - copied verbatim from .github/assets/logo.svg
-// (the same file the README banner/desktop app icon are generated from),
-// with each fill CLASS resolved to a literal fill ATTRIBUTE instead. An
-// inlined <style> block's classes are effectively global once this markup
-// lands in the page via innerHTML, so a second copy anywhere else on the
-// page would silently collide with (or override) this one's colours -
-// literal attributes have no such scope to collide in. Geometry (every d=/
-// points= value) is untouched; only the colour-class indirection is gone.
+// The header logo from .github/assets/logo.svg, with its fill classes turned
+// into fill attributes: the classes of an inlined <style> are global once the
+// markup is in the page and would collide with any other copy.
 export function brandLogo(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 223.97 76.87" class="app-brand-logo" aria-hidden="true">
   <path fill="#3a260f" d="M168.21,61.32l1.93.22c.31.04.61.07.92.11,1.26.15,2.53.3,3.8.46,2.16.27,2.45.3,4.6.6l-16.07,9.17v-11c.83.09,3.98.34,4.81.44Z"/>

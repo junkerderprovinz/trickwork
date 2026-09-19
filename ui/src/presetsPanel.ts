@@ -1,11 +1,5 @@
-// ui/src/presetsPanel.ts
-//
-// Save/load the full generation-affecting `options` object as a shareable
-// JSON file - goes beyond ASCGen2's own settings.dat, which only persisted a
-// handful of fields (not even the character set) and couldn't be shared or
-// swapped between multiple named presets at all. Lives in the Settings view
-// as its own card (a global, non-preview action, same footing as Shape/
-// Theme/Accent/Language), not folded into the Adjust card.
+// Saves and loads the whole `options` object as a shareable JSON file, from its
+// own card in the Settings view.
 
 import type { MappingOptions } from 'trickwork-core'
 import { downloadBlob } from './download'
@@ -24,10 +18,8 @@ function isFiniteNumber(value: unknown): value is number {
 }
 
 /**
- * Rebuilds a MappingOptions from untrusted parsed JSON field by field,
- * accepting only well-formed values - a hand-edited or corrupted file must
- * fail closed (null) rather than hand assembleGrid something that crashes it
- * mid-render (e.g. columns: 0, or a charset that isn't actually an array).
+ * Rebuilds MappingOptions from untrusted JSON field by field, so a hand-edited
+ * or corrupt file yields null instead of crashing assembleGrid mid-render.
  */
 function validateOptions(value: unknown): MappingOptions | null {
   if (!value || typeof value !== 'object') return null
@@ -73,7 +65,6 @@ function validateOptions(value: unknown): MappingOptions | null {
   return options
 }
 
-/** Exported for direct unit testing - see presetsPanel.test.ts. */
 export function parsePresetFile(text: string): MappingOptions | null {
   let parsed: unknown
   try {
@@ -137,10 +128,7 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
         summary.textContent = t('presets.importInvalid')
         return
       }
-      // A whole-settings swap is exactly the kind of change a user wants to
-      // step back from with Ctrl+Z if the loaded preset turns out wrong -
-      // replaceOptions() gets that AND re-syncs every control's displayed
-      // value, the same as an undo/redo jump (see state.ts).
+      // replaceOptions records an undo step and re-syncs every control.
       store.replaceOptions(options, t('history.entrySettingsImported'))
       summary.textContent = t('presets.imported')
     })()

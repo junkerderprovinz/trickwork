@@ -1,10 +1,5 @@
-// ui/src/levelsPanel.ts
-//
-// ASCGen2's "Levels" tab (WidgetTextSettings.cs, a JMLevels control: histogram
-// + black/median/white point sliders, Photoshop-style) - folded into the
-// Filters card as one more always-visible block instead of a separate dialog/
-// tab, matching TrickWork's "every generation-affecting control is live at
-// once" layout. Mounted by filtersPanel.ts.
+// ASCGen2's Levels control, a histogram with black, gamma and white handles,
+// shown inside the Filters card instead of a separate dialog.
 
 import { computeLuminanceHistogram, type LevelsSpec } from 'trickwork-core'
 import { subscribeLocale, t } from './i18n'
@@ -19,12 +14,9 @@ function levelsOf(store: Store): LevelsSpec {
 }
 
 /**
- * Where the midtone handle sits on the shared 0..255 track for a given
- * gamma - the inverse of applyLevels' own curve (filters.ts), solved for the
- * input value that maps to output 0.5: normalized^(1/gamma) = 0.5 =>
- * normalized = 0.5^gamma. gamma=1 centers it; gamma>1 (brighten) pulls it
- * toward black; gamma<1 (darken) pushes it toward white - the same direction
- * Photoshop's own gray-point slider moves.
+ * Where the midtone handle sits on the 0..255 track: the input applyLevels
+ * maps to 0.5, which is 0.5^gamma of the span. A gamma above 1 pulls it toward
+ * black, as Photoshop's gray point moves.
  */
 function gammaTrackPosition(levels: LevelsSpec): number {
   return levels.black + (levels.white - levels.black) * Math.pow(0.5, levels.gamma)
@@ -55,11 +47,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   labelRow.append(labelText, resetButton)
   wrap.appendChild(labelRow)
 
-  // The boxed "window" (glim-well) now wraps ONLY the histogram, not the
-  // track underneath it (jdp: "das Fenster soll am oberen Ende der
-  // Verschieberegler aufhören") - the track sits as a plain sibling right
-  // after it, background-free, so the handles float directly on the card's
-  // own surface instead of inside a second boxed strip.
+  // The well frames only the histogram; the handles sit on the card surface.
   const canvasWrap = document.createElement('div')
   canvasWrap.className = 'levels-canvas-wrap glim-well'
   wrap.appendChild(canvasWrap)
@@ -85,9 +73,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   const gammaInput = makeHandle('gamma')
   const whiteInput = makeHandle('white')
 
-  // Live numeric values, not just a hover tooltip - ASCGen2's own dialog
-  // reads as more polished partly because the black/gamma/white numbers are
-  // always visible, not hidden behind a mouseover.
+  // The values stay visible rather than behind a hover, as in ASCGen2.
   const readoutRow = document.createElement('div')
   readoutRow.className = 'levels-readout-row'
   const blackReadout = document.createElement('span')
@@ -103,9 +89,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     const levels = levelsOf(store)
     blackInput.value = String(levels.black)
     whiteInput.value = String(levels.white)
-    // The gamma handle's own draggable range is bounded by the current
-    // black/white points, not the full 0..255 track - it can never cross
-    // either outer point.
+    // The gamma handle stays between the black and white points.
     gammaInput.min = String(levels.black)
     gammaInput.max = String(levels.white)
     gammaInput.value = String(Math.round(gammaTrackPosition(levels)))
@@ -124,9 +108,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     syncHandles()
   }
 
-  // Same gesture-aware undo pattern as numberSlider (controls.ts): snapshot
-  // once per drag/keyboard gesture, not once per 'input' tick, so a whole
-  // drag undoes as a single step back to the value before the drag began.
+  // One undo step per drag or keyboard gesture, as in numberSlider.
   function wireGestureUndo(input: HTMLInputElement): void {
     let committedThisGesture = false
     function commitGestureStart(): void {
@@ -144,12 +126,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   wireGestureUndo(whiteInput)
   wireGestureUndo(gammaInput)
 
-  // Double-click a handle to snap just that point back to IDENTITY_LEVELS'
-  // own value (jdp: "die ganzen schieberegler soll man mit doppelklick auf
-  // den reglerknopf zurücksetzen können") - the existing Reset button above
-  // resets all three at once; this is the same gesture numberSlider's own
-  // sliders got, applied per-handle here since Levels has three independent
-  // points rather than one value.
+  // A double-click resets one handle; the Reset button resets all three.
   blackInput.addEventListener('dblclick', () => {
     if (levelsOf(store).black === IDENTITY_LEVELS.black) return
     store.commitOptionsSnapshot(t('history.entryLevels'))
@@ -183,29 +160,17 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     commit({ ...IDENTITY_LEVELS })
   })
 
-  // The histogram itself only depends on the active image (recompute on
-  // switch), never on the levels values themselves - only the three handle
-  // positions above react to those on every drag frame.
+  // The histogram depends on the active image only.
   let lastImageId: string | null = null
   let lastHistogram: Uint32Array | null = null
 
   function drawHistogram(): void {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    // CSS pixels, not device pixels - width/height below are the box the
-    // histogram actually occupies on screen (style.css's own 84px), read
-    // live via clientHeight instead of a hard-coded constant that had
-    // drifted out of sync with it (a real, independent cause of the
-    // "blurry compared to ASCII Gen 2" look jdp flagged: the canvas's own
-    // internal buffer was 64px tall while CSS stretched it to 84px, and
-    // browsers blur a stretched canvas exactly like a stretched photo).
+    // The buffer follows the laid-out CSS box times the device pixel ratio,
+    // since a canvas stretched by CSS or drawn at 1x on a scaled display blurs.
     const width = canvas.clientWidth || 280
     const height = canvas.clientHeight || 84
-    // The OTHER independent cause: a canvas's backing store defaults to one
-    // pixel per CSS pixel, which looks soft on any display scaled above
-    // 100% (dpr > 1 - common on Windows) even once width/height agree with
-    // the CSS box. Size the actual bitmap up by dpr and scale the context
-    // so every draw call below still thinks in CSS-pixel coordinates.
     const dpr = window.devicePixelRatio || 1
     const bufferWidth = Math.round(width * dpr)
     const bufferHeight = Math.round(height * dpr)
@@ -217,14 +182,8 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
     const max = Math.max(1, ...lastHistogram)
     const barWidth = width / 256
     ctx.fillStyle = cssVar('--accent') || '#FCC419'
-    // log1p, not sqrt: a real photo's histogram has a handful of tall peaks
-    // and a long tail of much smaller counts - sqrt still compressed the
-    // peaks so hard relative to the tail that most buckets rounded to a 1px
-    // sliver invisible against the white background, reading as "only a few
-    // individual bars" instead of ASCGen2's own continuous mountain-range
-    // silhouette (jdp, comparing the two directly). log1p compresses the
-    // peak far more aggressively, giving the tail proportionally much more
-    // visible height - the same scaling a real histogram widget uses.
+    // Log scale, so the long tail of small counts stays visible next to the
+    // few tall peaks of a photo.
     const logMax = Math.log1p(max)
     for (let bucket = 0; bucket < 256; bucket++) {
       const count = lastHistogram[bucket] ?? 0
@@ -261,12 +220,9 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   subscribeLocale(applyLabels)
 
   refreshImage()
-  // The canvas's own clientWidth is 0 until it's actually laid out in the
-  // DOM (container.appendChild above only attaches it) - re-measure once
-  // after layout so the very first histogram isn't drawn at a 0px width.
+  // clientWidth is 0 until layout, so draw again after the first frame.
   requestAnimationFrame(drawHistogram)
 
-  // Re-syncs the three handle positions after an undo/redo changes `levels`
-  // from outside this panel - see state.ts's subscribeHistory doc comment.
+  // Re-syncs the handles after an undo or redo.
   store.subscribeHistory(syncHandles)
 }

@@ -68,15 +68,9 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
 
   build()
   subscribeLocale(build)
-  // See controls.ts: re-syncs the rotate/flip controls after an undo/redo
-  // changes them from outside this panel, without rebuilding on every
-  // regular options change (that would break mid-drag interactions elsewhere).
+  // Re-syncs after an undo or redo, without rebuilding on every options change,
+  // which would break a drag in progress elsewhere.
   store.subscribeHistory(build)
-  // Rainbow indices are baked in at build() time (segmentedRow/
-  // iconToggleButton read rainbowColor() once, not reactively) - toggling
-  // the mode in Settings has to rebuild this panel too, same reason
-  // queue.ts subscribes (jdp: "die ganzen badges und schaltflächen werden
-  // nicht eingefärbt" - Rotate/Flip are exactly the kind of equal-member
-  // set the rainbow engine is meant to cover, not just the queue).
+  // The widgets read their rainbow colour once, at build time.
   subscribeRainbow(build)
 }

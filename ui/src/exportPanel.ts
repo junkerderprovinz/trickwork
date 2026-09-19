@@ -23,9 +23,7 @@ type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
 const COPIED_FEEDBACK_MS = 1500
 
 export function mountExportPanel(container: HTMLElement, store: Store): void {
-  // Eyebrow + info icon share a row (GlimStone rule 8: explanations live in
-  // a bubble, not printed under the control) - the TXT-carries-no-colour
-  // caveat used to be an always-visible paragraph under the button row.
+  // The info bubble beside the eyebrow explains that TXT carries no colour.
   const eyebrowRow = document.createElement('div')
   eyebrowRow.className = 'eyebrow-row'
   const eyebrow = document.createElement('span')
@@ -40,13 +38,8 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   const summary = document.createElement('p')
   summary.className = 'export-summary'
 
-  // Moved here from the Preview card (jdp: "der Copy button der im
-  // vorschaufenster ist soll ins export menü wandern"), then INTO this
-  // same row as the format buttons rather than sitting apart in the
-  // eyebrow (jdp: "den zwischenablage button [...] in die reihe der
-  // anderen buttons integrieren") - copying plain text to the clipboard
-  // IS an export, just to the clipboard instead of a file. Pinned to the
-  // row's trailing edge via margin-left: auto.
+  // Copying the text is an export too, so Copy sits at the end of the format
+  // row.
   const copyButton = document.createElement('button')
   copyButton.type = 'button'
   copyButton.className = 'preview-copy-button'
@@ -63,13 +56,8 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
     formatButtons.push({ format, button })
   })
   formatRow.appendChild(copyButton)
-  // The four formats plus Copy are an equal-weight ACTION set, not a
-  // persistent selection (jdp: "die buttons die inaktiv sind sollen nicht
-  // eingefärbt sein, beim mouseover sollen sie eingefärbt werden") - each
-  // owns a fixed rainbow position, but .glim-tint-hover keeps them quiet
-  // at rest and reveals the wash only on hover/focus, applied once at
-  // mount and re-applied on toggle (these buttons are never torn down the
-  // way a panel's own build() would be).
+  // The formats and Copy are actions, not a selection: each owns a rainbow
+  // position, but .glim-tint-hover shows it only on hover and focus.
   ;[...formatButtons.map((f) => f.button), copyButton].forEach((button, index) => {
     if (applyHueVars(button, index)) button.classList.add('glim-hue', 'glim-tint-hover')
   })
@@ -88,9 +76,8 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   function applyLabels(): void {
     eyebrow.textContent = t('export.eyebrow')
     for (const { format, button } of formatButtons) {
-      // aria-label carries the full sentence as the accessible name (what
-      // screen readers and Playwright's getByRole both read), while the
-      // visible label stays a compact format code.
+      // The accessible name is the full sentence; the visible label stays the
+      // short format code.
       const label = t('export.formatAriaLabel', { format: format.toUpperCase() })
       button.setAttribute('aria-label', label)
       button.title = label
@@ -98,10 +85,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
     batchButton.textContent = t('export.batchButton')
     eyebrowInfo.setAttribute('data-tip', t('controls.colorTxtNote'))
     eyebrowInfo.setAttribute('aria-label', t('controls.colorTxtNote'))
-    // Skipped while the "Copied!" feedback is showing - reapplying the
-    // normal label mid-timeout would cut the feedback short on a locale
-    // switch (rare, but a full rebuild elsewhere in the app can trigger
-    // this callback at any time).
+    // Skipped while "copied" shows, or a locale switch would cut it short.
     if (!copiedFeedbackTimer) {
       copyButton.title = t('preview.copy')
       copyButton.setAttribute('aria-label', t('preview.copy'))
@@ -134,10 +118,8 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
       })
   })
 
-  // Unlike a panel with its own build(), these buttons are created once and
-  // never torn down - re-applying the hue vars is what picks up a palette
-  // edit or a mode toggle (applyHueVars() itself is idempotent and a no-op
-  // once rainbow is off, so this is safe to call unconditionally).
+  // These buttons are built once, so a palette edit or a mode switch has to
+  // re-apply the hue vars.
   function syncRainbow(): void {
     ;[...formatButtons.map((f) => f.button), copyButton].forEach((button, index) => {
       const applied = applyHueVars(button, index)
@@ -162,18 +144,15 @@ async function buildOutput(item: BatchItem, store: Store, format: ExportFormat):
     case 'txt':
       return new Blob([toText(grid)], { type: 'text/plain' })
     case 'xhtml':
-      // White page / black ink, matching the live preview and RTF's implicit
-      // white-page default - see preview.ts.
+      // Black on white, like the preview.
       return new Blob([toXHTML(grid, { background: '#ffffff', foreground: '#000000' })], {
         type: 'application/xhtml+xml',
       })
     case 'rtf':
       return new Blob([toRTF(grid)], { type: 'application/rtf' })
     case 'png':
-      // The PNG is the one export that renders with the actual selected font,
-      // so its cell pitch has to come from that font too — a fixed 8x16px grid
-      // overlapped the proportional stacks badly (Georgia/Arial measure ~14px
-      // wide at a 14px font size, not 8px).
+      // The PNG renders with the selected font, so its cell pitch comes from
+      // that font too.
       return toImage(
         grid,
         {
@@ -234,7 +213,7 @@ async function exportAllAsText(store: Store, summary: HTMLElement): Promise<void
     if (item.status !== 'converted' && item.status !== 'exported') continue
     try {
       const blob = await buildOutput(item, store, 'txt')
-      // One item erroring must never abort the rest of the batch (spec §6).
+      // One failing item does not abort the rest of the batch.
       if (await downloadBlob(blob, `${item.file.name}.txt`)) {
         store.updateItem(item.id, { status: 'exported' })
         succeeded++

@@ -36,31 +36,18 @@ export function mountQueue(container: HTMLElement, store: Store): void {
 
   store.subscribe(render)
   subscribeLocale(render)
-  // Rainbow is a document-level setting living outside `store` (see
-  // design/appearance.ts) - toggling it on/off in Settings has to re-render
-  // this list too, or the queue would only pick up the palette on its next
-  // unrelated re-render.
+  // Rainbow mode lives outside the store.
   subscribeRainbow(render)
   render()
 }
 
 function renderItem(item: BatchItem, isActive: boolean, index: number, store: Store): HTMLLIElement {
   const li = document.createElement('li')
-  // .glim-active alongside the app's own queue-item--active - GlimStone's
-  // shared rainbow composition rule (tokens.css's `.glim-tint.glim-active`)
-  // keys off the GENERIC marker, not an app-specific one; without it, the
-  // active row silently fell back to the same flat wash as every other row
-  // (a real bug found this session - see design-language.md's rainbow
-  // section, "the active row needs its own class").
+  // The rainbow rule in tokens.css keys off the generic .glim-active marker.
   li.className = `queue-item queue-item--${item.status}${isActive ? ' queue-item--active glim-active' : ''}`
 
-  // Each row owns one palette position - the canonical rainbow use case
-  // (design-language.md: "a download row owns a colour"). rainbowColor()
-  // already returns undefined when the mode is off, so the row falls back
-  // to the single accent with no extra branching here. The active item's
-  // OWN highlight (queue-item--active, below) already reads var(--accent-
-  // soft) - .glim-hue redefining that token is what makes it pick up this
-  // row's own hue automatically, no separate rule needed.
+  // Each row owns one palette position. .glim-hue redefines --accent-soft,
+  // which the active highlight reads, so it takes on the row's hue.
   const hue = rainbowColor(index)
   if (hue) {
     li.classList.add('glim-hue', 'glim-tint')
@@ -69,11 +56,7 @@ function renderItem(item: BatchItem, isActive: boolean, index: number, store: St
     }
   }
 
-  // A solid dot, not just the background wash (jdp: "der Regenbogen-Modus
-  // funktioniert nicht!!" - the wash is real and verified correct, but a
-  // ~16-22% alpha tint over an already-similar surface colour is easy to
-  // miss entirely depending on the display; a fully-opaque swatch can't be
-  // mistaken for "nothing changed" the way a subtle wash can).
+  // A solid dot as well, since the faint wash is easy to miss on some displays.
   if (hue) {
     const dot = document.createElement('span')
     dot.className = 'queue-item-dot'

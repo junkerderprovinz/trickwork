@@ -1,4 +1,3 @@
-// ui/src/presetsPanel.test.ts
 import { describe, expect, it } from 'vitest'
 import { parsePresetFile } from './presetsPanel'
 
@@ -73,9 +72,7 @@ describe('parsePresetFile', () => {
   })
 
   it('ignores a malformed optional field instead of rejecting the whole preset', () => {
-    // sharpen: 'extreme' isn't one of the three valid values - the required
-    // core fields are still fine, so the preset loads with sharpen just
-    // silently omitted rather than failing outright.
+    // 'extreme' is not a sharpen method, so only that field is dropped.
     const result = parsePresetFile(preset({ ...VALID_OPTIONS, sharpen: 'extreme' }))
     expect(result).not.toBeNull()
     expect(result?.sharpen).toBeUndefined()

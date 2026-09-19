@@ -1,16 +1,6 @@
-// ui/src/cardReorder.ts
-//
-// Lets the secondary column's sidecards (History/Adjust/Transform/Filters/
-// Queue/Export) be rearranged by dragging a small handle in each card's
-// corner (jdp: "die cards sollen auch per drag and drop nach wunsch
-// anordenbar sein"). Native HTML5 drag-and-drop, not a pointer-based
-// reimplementation - the app has no other draggable-list precedent to
-// match, and this is the standard mechanism for "pick this card up, drop
-// it somewhere else" on desktop. Persisted order survives a reload; a
-// missing/invalid saved order falls back to the DEFAULT order the caller
-// passed in (main.ts's own History-above-Queue arrangement), and any card
-// the saved order doesn't mention (a future new sidecard) is appended
-// after the ones it does, in the caller's own default order.
+// Lets the sidecards of the secondary column be rearranged with native HTML5
+// drag and drop on a handle in each card's corner. The order is saved; without
+// a valid saved order the caller's default order stays.
 
 import { iconGrip } from './icons'
 import { t } from './i18n'
@@ -51,8 +41,7 @@ export function makeReorderable(container: HTMLElement, cards: Card[]): void {
       const el = byId.get(id)
       if (el) container.appendChild(el)
     }
-    // Cards the saved order doesn't know about yet (added after the user
-    // last rearranged) land at the end, in the caller's own default order.
+    // Cards added since the order was saved go last, in the default order.
     for (const { id, el } of cards) {
       if (!saved.includes(id)) container.appendChild(el)
     }
@@ -84,11 +73,8 @@ export function makeReorderable(container: HTMLElement, cards: Card[]): void {
       persistOrder(container)
     })
 
-    // dragover/drop live on the CARD (not the handle) - the whole card is
-    // the drop target a user aims for, even though only its handle can
-    // start a drag. Reorders live, on every hover, rather than waiting for
-    // a separate drop event - the common "cards slide out of the way as
-    // you drag" pattern.
+    // The whole card is the drop target, though only the handle starts a
+    // drag, and cards move on every dragover so they slide out of the way.
     el.addEventListener('dragover', (event) => {
       if (!draggedEl || draggedEl === el) return
       event.preventDefault()

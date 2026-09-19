@@ -26,10 +26,8 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   empty.className = 'preview-empty glim-well'
   container.appendChild(empty)
 
-  // Zoom is view-only state, deliberately NOT part of store.options - it
-  // isn't a generation setting (undo/redo, presets, and exports must all
-  // ignore it entirely), it's purely "how am I looking at the result right
-  // now", matching ASCGen2's own Zoom In/Out buttons on its preview widget.
+  // Zoom is view state rather than an option, so undo, presets and exports
+  // ignore it.
   let zoomPct = DEFAULT_ZOOM
 
   const zoomCluster = document.createElement('div')
@@ -51,12 +49,6 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   zoomRow.className = 'preview-zoom-row'
   zoomRow.appendChild(zoomCluster)
   container.appendChild(zoomRow)
-
-  // No rainbow wiring here any more (jdp rejected the idle badge wash this
-  // fed - see controlWidgets.ts's iconToggleButton). Zoom out/in have no
-  // persisted checked state either - a momentary action button has nowhere
-  // honest to show a rainbow position, so it just stays a plain neutral
-  // badge.
 
   function applyLabels(): void {
     eyebrow.textContent = t('preview.eyebrow')
@@ -83,11 +75,8 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   function applyZoom(): void {
     zoomLabel.textContent = `${zoomPct}%`
     if (canvas.width === 0) return
-    // Explicit pixel dimensions, not a CSS transform: scaling the actual
-    // layout box (not just its paint) is what makes canvasWrap's own
-    // overflow:auto produce real scrollbars once the scaled image is
-    // bigger than the card - a transform: scale() repaints in place
-    // without touching layout size, so nothing would ever overflow to pan.
+    // Sizing the layout box instead of using a transform lets canvasWrap
+    // overflow and scroll.
     canvas.style.width = `${(canvas.width * zoomPct) / 100}px`
     canvas.style.height = `${(canvas.height * zoomPct) / 100}px`
   }
@@ -101,9 +90,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   zoomInButton.addEventListener('click', () => setZoom(zoomPct + ZOOM_STEP))
   zoomLabel.addEventListener('click', () => setZoom(DEFAULT_ZOOM))
 
-  // Ctrl/Cmd+wheel zooms (the common image-viewer convention) - a bare
-  // wheel is left alone so it still scrolls canvasWrap's own scrollbars
-  // normally when not zooming.
+  // Ctrl or Cmd with the wheel zooms; a bare wheel still scrolls.
   canvasWrap.addEventListener(
     'wheel',
     (event) => {
@@ -114,10 +101,7 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     { passive: false },
   )
 
-  // Click-and-drag panning, on top of the scrollbars canvasWrap's own
-  // overflow:auto already provides - ASCGen2 itself only ever had
-  // scrollbar-based panning (confirmed against its source, no dedicated
-  // pan tool), so this is TrickWork going a step beyond the original.
+  // Drag to pan, in addition to the scrollbars.
   let dragging = false
   let dragStartX = 0
   let dragStartY = 0
@@ -150,18 +134,13 @@ export function mountPreview(container: HTMLElement, store: Store): void {
   const measure = createCanvasGlyphMeasurer()
   const measureWidth = createCanvasWidthMeasurer()
 
-  // Building the font-width table costs one canvas plus one getImageData
-  // readback PER character (up to 70 for the "detailed" preset), and render()
-  // runs on every store notification — including every frame of a slider drag.
-  // Brightness, contrast and column count change none of the table's inputs,
-  // so cache it and rebuild only when the charset or font actually changes.
+  // The font-width table costs a canvas readback per character, and render()
+  // runs on every store change, including each frame of a slider drag. Only
+  // the charset and the font feed it.
   let lastTableKey: string | null = null
   let cachedTable: FontWidthTable | null = null
   let cachedCellSize: CellSize | null = null
-  // Recomputed grids reset the zoom back to 100% only when the ACTIVE IMAGE
-  // changes (a fresh image should always start at a predictable zoom), never
-  // on every render (that would fight the user zooming while adjusting an
-  // unrelated slider).
+  // Zoom resets when the active image changes, not on every render.
   let lastImageId: string | null = null
 
   function render() {
@@ -201,10 +180,8 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     canvas.width = columns * cachedCellSize.cellWidthPx
     canvas.height = rows * cachedCellSize.cellHeightPx
 
-    // White page / black ink by default, regardless of the app's own theme
-    // (matches ASCGen2's own output convention and .preview-canvas-wrap's
-    // fixed white background) - PNG and XHTML export use the same pair, see
-    // exportPanel.ts.
+    // Black ink on white regardless of the theme, as in ASCGen2 and in the
+    // PNG and XHTML exports.
     renderGridToCanvas(ctx!, grid, {
       cellWidthPx: cachedCellSize.cellWidthPx,
       cellHeightPx: cachedCellSize.cellHeightPx,

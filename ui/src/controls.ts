@@ -13,9 +13,7 @@ import { iconLockClosed, iconLockOpen } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'
 
-// Display names for the preset dropdown - CHARSET_PRESETS' own keys are
-// lowercase identifiers ("standard", "detailed"), never shown to a user
-// directly (that produced an all-lowercase-looking dropdown).
+// Display names for the preset keys, which are lowercase identifiers.
 const CHARSET_PRESET_KEYS: Record<CharsetPresetKey, TranslationKey> = {
   standard: 'controls.charsetPresetStandard',
   detailed: 'controls.charsetPresetDetailed',
@@ -29,24 +27,16 @@ const CHARSET_PRESET_KEYS: Record<CharsetPresetKey, TranslationKey> = {
   binary: 'controls.charsetPresetBinary',
 }
 
-// Mirrors state.ts's own initial options.columns - the double-click-to-
-// reset value for the Width slider (jdp: "die ganzen schieberegler soll
-// man mit doppelklick auf den reglerknopf zurücksetzen können").
+// The initial width in state.ts, which a double-click on the thumb restores.
 const DEFAULT_COLUMNS = 120
 
-// Shown for the Height slider only before any image has been loaded yet
-// (computeDisplayRows below has nothing to derive an aspect ratio from at
-// that point) - matches what a 1:1 image at DEFAULT_COLUMNS would auto-
-// compute, via the same CELL_ASPECT_COMPENSATION real generation uses.
+// Height before any image is loaded: the auto row count of a square image.
 const DEFAULT_ROWS_FALLBACK = Math.round(DEFAULT_COLUMNS / CELL_ASPECT_COMPENSATION)
 
 /**
- * The row count the Height slider should currently show: MappingOptions.rows
- * itself once the user has set an explicit override (unlocked), otherwise the
- * same aspect-ratio-matched value assembleGrid would auto-derive for the
- * active image at the given column count - computed via effectiveDimensions
- * (crop/rotate math only, no pixel work) rather than running the full
- * applyImageFilters pipeline just to read its output size.
+ * The row count the Height slider shows: the explicit override, or the auto
+ * value assembleGrid would derive for the active image, taken from
+ * effectiveDimensions instead of running the pixel pipeline.
  */
 function computeDisplayRows(store: Store, columns: number): number {
   const state = store.getState()
@@ -64,7 +54,7 @@ const FONT_CHOICES: { key: TranslationKey; family: string }[] = [
   { key: 'controls.fontSans', family: 'ui-sans-serif, system-ui, "Segoe UI", sans-serif' },
 ]
 
-/** The Adjust card: the core rendering parameters (not transform/filter/colour - see transformPanel.ts/filtersPanel.ts). */
+/** The Adjust card: width, height, charset and font. */
 export function mountControls(container: HTMLElement, store: Store): void {
   const eyebrow = document.createElement('div')
   eyebrow.className = 'glim-eyebrow'
@@ -74,14 +64,8 @@ export function mountControls(container: HTMLElement, store: Store): void {
   panel.className = 'controls'
   container.appendChild(panel)
 
-  // Outside build() so it survives a rebuild (locale switch, undo/redo,
-  // rainbow toggle) - only the lock toggle itself changes it. Locked is the
-  // default (jdp never asked for unlocked-by-default, and it matches every
-  // release before this one, where height always followed width implicitly).
-  // Deliberately NOT part of MappingOptions: it's a UI editing mode, not a
-  // generation parameter - "rows: undefined" already means "auto, locked to
-  // width" on its own (see computeDisplayRows), so locked/unlocked is fully
-  // derivable from whether rows is set. No separate flag to keep in sync.
+  // Outside build() so it survives rebuilds. It is a UI mode rather than an
+  // option, since an unset `rows` already means height follows width.
   let aspectLocked = true
 
   function build(): void {
@@ -96,11 +80,8 @@ export function mountControls(container: HTMLElement, store: Store): void {
       options.columns,
       (value) => {
         store.setState({ options: { ...store.getState().options, columns: value } })
-        // Locked: rows stays undefined (still auto) - only the Height
-        // slider's OWN displayed number needs to track the new width live,
-        // without the full-panel rebuild a store.subscribe would cause on
-        // every drag tick (see numberSlider's own gesture-based undo
-        // comment for why that matters here too).
+        // Rows stays auto; only the Height display follows, without a full
+        // rebuild on every drag tick.
         if (aspectLocked) syncRowsDisplay(computeDisplayRows(store, value))
       },
       1,
@@ -109,13 +90,8 @@ export function mountControls(container: HTMLElement, store: Store): void {
       DEFAULT_COLUMNS,
     )
 
-    // A plain sibling row, NOT nested inside numberSlider's own <label> -
-    // that wrapper exists so clicking the row helps focus its <input>, and a
-    // <button> living inside the same <label> would receive stray forwarded
-    // clicks meant for the range input (the implicit label/control
-    // association HTML gives every <label>). Keeping the toggle as a sibling
-    // avoids that entirely, at the cost of the toggle sitting beside the
-    // whole Height control rather than inline with just its label text.
+    // The lock sits beside numberSlider's <label> rather than inside it, where
+    // the label would forward clicks meant for the range input to it.
     const rowsWrap = document.createElement('div')
     rowsWrap.className = 'control-slider-with-toggle'
     const rows = numberSlider(
@@ -147,12 +123,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
       (checked) => {
         aspectLocked = checked
         if (aspectLocked) {
-          // Locking discards any explicit override and goes back to
-          // matching the image's own proportions - the same "auto" state
-          // rows started in, not just freezing wherever it happened to be.
-          // Omits the key entirely rather than setting it to `undefined` -
-          // exactOptionalPropertyTypes treats those as different (same trap
-          // GlimStone's own appearance.ts hit and documented).
+          // Locking drops the override and returns to the image's
+          // proportions. The key is removed rather than set to undefined,
+          // which exactOptionalPropertyTypes treats differently.
           store.commitOptionsSnapshot(t('history.entryAspectLocked'))
           const { rows: _rows, ...withoutRows } = store.getState().options
           store.setState({ options: withoutRows })
@@ -175,28 +148,15 @@ export function mountControls(container: HTMLElement, store: Store): void {
       opt.textContent = t(CHARSET_PRESET_KEYS[key])
       charsetSelect.appendChild(opt)
     }
-    // No "Custom" option anymore (jdp: "benutzerdefiniert braucht es nicht,
-    // weil alles editierbar ist") - with the free-text field below, "custom"
-    // isn't a state a user ever picks, only one the field can drift into by
-    // being edited, so it isn't offered as a selectable choice at all. When
-    // the current charset matches no preset, syncCharsetSelect() below just
-    // leaves the dropdown showing no selection (selectedIndex = -1) rather
-    // than inventing an option for that state.
-    // Distinct from the textarea's own aria-label below - both used to say
-    // plain "Character set", which gave a screen reader (and any test
-    // locator by accessible name) two same-named controls with no way to
-    // tell the preset picker from the actual text field apart.
+    // The field below is always editable, so there is no Custom option; a
+    // charset matching no preset leaves the select empty. Its name differs
+    // from the field's so the two controls can be told apart.
     charsetSelect.setAttribute('aria-label', t('controls.charsetPresetLabel'))
     charsetWrap.appendChild(charsetSelect)
     enableSelectScroll(charsetSelect)
 
-    // The live, editable ramp preview ASCGen2 had (its "Valid Ramp Chars"
-    // dialog) and TrickWork didn't - a genuinely plain <textarea> (jdp:
-    // "einfach ein normaler Text, den man normal bearbeiten kann"), not a
-    // tile grid you click to delete from. Order doesn't matter for the
-    // algorithm (assembleGrid's font-width table re-sorts by measured ink
-    // coverage regardless of array order), so free typing/pasting/deleting
-    // anywhere in the field is exactly as valid as any other order.
+    // The editable ramp, like ASCGen2's Valid Ramp Chars, as plain text. Order
+    // does not matter, since the font-width table sorts by coverage.
     const charsetField = document.createElement('textarea')
     charsetField.className = 'charset-field'
     charsetField.spellcheck = false
@@ -211,18 +171,13 @@ export function mountControls(container: HTMLElement, store: Store): void {
       if (preset) {
         charsetSelect.value = preset
       } else {
-        // No option represents "custom" - selectedIndex = -1 is the native
-        // way to show a <select> with nothing selected at all.
         charsetSelect.selectedIndex = -1
       }
     }
     syncCharsetSelect()
 
-    // Only touches the field's DISPLAYED text and font - never called from
-    // the field's own 'input' handler (that would fight the user's cursor
-    // mid-keystroke), only on external changes: initial mount, a preset
-    // pick, a font change, or blur (to show the deduped canonical form once
-    // editing is done).
+    // For outside changes only (mount, preset, font, blur); from the field's
+    // own input handler it would fight the cursor.
     function syncCharsetFieldDisplay(): void {
       const current = store.getState().options
       charsetField.style.fontFamily = current.font.family
@@ -230,33 +185,17 @@ export function mountControls(container: HTMLElement, store: Store): void {
     }
     syncCharsetFieldDisplay()
 
-    // Extracts the live characters from whatever the user has typed and
-    // pushes it straight to the store - Array.from iterates by code point,
-    // so an astral character (emoji) stays one entry instead of splitting
-    // into two lone surrogates. Newlines are the textarea's own wrapping
-    // mechanism, not a real ramp character, so they're dropped.
-    //
-    // REPEATS ARE KEPT, not deduped to a unique set - an earlier revision
-    // of this function collapsed the field to its distinct characters on
-    // every keystroke, which was harmless back when mapLuminanceToChar
-    // (core/src/mapping.ts) picked by nearest measured value and a repeat
-    // was genuinely dead weight. It ranks by weighted POSITION now (jdp:
-    // "je öfter man das gleiche Zeichen eingetragen hat, desto mehr wurde
-    // es gewichtet"), so deduping here would silently throw the user's own
-    // weighting away the moment they typed a single extra character
-    // anywhere in the field - exactly the feature this field exists to
-    // control.
+    // Array.from splits by code point, so an emoji stays one character, and
+    // newlines only wrap the field. Repeats are kept, since a repeated
+    // character is weighted more.
     function commitCharsetField(): void {
       const chars = Array.from(charsetField.value).filter((ch) => ch !== '\n' && ch !== '\r')
-      if (chars.length === 0) return // never commit an empty charset
+      if (chars.length === 0) return
       store.setState({ options: { ...store.getState().options, charset: chars } })
       syncCharsetSelect()
     }
 
-    // Gesture-aware undo, same pattern as numberSlider: one snapshot per
-    // focus session (however many keystrokes happen while focused), not one
-    // per keystroke - otherwise typing ten characters would take ten
-    // Ctrl+Z presses to undo instead of one.
+    // One undo step per focus session, not per keystroke.
     let committedThisSession = false
     charsetField.addEventListener('focus', () => {
       if (committedThisSession) return
@@ -278,12 +217,8 @@ export function mountControls(container: HTMLElement, store: Store): void {
       syncCharsetFieldDisplay()
     })
 
-    // A plain <div>, not a <label> - the info icon below sits in the same
-    // row as the label text, and an implicit <label>'s accessible-name
-    // computation would pull the icon's own aria-label into the SELECT's
-    // computed name too. fontSelect gets an explicit aria-label instead
-    // (same defensive pattern charsetSelect already uses), so nothing here
-    // depends on DOM wrapping for its accessible name.
+    // A <div> rather than a <label>, which would add the info icon's
+    // aria-label to the select's name; the select has its own aria-label.
     const fontLabel = document.createElement('div')
     fontLabel.className = 'control-slider'
     const fontLabelRow = document.createElement('div')
@@ -316,13 +251,9 @@ export function mountControls(container: HTMLElement, store: Store): void {
 
   build()
   subscribeLocale(build)
-  // A full rebuild re-reads store.getState().options fresh, which is exactly
-  // what's needed after undo/redo changes it from outside this panel - see
-  // state.ts's subscribeHistory doc comment for why this is a SEPARATE
-  // channel from store.subscribe (a plain drag must never trigger this).
+  // Re-syncs after an undo or redo; a drag never triggers this.
   store.subscribeHistory(build)
-  // See transformPanel.ts for why: rainbowColor() is read once at build()
-  // time, so toggling the mode has to rebuild this panel too.
+  // The widgets read their rainbow colour once, at build time.
   subscribeRainbow(build)
 }
 
@@ -335,13 +266,8 @@ function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
 }
 
 /**
- * `onBeforeChange`, when given, fires ONCE per drag/keyboard gesture (from
- * the first pointerdown or keydown until the input blurs), not once per
- * 'input' tick - a continuous drag fires dozens of 'input' events, and
- * treating each as its own undo step would make undo useless (one press
- * would barely move the value back). Snapshotting once at gesture-start
- * instead means a whole drag undoes as a single step, back to the value
- * before the drag began.
+ * `onBeforeChange` fires once per drag or keyboard gesture, from the first
+ * pointerdown or keydown until blur, so a whole drag undoes as one step.
  */
 export function numberSlider(
   label: string,
@@ -351,16 +277,9 @@ export function numberSlider(
   onChange: (value: number) => void,
   step = 1,
   onBeforeChange?: () => void,
-  // Opt-in only, same rule as segmentedRow's own rainbowBaseIndex (jdp:
-  // "die Schieberegler sind nicht im rainbowmode"). A slider has no
-  // "inactive member" the way a selector does - it's always showing some
-  // value - so it just colours its own thumb via .glim-hue (the thumb's
-  // CSS already reads var(--accent)), no wash/tint needed.
+  // Colours the thumb, which reads --accent.
   rainbowIndex?: number,
-  // Double-click the thumb to snap back to this value (jdp: "die ganzen
-  // schieberegler soll man mit doppelklick auf den reglerknopf
-  // zurücksetzen können"). Defaults to `initial` (a no-op reset) for a
-  // caller that doesn't pass one - every real call site below does.
+  // A double-click on the thumb resets to this.
   defaultValue: number = initial,
 ): HTMLElement {
   const wrapper = document.createElement('label')
@@ -402,10 +321,7 @@ export function numberSlider(
     onChange(Number(input.value))
   })
 
-  // A dblclick on the thumb fires two 'input'-less pointer events in most
-  // browsers - no drag occurred, so commitGestureStart() above never ran -
-  // hence its own explicit onBeforeChange() call here rather than relying
-  // on that path.
+  // The reset is an undo step of its own.
   input.addEventListener('dblclick', () => {
     if (Number(input.value) === defaultValue) return
     onBeforeChange?.()

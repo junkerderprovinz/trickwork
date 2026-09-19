@@ -1,16 +1,8 @@
-// ui/src/i18n.ts
-//
-// BombVault's i18n.ts is React-Context-based (createContext/useState), which
-// doesn't transplant to this app's vanilla-TS + Store architecture (see
-// state.ts - reactivity here is a module-level Set<Listener> + notify()).
-// This is the same idea built on that same shape: a second, independent
-// reactive source alongside Store, since image-conversion state and UI-
-// language state are unrelated concerns that shouldn't trigger each other.
+// The locale is a reactive source of its own beside the Store, since the
+// language and the conversion state never need to trigger each other.
 
-// en + de are the two source-of-truth languages and stay in the main bundle,
-// mirroring BombVault's own i18n.ts exactly. The other 24 are lazy-loaded so
-// a visitor who reads one language never downloads the other 24 (a prior
-// project's main bundle grew ~150kB from eager-importing every locale).
+// en and de are the source languages and ship in the main bundle; the other
+// 24 load lazily, so a visitor downloads only the language they read.
 export const en = {
   'tabs.adjust': 'Adjust',
   'tabs.transform': 'Transform',
@@ -372,8 +364,7 @@ export interface LocaleInfo {
   flag: string
 }
 
-// Identical 26-entry set BombVault ships (web/src/lib/i18n.ts's LOCALES),
-// per jdp's explicit "genau wie BombVault" scoping decision.
+// The same 26 locales as BombVault.
 export const LOCALES: LocaleInfo[] = [
   { code: 'en', label: 'English', flag: 'gb' },
   { code: 'de', label: 'Deutsch', flag: 'de' },
@@ -454,11 +445,8 @@ export function currentLocale(): string {
 }
 
 /**
- * Synchronous by design: every mount*() function calls this directly while
- * building its DOM tree. Falls back through the active dictionary to en for
- * any key the active locale hasn't got - this is also exactly what the
- * parity test (i18n.parity.test.ts) exists to make unreachable for a
- * complete locale.
+ * Synchronous, since every mount function calls it while building its DOM. A
+ * key missing from the active locale falls back to English.
  */
 export function t(key: TranslationKey, params?: Record<string, string | number>): string {
   const template = currentDict[key] ?? en[key] ?? key
@@ -470,11 +458,8 @@ export function t(key: TranslationKey, params?: Record<string, string | number>)
 }
 
 /**
- * Dynamically imports the target locale (a no-op if already cached this
- * session), swaps the active dictionary, and notifies subscribers. Until the
- * import resolves, t() keeps returning the PREVIOUS language's strings, not
- * English and not raw keys - matching BombVault's own documented lazy-load
- * behaviour.
+ * Loads the locale if needed, swaps the dictionary and notifies subscribers.
+ * Until the import resolves, t() keeps returning the previous language.
  */
 export async function setLocale(code: string): Promise<void> {
   if (!LOCALES.some((l) => l.code === code)) return

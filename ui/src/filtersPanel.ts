@@ -13,9 +13,7 @@ const SHARPEN_METHODS: { value: SharpenMethod; key: TranslationKey }[] = [
   { value: 'unsharp', key: 'controls.sharpenUnsharp' },
 ]
 
-// Mirrors state.ts's own initial options.brightness/contrast - the double-
-// click-to-reset value for these sliders (jdp: "die ganzen schieberegler
-// soll man mit doppelklick auf den reglerknopf zurücksetzen können").
+// A double-click on the thumb resets to these, the initial values in state.ts.
 const DEFAULT_BRIGHTNESS = 0
 const DEFAULT_CONTRAST = 0
 
@@ -25,12 +23,8 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
   eyebrow.className = 'glim-eyebrow'
   container.appendChild(eyebrow)
 
-  // Mounted once, OUTSIDE build() below - it holds its own permanent
-  // store.subscribe() (to redraw the histogram when the active image
-  // changes), so it must not be torn down and recreated on every locale
-  // switch the way the plain checkbox/segmented rows in `panel` are. Sits
-  // first, matching ASCGen2's own tab order (Levels before Brightness/
-  // Contrast/Dither in its Text Settings widget).
+  // Mounted once outside build(), since it keeps its own store subscription
+  // for the histogram. Levels comes first, as in ASCGen2.
   const levelsContainer = document.createElement('div')
   container.appendChild(levelsContainer)
   mountLevelsPanel(levelsContainer, store)
@@ -44,11 +38,6 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
     panel.innerHTML = ''
     const options = store.getState().options
 
-    // Moved here from the Adjust card, directly under Levels in the same
-    // card (jdp: "Die Regler von Helligkeit und Kontrast sollen unter das
-    // Tonwertkorrektur, in die gleiche Card") - ASCGen2's own tab order was
-    // already Levels before Brightness/Contrast/Dither, so this is the first
-    // time TrickWork's own layout actually matches it end to end.
     const brightness = numberSlider(
       t('controls.brightness'),
       -1,
@@ -111,8 +100,6 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
       2,
     )
     toggleRow.append(invert, dither, color)
-    // The "TXT never carries colour" caveat lives in the Export tab instead,
-    // right next to the TXT button it's actually about.
 
     const sharpenRow = segmentedRow(
       t('controls.sharpen'),
@@ -130,11 +117,8 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
 
   build()
   subscribeLocale(build)
-  // See controls.ts: re-syncs invert/dither/sharpen/color after an undo/
-  // redo changes them from outside this panel. levelsPanel.ts wires its own
-  // history subscription separately (it isn't rebuilt by this build()).
+  // Re-syncs after an undo or redo; levelsPanel.ts subscribes on its own.
   store.subscribeHistory(build)
-  // See transformPanel.ts for why: rainbowColor() is read once at build()
-  // time, so toggling the mode in Settings has to rebuild this panel too.
+  // The widgets read their rainbow colour once, at build time.
   subscribeRainbow(build)
 }

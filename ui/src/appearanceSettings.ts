@@ -63,17 +63,12 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
   const cached = readCachedAppearance()
   let shape: Shape = SHAPES.includes(cached.shape as Shape) ? (cached.shape as Shape) : 'round'
-  // Empty string means "no override" — cacheAppearance requires a string, so
-  // an absent custom accent is stored as '' rather than omitted, and applying
-  // '' clears the override (see design/appearance.ts's valid()).
+  // '' means no custom accent: cacheAppearance needs a string, and applying ''
+  // clears the override.
   let accent = cached.accent && HEX_RE.test(cached.accent) ? cached.accent : ''
   let theme: ThemePref = cachedThemePref()
   let rainbowOn = rainbowState().on
-  // The rainbow palette itself (jdp: "die Farben des Rainbowmodes sollen
-  // auch bearbeitbar sein") - seeded from whatever's already cached
-  // (usablePalette() in design/appearance.ts already falls back to RAINBOW
-  // if the cached array is missing or the wrong length), copied so editing
-  // it never mutates the shared RAINBOW default array in place.
+  // A copy, so editing it never touches the shared RAINBOW default.
   let palette: string[] = [...rainbowState().palette]
 
   function persist(): void {
@@ -81,18 +76,12 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     cacheTheme(theme)
   }
 
-  // Rebuilding the whole panel on a locale switch is simpler and more robust
-  // than patching five different label sites in place (same reasoning as
-  // controls.ts) - it's a rare, deliberate action, not a hot path.
+  // A locale switch is rare, so the whole panel is rebuilt instead of patching
+  // each label.
   function build(): void {
     panel.innerHTML = ''
 
-    // Rainbow now covers the Settings tab's own selectors too (jdp: "die
-    // schaltflächen und toggles im settingstab" sind nicht eingefärbt) -
-    // only the ACTIVE segment of each row owns a position (see
-    // controlWidgets.ts's segmentedRow), so this reads as a subtle accent
-    // shift on the current choice, not a self-referential wash across the
-    // very controls that configure the mode.
+    // Only the active segment of each row takes a rainbow position.
     const shapeRow = segmentedRow(
       t('appearance.shape'),
       SHAPES.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
@@ -119,15 +108,9 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       0,
     )
 
-    // The custom-colour trigger is a flat swatch, same size/shape as every
-    // preset beside it - clicking it opens a FLOATING picker popover
-    // anchored to itself (jdp: "der Farbpicker soll per schwebendem
-    // Fenster erscheinen, nicht fix in der card sein" - an earlier
-    // permanently-embedded picker visibly grew this card every time it
-    // appeared). GlimStone's own openColorPickerPopover() (never a native
-    // <input type="color">, which hands off to a browser/OS surface
-    // entirely outside the page) closes on outside click/Escape/scroll -
-    // only one popover is ever open across the whole app.
+    // The custom colour is a swatch like the presets and opens a floating
+    // picker anchored to it, rather than a native colour input whose dialog
+    // lies outside the page.
     const accentWrap = document.createElement('div')
     accentWrap.className = 'control-slider'
     const accentLabel = document.createElement('span')
@@ -176,11 +159,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       renderSwatches()
     })
 
-    // Preset swatches stay flat colour circles, not pickers of their own
-    // (GlimStone's own rule) - a click selects the value AND resyncs the
-    // custom trigger, matching BombVault's border-colour highlight on the
-    // active preset (jdp: "die Voreingestellten Farben sollen
-    // gekennzeichnet werden wie in BV" - a border, not a fill).
+    // Presets are flat swatches; the active one gets a border, as in
+    // BombVault.
     function renderSwatches(): void {
       swatchGroup.innerHTML = ''
       for (const preset of ACCENTS) {
@@ -206,14 +186,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     accentRow.append(customTrigger, presetsLabel, swatchGroup, resetBtn)
     accentWrap.append(accentLabel, accentRow)
 
-    // A genuine sliding switch now, not a segmented Off/On pair (jdp: "soll
-    // ein Toggle sein, der auch der Form folgt") - GlimStone's own
-    // "Switches" section treats this as a distinct component. The Queue is
-    // still where the mode does its real work (design-language.md: "a
-    // download row owns a colour"), but toggling it here previously changed
-    // nothing VISIBLE in Settings itself (jdp: "ein zu schalten ändert
-    // nichts") - the palette row right below now gives it something to show
-    // immediately, without needing an image loaded first.
+    // The palette row below shows the switch's effect at once, before any
+    // image is loaded.
     const rainbowWrap = document.createElement('div')
     rainbowWrap.className = 'control-slider'
     const rainbowLabelRow = document.createElement('div')
@@ -239,12 +213,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       renderPalette()
     })
 
-    // Each position is a flat colour circle - a click opens a FLOATING
-    // picker popover anchored to that swatch (jdp: "der Farbpicker soll
-    // per schwebendem Fenster erscheinen, nicht fix in der card sein"),
-    // pre-synced to its current value. GlimStone's openColorPickerPopover()
-    // only ever has one popover open across the app, so no manual
-    // "which position is being edited" bookkeeping is needed here anymore.
+    // Each swatch opens a floating picker for its position; only one picker
+    // is ever open.
     function renderPalette(): void {
       paletteRow.innerHTML = ''
       palette.forEach((hex, index) => {
@@ -260,11 +230,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
             sw.style.backgroundColor = newHex
             sw.setAttribute('data-tip', newHex)
             sw.setAttribute('aria-label', newHex)
-            // Spread the CURRENT rainbow state first, not just {palette} -
-            // applyRainbow merges onto RAINBOW_OFF's defaults, so passing
-            // palette alone would silently reset on/reactive/rotate/seed
-            // back to off every time a colour is edited (the same trap the
-            // toggle handler below has to avoid too).
+            // applyRainbow merges onto the defaults of the off state, so the
+            // current state is spread first or an edit would switch it off.
             applyRainbow({ ...rainbowState(), palette: [...palette] })
             persist()
           })
@@ -275,10 +242,8 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     }
     renderPalette()
 
-    // Switched off, not hidden (GlimStone's own Switches rule: "a control
-    // that disappears never teaches anyone what the mode does") - dimmed
-    // instead, the same treatment CannonadeCommand gives its own dependent
-    // rainbow sub-controls while the mode is off.
+    // Dimmed rather than hidden while the mode is off, so the row still
+    // shows what the mode does.
     function syncPaletteDim(): void {
       paletteRow.style.opacity = rainbowOn ? '1' : '0.45'
       paletteRow.style.pointerEvents = rainbowOn ? '' : 'none'
@@ -287,9 +252,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
     const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
       rainbowOn = checked
-      // Spread the current state, not just {on} - see the palette swatch's
-      // own listener above for why (this exact call used to silently wipe
-      // any custom palette back to the RAINBOW default on every toggle).
+      // Spread the current state, or the toggle would reset a custom palette.
       applyRainbow({ ...rainbowState(), on: rainbowOn })
       persist()
       syncPaletteDim()
@@ -301,10 +264,6 @@ export function mountAppearanceSettings(container: HTMLElement): void {
     languageWrap.className = 'control-slider'
     const languageLabel = document.createElement('span')
     languageLabel.textContent = t('appearance.language')
-    // A custom button+listbox dropdown, not a native <select> (jdp: "das
-    // Feld ist zu klein und die Dropdownliste viel zu kompakt, siehe BV") -
-    // see controlWidgets.ts's customDropdown() doc comment for why this is a
-    // sanctioned deviation from GlimStone's own plain-<select> default.
     const languageOptions = LOCALES.map((locale) => ({
       value: locale.code,
       label: locale.label,
@@ -320,12 +279,7 @@ export function mountAppearanceSettings(container: HTMLElement): void {
 
   build()
   subscribeLocale(build)
-  // Shape/Theme's own rainbow colouring is baked in at build() time (segmentedRow
-  // reads rainbowColor() once, not reactively) - toggling the mode, or editing
-  // the palette, has to rebuild this panel too. See transformPanel.ts for the
-  // same pattern; a palette-popover drag stays smooth despite this because the
-  // popover itself lives outside `panel` (appended to document.body), so a
-  // panel.innerHTML='' rebuild never touches the DOM the drag is actually
-  // manipulating.
+  // segmentedRow reads the rainbow colour once. The picker popover lives on
+  // document.body, so a rebuild does not disturb a drag inside it.
   subscribeRainbow(build)
 }

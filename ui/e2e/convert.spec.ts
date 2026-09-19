@@ -1,22 +1,12 @@
-// ui/e2e/convert.spec.ts
 import { test, expect } from '@playwright/test'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// ui/package.json has "type": "module", so this file runs as ESM under
-// Playwright's test runner and __dirname is not defined; derive it from
-// import.meta.url instead.
+// The package is an ES module, so __dirname does not exist.
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// TrickWork deliberately skips GlimStone's own sidebar pattern (design-
-// language.md, "The sidebar") - a single square corner badge toggles between
-// Convert (every generation-affecting card visible together, never gated
-// behind a click) and Settings instead, per the lightweight-alternative
-// GlimStone documents for a genuinely simple, single-workspace app. The
-// badge's accessible name flips between "Settings" and "Back" (translated)
-// depending on which view is showing - located by its stable class instead
-// of a name regex, since a regex written for the English strings stops
-// matching the instant a locale switch changes the label underneath it.
+// The badge's name switches between Settings and Back and follows the locale,
+// so it is found by its class.
 function settingsBadge(page: import('@playwright/test').Page) {
   return page.locator('.settings-badge')
 }
@@ -24,9 +14,7 @@ function settingsBadge(page: import('@playwright/test').Page) {
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
   await page.goto('/')
 
-  // Scoped to the image dropzone's own accept attribute - the Settings
-  // page's presets-import file input also matches a bare input[type="file"]
-  // now, even while hidden behind display:none (both views stay mounted).
+  // The presets import in the hidden Settings view is a file input too.
   const fileInput = page.locator('input[type="file"][accept="image/*"]')
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
 
@@ -39,7 +27,7 @@ test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
     })
     .toBe(true)
 
-  // No nav click needed - the Export card is always visible beside the preview.
+  // The Export card is always visible beside the preview.
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export active image as TXT' }).click()
   const download = await downloadPromise
@@ -52,20 +40,13 @@ test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
 test('rotate, invert, and color output all still produce a non-empty preview and export', async ({ page }) => {
   await page.goto('/')
 
-  // Scoped to the image dropzone's own accept attribute - the Settings
-  // page's presets-import file input also matches a bare input[type="file"]
-  // now, even while hidden behind display:none (both views stay mounted).
   const fileInput = page.locator('input[type="file"][accept="image/*"]')
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
 
   const canvas = page.locator('canvas.preview-canvas')
   await expect(canvas).toBeVisible()
 
-  // Transform and Filters are their own always-visible cards now, not
-  // separate nav destinations - interact directly, no nav click first.
-  // Invert/Color are icon-only toggle buttons (not checkboxes), so a click
-  // toggles them - their accessible name comes from the button's own
-  // title/aria-label, not adjacent label text.
+  // Invert and Color are icon toggle buttons named by their aria-label.
   await page.getByRole('button', { name: '90°' }).click()
   await page.getByRole('button', { name: 'Invert colors' }).click()
   await page.getByRole('button', { name: 'Color output' }).click()
@@ -86,8 +67,7 @@ test('rotate, invert, and color output all still produce a non-empty preview and
 test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
   await page.goto('/')
 
-  // exact: true matters here - "0°" is a substring of "90°"/"180°"/"270°"
-  // too, so a loose match resolves to all four rotate buttons.
+  // "0°" is a substring of "90°", "180°" and "270°".
   const rotate90 = page.getByRole('button', { name: '90°', exact: true })
   const rotate0 = page.getByRole('button', { name: '0°', exact: true })
   await expect(rotate0).toHaveClass(/segmented-button--active/)
@@ -102,7 +82,7 @@ test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
   await expect(rotate90).toHaveClass(/segmented-button--active/)
 })
 
-test('undo/redo header buttons reflect history state and a dragged slider undoes as one step', async ({
+test('undo and redo buttons reflect history state and a dragged slider undoes as one step', async ({
   page,
 }) => {
   await page.goto('/')
@@ -112,16 +92,13 @@ test('undo/redo header buttons reflect history state and a dragged slider undoes
   await expect(undoButton).toBeDisabled()
   await expect(redoButton).toBeDisabled()
 
-  // Located via the stable label text, not getByLabel(full accessible name)
-  // - the accessible name here also concatenates the live numeric readout
-  // ("Width (columns) 120"), which changes on every keypress and would make
-  // a name-based locator stop matching after the very first ArrowRight.
+  // Found by label text, since the accessible name includes the live value
+  // ("Width (columns) 120") and changes with every key press.
   const widthSlider = page
     .locator('.control-slider', { hasText: 'Width (columns)' })
     .locator('input[type="range"]')
   await widthSlider.focus()
-  // Each arrow-key press is one 'input' tick within the same focus session -
-  // gesture-aware history should collapse all of them into ONE undo step.
+  // All presses fall into one focus session and so into one undo step.
   for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight')
   await expect(widthSlider).toHaveValue('125')
   await expect(undoButton).toBeEnabled()
@@ -135,48 +112,31 @@ test('undo/redo header buttons reflect history state and a dragged slider undoes
   await expect(widthSlider).toHaveValue('125')
 })
 
-test('the character set field is plain, freely editable text - no click-to-delete tiles', async ({ page }) => {
+test('the character set field is plain editable text', async ({ page }) => {
   await page.goto('/')
 
-  // Distinct accessible names on purpose (controls.ts) - "Character set
-  // preset" for the dropdown, "Character set" for the actual text field -
-  // so this locator can only ever match the field, never the select too.
   const charsetField = page.getByLabel('Character set', { exact: true })
   const presetSelect = page.getByLabel('Character set preset', { exact: true })
-  // ASCGen2's own dark-to-light order (jdp: "die leerzeichen kommen zum
-  // schluss") - densest character first, blank space last.
+  // ASCGen2's dark-to-light order, with the blank last.
   await expect(charsetField).toHaveValue('@%#*+=-:. ')
   await expect(presetSelect).toHaveValue('standard')
 
-  // A real "select all, type over it" edit, exactly like editing any other
-  // text field - not a series of tile clicks.
   await charsetField.click()
   await charsetField.press('Control+a')
   await charsetField.pressSequentially('@%#')
-  // No "Custom" option exists anymore (jdp: not needed once the whole
-  // charset is directly editable) - a charset matching no preset just
-  // leaves the dropdown showing no selection at all (selectedIndex = -1,
-  // which reads back as the empty string).
+  // A charset matching no preset leaves the select empty.
   await expect(presetSelect).toHaveValue('')
 
-  // Backspacing removes a character the normal way too, no click-to-delete
-  // affordance involved.
   await charsetField.press('Backspace')
   await charsetField.blur()
   // On blur the field redraws from whatever was actually committed ("@%").
   await expect(charsetField).toHaveValue('@%')
 })
 
-test('typing the same character more than once keeps every repeat, not just one', async ({ page }) => {
+test('typing a character more than once keeps every repeat', async ({ page }) => {
   await page.goto('/')
 
-  // mapLuminanceToChar (core/src/mapping.ts) ranks by weighted position now
-  // - a repeated character claims proportionally more of the luminance
-  // range, ASCGen2's own weighting mechanic (jdp: "je öfter man das gleiche
-  // Zeichen eingetragen hat, desto mehr wurde es gewichtet"). An earlier
-  // revision of commitCharsetField (controls.ts) deduped the field to its
-  // distinct characters on every keystroke, which silently discarded that
-  // weighting the moment a user typed a single repeat anywhere.
+  // A repeated character is weighted more, so the field keeps every repeat.
   const charsetField = page.getByLabel('Character set', { exact: true })
   await charsetField.click()
   await charsetField.press('Control+a')
@@ -188,16 +148,14 @@ test('typing the same character more than once keeps every repeat, not just one'
 test('a closed select answers the mouse wheel without opening', async ({ page }) => {
   await page.goto('/')
 
-  // exact: true matters here - the new Font info-icon's own aria-label
-  // (controls.rtfNote) contains the substring "font" too, which a loose
-  // getByLabel('Font') match now also picks up.
+  // The aria-label of the Font info icon contains "font" as well.
   const fontSelect = page.getByLabel('Font', { exact: true })
   const before = await fontSelect.inputValue()
   await fontSelect.hover()
   await page.mouse.wheel(0, 100)
   const after = await fontSelect.inputValue()
   expect(after).not.toBe(before)
-  // Scrolling changed the value directly - it never needed a click to open first.
+  // The wheel changed the value without opening the select.
 })
 
 test('Settings replaces the whole page: no preview, no working cards', async ({ page }) => {
@@ -209,15 +167,12 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
 
   await badge.click()
 
-  // The entire Convert workspace - preview, Import, every generation card -
-  // is hidden while Settings is active (main.ts toggles display:none, it
-  // doesn't remove the DOM, so toBeHidden() is the correct check here, not
-  // toHaveCount(0) - the nodes still exist, just aren't rendered).
+  // main.ts hides the Convert view with display: none, so its nodes stay in
+  // the DOM and toBeHidden is the check.
   await expect(page.getByText('Width (columns)', { exact: true })).toBeHidden()
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
   await expect(page.getByText('Shape', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Back')
-  // Version numbers live in Settings, never a persistent footer.
   await expect(page.getByText(/TrickWork v.* · GlimStone v/)).toBeVisible()
 
   await badge.click()
@@ -233,19 +188,13 @@ test('switching language updates the badge label and every card, including ones 
 
   const badge = settingsBadge(page)
   await badge.click()
-  // A custom button+listbox dropdown now, not a native <select> (jdp: "das
-  // Feld ist zu klein und die Dropdownliste viel zu kompakt, siehe BV") -
-  // open it, then click the option by its visible name.
+  // The language picker is a custom dropdown: open it, then pick the option.
   await page.getByRole('button', { name: 'Language', exact: true }).click()
   await page.getByRole('option', { name: 'Deutsch' }).click()
 
-  // "Settings" -> "Einstellungen" is a genuinely distinct string between the
-  // two languages - real positive proof the switch propagated to the badge.
   await expect(badge).toHaveAccessibleName('Zurück')
 
-  // The Convert page's cards were not showing during the switch - proves an
-  // already-mounted but hidden (display:none) view's DOM updates too, not
-  // just the currently visible one.
+  // The Convert view was hidden during the switch and still has to update.
   await badge.click()
   await expect(page.getByText('Breite (Spalten)', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Einstellungen')
@@ -317,12 +266,8 @@ test('preview zoom: buttons change the displayed canvas size and the label reset
   await page.getByRole('button', { name: 'Zoom out' }).click()
   await expect(zoomLabel).toHaveText('90%')
 
-  // Switching the ACTIVE image (not just adding another to the queue -
-  // addFiles never changes activeItemId once one is already set) resets the
-  // zoom back to a predictable 100% rather than carrying over whatever the
-  // previous image happened to be zoomed to. Upload the same fixture again
-  // (a second, distinctly-id'd queue item under the same filename) and
-  // select it explicitly.
+  // Selecting another image resets the zoom. addFiles keeps the active image,
+  // so the second copy of the fixture is selected explicitly.
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
   await page.getByRole('button', { name: 'Preview small.png' }).last().click()
   await expect(zoomLabel).toHaveText('100%')
@@ -345,8 +290,7 @@ test('crop: dragging on the source image sets a selection that survives undo and
 
   const box = await cropCanvas.boundingBox()
   if (!box) throw new Error('crop canvas has no bounding box')
-  // A real drag, well past the panel's own minimum-drag threshold, so this
-  // reads as a deliberate selection rather than a stray click.
+  // Well past the minimum drag, so it counts as a selection.
   await page.mouse.move(box.x + 5, box.y + 5)
   await page.mouse.down()
   await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.6, { steps: 8 })
@@ -355,11 +299,8 @@ test('crop: dragging on the source image sets a selection that survives undo and
   await expect(overlay).toBeVisible()
   await expect(clearButton).toBeVisible()
 
-  // columns is a fixed option independent of crop, and a roughly
-  // proportional crop leaves the sampled aspect ratio (and so the grid's
-  // row count too) essentially unchanged - the reliable, meaningful check
-  // here is the overlay's own visibility surviving undo/redo correctly,
-  // not the preview canvas's pixel dimensions.
+  // A roughly proportional crop barely changes the grid size, so the check is
+  // the overlay surviving undo and redo.
   await page.keyboard.press('Control+z')
   await expect(overlay).toBeHidden()
 
@@ -392,8 +333,7 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
   const drawn = await overlay.boundingBox()
   if (!drawn) throw new Error('overlay has no bounding box after drawing')
 
-  // Grab the INTERIOR (not a corner) and drag it - this should MOVE the
-  // selection at its existing size, not start a brand new one.
+  // A drag from inside moves the selection at its size.
   const interiorX = drawn.x + drawn.width / 2
   const interiorY = drawn.y + drawn.height / 2
   await page.mouse.move(interiorX, interiorY)
@@ -407,8 +347,7 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
   expect(moved.x).toBeGreaterThan(drawn.x + 10)
   expect(moved.y).toBeGreaterThan(drawn.y + 5)
 
-  // Grab the bottom-right CORNER and drag it outward - this should RESIZE
-  // (grow) the selection while its opposite (top-left) corner stays put.
+  // A drag from the bottom-right corner grows it around the fixed top-left.
   const cornerX = moved.x + moved.width
   const cornerY = moved.y + moved.height
   await page.mouse.move(cornerX, cornerY)
@@ -419,7 +358,6 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
   if (!resized) throw new Error('overlay has no bounding box after resizing')
   expect(resized.width).toBeGreaterThan(moved.width + 10)
   expect(resized.height).toBeGreaterThan(moved.height + 8)
-  // The top-left corner (the one NOT being dragged) stayed fixed.
   expect(Math.abs(resized.x - moved.x)).toBeLessThan(2)
   expect(Math.abs(resized.y - moved.y)).toBeLessThan(2)
 })
@@ -427,20 +365,14 @@ test('crop: an existing selection can be moved and resized, not just redrawn fro
 test('rainbow mode gives each queue row its own hue, and the language picker shows flags', async ({ page }) => {
   await page.goto('/')
 
-  // The custom language dropdown's own OPTIONS carry a flag-emoji prefix (a
-  // plain <option> can't hold an image/CSS background, and this control
-  // isn't a native <select> at all anymore - see GlimStone's
-  // design-language.md and controlWidgets.ts's customDropdown).
+  // The language options carry a flag emoji.
   await settingsBadge(page).click()
   await page.getByRole('button', { name: 'Language', exact: true }).click()
   const firstOptionText = await page.getByRole('option').first().textContent()
-  // A flag emoji is two "regional indicator symbol" codepoints, both well
-  // outside the Basic Multilingual Plane (> 0xFFFF) - a plain label
-  // wouldn't have any character in that range at all.
+  // A flag emoji is two regional indicator symbols, both above 0xFFFF.
   expect(Array.from(firstOptionText ?? '').some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(true)
   await page.keyboard.press('Escape')
 
-  // A genuine switch now (role="switch"), not a segmented Off/On button pair.
   await page.getByRole('switch', { name: 'Rainbow' }).click()
   await settingsBadge(page).click()
 
@@ -469,28 +401,23 @@ test('height slider follows width while locked, and becomes independent once unl
   const heightSlider = page
     .locator('.control-slider', { hasText: 'Height (rows)' })
     .locator('input[type="range"]')
-  // Scoped to its own wrapper, not by accessible name - the lock toggle's
-  // name swaps between locked/unlocked (same reason the Settings badge is
-  // never located by name either), and .icon-toggle-button alone would also
-  // match Flip/Invert/Dither/Color elsewhere on the page.
+  // Found through its wrapper: its name follows the lock state, and the class
+  // alone would also match Flip, Invert, Dither and Color.
   const lockToggle = page.locator('.control-slider-with-toggle .icon-toggle-button')
 
-  // Locked by default: a 16x16 (square) source at the default 120 columns
-  // auto-derives to 60 rows (CELL_ASPECT_COMPENSATION=2 halves it), and the
-  // slider itself isn't draggable yet.
+  // Locked by default: a square source at 120 columns gives 60 rows, since
+  // CELL_ASPECT_COMPENSATION is 2.
   await expect(heightSlider).toHaveValue('60')
   await expect(heightSlider).toBeDisabled()
   await expect(lockToggle).toHaveAttribute('aria-pressed', 'true')
 
-  // Still locked: dragging Width alone has to move Height's OWN displayed
-  // value live, with no click on Height itself - this is the one behaviour
-  // that can't be proven by reading the store, only by watching the second
-  // slider's <input> update on screen.
+  // While locked, Width moves the displayed Height, which only the second
+  // slider's <input> can show, not the store.
   await widthSlider.focus()
   await widthSlider.fill('60') // half the default width, same square source -> half the rows too
   await expect(heightSlider).toHaveValue('30')
 
-  // Unlock: Height becomes a real, independent control.
+  // Unlocked, Height is a control of its own.
   await lockToggle.click()
   await expect(lockToggle).toHaveAttribute('aria-pressed', 'false')
   await expect(heightSlider).toBeEnabled()
@@ -498,12 +425,12 @@ test('height slider follows width while locked, and becomes independent once unl
   await heightSlider.fill('99')
   await expect(heightSlider).toHaveValue('99')
 
-  // Widening again while unlocked must NOT touch the now-independent Height.
+  // Widening again leaves the unlocked Height alone.
   await widthSlider.fill('200')
   await expect(heightSlider).toHaveValue('99')
 
-  // Re-lock: discards the manual override and snaps back to the auto value
-  // for whatever Width currently is (200 columns, same square source -> 100).
+  // Locking again drops the override and returns to the auto value for 200
+  // columns.
   await lockToggle.click()
   await expect(lockToggle).toHaveAttribute('aria-pressed', 'true')
   await expect(heightSlider).toBeDisabled()

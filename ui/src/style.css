@@ -1,52 +1,23 @@
 @import './design/tokens.css';
 
-/* Noto Color Emoji subset, flag glyphs only (~800KB WOFF2, OFL-1.1 licensed -
-   derived from Google's Noto Color Emoji, see package.json). Windows'
-   Segoe UI Emoji deliberately omits flag glyphs (flagEmoji.ts's own comment
-   explains why - a long-standing Microsoft policy), rendering the regional-
-   indicator pairs as a bare two-letter tag instead; this font carries real
-   COLR-vector flag glyphs so the language picker shows actual flags there
-   too (jdp: "Echte Flaggen erzwingen"), same as macOS/Linux always did. */
+/* Flag glyphs from Noto Color Emoji (OFL-1.1, see package.json). Windows'
+   emoji font has no flags and shows the regional indicator pairs as two
+   letters, so the language picker loads this font to show real flags there
+   too. */
 @import 'noto-color-emoji-flags';
 
-/* Named badge-size stages (GlimStone's own "Badges" section, rule: "sizes
-   are named stages with one canonical source, not per-instance values" -
-   design-language.md). TrickWork had been doing exactly the thing that rule
-   warns against: every small icon control picked its own literal rem value
-   (1.5rem swatches, 1.6rem copy/zoom, 2.35rem toggles, 3rem settings) with
-   no shared source, which is how a reset badge ends up visibly smaller than
-   the swatches beside it (jdp: "ich will insgesamt im Design immer
-   Standardgrößen und nicht zig verschiedene Größen aller Elemente"). Three
-   stages, matching the doc's own "small/medium/large is usually enough":
-   sm for compact action badges (copy, zoom), md for the icon-toggle/history
-   buttons (also .segmented-button's own height), lg for the single corner
-   Settings badge. --swatch-size used to be its own, separate 1.5rem token
-   for pure colour swatches (accent presets, rainbow palette), on the theory
-   that a swatch and an icon badge are different enough kinds of control to
-   not need matching sizes - jdp came back wanting them visually identical
-   to the horizontal selector's own badges ("die farbfelder... so hoch...
-   wie die badges der horizontalen selektoren", "die resetbadges dann
-   natürlich auch"), so it's now a plain alias for --badge-md rather than
-   its own value; the accent/palette reset badges (.icon-reset-badge) read
-   --badge-md directly for the same reason, no longer --badge-sm. */
+/* Badge sizes are named stages with one source (design-language.md,
+   "Badges"): sm for compact actions such as copy and zoom, md for the toggle
+   and history buttons and the segmented row's height, lg for the corner
+   Settings badge. Colour swatches and their reset badges share md, so they
+   line up with the selectors. */
 :root {
   --badge-sm: 1.75rem;
   --badge-md: 2.35rem;
   --badge-lg: 3rem;
   --swatch-size: var(--badge-md);
-  /* A deliberate, noted TrickWork-specific override of GlimStone's own
-     --text-body token (0.875rem/14px) - jdp compared control/label text
-     directly against BombVault twice and still found TrickWork's smaller
-     even after the earlier dense->body role-mapping fix landed.
-     BombVault's own most-compared control, its persistent sidebar nav
-     (which is also where its language picker lives), renders at a literal
-     15px (Sidebar.tsx's own arbitrary text-[15px], not even BombVault's
-     own --text-body) - not something to push into GlimStone's shared
-     token value itself, since that 15px is BombVault's own undocumented
-     inconsistency (its internal audit already flagged it), not a
-     deliberate reference point the other sibling apps should also adopt
-     without their own stakeholders weighing in. One override point, not
-     patched into every individual rule that reads --text-body. */
+  /* 15px rather than GlimStone's 14px body text, to match BombVault's sidebar
+     text; overridden here once instead of in every rule that reads it. */
   --text-body: 0.9375rem;
 }
 
@@ -65,21 +36,10 @@ html, body {
   min-height: 100%;
 }
 
-/* ---------------------------------------------------------------------
-   Header — brand centred, the Settings badge top-right. A deliberate
-   exception to GlimStone's own sidebar pattern (design-language.md, "The
-   sidebar"): TrickWork has exactly two destinations, not a multi-page
-   dashboard, so the documented lightweight alternative (a small square
-   badge instead of a full left rail) is the right call here, not the rail
-   itself. Recorded as an exception in the vault project note too.
-   --------------------------------------------------------------------- */
-/* Three columns, the outer two an equal 1fr each - not flex+space-between,
-   which pushed the brand flush left with empty space only on the right
-   (jdp: "das logo in der ui bitte zentriert"). An empty left spacer
-   (main.ts's headerSpacer) mirrors the Settings badge's own column width,
-   so the middle "auto" column - the brand - lands genuinely centred in the
-   header regardless of the badge's own size, not just centred in whatever
-   space happened to be left over after left-aligning it. */
+/* The header: brand centred, the Settings badge top right in place of
+   GlimStone's sidebar, since the app has only two destinations. The outer
+   columns are equal (an empty spacer on the left), so the brand stays centred
+   whatever the badge's width. */
 .app-header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -92,20 +52,13 @@ html, body {
   justify-self: end;
 }
 
-/* Logo beside the name now, not a tagline stacked underneath it (jdp: "das
-   logo bitte auch in das ui integrieren, der untertitel... entfernen") -
-   row instead of the old column layout, vertically centred against the
-   logo's own height rather than baseline-aligned against short text alone. */
 .app-brand {
   display: flex;
   align-items: center;
   gap: 0.65rem;
 }
 
-/* The logo's own viewBox (223.97 x 76.87) is a wide ribbon, not a square
-   mark - height-constrained so it scales to a sensible header size and
-   lets width follow the real aspect ratio, same approach the README
-   banner generator uses. */
+/* The logo is a wide ribbon, so the height is set and the width follows. */
 .app-brand-logo {
   height: 2.35rem;
   width: auto;
@@ -119,14 +72,9 @@ html, body {
   color: var(--carbon-text);
 }
 
-/* Undo/redo - now a card of its own (historyPanel.ts) rather than header
-   actions, in the same icon-toggle-row layout as Flip/Invert/etc. (own tile
-   background each, matching .icon-toggle-button - jdp flagged the earlier
-   fully-transparent-at-rest look as no longer reading as a badge at all),
-   but without their persistent active/checked state - these are momentary
-   actions, not toggles, so no --active fill, just hover/disabled states.
-   Disabled by greying out rather than hiding, since a hidden-then-
-   reappearing button would shift the row's own width on every history change. */
+/* Undo and redo look like the icon toggles but are momentary actions, so they
+   have no active fill. Disabled greys out rather than hiding, which would
+   shift the row with every history change. */
 .history-button {
   appearance: none;
   border: none;
@@ -152,17 +100,8 @@ html, body {
   opacity: 0.35;
 }
 
-/* The log window (jdp: "ein kleines Protokollfenster") - a small, always-
-   present list of recent actions (historyPanel.ts's renderLog), most recent
-   on top. A fixed max-height with its own scroll, not the card's own, so a
-   long session's log never grows the whole sidecard. */
-/* A fixed height, not max-height - jdp: "das Verlauf-Fenster soll immer
-   gleich groß sein und nicht sich erst füllen und größer werden, wenn was
-   passiert ist". max-height let the card visibly grow from the single
-   "No changes yet" line up to the cap as entries appeared, shifting
-   everything below it on the page each time. Height is now reserved
-   upfront regardless of content; overflow-y still scrolls once entries
-   exceed it. */
+/* The log of recent actions keeps a fixed height and scrolls, so the card
+   neither grows as entries arrive nor shifts what lies below it. */
 .history-log {
   list-style: none;
   margin: 0.5rem 0 0;
@@ -192,18 +131,9 @@ html, body {
   font-size: var(--text-caption);
 }
 
-/* GlimStone's own "Badges" register: an icon-only/single-glyph badge is the
-   "circle" register (border-radius: var(--radius-pill), the raw token - the
-   browser's own corner-overflow scaling already caps it to a true circle,
-   see tokens.css's own comment for why a manual min(…, 50%) cap is wrong),
-   not "rounded" (--radius-control) - that second one is for rectangular
-   text-bearing controls. This
-   used to say the opposite ("Square, not the pill") and rendered as a
-   rounded square instead of a true circle in Round shape mode - jdp: "Der
-   Rund form modus macht die badges nicht richtig rund". Opens Settings as
-   its own full page, no preview or working cards behind it. Sized up from
-   the original 2.25rem - it's the single entry point to the whole Settings
-   destination, not just another toolbar icon. */
+/* An icon-only badge takes the raw pill radius and becomes a circle in the
+   Round shape (see tokens.css); --radius-control is for rectangular controls
+   with text. The large size marks the one entry point to Settings. */
 .settings-badge {
   appearance: none;
   border: none;
@@ -230,13 +160,8 @@ html, body {
   color: var(--carbon-text);
 }
 
-/* ---------------------------------------------------------------------
-   app-body hosts exactly one of two views at a time (main.ts toggles
-   which): the Convert workspace (preview + every card that affects
-   generation, all live) or the Settings page (theming/language only, no
-   preview at all - its own separate "window", not a panel beside the
-   working area).
-   --------------------------------------------------------------------- */
+/* app-body shows one of two views, which main.ts switches: Convert with the
+   preview and every card, or the Settings page without a preview. */
 .app-body {
   flex: 1;
   min-width: 0;
@@ -264,10 +189,8 @@ html, body {
   min-width: 0;
 }
 
-/* Import + Crop side by side - importing and then trimming the source
-   image are one continuous step before anything gets converted, so they
-   read as a pair rather than a vertical stack. Preview stays full-width
-   below both, since it's the thing everything else feeds into. */
+/* Import and Crop side by side, as one step before conversion; the preview
+   spans the width below them. */
 .app-primary-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -281,15 +204,8 @@ html, body {
   }
 }
 
-/* Settings is its own page, not a column beside the canvas - centred and
-   width-capped, since Shape/Theme/Accent/Language never need the full
-   viewport the working canvas does. Two cards stack here now (appearance,
-   presets) - one card per section still holds, this is two sections. */
-/* Settings is deliberately roomier than the dense working cards on Convert -
-   it's a destination you visit and read, not a live panel you glance at
-   mid-drag, so it gets real breathing room instead of the Convert page's
-   compact rhythm. Scoped to .settings-view so the Convert cards (Adjust/
-   Transform/Filters/...) keep their own tighter --text-dense spacing. */
+/* Settings is a centred, width-capped page, and roomier than the dense
+   Convert cards: it is read, not glanced at mid-drag. */
 .settings-view {
   padding: 2.5rem 1.5rem;
   display: flex;
@@ -318,9 +234,7 @@ html, body {
 }
 
 /* One card per section (rule 1: never nest cards). position: relative
-   anchors .card-drag-handle (cardReorder.ts) in the corner - only the six
-   Convert-page sidecards actually get a handle appended, but the rule is
-   harmless on every other .glim-section too. */
+   anchors the drag handle of a sidecard. */
 .glim-section {
   position: relative;
   padding: 1rem 1.125rem;
@@ -329,11 +243,8 @@ html, body {
   gap: 0.75rem;
 }
 
-/* The sidecard drag handle (cardReorder.ts, jdp: "die cards sollen auch per
-   drag and drop nach wunsch anordenbar sein") - pinned to the card's own
-   top-right corner, furniture until hovered (same convention as the info
-   icon: opacity .5 at rest, 1 on hover/focus) rather than a filled badge,
-   since it isn't "activity" (rule 3), just a grip. */
+/* The sidecard drag handle, top right. A grip is not activity (rule 3), so
+   like the info icon it is a bare glyph that only opacity lifts. */
 .card-drag-handle {
   position: absolute;
   top: 0.6rem;
@@ -358,20 +269,13 @@ html, body {
   cursor: grabbing;
 }
 
-/* The card currently being picked up - dimmed in place so its own drop
-   target (the gap it's about to land in) reads clearly among the others
-   sliding out of the way. */
+/* The dragged card dims, so the gap it will land in stands out. */
 .card-dragging {
   opacity: 0.4;
 }
 
-/* The controls panel each Convert-page sidecard mounts its rows into
-   (controls.ts/transformPanel.ts/filtersPanel.ts) had NO layout rule of its
-   own at all - every slider/field/toggle-row inside it stacked with zero
-   explicit space between them, relying on nothing (jdp: "in den Sidecards
-   sind die Optionen teilweise super nah beieinander"). .glim-section's own
-   gap only separates its direct children (eyebrow, this panel) from each
-   other, never reaches inside it. */
+/* The rows inside a sidecard's panel; .glim-section's gap only spaces its
+   direct children. */
 .controls {
   display: flex;
   flex-direction: column;
@@ -380,56 +284,33 @@ html, body {
 
 .glim-section > .glim-eyebrow {
   margin-bottom: -0.15rem;
-  /* GlimStone exception (recorded in the vault project note): the shared
-     .glim-eyebrow is deliberately quiet everywhere else because it labels a
-     panel the user has already navigated to via a tab or sidebar item. Here
-     it is the ONLY heading five simultaneously-visible cards have - it IS
-     the navigation, not a secondary label under it, so it reads as an
-     actual card TITLE: full text contrast (not the muted -sub step),
-     bumped a size up from the base eyebrow, and bolder still. A second
-     pass after jdp flagged the first attempt (carbon-text-sub, 600) as
-     still too quiet to register as a heading at a glance. */
+  /* Louder than GlimStone's eyebrow, which labels a panel reached through
+     navigation: here it is the only heading of cards that are all visible at
+     once, so it reads as a title. */
   font-size: var(--text-dense);
   color: var(--carbon-text);
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 
-/* An eyebrow that also carries an info icon (crop.ts, exportPanel.ts) -
-   .glim-eyebrow itself stays a plain <span> so its own text-transform/
-   letter-spacing rule above is untouched; this just adds the flex row
-   around it. */
+/* An eyebrow with an info icon beside it (cropPanel.ts, exportPanel.ts). */
 .eyebrow-row {
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
-/* A label row that also carries a trailing info icon (controls.ts's Font
-   field) - a plain flex row, deliberately NOT a <label>, so the icon's own
-   aria-label can never leak into a wrapped control's accessible name. */
+/* A label row with a trailing info icon (the Font field), not a <label>, so
+   the icon's aria-label stays out of the control's accessible name. */
 .control-slider-label-row {
   display: flex;
   align-items: center;
   gap: 0.35rem;
 }
 
-/* The (i) info bubble trigger and the shared tooltip bubble itself
-   (.glim-info-icon / .glim-bubble) now come from GlimStone's own
-   tokens.css (design/tooltip.ts) - matches CannonadeCommand's reference
-   implementation exactly (jdp: "die i Infobubbles schauen in TW auch
-   anders aus als in CC"), so no TrickWork-local override lives here
-   anymore. */
-
-/* ---------------------------------------------------------------------
-   Crop — ASCGen2's WidgetImage selection tool: drag a rectangle on the
-   source image to restrict conversion to that region. The selection reads
-   entirely through SHADE (rule: never a border/ring to delineate an area -
-   see design-language.md's "no border lines" convention), not an outline:
-   a single oversized box-shadow spread dims everything OUTSIDE the small
-   transparent selection box, the same "spotlight" technique Photoshop's own
-   crop tool uses, so the boundary is a shade transition, never a stroke.
-   --------------------------------------------------------------------- */
+/* Crop: the selection shows through shade, never an outline. One oversized
+   box-shadow dims everything outside the transparent selection box, as
+   Photoshop's crop tool does. */
 .crop-canvas-wrap {
   position: relative;
   width: max-content;
@@ -441,9 +322,7 @@ html, body {
 
 .crop-source-canvas {
   display: block;
-  /* No static cursor here - cropPanel.ts sets it dynamically per pointer
-     position (crosshair over open space, move over the selection interior,
-     resize cursors over its corners). */
+  /* cropPanel.ts sets the cursor from the pointer position. */
 }
 
 .crop-overlay {
@@ -467,12 +346,8 @@ html, body {
   background-color: var(--carbon-surface2);
 }
 
-/* ---------------------------------------------------------------------
-   Drop zone — a real, inviting drop target now (jdp: "eine schöne Drop
-   Zone"), not a thin bar: a centred icon-well over the label, filling the
-   full height of its half of the Import/Crop row so both cards read as an
-   equal pair.
-   --------------------------------------------------------------------- */
+/* The drop zone: a centred icon over the label, filling the height of its
+   half of the Import and Crop row so both cards read as a pair. */
 .dropzone {
   cursor: pointer;
   border-radius: var(--radius-control);
@@ -491,10 +366,7 @@ html, body {
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-/* No badge/circle background (jdp: "Dropzone Icon ohne Badgehintergrund") -
-   a bare glyph, matching the info icon's "furniture, not a control" framing
-   rather than reading as its own clickable action distinct from the zone
-   it sits inside. */
+/* A bare glyph without a badge, so it does not read as a separate action. */
 .dropzone-icon {
   display: inline-flex;
   align-items: center;
@@ -517,9 +389,6 @@ html, body {
   color: var(--accent);
 }
 
-/* ---------------------------------------------------------------------
-   Preview
-   --------------------------------------------------------------------- */
 .preview-empty {
   min-height: 320px;
   display: flex;
@@ -532,16 +401,8 @@ html, body {
 }
 
 .preview-canvas-wrap {
-  /* Always the full card width (jdp: "die weiße Fläche soll die ganze
-     Breite der Card ausfüllen, egal wie groß das ASCII ist") - a smaller-
-     than-card canvas used to leave the wrap only as wide as the canvas
-     itself, showing the card's own grey background beside it. overflow:
-     auto still gives real horizontal AND vertical scrollbars once the
-     canvas (zoomed in, or just a wide grid) exceeds this width/max-height.
-     Background is a fixed white, not a theme token, on purpose: the
-     working canvas simulates the printed/plain-text page the export
-     actually produces, so it stays white even while the rest of the app
-     is in dark mode - matching ASCGen2's own default output look. */
+  /* The full card width, scrolling once the canvas outgrows it. The page is
+     white in every theme, like the exported output. */
   width: 100%;
   overflow: auto;
   border-radius: var(--radius-control);
@@ -553,12 +414,8 @@ html, body {
   cursor: grabbing;
 }
 
-/* No max-width/height:auto here (used to shrink-to-fit on load) - the zoom
-   control (preview.ts) now owns width/height explicitly via inline style at
-   every zoom level including 100%, and canvasWrap's own overflow:auto is
-   what contains it, not a shrink on the canvas itself. A leftover
-   max-width:100% here would silently re-clamp anything past the card's own
-   width back down, defeating zooming in past 100% entirely. */
+/* No max-width: preview.ts sizes the canvas for the zoom, and a cap would
+   undo zooming past the card width. */
 canvas.preview-canvas {
   display: block;
 }
@@ -574,18 +431,8 @@ canvas.preview-canvas[width="0"] {
   margin-top: -0.25rem;
 }
 
-/* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
-   solche Badges") - lives inside the Export card's own format-button row
-   now (jdp: "den zwischenablage button [...] in die reihe der anderen
-   buttons integrieren"), pinned to the trailing edge via margin-left: auto.
-   --badge-md, not --badge-sm: the four format buttons beside it render at
-   ~34px tall (base button padding + text content, no fixed height of their
-   own), so a --badge-sm (26.25px) circle sat visibly smaller than its row-
-   mates and flush to the row's top edge instead of centred among them
-   (jdp: "der zwischenablage button hat nicht die richtige größe") - see
-   .export-format-row button below, which now gives the FORMAT buttons an
-   explicit --badge-md height too, so every button in this row is the exact
-   same height regardless of whether it holds an icon or text. */
+/* The Copy badge at the end of the export format row, at --badge-md like the
+   format buttons beside it. */
 .preview-copy-button {
   width: var(--badge-md);
   height: var(--badge-md);
@@ -596,8 +443,7 @@ canvas.preview-canvas[width="0"] {
   justify-content: center;
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
-  /* Overrides the base button rule's --radius-control (a rectangular-
-     control radius) - an icon-only badge is GlimStone's "circle" register. */
+  /* An icon-only badge is round, unlike the base button. */
   border-radius: var(--radius-pill);
 }
 .preview-copy-button .control-icon {
@@ -640,20 +486,11 @@ canvas.preview-canvas[width="0"] {
   background-color: var(--carbon-hover);
 }
 
-/* ---------------------------------------------------------------------
-   Controls
-   --------------------------------------------------------------------- */
 .control-slider {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  /* --text-body (14px), not --text-dense - GlimStone's own type scale
-     already documents --text-dense as "list rows, table cells, anywhere
-     many instances stack" (design-language.md, "The type scale"), and a
-     single slider/select/field's own label is none of those. This was a
-     TrickWork misapplication, not a GlimStone gap - jdp compared it
-     directly against BombVault, whose equivalent control-label text
-     renders at 14px (Tailwind's text-sm), confirming the mismatch. */
+  /* --text-dense is for rows that stack by the dozen, not a single label. */
   font-size: var(--text-body);
   color: var(--carbon-text-sub);
 }
@@ -669,12 +506,8 @@ canvas.preview-canvas[width="0"] {
   color: var(--carbon-text-muted);
 }
 
-/* Range: neutral filled track, accent thumb — activity lives in the thumb.
-   The thumb's radius comes from the shape engine's raw --radius-pill token
-   (the browser's own corner-overflow scaling already caps a 16×16 square
-   thumb to a true circle - no min(…, 50%) needed, see tokens.css), so
-   Square makes it a square handle and Soft makes it a rounded-rect one, not
-   a permanent circle regardless of the app's chosen shape. */
+/* Range: neutral track, accent thumb, since activity lives in the thumb. The
+   thumb reads --radius-pill, so it follows the shape: round, soft or square. */
 input[type="range"] {
   appearance: none;
   width: 100%;
@@ -712,9 +545,8 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
-/* The Height slider while the aspect-ratio lock holds it to an auto value -
-   still shows the live number, just not draggable. A flat neutral thumb
-   (not --accent) reads as "not an editable control right now" at a glance. */
+/* Height while the aspect-ratio lock holds it: the number stays live, and the
+   neutral thumb shows it cannot be dragged. */
 input[type="range"]:disabled {
   cursor: not-allowed;
 }
@@ -727,9 +559,7 @@ input[type="range"]:disabled::-moz-range-thumb {
   cursor: not-allowed;
 }
 
-/* Width's slider stays full-width; Height's shares its row with the
-   aspect-ratio lock toggle beside it, vertically centred against the whole
-   two-row (label + track) control rather than either row alone. */
+/* Height shares its row with the lock, centred against label and track. */
 .control-slider-with-toggle {
   display: flex;
   align-items: center;
@@ -776,15 +606,8 @@ input[type="text"]:focus-visible {
   background-color: var(--carbon-hover);
 }
 
-/* The live, editable character-ramp preview (ASCGen2's "Valid Ramp Chars"
-   dialog) - a genuinely plain, freely-editable text field holding the
-   actual characters, rendered at real size in the active font so a
-   70-character preset is legible, not just a name in a dropdown. Second
-   design pass: the first version modelled this as click-to-remove tiles
-   plus a separate fixed add-row, which jdp flagged as not "normal text you
-   can edit normally" - a <textarea> instead, so typing/selecting/pasting/
-   backspacing anywhere in the field works exactly like editing any other
-   text, with no click-to-delete behaviour and no separate input row at all. */
+/* The editable character ramp, shown in the active font at a size where a
+   70-character preset stays legible. */
 .charset-field {
   display: block;
   width: 100%;
@@ -814,24 +637,16 @@ input[type="text"]:focus-visible {
   color: var(--carbon-text-muted);
 }
 
-/* ---------------------------------------------------------------------
-   Levels — ASCGen2's histogram + black/gamma/white point dialog, folded
-   into the Filters card instead of a separate modal/tab. Three native
-   range inputs share one track over the histogram (transparent track,
-   pointer-events only on each thumb) rather than a hand-rolled pointer-drag
-   implementation - keyboard-operable and far less code than reimplementing
-   dragging. Thumbs are CSS triangles pointing up into the histogram,
-   matching the reference dialog's own marker shape.
-   --------------------------------------------------------------------- */
+/* Levels: three native range inputs share one transparent track under the
+   histogram, with pointer events on the thumbs only, which keeps them
+   keyboard-operable. The thumbs are triangles pointing up, as in ASCGen2. */
 .levels-canvas-wrap {
   padding: 0;
   overflow: hidden;
 }
 
-/* Fixed white, like ASCGen2's own Levels dialog (and matching the same
-   "represents actual tonal data, not app chrome" reasoning the crop source
-   canvas and the ASCII preview already use a fixed white page for) - a
-   dark-surface histogram reads far weaker than bars plotted on white. */
+/* White in every theme, like ASCGen2's dialog: bars on a dark surface read
+   far weaker. */
 .levels-histogram {
   display: block;
   width: 100%;
@@ -839,13 +654,7 @@ input[type="text"]:focus-visible {
   background-color: #fff;
 }
 
-/* No visible track background at all now (jdp, second pass: "der graue
-   Balken soll weg. Das Fenster soll am oberen Ende der Verschieberegler
-   aufhören") - the grey bar from the previous pass is gone entirely, and
-   levelsPanel.ts moved this element OUTSIDE .levels-canvas-wrap's own
-   glim-well box, so that box's edge now sits exactly at the histogram's own
-   bottom edge instead of extending an extra 22px to wrap this too. The
-   three handles float directly on the card's own surface colour. */
+/* No track background: the handles sit on the card surface below the well. */
 .levels-track {
   position: relative;
   height: 22px;
@@ -869,12 +678,8 @@ input.levels-handle-input::-moz-range-track {
   background: transparent;
 }
 
-/* background/box-shadow are declared explicitly here (not just left unset) -
-   CSS applies unconflicting declarations from the generic input[type="range"]
-   thumb rule (style.css above: a filled accent circle + a box-shadow halo)
-   even though THIS rule wins every property it does declare, since the
-   cascade resolves per-DECLARATION, not per-rule. Without these two lines
-   that circle+halo painted right through the 0-size triangle box. */
+/* background and box-shadow are reset here, or the cascade would still apply
+   the generic thumb's accent circle and halo to the triangle. */
 input.levels-handle-input::-webkit-slider-thumb {
   appearance: none;
   pointer-events: auto;
@@ -902,11 +707,9 @@ input.levels-handle-input::-moz-range-thumb {
   box-shadow: none;
 }
 
-/* Fixed, not theme tokens: these three triangles represent an absolute
-   black point / midtone / white point, the same way the preview canvas
-   stays a fixed white page regardless of the app's own theme - a "black"
-   handle that turned white under dark mode (following --carbon-text) would
-   invert the exact meaning it's showing. */
+/* Fixed colours rather than theme tokens: the handles stand for absolute
+   black, midtone and white, and a black handle turning white in dark mode
+   would invert its meaning. */
 .levels-handle-input--black {
   color: #1a1a1a;
 }
@@ -940,9 +743,8 @@ input.levels-handle-input::-moz-range-thumb {
   background-color: var(--carbon-hover);
 }
 
-/* Live black/gamma/white numbers under the track, positioned to sit roughly
-   under their own handle (left/center/right) - always visible, not just on
-   hover, the same as ASCGen2's own dialog. */
+/* The black, gamma and white values under the track, roughly below their
+   handles. */
 .levels-readout-row {
   display: flex;
   align-items: center;
@@ -961,19 +763,9 @@ input.levels-handle-input::-moz-range-thumb {
   color: var(--carbon-text-sub);
 }
 
-/* Icon-only toggle buttons - replaced the earlier checkbox+text rows
-   entirely (jdp: icons INSTEAD of checkboxes and text, not alongside).
-   Second pass: the original shared-well treatment (one inset background
-   behind all the buttons, each transparent at rest) made independent
-   toggles read as fused into one blob with no boundary between them (jdp:
-   "die Bearbeitungsicons kleben immer aneinander") - that shared-well look
-   is right for .segmented-row (an EXCLUSIVE choice among options, one
-   control), but wrong here (each icon is its OWN independent toggle, a
-   set of controls, not one). Each button now carries its own idle tile
-   background instead, with a real gap between them, and matches
-   .segmented-button's own height (--badge-md) so a Rotate row and a Flip
-   row in the same card read as the same size control, not two different
-   ones. */
+/* Icon-only toggles. Each is its own control, so each has its own tile with a
+   gap between them, unlike the shared well of a segmented row, which is one
+   exclusive choice. They match the segmented row's height. */
 .icon-toggle-row {
   display: flex;
   gap: 0.5rem;
@@ -1006,9 +798,6 @@ input.levels-handle-input::-moz-range-thumb {
   color: var(--accent-contrast);
 }
 
-/* ---------------------------------------------------------------------
-   Queue
-   --------------------------------------------------------------------- */
 .queue-list {
   list-style: none;
   margin: 0;
@@ -1051,9 +840,8 @@ input.levels-handle-input::-moz-range-thumb {
   box-shadow: inset 0 0 0 999px var(--accent-soft);
 }
 
-/* A solid, fully-opaque rainbow-position dot - see queue.ts's own comment on
-   why this exists alongside the wash (the wash alone reads as "nothing
-   happened" on some displays even when it's applying correctly). */
+/* A solid dot of the row's rainbow colour, since the wash alone is easy to
+   miss on some displays. */
 .queue-item-dot {
   width: 0.65rem;
   height: 0.65rem;
@@ -1098,9 +886,6 @@ input.levels-handle-input::-moz-range-thumb {
   color: var(--status-warn-text);
 }
 
-/* ---------------------------------------------------------------------
-   Export
-   --------------------------------------------------------------------- */
 .export-panel {
   display: flex;
   flex-direction: column;
@@ -1118,10 +903,7 @@ button {
   border: none;
   cursor: pointer;
   font: inherit;
-  /* --text-body, matching select/input[type=text] above and the same
-     role-mapping fix (see .control-slider) - a button's own label isn't a
-     stacking-many-instances context either. .queue-item and its dense-
-     tier siblings keep --text-dense deliberately (they DO stack). */
+  /* A button label does not stack by the dozen, so it takes --text-body. */
   font-size: var(--text-body);
   color: var(--carbon-text);
   background-color: var(--carbon-surface2);
@@ -1139,15 +921,8 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* An explicit --badge-md height, not the base button rule's own padding-
-   plus-content sizing - these otherwise rendered a couple pixels taller
-   than the copy badge beside them (34px vs. its 26.25px, see
-   .preview-copy-button's own comment) once the two were meant to look like
-   one continuous row of same-sized controls. display:flex + centering
-   replaces the base rule's plain text-align: center now that height is
-   fixed rather than padding-derived, so a single line of text still sits
-   dead centre instead of drifting toward whichever side line-height rounds
-   to. */
+/* A fixed --badge-md height, so the format buttons match the Copy badge, with
+   flex centring the label in it. */
 .export-format-row button {
   flex: 1;
   min-width: 4.5rem;
@@ -1157,12 +932,8 @@ button:focus-visible {
   justify-content: center;
 }
 
-/* The Copy badge joined this row (jdp: "den zwischenablage button [...]
-   in die reihe der anderen buttons integrieren") but stays its own fixed
-   icon-badge size - without this override the generic rule above (aimed
-   at the four text format buttons) stretched it into a 4.5rem-wide pill
-   instead of a small circle. Higher specificity wins over the rule above
-   (two classes vs. one class + element). */
+/* The Copy badge keeps its circle instead of stretching like the format
+   buttons. */
 .export-format-row .preview-copy-button {
   flex: none;
   min-width: 0;
@@ -1179,10 +950,6 @@ button:focus-visible {
   color: var(--carbon-text-muted);
 }
 
-/* ---------------------------------------------------------------------
-   Presets — save/load the whole options object as a JSON file, in Settings
-   next to Appearance (a global action, not tied to any one working card).
-   --------------------------------------------------------------------- */
 .presets-panel {
   display: flex;
   flex-direction: column;
@@ -1198,20 +965,14 @@ button:focus-visible {
   flex: 1;
 }
 
-/* ---------------------------------------------------------------------
-   Appearance settings — Shape / Theme / Accent, the axes GlimStone reserves
-   for the user (rule: applied once at the app root, never by the page that
-   edits them).
-   --------------------------------------------------------------------- */
 .appearance-settings {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* A toggle-switch group, not a row of independent pill buttons: one shared
-   well reads as a single control, and only the active segment is filled -
-   mirrors how a real segmented toggle groups its options. */
+/* One shared well reads as a single control, with only the active segment
+   filled. */
 .segmented-row {
   display: flex;
   gap: 0.2rem;
@@ -1223,18 +984,8 @@ button:focus-visible {
 .segmented-button {
   flex: 1;
   min-width: 0;
-  /* Matches --badge-md (.icon-toggle-button/.history-button's own stage) -
-     a Rotate row and a Flip row sitting in the same card (or Sharpen and
-     the invert/dither/color row in Filters) used to be visibly different
-     heights, the other half of the "kleben aneinander" complaint. An
-     explicit height, not min-height: the base button rule's own padding
-     pushed the rendered height a couple pixels past the min-height floor,
-     so this was 37px next to .icon-toggle-button's/the swatches' exact
-     35.25px - close, but not the "pixel-identical, regardless of the
-     underlying element" GlimStone's own Badges rule asks for (jdp: "die
-     ganzen farbfelder... so hoch... wie die badges der horizontalen
-     selektoren" only holds if the selector's OWN badge is exactly that
-     height too). */
+  /* A fixed --badge-md height, so a segmented row matches the icon toggles
+     and swatches beside it; min-height would let the padding push past it. */
   height: var(--badge-md);
   display: flex;
   align-items: center;
@@ -1243,16 +994,9 @@ button:focus-visible {
   background-color: transparent;
 }
 
-/* One line, always - a long label (German "Unscharf maskieren" vs. short
-   "0°") must never make this row taller than a sibling card's row of the
-   same --radius-control/padding rhythm, and must never overflow the
-   button's own bounds either. text-overflow: ellipsis doesn't reliably
-   apply to a flex CONTAINER's own direct text node (.segmented-button is
-   display:flex) - it needs a genuine block-level child, hence this span.
-   min-width: 0 overrides the flex default (min-width: auto, which refuses
-   to shrink a flex item below its content size) so the ellipsis can
-   actually engage instead of pushing the button wider. data-tip on the
-   button carries the full text when it truncates. */
+/* One line, truncated with an ellipsis, which needs a child of the flex
+   button; min-width: 0 lets the item shrink below its content. The button's
+   data-tip carries the full text when it is cut. */
 .segmented-button-label {
   min-width: 0;
   white-space: nowrap;
@@ -1273,12 +1017,9 @@ button:focus-visible {
   background-color: var(--accent);
 }
 
-/* The presets row: a small muted "Presets:" label, the preset swatches,
-   wrapping together on narrow widths - then the reset badge, pinned to the
-   far right whenever there's room via margin-left: auto, wrapping onto its
-   own trailing position otherwise. The actual colour picker (a real,
-   permanently embedded SV square + hue bar, .glim-picker) sits ABOVE this
-   row - see appearanceSettings.ts and GlimStone's reference/colorPicker.ts. */
+/* The accent row: the custom swatch, a muted "Presets:" label and the preset
+   swatches, wrapping on narrow widths, with the reset badge pushed to the
+   right. */
 .accent-row {
   display: flex;
   flex-wrap: wrap;
@@ -1302,21 +1043,9 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
-/* Swatches with a border-colour highlight on the active preset, mirroring
-   BombVault's own technique exactly (border, not a box-shadow ring) -
-   BombVault itself has no shape engine yet, so its own swatches are
-   permanently circular; TrickWork goes one step further and makes them
-   follow it (jdp: "die Farbfelder sollen der Form folgen", CannonadeCommand's
-   own precedent for a shape-reactive swatch: border-radius: var(--cc-b-
-   radius)). --swatch-size reads the --badge-md stage directly (jdp: "die
-   ganzen farbfelder... so groß machen, dass sie so hoch sind wie die
-   badges der horizontalen selektoren") - swatches used to sit at their own
-   smaller 1.5rem value, a size no other control in the app shared, which is
-   exactly the "don't need to match" call this comment used to defend and
-   jdp explicitly reversed. Plain flat <button>s, not native
-   <input type="color"> - each swatch only SELECTS a value; the one
-   shared/embedded .glim-picker does the editing (GlimStone's colour-picker
-   layout rule). */
+/* Swatches follow the shape, and the active preset gets a border, as in
+   BombVault. They are plain buttons that select a value; the picker popover
+   does the editing. */
 .accent-swatch,
 .palette-swatch {
   appearance: none;
@@ -1339,12 +1068,7 @@ button:focus-visible {
   border-color: var(--carbon-text);
 }
 
-/* Icon badge, not text (jdp: "immer Symbole statt Texte verwenden für
-   solche Badges") - shared by the Accent reset AND the Rainbow palette
-   reset. --badge-md, not --badge-sm: these sit right beside the accent/
-   palette swatches in the same row, and jdp asked for the swatches to grow
-   to --badge-md and the reset badges to follow suit in the same breath
-   ("die resetbadges dann natürlich auch"). */
+/* The reset badge of the accent and palette rows, at the swatches' size. */
 .icon-reset-badge {
   width: var(--badge-md);
   height: var(--badge-md);
@@ -1358,19 +1082,8 @@ button:focus-visible {
   border-radius: var(--radius-pill);
 }
 
-/* Every other icon-badge in the app (.preview-copy-button .control-icon,
-   .settings-badge svg) pins its glyph's CSS size explicitly - this one
-   never got that rule and relied on the raw width="19" height="19" HTML
-   attributes alone. Inside a flex container that's fragile: a replaced
-   element (an SVG) with no CSS width/height of its own can have its
-   auto-computed flex-basis shrink to a sliver instead of its intrinsic
-   size (jdp: "die reset buttion habe kein icon mehr" - it was still
-   there, just squashed to ~2px wide). 19px, not the smaller 15px this
-   used to read at now that the badge itself grew to --badge-md - the
-   glyph-to-badge ratio otherwise shrinks and the icon reads as lost
-   inside the bigger circle; 19px matches every OTHER --badge-md icon's
-   own natural, un-overridden controlSvg() size (icon-toggle-button,
-   history-button). */
+/* An SVG with no CSS size can shrink to a sliver inside a flex container, so
+   the glyph gets the 19px of every other --badge-md icon. */
 .icon-reset-badge .control-icon {
   width: 19px;
   height: 19px;
@@ -1382,14 +1095,8 @@ button:focus-visible {
   color: var(--carbon-text);
 }
 
-/* The rainbow palette - editable now (jdp: "die Farben des Rainbowmodes
-   sollen auch bearbeitbar sein, daher brauchen wir dort auch einen Reset
-   Button"), each position a real, always-present <input type="color">
-   (class .palette-swatch, styled via the shared swatch group above), same
-   border/hover treatment and --swatch-size as the accent presets. Dimmed
-   (not hidden) and pointer-events: none while rainbow mode itself is off,
-   matching CannonadeCommand's own treatment of its dependent rainbow
-   sub-controls. */
+/* The editable rainbow palette, one swatch per position, styled like the
+   accent swatches. appearanceSettings.ts dims it while the mode is off. */
 .palette-swatch-row {
   display: flex;
   flex-wrap: wrap;
@@ -1398,18 +1105,9 @@ button:focus-visible {
   transition: opacity 150ms ease;
 }
 
-/* A genuine sliding switch (controlWidgets.ts's toggleSwitch) - GlimStone's
-   "Switches" section as its own component, not a segmented Off/On pair.
-   Track and knob both read the raw --radius-pill token directly - Round
-   keeps the classic pill+circle look while Soft/Square progressively square
-   it off. The track used to cap it with min(var(--radius-pill), 50%),
-   which is wrong on a NON-square box like this one (2.75rem × 1.5rem):
-   50% resolves per-axis (50% width horizontally, 50% height vertically)
-   before the border-radius overflow algorithm ever runs, hard-coding two
-   different corner radii and rendering as a visible ellipse instead of a
-   pill (jdp: "der toggle... ist in der runden form einstellung
-   elliptisch"). The raw token alone is correct on both the square knob and
-   the non-square track - see tokens.css's own comment for why. */
+/* The sliding switch (toggleSwitch in controlWidgets.ts). Track and knob read
+   the raw --radius-pill, which stays a pill on the non-square track (see
+   tokens.css), and follow the Soft and Square shapes. */
 .toggle-switch {
   position: relative;
   flex-shrink: 0;
@@ -1443,11 +1141,9 @@ button:focus-visible {
   left: 1.4375rem;
 }
 
-/* A custom button+listbox dropdown (controlWidgets.ts's customDropdown) -
-   the language picker's own field+list, roomier than a native <select> can
-   ever be given (jdp: "das Feld ist zu klein und die Dropdownliste viel zu
-   kompakt, siehe BV"). Positioned absolutely off its own wrapper so opening
-   it never pushes later Settings content down. */
+/* The custom dropdown of the language picker (customDropdown), roomier than a
+   native <select>. The list is absolutely positioned, so opening it does not
+   push the content below. */
 .dropdown-wrap {
   position: relative;
   width: 100%;
@@ -1457,18 +1153,14 @@ button:focus-visible {
   width: 100%;
   display: flex;
   align-items: center;
-  /* A real gap between the flag glyph and the label (jdp: "der Text ist zu
-     nah an den Flaggen") - a single space character in a plain text string
-     doesn't read as a gap the way a flex gap does. */
+  /* A space character is too narrow a gap between flag and label. */
   gap: 0.6rem;
   text-align: start;
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
   color: var(--carbon-text);
   font: inherit;
-  /* Bumped past the app-wide --text-body override too (jdp, repeated: still
-     reads as small) - a literal size specific to this control rather than
-     another shared-token bump. */
+  /* Larger than body text for this control alone. */
   font-size: 1rem;
   padding: 1.1rem 1.2rem;
 }
@@ -1506,9 +1198,7 @@ button:focus-visible {
 .dropdown-option-flag,
 .dropdown-trigger .dropdown-option-flag {
   flex-shrink: 0;
-  /* 'Noto Color Emoji Flags' first, imported above - real flag glyphs on
-     Windows/Chromium too, not just the two-letter fallback the page's own
-     Segoe UI text font would otherwise show for these codepoints. */
+  /* The flag font first, so Windows shows flags rather than two letters. */
   font-family: 'Noto Color Emoji Flags', "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 .dropdown-option:hover {
@@ -1520,10 +1210,8 @@ button:focus-visible {
   color: var(--carbon-text);
 }
 
-/* GlimStone rule: version numbers live in Settings, never a persistent
-   footer - see appearanceSettings.ts. */
-/* Sits directly in .settings-view now (main.ts), not inside a card - its
-   own flex gap already provides the spacing above, so no extra margin here. */
+/* The versions sit in Settings below the cards (GlimStone keeps them out of a
+   persistent footer); the view's gap spaces them. */
 .settings-version {
   margin: 0;
   font-size: var(--text-caption);

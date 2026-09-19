@@ -1,28 +1,17 @@
-// ui/src/icons.ts
-//
-// Minimal inline SVG icons, monochrome, matching BombVault/KnightLoader's own
-// sidebar icon treatment (20x20 viewBox, currentColor, strokeWidth 1.5 for
-// stroked glyphs). TrickWork itself uses the corner Settings badge instead of
-// a full sidebar (a deliberate GlimStone-documented exception - see main.ts
-// and the vault project note), so the badge's own two icons live here
-// alongside the icon-only toggle buttons iconToggleButton() (controlWidgets.ts)
-// uses for Flip/Invert/Dither/Color - aria-hidden everywhere since the
-// button's own title/aria-label (the hover tooltip) carries the accessible
-// name, not visible text next to the glyph anymore.
+// Monochrome inline SVG icons on a 20x20 viewBox in currentColor, like the
+// BombVault and KnightLoader sidebars. They are aria-hidden because the
+// button's title and aria-label carry the name.
 
 function svg(inner: string, viewBox = '0 0 20 20'): string {
   return `<svg width="22" height="22" viewBox="${viewBox}" fill="none" class="nav-icon" aria-hidden="true">${inner}</svg>`
 }
 
-// Sized to be the ENTIRE content of a toggle button, not a small aside next
-// to label text anymore - bumped up from the original 16px now that the
-// icon alone has to carry the option.
+// A toggle button shows nothing but its icon, so the icon is larger.
 function controlSvg(inner: string): string {
   return `<svg width="19" height="19" viewBox="0 0 20 20" fill="none" class="control-icon" aria-hidden="true">${inner}</svg>`
 }
 
-// Two triangles pointing away from a dashed vertical mirror axis - flips
-// left-right across that axis.
+// Two triangles pointing away from a dashed vertical mirror axis.
 export function iconFlipHorizontal(): string {
   return controlSvg(
     `<path d="M10 3v14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="2 2.5" />` +
@@ -31,7 +20,7 @@ export function iconFlipHorizontal(): string {
   )
 }
 
-// Same idea rotated a quarter turn - flips top-bottom across a horizontal axis.
+// The same, turned a quarter, with a horizontal axis.
 export function iconFlipVertical(): string {
   return controlSvg(
     `<path d="M3 10h14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="2 2.5" />` +
@@ -40,8 +29,7 @@ export function iconFlipVertical(): string {
   )
 }
 
-// Half-filled circle - the standard "invert/contrast" glyph, one ring split
-// light/dark down the middle.
+// A half-filled circle, the usual invert glyph.
 export function iconInvert(): string {
   return controlSvg(
     `<circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.25" />` +
@@ -49,8 +37,7 @@ export function iconInvert(): string {
   )
 }
 
-// A loose scatter of varying-size dots - the halftone/noise pattern
-// dithering actually produces, rather than a generic settings glyph.
+// A loose scatter of dots of varying size, the pattern dithering produces.
 export function iconDither(): string {
   return controlSvg(
     `<circle cx="5" cy="6" r="1.5" fill="currentColor" />` +
@@ -65,8 +52,7 @@ export function iconDither(): string {
   )
 }
 
-// A closed padlock - the aspect-ratio lock in its LOCKED state (Height
-// follows Width automatically).
+// A closed padlock: the aspect-ratio lock is on and Height follows Width.
 export function iconLockClosed(): string {
   return controlSvg(
     `<rect x="4.5" y="9" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
@@ -74,8 +60,7 @@ export function iconLockClosed(): string {
   )
 }
 
-// Same shackle, swung open - the UNLOCKED state (Height is a real
-// independent slider).
+// The shackle swung open: Height is its own slider.
 export function iconLockOpen(): string {
   return controlSvg(
     `<rect x="4.5" y="9" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
@@ -83,20 +68,15 @@ export function iconLockOpen(): string {
   )
 }
 
-// A paint droplet - color output.
+// A paint droplet for colour output.
 export function iconColor(): string {
   return controlSvg(
     `<path d="M10 2.8c-2.7 3.3-5.1 6.5-5.1 9.3a5.1 5.1 0 0 0 10.2 0c0-2.8-2.4-6-5.1-9.3z" fill="currentColor" />`,
   )
 }
 
-// A plain image-placeholder glyph (frame + sun + mountain line) - the
-// dropzone's own icon, sized up from the toolbar glyphs (40px) since it's
-// the sole visual anchor of a genuinely inviting drop target. Replaces the
-// original upload-arrow-into-a-tray design (jdp: "ein schöneres,
-// minimalistisches Icon") - this reads immediately as "an image", the
-// universal broken-image/photo-placeholder glyph, rather than a generic
-// upload action that could apply to any file type.
+// An image placeholder (frame, sun and mountain line) for the dropzone, at
+// 40px since it is the only visual anchor of the drop target.
 export function iconUpload(): string {
   return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">` +
     `<rect x="2.75" y="4.75" width="18.5" height="14.5" rx="2.5" stroke="currentColor" stroke-width="1.3" />` +
@@ -105,16 +85,15 @@ export function iconUpload(): string {
     `</svg>`
 }
 
-// Left arrow - the settings badge's own state once Settings is open (toggles
-// back to Convert), matching the corner-badge alternative documented in
-// GlimStone's "The sidebar" section for a genuinely simple, single-workspace app.
+// A left arrow: the settings badge while Settings is open, leading back to
+// Convert.
 export function iconBack(): string {
   return svg(
     `<path d="M12.5 4 6 10l6.5 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />`,
   )
 }
 
-// Corner-up-left arrow - Undo, in the header's undo/redo button pair.
+// A corner-up-left arrow for Undo.
 export function iconUndo(): string {
   return svg(
     `<path d="M7.5 12 3.5 8l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
@@ -122,7 +101,7 @@ export function iconUndo(): string {
   )
 }
 
-// Mirror of iconUndo() - Redo.
+// The mirror of iconUndo() for Redo.
 export function iconRedo(): string {
   return svg(
     `<path d="M12.5 12 16.5 8l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
@@ -130,10 +109,9 @@ export function iconRedo(): string {
   )
 }
 
-// A counter-clockwise circular arrow - "reset to default", matching
-// CannonadeCommand's own reset badge (a Font Awesome fa-undo glyph) rather
-// than iconUndo()'s corner-turn arrow, which already means something more
-// specific ("step back in history") elsewhere in this app.
+// A counter-clockwise circular arrow for reset to default, as in
+// CannonadeCommand; the corner arrow of iconUndo() already means a step back
+// in history.
 export function iconReset(): string {
   return controlSvg(
     `<path d="M4 10a6 6 0 1 1 1.9 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
@@ -141,7 +119,7 @@ export function iconReset(): string {
   )
 }
 
-// A clipboard glyph - "copy to clipboard", the preview panel's Copy badge.
+// A clipboard for the preview's Copy badge.
 export function iconCopy(): string {
   return controlSvg(
     `<rect x="6" y="4.5" width="9" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
@@ -149,12 +127,12 @@ export function iconCopy(): string {
   )
 }
 
-// A checkmark - the Copy badge's own momentary "copied" confirmation.
+// A checkmark for the Copy badge's brief "copied" state.
 export function iconCheck(): string {
   return controlSvg(`<path d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
 }
 
-// The standard six-dot grip glyph - a sidecard's own drag handle (cardReorder.ts).
+// A six-dot grip for a sidecard's drag handle.
 export function iconGrip(): string {
   return controlSvg(
     [7, 13]
@@ -163,7 +141,7 @@ export function iconGrip(): string {
   )
 }
 
-// Standard 8-tooth cog - Appearance/settings, identical concept to BV/KL's own Settings glyph.
+// An 8-tooth cog for Settings, as in BombVault and KnightLoader.
 export function iconAppearance(): string {
   return svg(
     `<path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1 2.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 0 1 2.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 0 1 .947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 0 1-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 0 1-2.287-.947zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />`,

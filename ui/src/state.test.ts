@@ -1,4 +1,3 @@
-// ui/src/state.test.ts
 import { describe, expect, it } from 'vitest'
 import { createStore } from './state'
 
