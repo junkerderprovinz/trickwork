@@ -1,12 +1,6 @@
-# Push the README to the Docker Hub repo's Overview, on demand and nothing else.
-#
-# The image build already syncs the description after every push, but only after
-# a full multi-arch build. That makes it useless for answering the one question
-# worth answering when the sync starts failing: is the credential broken, or is
-# this repo's secret wrong? A run that builds nothing isolates the credential.
-#
-# Manual only. It never builds, never pushes an image, and touches nothing but
-# the description text on Docker Hub.
+# Pushes the README to the Docker Hub Overview, on demand. It builds nothing and
+# touches nothing but the description, so a failing run points at the
+# credential alone.
 name: Docker Hub description
 
 on:

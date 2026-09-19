@@ -1,10 +1,7 @@
-// Composes the desktop app icon (a plain square tile - the OS applies its
-// own corner mask, so this stays unrounded): the ribbon logo centred on the
-// app's own dark ground colour (GlimStone's --carbon-bg, #161616), scaled to
-// leave comfortable padding. Wails reads desktop/build/appicon.png (1024x1024)
-// and generates the platform .ico/.icns from it at build time - that file is
-// the one exception carved out of desktop/build/'s own .gitignore rule (a
-// real repo asset, not a build output; see the .gitignore comment).
+// Composes the desktop app icon: the ribbon logo centred on GlimStone's
+// --carbon-bg as an unrounded square, since the OS applies its own corner mask.
+// Wails generates the platform .ico/.icns from desktop/build/appicon.png, which
+// is why that file is exempt from the desktop/build/ ignore rule.
 // Run: node .github/assets/gen-appicon.mjs
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -26,7 +23,6 @@ const BG = "#161616";
 const PAD = 0.07; // fraction of SIZE reserved as margin on each side
 const availW = SIZE * (1 - PAD * 2);
 const availH = SIZE * (1 - PAD * 2);
-// Fit the wide ribbon inside the available box, preserving aspect ratio.
 const scale = Math.min(availW / VB_W, availH / VB_H);
 const logoW = VB_W * scale, logoH = VB_H * scale;
 const x = (SIZE - logoW) / 2, y = (SIZE - logoH) / 2;

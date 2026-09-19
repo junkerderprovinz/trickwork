@@ -2,12 +2,9 @@ node_modules/
 dist/
 *.log
 .DS_Store
-# desktop/build/ holds Wails' generated per-platform bundles (windows/,
-# darwin/, bin/, ...) - all ignored except appicon.png, which is the actual
-# SOURCE icon (.github/assets/logo.svg composed onto a branded tile) that
-# `wails build` reads to generate every platform icon from - a real repo
-# asset, not a build artifact, so it has to be tracked or CI falls back to
-# Wails' own generic default icon (a plain "W").
+# Wails generates the platform bundles in desktop/build/, but appicon.png is
+# the source every platform icon is made from; untracked, CI falls back to
+# Wails' default icon.
 desktop/build/*
 !desktop/build/appicon.png
 webembed/dist/

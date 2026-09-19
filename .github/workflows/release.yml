@@ -1,12 +1,8 @@
 name: Release
 
-# Cut from a vX.Y.Z tag. This job's only responsibility is publishing the
-# GitHub Release itself (from the hand-written notes file); desktop.yml's own
-# `attach` job (triggered by the same tag, in parallel) polls for this release
-# to exist and then uploads the platform zips to it. The container image
-# needs no separate release step here - container.yml already tags/pushes a
-# versioned image on the same tag push (type=semver in its metadata-action
-# config).
+# Publishes the GitHub Release for a vX.Y.Z tag from its hand-written notes.
+# desktop.yml attaches the platform bundles once the release exists, and
+# container.yml pushes the versioned image on the same tag.
 
 on:
   push:
@@ -28,7 +24,7 @@ jobs:
           set -eu
           notes=".github/release-notes/${GITHUB_REF_NAME}.md"
           if [ ! -f "$notes" ]; then
-            echo "missing $notes - every tag needs a hand-written release-notes file" >&2
+            echo "missing $notes: every tag needs a hand-written release-notes file" >&2
             exit 1
           fi
           gh release create "$GITHUB_REF_NAME" \

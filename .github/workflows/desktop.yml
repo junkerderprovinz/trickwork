@@ -18,10 +18,7 @@ jobs:
           - os: windows-latest
             platform: windows/amd64
             slug: windows-amd64
-            # -nsis builds BOTH TrickWork.exe (portable) AND a real NSIS
-            # installer in the same build/bin/ output (jdp: "können wir auch
-            # ein windows installer anbieten?" - alongside the portable exe,
-            # not instead of it - see the attach job's Package step below).
+            # -nsis builds an NSIS installer next to the portable TrickWork.exe.
             extra: "-nsis"
           - os: macos-latest
             platform: darwin/universal
@@ -48,35 +45,22 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
-      # -nsis (above) shells out to makensis to produce a real Windows
-      # installer alongside the portable exe - windows-latest has
-      # historically carried NSIS preinstalled, but that's an implicit
-      # runner-image detail GitHub has already dropped once for a newer
-      # image (actions/runner-images#11754), so install it explicitly.
+      # -nsis needs makensis, and the runner image has dropped its
+      # preinstalled NSIS before (actions/runner-images#11754).
       - name: Install NSIS
         if: runner.os == 'Windows'
         run: |
           choco install nsis -y
-          # choco updates the machine PATH, but that change doesn't reach
-          # this already-running job process - wails build's own NSIS
-          # invocation silently degrades to "Warning: Cannot create
-          # installer: makensis not found" without this (confirmed against
-          # a real run: NSIS installed fine, PATH just never got there).
+          # The running job does not see choco's PATH change, and wails only
+          # warns "makensis not found" and skips the installer.
           echo "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      # Kept in step with desktop/go.mod's own wails/v2 version - Renovate
-      # bumps the go.mod library dependency automatically but has no config
-      # to also catch this `go install ...@vX` pin (it's a shell string in a
-      # workflow file, not a go.mod entry), so a Renovate library bump alone
-      # would otherwise silently leave the CLI on an older version than the
-      # library it's generating bindings against.
+      # Keep in step with wails/v2 in desktop/go.mod: Renovate bumps the
+      # library but not this pin, and the CLI generates bindings against it.
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
 
-      # GitHub Actions runs `run:` steps under pwsh by default on windows-latest,
-      # not bash - `rm -rf` is a bash-ism with no pwsh equivalent flag, so this
-      # step needs an explicit shell. Git Bash ships on windows-latest runners
-      # specifically so cross-platform build steps like this one work unchanged.
+      # windows-latest defaults to pwsh, which has no `rm -rf`.
       - name: Build ui/ and populate webembed/dist
         shell: bash
         run: |
@@ -92,11 +76,8 @@ jobs:
           go mod tidy
           wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }}
 
-      # macOS gets no built-in Wails installer step (unlike -nsis on Windows) -
-      # wraps the .app bundle it just built into a real .dmg with hdiutil,
-      # already present on every macos-latest runner, no extra tooling needed.
-      # The bare .app is removed afterward so only the .dmg (the one file a
-      # user should actually download) reaches the artifact.
+      # Wails has no macOS installer step, so the .app goes into a .dmg and
+      # only the .dmg reaches the artifact.
       - name: Package macOS .app into a .dmg
         if: runner.os == 'macOS'
         working-directory: desktop
@@ -111,9 +92,8 @@ jobs:
           path: desktop/build/bin/*
           if-no-files-found: error
 
-  # Without this job the bundles are built on every tag and then thrown away
-  # when the artifact expires: green CI, and nobody outside Actions can download
-  # the desktop app at all. This attaches them to the release the tag creates.
+  # Artifacts expire and are only reachable inside Actions, so the bundles go
+  # onto the release the tag creates.
   attach:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
@@ -125,18 +105,9 @@ jobs:
         with:
           path: bundles
 
-      # One file per platform/option, named for the tag - not a zip of the
-      # raw build output. Windows ships TWO options side by side (jdp:
-      # "können wir auch ein windows installer anbieten?" - the portable exe
-      # stays, an NSIS installer is offered alongside it, not instead of
-      # it): download-and-run for anyone who wants no install step, or a
-      # real installer (Start Menu entry, uninstaller) for anyone who
-      # prefers that. macOS's .dmg is Apple's own drag-to-Applications
-      # convention, not an installer wizard with registry/service side
-      # effects, so it stays as the one option there. Linux has no
-      # single-file installer convention either, so its own "installation
-      # file" is the raw self-contained binary (chmod +x && run) - already
-      # portable, unchanged.
+      # One file per platform and option, named for the tag. Windows gets a
+      # portable exe and an installer; macOS gets its drag-to-Applications
+      # .dmg and Linux the self-contained binary.
       - name: Package
         run: |
           set -eu
@@ -152,9 +123,8 @@ jobs:
           chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
           ls -lh dist
 
-      # The release is expected to exist for this tag by the time the bundles are
-      # ready, but these builds can easily take longer than release creation - and
-      # a runner queue can invert that further. So wait for it rather than racing it.
+      # release.yml creates the release in parallel, and a runner queue can put
+      # it behind these builds.
       - name: Wait for the release
         env:
           GH_TOKEN: ${{ github.token }}

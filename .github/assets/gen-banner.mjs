@@ -1,27 +1,21 @@
 /**
  * Generates the TrickWork banners (1600x500):
  *
- *   trickwork-banner.svg/.png       light, logo + "TrickWork" + claim   (README, light)
- *   trickwork-banner-dark.svg/.png  dark,  logo + "TrickWork" + claim   (README, GitHub dark)
- *   trickwork-banner-logo.svg/.png  light, logo only, NO text           (support thread)
+ *   trickwork-banner.svg/.png       light, logo, name and claim   (README, light)
+ *   trickwork-banner-dark.svg/.png  dark, logo, name and claim    (README, GitHub dark)
+ *   trickwork-banner-logo.svg/.png  light, logo only              (support thread)
  *
- * The text-free "-banner-logo" variant is ALWAYS generated alongside the README
- * banner: the Unraid support thread wants a banner completely without text (house
- * rule). It uses the house-standard "-banner-logo" name shared across all repos.
+ * The Unraid support thread wants a banner without any text, so the "-banner-logo"
+ * variant is always generated alongside the README banners.
  *
- * ONE logo file for both themes, not a dunkel/hell pair: unlike the ring-on-
- * transparent coin logos most other repos use (a dark or white RING has to match
- * the surface it sits on), TrickWork's logo is a self-contained multi-tone banner
- * graphic (gold/bronze fill, no ring) that already reads cleanly against both a
- * white and a near-black ground - confirmed by rendering it on both before writing
- * this script. Manufacturing a second, functionally-identical "hell" variant just
- * to match the pattern would be duplication with no visual difference to show for it.
+ * One logo file serves both themes. Unlike the ring logos of the other repos, whose
+ * ring has to match the surface, this one is a self-contained gold and bronze
+ * graphic that reads on white and on near-black alike.
  *
- * Text is converted to SVG paths (opentype.js) so the SVG needs NO font and renders
- * identically with resvg or a browser. Bree Serif (name) + Lato (claim), the shared
- * brand fonts across the Bree-Serif repos (BombVault, featherdrop, ShipLog) - kept
- * for cross-repo consistency even though TrickWork's own in-app UI reads GlimStone's
- * system font stack instead; the banner is a marketing surface, not the app chrome.
+ * Text is converted to SVG paths (opentype.js) so the SVG needs no font and renders
+ * the same in resvg and a browser. Bree Serif (name) and Lato (claim) are the brand
+ * fonts shared with BombVault, featherdrop and ShipLog; the app itself uses the
+ * system font stack, but the banner is a marketing surface.
  *
  * Deps (global): opentype.js, @resvg/resvg-js. Fonts are fetched to the OS temp dir.
  * Run: node .github/assets/gen-banner.mjs
@@ -40,25 +34,22 @@ const { Resvg } = require(`${groot}/@resvg/resvg-js`);
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 
-// ---- content + styling -----------------------------------------------------
 const NAME = "TrickWork";
 const CLAIM = "Worth 1,000 words? We use way more.";
 const W = 1600, H = 500;
 const LOGO_FILE = "logo.svg";
-// The logo's own viewBox is 223.97 x 76.87 (a wide ribbon, not a square coin) -
-// fit it to a height proportionate to the text block (132 name + 8 gap + 44
-// claim + 70 logo-gap =~ 254px tall) rather than the house 400x400 square used
-// for ring-style logos, and let width follow the real aspect ratio.
+// The logo is a wide ribbon, not a square coin, so it gets a height in
+// proportion to the text block instead of the house 400x400 square, and its
+// width follows the real aspect ratio.
 const LOGO_VB_W = 223.97, LOGO_VB_H = 76.87;
 const LH = 210, LW = LH * (LOGO_VB_W / LOGO_VB_H);
-// House banner standard: name 132 / claim 44, logo-to-text gap 70, name-to-claim gap 8.
+// House banner standard: name 132, claim 44, logo-to-text gap 70, name-to-claim gap 8.
 const nameSize = 132, claimSize = 44, gap = 70, lineGap = 8;
 
 const THEMES = [
   { suffix: "", bg: "#ffffff", name: "#1f2328", claim: "#5a5d5e" },
   { suffix: "-dark", bg: "#0d1117", name: "#e6edf3", claim: "#9aa4ad" },
 ];
-// ---------------------------------------------------------------------------
 
 const fontPath = join(tmpdir(), "TrickWork-BreeSerif-Regular.ttf");
 if (!existsSync(fontPath)) {
@@ -77,11 +68,11 @@ if (!existsSync(claimFontPath)) {
 }
 const claimFont = opentype.parse(readFileSync(claimFontPath));
 
-// Text layout (logo + name + claim, group centred horizontally).
+// Logo, name and claim are centred horizontally as one group.
 const nameW = font.getAdvanceWidth(NAME, nameSize);
 const claimW = claimFont.getAdvanceWidth(CLAIM, claimSize);
 const groupW = LW + gap + Math.max(nameW, claimW);
-const startX = Math.max(60, (W - groupW) / 2); // centred, but never past the house 165 minimum feel on a wide logo
+const startX = Math.max(60, (W - groupW) / 2);
 const LX = startX, LY = (H - LH) / 2;
 const textX = startX + LW + gap;
 
@@ -96,8 +87,7 @@ const claimBaseline = nameBaseline + nameDesc + lineGap + claimAsc;
 const namePath = font.getPath(NAME, textX, nameBaseline, nameSize).toPathData(2);
 const claimPath = claimFont.getPath(CLAIM, textX, claimBaseline, claimSize).toPathData(2);
 
-// Embed the logo verbatim at (x,y,w,h): drop the XML decl, reposition its <svg>.
-// viewBox-agnostic - reads the file's own viewBox and preserves it.
+// Embeds the logo at (x, y, w, h), keeping the file's own viewBox.
 function embedLogo(logoFile, x, y, w, h) {
   const raw = readFileSync(join(__dir, logoFile), "utf8").replace(/<\?xml[^>]*\?>\s*/, "");
   const vb = (raw.match(/viewBox="([^"]+)"/) || [, `0 0 ${LOGO_VB_W} ${LOGO_VB_H}`])[1];
@@ -114,7 +104,6 @@ function emit(name, svg, bg) {
   console.log(`wrote ${name}.svg + .png`);
 }
 
-// README banner (both themes): logo (left) + name + claim.
 for (const t of THEMES) {
   const full = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${t.bg}"/>
@@ -126,7 +115,7 @@ for (const t of THEMES) {
   emit(`trickwork-banner${t.suffix}`, full, t.bg);
 }
 
-// Support-thread banner: logo only, NO text - ALWAYS generated (house rule).
+// Support-thread banner: logo only.
 const logoLX = (W - LW) / 2, logoLY = (H - LH) / 2;
 const lt = THEMES[0];
 const logoOnly = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
