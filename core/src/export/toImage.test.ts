@@ -1,4 +1,3 @@
-// core/src/export/toImage.test.ts
 import { describe, expect, it, vi } from 'vitest'
 import { toImage } from './toImage'
 import type { Grid } from '../types'

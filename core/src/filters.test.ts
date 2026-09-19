@@ -1,4 +1,3 @@
-// core/src/filters.test.ts
 import { describe, expect, it } from 'vitest'
 import { applyLevels, cropImage, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
 
@@ -136,17 +135,14 @@ describe('sharpenImage', () => {
   })
 
   it('"sharpen" increases local contrast at a hard edge', () => {
-    // A dark pixel next to a bright block: sharpening should push the dark
-    // side darker (or hold the floor at 0) and/or the bright side brighter.
     const img = makeImageData([
       [255, 255, 0, 255, 255],
       [255, 255, 0, 255, 255],
       [255, 255, 0, 255, 255],
     ])
     const out = sharpenImage(img, 'sharpen')
-    // The center dark column had 4 bright neighbours pulling it further from
-    // its own value under the sharpen kernel (5*0 - 4*255 clamps to 0), so it
-    // must stay at the floor rather than moving toward grey.
+    // 5*0 - 4*255 clamps to 0, so the dark column stays at the floor instead
+    // of moving toward grey.
     expect(pixelAt(out, 2, 1)[0]).toBe(0)
   })
 

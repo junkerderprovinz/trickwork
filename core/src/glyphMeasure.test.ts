@@ -1,4 +1,3 @@
-// core/src/glyphMeasure.test.ts
 import { describe, expect, it } from 'vitest'
 import {
   createCanvasGlyphMeasurer,
@@ -6,10 +5,8 @@ import {
 } from './glyphMeasure'
 
 function makeFakeCanvasFactory(coverageByChar: Record<string, number>) {
-  // A fake 2D context that reports a deterministic "ink coverage" per char
-  // by returning ImageData whose alpha-channel fill fraction matches the
-  // requested coverage, so the measurer's pixel-counting logic is exercised
-  // for real without needing an actual browser canvas.
+  // The fake context returns ImageData with the requested fraction of opaque
+  // pixels, so the measurer's pixel counting runs for real.
   return (sizePx: number) => {
     const dim = sizePx * 2
     const ctx = {

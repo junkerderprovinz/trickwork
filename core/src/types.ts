@@ -10,16 +10,9 @@ export interface GlyphMetrics {
   /** Fraction of the glyph's em-box covered by "ink" (0 = fully blank, 1 = fully covered). */
   inkCoverage: number
   /**
-   * How many times this character appeared in the SOURCE charset array
-   * (buildFontWidthTable dedupes for measurement, but keeps the count) - not
-   * a property of the glyph itself, so a bare GlyphMeasurer never sets this
-   * (optional, defaults to 1 wherever absent); buildFontWidthTable always
-   * fills it in for real. mapLuminanceToChar gives a character `weight`
-   * consecutive rank slots instead of one, so a charset that repeats a
-   * character claims a proportionally wider luminance band - ASCGen2's own
-   * weighting mechanic (Variables.cs's DefaultRamps, a plain string where
-   * repetition IS the weighting), reproduced here on top of TrickWork's own
-   * measured-ink-coverage ranking rather than ASCGen2's hand-picked order.
+   * How often the character appears in the source charset; absent means 1.
+   * mapLuminanceToChar gives it that many rank slots, which is how ASCGen2
+   * weights a character by repetition.
    */
   weight?: number
 }
@@ -61,8 +54,7 @@ export type SharpenMethod = 'none' | 'sharpen' | 'unsharp'
 /**
  * Photoshop/ASCGen2-style Levels: black/white are 0..255 input clip points,
  * gamma is the midtone curve (1 = linear, >1 lifts midtones, <1 sinks them).
- * {black: 0, gamma: 1, white: 255} is the identity - see filters.ts's
- * applyLevels.
+ * {black: 0, gamma: 1, white: 255} is the identity.
  */
 export interface LevelsSpec {
   black: number
@@ -71,11 +63,8 @@ export interface LevelsSpec {
 }
 
 /**
- * A crop rectangle expressed as fractions (0..1) of the SOURCE image's own
- * width/height, not absolute pixels - normalized coordinates stay correct
- * across a downscale, a rotate, or simply a different image being loaded
- * later at a different native resolution, none of which absolute pixel
- * bounds would survive unchanged.
+ * A crop rectangle as fractions (0..1) of the source image, which stay correct
+ * across a downscale, a rotation or a new image at another resolution.
  */
 export interface CropSpec {
   x: number
@@ -87,17 +76,13 @@ export interface CropSpec {
 export interface MappingOptions {
   columns: number
   /**
-   * Explicit row count, overriding the aspect-ratio-matched auto value
-   * grid.ts's computeAutoRows() would otherwise derive from columns + the
-   * source image's own dimensions. Omitted (the default) means "auto" -
-   * the UI's aspect-ratio lock toggle controls whether this is set at all,
-   * not a separate boolean flag, so "locked" and "no override yet" are the
-   * same state instead of two that could disagree.
+   * Explicit row count, overriding computeAutoRows. The aspect-ratio lock
+   * works by leaving it unset, so "locked" and "no override" are one state.
    */
   rows?: number
   brightness: number // -1..1, additive
   contrast: number // -1..1, multiplicative around 0.5 midpoint
-  charset: string[] // darkest-to-lightest is NOT required; buildFontWidthTable re-sorts by measured coverage
+  charset: string[] // any order; buildFontWidthTable sorts by measured coverage
   font: FontSpec
   /** Attaches per-cell average colour to the grid. Default false (no perf cost). */
   color?: boolean

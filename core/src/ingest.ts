@@ -1,4 +1,3 @@
-// core/src/ingest.ts
 import { computeDownscaleDimensions } from './downscale'
 
 export interface IngestResult {
@@ -26,15 +25,9 @@ export async function decodeAndPrepareImage(
   if (!ctx) {
     throw new Error('decodeAndPrepareImage: 2D context unavailable')
   }
-  // Composite onto an opaque white background before drawing the bitmap.
-  // Canvas represents a fully-transparent pixel as (0,0,0,0), and the mapping
-  // stage reads luminance from R/G/B only — so without this fill, every
-  // transparent pixel would read as pure black and map to the DENSEST glyph.
-  // A logo or icon with a transparent background would come out as a solid
-  // block of '@' with the actual artwork lost inside it. White matches how
-  // image viewers and other ASCII-art tools treat transparency by default:
-  // transparent means "background", which for dark-ink-on-light-paper output
-  // is the same thing as "no ink".
+  // A transparent pixel is (0,0,0,0) and luminance ignores alpha, so without a
+  // white ground a logo on a transparent background maps to a solid block of
+  // the densest glyph. Image viewers treat transparency as white as well.
   ctx.fillStyle = '#ffffff'
   ctx.fillRect(0, 0, width, height)
   ctx.drawImage(bitmap, 0, 0, width, height)

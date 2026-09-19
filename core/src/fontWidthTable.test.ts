@@ -1,4 +1,3 @@
-// core/src/fontWidthTable.test.ts
 import { describe, expect, it } from 'vitest'
 import { buildFontWidthTable } from './fontWidthTable'
 import type { GlyphMeasurer } from './types'

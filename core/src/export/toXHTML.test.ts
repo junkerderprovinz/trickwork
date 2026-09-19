@@ -1,4 +1,3 @@
-// core/src/export/toXHTML.test.ts
 import { describe, expect, it } from 'vitest'
 import { toXHTML } from './toXHTML'
 import type { Grid } from '../types'
@@ -17,7 +16,7 @@ describe('toXHTML', () => {
     expect(html).toContain('background-color: #000000')
     expect(html).toContain('color: #ffffff')
     expect(html).toContain('A&lt;')
-    expect(html).not.toContain('A<') // the raw '<' must never appear unescaped
+    expect(html).not.toContain('A<')
   })
 
   it('escapes ampersands and quotes as well as angle brackets', () => {
@@ -67,7 +66,7 @@ describe('toXHTML', () => {
     expect(html).toContain('<span style="color: #ff0000">A</span><span style="color: #00ff00">B</span>')
   })
 
-  it('produces the exact previous flat-<pre> output for an uncoloured grid (no span at all)', () => {
+  it('writes an uncoloured grid without any span', () => {
     const grid: Grid = [[{ char: 'A', font: { family: 'monospace', sizePx: 10 } }]]
     const html = toXHTML(grid, { background: '#000', foreground: '#fff' })
     expect(html).not.toContain('<span')

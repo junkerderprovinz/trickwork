@@ -1,4 +1,3 @@
-// core/src/export/toXHTML.ts
 import { rgbToHex, sameColor } from '../color'
 import type { Grid } from '../types'
 import { toText } from './toText'
@@ -22,10 +21,8 @@ function gridHasColor(grid: Grid): boolean {
 }
 
 /**
- * Groups consecutive same-colour cells in a row into one <span>, mirroring
- * ASCGen2's own OutputCreator.CreateHtml() (its characterToColor[y][x] = -1
- * marker for "same as predecessor" is the identical run-length idea). Without
- * this, a coloured export would emit one span per character.
+ * Groups consecutive same-colour cells into one <span> instead of one per
+ * character, as ASCGen2's OutputCreator.CreateHtml() does.
  */
 function rowToHtml(row: Grid[number]): string {
   let html = ''
@@ -49,8 +46,6 @@ function rowToHtml(row: Grid[number]): string {
 }
 
 export function toXHTML(grid: Grid, options: XHTMLOptions): string {
-  // Uncoloured grids (every existing caller, before this feature existed)
-  // keep the exact previous single flat-<pre> output, byte for byte.
   const body = gridHasColor(grid) ? grid.map(rowToHtml).join('\n') : escapeXml(toText(grid))
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

@@ -1,13 +1,7 @@
-// core/src/filters.ts
-//
-// Pixel-level transforms applied to the decoded source image BEFORE the
-// character-mapping stage, mirroring ASCGen2's own separation of these into
-// standalone filter classes (Filters/Flip.cs, Filters/Sharpen.cs,
-// Filters/UnsharpMask.cs) rather than folding them into assembleGrid. Each
-// function is pure: it never mutates its input, always returns a new
-// ImageData. Dithering is NOT here — it diffuses character-selection error,
-// not pixel error, so it lives inside grid.ts's own raster loop instead (see
-// docs/superpowers/specs/2026-08-19-trickwork-v1.1-design.md, section 3.3).
+// Pixel transforms applied to the source image before character mapping,
+// kept apart from assembleGrid as ASCGen2 keeps its filter classes. Each one
+// returns a new ImageData and leaves its input alone. Dithering diffuses the
+// error of the chosen characters rather than of pixels, so it lives in grid.ts.
 
 import type { CropSpec, LevelsSpec, Rotation, SharpenMethod } from './types'
 
@@ -20,13 +14,7 @@ function cloneImageData(imageData: ImageData): ImageData {
   } as ImageData
 }
 
-/**
- * Extracts the sub-region `crop` describes (fractions of the source image,
- * see CropSpec) as a new, standalone ImageData - runs FIRST in the pipeline
- * (pipeline.ts), before rotate/flip/invert/levels/sharpen, since every one
- * of those should act on "the region the user actually wants," not on the
- * full original frame.
- */
+/** Extracts the region `crop` describes as a new ImageData. */
 export function cropImage(imageData: ImageData, crop: CropSpec): ImageData {
   const { width: srcW, height: srcH, data: srcData } = imageData
   const x = Math.round(Math.min(1, Math.max(0, crop.x)) * srcW)
@@ -114,12 +102,9 @@ export function flipImage(imageData: ImageData, horizontal: boolean, vertical: b
 }
 
 /**
- * Photoshop-style RGB/composite Levels: clip everything at or below `black`
- * to 0 and at or above `white` to 255, linearly remap what's between, then
- * apply a gamma (midtone) curve - identical to ASCGen2's own "Levels" dialog
- * (single composite histogram, not per-channel R/G/B), applied to all three
- * channels equally so it stays correct under color output too, not just the
- * luminance mapping.
+ * Composite Levels as in ASCGen2 and Photoshop: clips at `black` and `white`,
+ * remaps linearly between them, then applies the gamma curve. All three
+ * channels get the same curve, so colour output stays right too.
  */
 export function applyLevels(imageData: ImageData, levels: LevelsSpec): ImageData {
   const { black, gamma, white } = levels
@@ -172,7 +157,7 @@ function convolve3x3(imageData: ImageData, kernel: number[]): ImageData {
 }
 
 const SHARPEN_KERNEL = [0, -1, 0, -1, 5, -1, 0, -1, 0]
-/** 3x3 box blur - the "unsharp" half of unsharp masking. */
+/** The blur half of unsharp masking. */
 const BOX_BLUR_KERNEL = [1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9]
 const UNSHARP_AMOUNT = 1
 

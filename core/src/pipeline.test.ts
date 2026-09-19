@@ -39,15 +39,13 @@ describe('applyImageFilters', () => {
     expect(pixel0(out)).toBe(10)
   })
 
-  it('applies rotate before flip (a 90-degree rotate then horizontal flip is not the same as the reverse order)', () => {
-    // 2x1 source: [10, 200]. Rotate 90 -> 1x2 column [10; 200] (top=10,bottom=200).
-    // Flip horizontal on a 1-wide image is a no-op, so this alone doesn't
-    // distinguish order - use flipVertical to prove rotate ran first.
+  it('applies rotate before flip', () => {
+    // Rotating [10, 200] by 90 gives the column [10; 200], and the vertical
+    // flip then puts 200 on top.
     const img = makeImageData([[10, 200]])
     const out = applyImageFilters(img, { ...baseOptions, rotate: 90, flipVertical: true })
     expect(out.width).toBe(1)
     expect(out.height).toBe(2)
-    // rotate first -> [10;200] top-to-bottom, THEN vertical flip -> [200;10]
     expect(pixel0(out)).toBe(200)
   })
 
@@ -65,9 +63,7 @@ describe('applyImageFilters', () => {
       [128, 128, 128],
     ])
     const out = applyImageFilters(img, { ...baseOptions, invert: true, sharpen: 'sharpen' })
-    // A flat image stays flat through invert and through the sharpen kernel
-    // (which sums to 1), so the center pixel should be the inverted flat
-    // value, proving sharpen ran on inverted data rather than pre-invert.
+    // A flat image stays flat under the sharpen kernel, which sums to 1.
     const centerIndex = (1 * 3 + 1) * 4
     expect(out.data[centerIndex]).toBe(255 - 128)
   })
@@ -93,11 +89,8 @@ describe('applyImageFilters', () => {
     expect(pixel0(out)).toBe(10)
   })
 
-  it('applies crop first, before rotate - cropping then rotating a region is not the same as the reverse', () => {
-    // 4x1 source: [10, 20, 30, 40]. Crop the right half -> [30, 40], THEN
-    // rotate 90 -> a 1x2 column with 30 on top (proves crop ran first: if
-    // rotate ran first, cropping the "right half" of a rotated 1x4 column
-    // wouldn't even be expressible as the same crop rectangle).
+  it('applies crop before rotate', () => {
+    // The right half [30, 40] rotated by 90 is a column with 30 on top.
     const img = makeImageData([[10, 20, 30, 40]])
     const out = applyImageFilters(img, {
       ...baseOptions,

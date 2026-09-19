@@ -1,4 +1,3 @@
-// core/src/fontWidthTable.ts
 import type { FontSpec, FontWidthTable, GlyphMeasurer } from './types'
 
 export function buildFontWidthTable(
@@ -6,11 +5,8 @@ export function buildFontWidthTable(
   font: FontSpec,
   measure: GlyphMeasurer,
 ): FontWidthTable {
-  // Dedupe for MEASUREMENT only (no point rendering the same glyph to a
-  // canvas twice) - but count occurrences first and carry that count
-  // forward as each entry's `weight`, since a repeated character is meant
-  // to claim proportionally more of the luminance range once picked by
-  // rank rather than nearest-value (see mapLuminanceToChar/GlyphMetrics).
+  // Each glyph is measured once, but keeps its count as `weight`: a repeated
+  // character claims more of the luminance range when picked by rank.
   const counts = new Map<string, number>()
   for (const char of chars) {
     counts.set(char, (counts.get(char) ?? 0) + 1)

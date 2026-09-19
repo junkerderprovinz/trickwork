@@ -1,11 +1,8 @@
-// core/src/histogram.ts
-//
-// Feeds the Levels panel's histogram plot (ui/src/levelsPanel.ts) - a plain
-// 256-bucket count of source-image luminance, computed once per image (not
-// per slider drag) since the histogram itself doesn't change as the black/
-// gamma/white points move, only their overlaid marker positions do.
-
-/** Rec. 601 luma weights, matching mapping.ts's computeBlockLuminance exactly. */
+/**
+ * Counts source luminance into 256 buckets for the Levels panel, once per
+ * image, since moving the black, gamma and white points only moves the markers.
+ * Uses the Rec. 601 weights of computeBlockLuminance.
+ */
 export function computeLuminanceHistogram(imageData: ImageData): Uint32Array {
   const buckets = new Uint32Array(256)
   const { data } = imageData

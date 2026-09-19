@@ -1,4 +1,3 @@
-// core/src/grid.ts
 import {
   computeBlockAverageColor,
   computeBlockLuminance,
@@ -8,10 +7,8 @@ import {
 import type { FontWidthTable, Grid, MappingOptions } from './types'
 
 /**
- * Floyd-Steinberg diffusion coefficients, applied to the CHARACTER grid (the
- * error between a cell's target luminance and the achieved luminance of the
- * glyph actually chosen for it) rather than to source pixels - see
- * docs/superpowers/specs/2026-08-19-trickwork-v1.1-design.md, section 3.3.
+ * Floyd-Steinberg coefficients, applied to the character grid: the error is the
+ * gap between a cell's target luminance and that of the glyph chosen for it.
  */
 const DITHER_RIGHT = 7 / 16
 const DITHER_BELOW_LEFT = 3 / 16
@@ -19,24 +16,15 @@ const DITHER_BELOW = 5 / 16
 const DITHER_BELOW_RIGHT = 1 / 16
 
 /**
- * Character cells are roughly twice as tall as they are wide on screen, so
- * sampling square pixel blocks would visibly stretch the output vertically.
- * This compensates by sampling taller blocks than the column width implies.
- *
- * Exported because the render side has to agree with the sampling side: a grid
- * sampled at this aspect ratio must be drawn back out at the same one, or the
- * output is stretched. `measureCellSize` in cellSize.ts is the render-side
- * consumer.
+ * Character cells are about twice as tall as wide, so blocks are sampled taller
+ * than the column width implies. measureCellSize draws the grid at the same
+ * ratio, or the output would stretch.
  */
 export const CELL_ASPECT_COMPENSATION = 2
 
 /**
- * The row count that keeps the output matching the source image's own
- * proportions at the given column count - the same formula assembleGrid
- * itself falls back to whenever MappingOptions.rows is omitted. Exported so
- * the UI's aspect-ratio lock (controls.ts) can show/derive the same value
- * without re-deriving the formula a second time and risking it drifting out
- * of step with the one grid sampling actually uses.
+ * The row count that keeps the source proportions at the given column count,
+ * shared by assembleGrid and the UI's aspect-ratio lock.
  */
 export function computeAutoRows(sourceWidth: number, sourceHeight: number, columns: number): number {
   const blockW = sourceWidth / Math.max(1, columns)
@@ -58,10 +46,8 @@ export function assembleGrid(
       ? Math.max(1, Math.round(options.rows))
       : computeAutoRows(width, height, columns)
 
-  // One accumulator per cell, only allocated when dithering is on. A cell's
-  // diffused error can arrive from its left, top-left, top, or top-right
-  // neighbour, so this has to be a full 2D buffer read-and-written across
-  // rows, not a value that could be tracked with a single running variable.
+  // Error reaches a cell from its left neighbour and from three cells in the
+  // row above, so it needs a buffer per cell.
   const errorBuffer: number[][] | null = options.dither
     ? Array.from({ length: rows }, () => new Array<number>(columns).fill(0))
     : null

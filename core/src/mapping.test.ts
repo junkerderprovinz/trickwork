@@ -55,10 +55,8 @@ describe('computeBlockLuminance', () => {
 })
 
 describe('mapLuminanceToChar', () => {
-  // Ascending by inkCoverage, matching buildFontWidthTable's own contract -
-  // mapLuminanceToChar picks by RANK (position in this array, each entry
-  // claiming `weight` consecutive slots) rather than nearest value, so
-  // unlike the old nearest-value algorithm, array ORDER now matters.
+  // Sorted by inkCoverage like buildFontWidthTable's output; glyphs are
+  // picked by rank, so the order matters.
   const table: FontWidthTable = {
     font: { family: 'monospace', sizePx: 16 },
     entries: [
@@ -84,14 +82,8 @@ describe('mapLuminanceToChar', () => {
     expect(mapLuminanceToChar(0.5, table)).toBe('*')
   })
 
-  // Regression guard for an ink-coverage scale mismatch this table's own
-  // synthetic 0..0.9 spread never exercised: a real, canvas-measured table's
-  // coverage values are a small fraction of the glyph cell (~0 .. 0.12), not
-  // a 0..1 spread. The selection algorithm has since moved from nearest-VALUE
-  // (where that mismatch mattered) to rank-by-POSITION (mapLuminanceToChar's
-  // own doc comment) - rank is scale-invariant, so this specific failure mode
-  // can no longer recur, but the realistic-range fixture stays as a guard
-  // against the historical bug's SYMPTOM (everything collapsing to one glyph).
+  // Canvas-measured coverage spans only about 0..0.12 of the cell, and such a
+  // table still has to spread across the whole charset.
   describe('with a realistically compressed coverage range', () => {
     const realistic: FontWidthTable = {
       font: { family: 'monospace', sizePx: 16 },
@@ -132,13 +124,9 @@ describe('mapLuminanceToChar', () => {
     })
   })
 
-  it('still varies by RANK across tied coverage, unlike the old nearest-value algorithm', () => {
-    // Both entries measure identically (0.03) - a nearest-VALUE search could
-    // never tell them apart and always returned the first (see mapping.ts's
-    // git history), but rank-based selection doesn't need a coverage
-    // difference to distinguish positions: 'a' is rank 0 (lightest slot),
-    // 'b' is rank 1 (darkest slot), exactly as ASCGen2's own plain-string
-    // ramp would treat two adjacent identical characters.
+  it('tells glyphs with tied coverage apart by rank', () => {
+    // 'a' and 'b' measure the same but hold ranks 0 and 1, as two adjacent
+    // characters in an ASCGen2 ramp would.
     const flat: FontWidthTable = {
       font: { family: 'monospace', sizePx: 16 },
       entries: [
@@ -151,11 +139,8 @@ describe('mapLuminanceToChar', () => {
   })
 
   describe('with a repeated character (weight > 1)', () => {
-    // ASCGen2's own weighting mechanic (Variables.cs's DefaultRamps repeat a
-    // character to weight it in a plain linear-index ramp string) - here
-    // '.' appears 5x in the source charset, 1x each for ' ' and '@', so it
-    // should claim 5 of the 7 total rank slots (jdp: "je öfter man das
-    // gleiche Zeichen eingetragen hat, desto mehr wurde es gewichtet").
+    // '.' appears five times in the source charset, so it claims 5 of the 7
+    // rank slots.
     const weighted: FontWidthTable = {
       font: { family: 'monospace', sizePx: 16 },
       entries: [
@@ -239,8 +224,7 @@ describe('computeBlockAverageColor', () => {
 })
 
 describe('mapLuminanceToCharWithAchieved', () => {
-  // Ascending by inkCoverage - see mapLuminanceToChar's own table above for
-  // why order matters now.
+  // Sorted by inkCoverage, as above.
   const table: FontWidthTable = {
     font: { family: 'monospace', sizePx: 16 },
     entries: [
@@ -255,19 +239,15 @@ describe('mapLuminanceToCharWithAchieved', () => {
   })
 
   it('reports zero achieved error when the picked glyph sits at the table\'s own extreme', () => {
-    // luminance 0 -> targetRank = round(1 * 2) = 2 -> picks '@', the entry
-    // AT the table's own max coverage (0.9) - achieved luminance must equal
-    // the target exactly: 0 error.
+    // luminance 0 picks '@' at the table's maximum coverage, so the achieved
+    // luminance equals the target.
     const { achievedLuminance } = mapLuminanceToCharWithAchieved(0, table)
     expect(achievedLuminance).toBeCloseTo(0, 5)
   })
 
   it('reports nonzero achieved error when the picked glyph only approximates the target', () => {
-    // luminance 0.5 -> targetRank = round(0.5 * 2) = 1 -> picks '*' (0.4),
-    // whose achieved luminance is 1 - (0.4-0)/0.9 = 0.5555... - not exactly
-    // 0.5, since rank position and real measured coverage aren't the same
-    // axis (that's the whole point - see mapLuminanceToCharWithAchieved's
-    // own doc comment on why achieved error stays coverage-based).
+    // luminance 0.5 picks '*' at rank 1, whose coverage 0.4 achieves
+    // 1 - 0.4/0.9 = 0.555..., because rank and coverage are different axes.
     const { char, achievedLuminance } = mapLuminanceToCharWithAchieved(0.5, table)
     expect(char).toBe('*')
     expect(achievedLuminance).not.toBeCloseTo(0.5, 3)

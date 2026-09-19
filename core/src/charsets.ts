@@ -1,32 +1,10 @@
-// standard/blocks/classic/alternate/compact/bold/symbols/minimal/binary are
-// ASCGen2's own nine DefaultRamps (Variables.cs, fetched from the real
-// SourceForge source archive and verified byte-for-byte) - kept in their
-// AUTHENTIC dark-to-light storage order, densest character first and blank
-// space last (jdp: "im ASCII Gen 2 ist die zeichenreihenfolge des
-// zeichensatz genau umgekehrt und die leerzeichen kommen zum schluss" - an
-// earlier revision of this file reversed the order to TrickWork's own
-// light-to-dark habit, which reads backwards next to the real source). Order
-// has no effect on the RENDERED output either way - mapLuminanceToChar
-// (mapping.ts) always re-ranks by measured ink coverage before picking - so
-// this is purely about the charset field showing the same string ASCGen2
-// itself would have shown, not a functional change.
-//
-// REPEATS ARE KEPT, not deduped to a distinct-character set: each preset's
-// characters are ranked by their own MEASURED ink coverage (more accurate
-// than ASCGen2's hand-picked ordering) and then picked by ASCGen2's own
-// linear-percentile RANK, not nearest-value - so a character repeated N
-// times in the source ramp claims N adjacent rank slots and covers a
-// proportionally wider luminance band, exactly reproducing ASCGen2's own
-// "type it more, it shows up more" weighting (jdp: "je öfter man das
-// gleiche Zeichen eingetragen hat, desto mehr wurde es gewichtet"). Five of
-// the nine (standard/compact/minimal/binary/blocks) happen to have no
-// repeated character in the original source at all, so they render exactly
-// as before; classic/alternate/bold/symbols now visibly favour their most-
-// repeated characters. `detailed` is not one of ASCGen2's nine - it's the
-// separately well-known ~70-character community ramp (Paul Bourke's), kept
-// as TrickWork's own bonus preset. ASCGen2 has no user-facing preset NAMES
-// at all (its dropdown just showed the raw string); these names are
-// TrickWork's own.
+// All presets but `detailed` (Paul Bourke's ramp) are ASCGen2's nine
+// DefaultRamps from Variables.cs, in its dark-to-light order with the blank
+// last, so the charset field shows the string ASCGen2 showed. Order does not
+// change the output, because mapLuminanceToChar re-ranks by measured ink
+// coverage. Repeats are kept: characters are picked by rank, so one typed N
+// times covers N slots of the luminance range, as in ASCGen2. The preset
+// names are TrickWork's own; ASCGen2 listed only the raw strings.
 export const CHARSET_PRESETS = {
   standard: ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' '],
   detailed:

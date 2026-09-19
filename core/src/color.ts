@@ -1,4 +1,3 @@
-// core/src/color.ts
 import type { RGB } from './types'
 
 function hex2(n: number): string {

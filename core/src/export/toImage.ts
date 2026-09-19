@@ -1,4 +1,3 @@
-// core/src/export/toImage.ts
 import { renderGridToCanvas, type RenderOptions } from '../renderGridToCanvas'
 import type { Grid } from '../types'
 

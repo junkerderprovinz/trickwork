@@ -1,4 +1,3 @@
-// core/src/histogram.test.ts
 import { describe, expect, it } from 'vitest'
 import { computeLuminanceHistogram } from './histogram'
 

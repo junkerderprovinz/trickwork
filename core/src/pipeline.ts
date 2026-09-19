@@ -1,33 +1,10 @@
-// core/src/pipeline.ts
-//
-// The ONE place preview.ts and exportPanel.ts both call before assembleGrid -
-// having two independently-reimplemented call sites for the same transform
-// order was exactly the class of bug the v1 whole-branch review caught, so
-// this exists specifically to prevent a repeat.
-
 import { applyLevels, cropImage, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
 import type { MappingOptions } from './types'
 
 /**
- * Applies crop -> rotate -> flip -> invert -> levels -> sharpen in that fixed
- * order, matching ASCGen2's own Edit menu grouping (Input transforms -
- * rotate/flip - before Output transforms - invert/levels/sharpen, all under
- * one Edit > Output dialog there); crop runs before either group since every
- * later step should act on "the region the user actually selected," not the
- * full original frame. Levels runs before sharpen so its tonal remap isn't
- * fighting the sharpen kernel's own contrast boost. No-op fields are skipped
- * internally by each filter (see filters.ts), so calling this with an
- * all-default options object is cheap - just a single ImageData clone.
- */
-/**
- * The width/height cropImage()/rotateImage() (via applyImageFilters above)
- * would produce for this options object, without doing any pixel work -
- * dimensions only, mirroring their exact rounding/clamping so this never
- * drifts from what the real pipeline actually produces. Used by the UI to
- * predict the aspect-ratio-matched row count live while dragging the width
- * slider, where running the full pixel pipeline on every 'input' tick would
- * be wasted work - the prediction is cosmetic only (assembleGrid always
- * recomputes the real row count itself when MappingOptions.rows is unset).
+ * The size cropImage and rotateImage would produce, with the same rounding and
+ * clamping but no pixel work, so the UI can predict the auto row count while
+ * the width slider moves. assembleGrid still computes the real one.
  */
 export function effectiveDimensions(
   width: number,
@@ -50,6 +27,12 @@ export function effectiveDimensions(
   return { width: w, height: h }
 }
 
+/**
+ * Applies crop, rotate, flip, invert, levels and sharpen in ASCGen2's order,
+ * for both preview and export. Crop comes first so every later step acts on
+ * the selected region, and levels runs before sharpen so the tonal remap does
+ * not fight the kernel's contrast boost.
+ */
 export function applyImageFilters(imageData: ImageData, options: MappingOptions): ImageData {
   let result = imageData
   if (options.crop) {

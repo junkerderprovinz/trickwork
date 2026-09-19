@@ -1,4 +1,3 @@
-// core/src/cellSize.test.ts
 import { describe, expect, it } from 'vitest'
 import { measureCellSize } from './cellSize'
 import { CELL_ASPECT_COMPENSATION } from './grid'

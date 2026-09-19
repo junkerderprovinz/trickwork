@@ -1,4 +1,3 @@
-// core/src/renderGridToCanvas.test.ts
 import { describe, expect, it, vi } from 'vitest'
 import { renderGridToCanvas } from './renderGridToCanvas'
 import type { Grid } from './types'

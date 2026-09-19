@@ -1,4 +1,3 @@
-// core/src/renderGridToCanvas.ts
 import { rgbToHex } from './color'
 import type { Grid } from './types'
 
@@ -31,16 +30,9 @@ export function renderGridToCanvas(
   ctx.textAlign = 'left'
   ctx.fillStyle = options.foreground
 
-  // Assigning ctx.font re-parses the CSS font shorthand and can invalidate the
-  // canvas's text-shaping state, so only do it when the font actually differs
-  // from the previous cell. Every grid this app builds today is single-font,
-  // which made the unconditional per-cell assignment pure overhead on every
-  // cell but the first. The empty sentinel can never equal a real font string
-  // (always "<number>px <family>"), so the first cell always sets it.
+  // Assigning ctx.font or fillStyle re-parses the string, so both are set only
+  // when a cell differs from the one before; '' never matches a real font.
   let lastFont = ''
-  // Same reasoning as the font cache above: fillStyle reassignment is cheap,
-  // but skipping it when unchanged avoids parsing the colour string again on
-  // every single cell in the (extremely common) uncoloured/mono-colour case.
   let lastFillStyle = options.foreground
 
   for (let row = 0; row < rows; row++) {

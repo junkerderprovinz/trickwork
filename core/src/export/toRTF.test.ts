@@ -11,7 +11,7 @@ describe('toRTF', () => {
   it('wraps rows in an RTF document with a monospace font table entry', () => {
     const grid: Grid = [
       [
-        { char: 'A', font: { family: 'serif', sizePx: 20 } }, // font is deliberately ignored
+        { char: 'A', font: { family: 'serif', sizePx: 20 } }, // the cell font is ignored
         { char: 'B', font: { family: 'serif', sizePx: 20 } },
       ],
     ]

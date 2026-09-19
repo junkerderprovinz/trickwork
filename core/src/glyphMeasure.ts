@@ -1,4 +1,3 @@
-// core/src/glyphMeasure.ts
 import type {
   FontSpec,
   FontWidthMeasurer,
@@ -9,19 +8,15 @@ import type {
 type CanvasFactory = (sizePx: number) => HTMLCanvasElement | OffscreenCanvas
 
 /**
- * Characters sampled to derive a font's cell pitch. A proportional font has no
- * single "the" advance width, so take the widest of a few reliably-wide
- * glyphs: pitch the grid to the narrowest of them and the wide ones collide.
+ * A proportional font has no single advance width, so the cell pitch follows
+ * the widest of a few wide glyphs; any narrower pitch makes them collide.
  */
 const WIDTH_SAMPLE_CHARS = ['M', 'W', '@']
 
 /**
- * Creates a real, Canvas-backed GlyphMeasurer: renders each glyph to an
- * offscreen square canvas sized to 2x the font size (generous margin for
- * ascenders/descenders/overshoot), then counts the fraction of pixels with
- * non-zero alpha as the glyph's "ink coverage". This is what lets the
- * character mapping account for a glyph's rendered visual density instead
- * of assuming every character in a monospace grid looks equally "full".
+ * Creates a canvas-backed GlyphMeasurer that draws each glyph on a square of
+ * twice the font size and reports the fraction of pixels with any alpha as
+ * its ink coverage, so mapping follows a glyph's real density.
  */
 export function createCanvasGlyphMeasurer(
   canvasFactory: CanvasFactory = defaultCanvasFactory,
@@ -54,13 +49,8 @@ export function createCanvasGlyphMeasurer(
 }
 
 /**
- * Sibling of createCanvasGlyphMeasurer for advance width rather than ink
- * coverage: reports the widest advance among WIDTH_SAMPLE_CHARS at the given
- * font, via a real ctx.measureText. Feed the result to measureCellSize to get
- * a grid pitch that matches the selected font instead of assuming 8x16px.
- *
- * Same canvas-factory injection as its sibling, so the canvas dependency stays
- * a parameter rather than a global reach for `document`.
+ * Creates a FontWidthMeasurer that reports the widest advance among
+ * WIDTH_SAMPLE_CHARS, for measureCellSize.
  */
 export function createCanvasWidthMeasurer(
   canvasFactory: CanvasFactory = defaultCanvasFactory,

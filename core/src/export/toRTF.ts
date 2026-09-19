@@ -2,7 +2,7 @@ import { sameColor } from '../color'
 import type { Grid, RGB } from '../types'
 
 /**
- * RTF's \uN control word takes a SIGNED 16-bit integer, so anything at or above
+ * RTF's \uN control word takes a signed 16-bit integer, so anything at or above
  * 0x8000 has to be written as (code - 65536), and anything outside the BMP has
  * to go out as its two UTF-16 surrogate units, each with its own escape. The
  * trailing '?' is the mandatory ANSI fallback character for readers that do not
@@ -26,9 +26,8 @@ function gridHasColor(grid: Grid): boolean {
 }
 
 /**
- * Collects every distinct colour used in the grid, in first-seen order -
- * mirrors ASCGen2's OutputCreator.uniqueColors ArrayList, which the RTF
- * \colortbl and the \cfN indices below are built from the same way.
+ * Collects the distinct colours in first-seen order, from which the \colortbl
+ * and the \cfN indices are built, as in ASCGen2's OutputCreator.
  */
 function collectUniqueColors(grid: Grid): RGB[] {
   const unique: RGB[] = []
@@ -47,11 +46,7 @@ function colorTableRtf(colors: RGB[]): string {
   return `{\\colortbl;${entries}}\n`
 }
 
-/**
- * Groups consecutive same-colour cells into one \cfN-prefixed run, exactly
- * the run-length idea ASCGen2's OutputCreator.CreateRtf() uses (its
- * characterToColor[y][x] = -1 marker for "same as predecessor").
- */
+/** Groups consecutive same-colour cells into one \cfN run, as ASCGen2 does. */
 function rowToRtf(row: Grid[number], colors: RGB[]): string {
   let out = ''
   let i = 0

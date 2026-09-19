@@ -1,4 +1,3 @@
-// core/src/index.ts
 export * from './types'
 export * from './charsets'
 export { createCanvasGlyphMeasurer, createCanvasWidthMeasurer } from './glyphMeasure'
