@@ -19,7 +19,7 @@
 <br>
 
 <p align="center">
-TrickWork turns your images into <b>proportional-font-aware ASCII art</b> — with a <b>live interactive
+TrickWork turns your images into <b>proportional-font-aware ASCII art</b>, with a <b>live interactive
 preview</b> and <b>TXT / XHTML / RTF / PNG export</b>. It's the feature set of the abandoned
 <a href="https://sourceforge.net/projects/ascgen2/">ASCGen2</a>, rebuilt: characters are picked by how much
 visual "ink" they cover at your chosen font, not just by brightness, so proportional (non-monospace) fonts
@@ -27,7 +27,7 @@ render correctly instead of looking stretched or squashed.<br>
 <br>
 Ships two ways from one shared TypeScript/Canvas core, so the desktop app and the self-hosted container are
 always pixel-for-pixel the same tool: a <b>desktop app</b> for Windows, macOS and Linux (via Wails) and a
-<b>self-hosted Docker container</b> (with an Unraid Community Applications template). Stateless — no
+<b>self-hosted Docker container</b> (with an Unraid Community Applications template). Stateless: no
 database, no accounts, nothing to configure beyond the port.
 </p>
 
@@ -77,62 +77,62 @@ TrickWork is a self-hosted, single-purpose tool that converts an image into ASCI
 an image, tune the sliders, watch the preview update live, export in whichever format you need.
 
 The name is a heraldic term: **"tricking"** is the historical practice of sketching a coat of arms in outline
-and marking its colours with letter abbreviations instead of paint — a near-literal description of what this
+and marking its colours with letter abbreviations instead of paint, a near-literal description of what this
 tool does to a picture.
 
 ### How it compares
 
 Every actively-maintained image-to-ASCII tool (`chafa`, `ascii-image-converter`, `jp2a`, `img2txt`/libcaca) is
 CLI-only, monospace-only, and has no live preview. ASCGen2 (the direct inspiration for this project, C#/.NET,
-GPLv2, last updated 2015) had all three of those — proportional-width awareness, a real-time GUI, multi-format
-export — and nothing since has replaced it. TrickWork is that combination, rebuilt from scratch.
+GPLv2, last updated 2015) had all three of those (proportional-width awareness, a real-time GUI, multi-format
+export), and nothing since has replaced it. TrickWork is that combination, rebuilt from scratch.
 
 <br>
 
 ## 2. Screenshots
 
 <p align="center">
-  <img src=".github/assets/screenshot-dark.png" alt="TrickWork in dark mode — a converted image, live preview and export options" width="90%">
-  <br><em>Dark mode — every slider updates the live preview instantly; export the active image or the whole queue at once.</em>
+  <img src=".github/assets/screenshot-dark.png" alt="TrickWork in dark mode, a converted image, live preview and export options" width="90%">
+  <br><em>Dark mode: every slider updates the live preview instantly; export the active image or the whole queue at once.</em>
 </p>
 
 <br>
 
 <p align="center">
-  <img src=".github/assets/screenshot-light.png" alt="TrickWork in light mode — the same conversion, light theme" width="90%">
-  <br><em>Light mode, the same working layout — theme, shape and accent are all yours to pick in Settings.</em>
+  <img src=".github/assets/screenshot-light.png" alt="TrickWork in light mode, the same conversion, light theme" width="90%">
+  <br><em>Light mode, the same working layout. Theme, shape and accent are all yours to pick in Settings.</em>
 </p>
 
 <br>
 
 ## 3. Features
 
-- **Proportional-font-aware character mapping** — measures each candidate character's actual rendered ink
+- **Proportional-font-aware character mapping**: measures each candidate character's actual rendered ink
   coverage at your chosen font and picks the closest match, so proportional (non-monospace) fonts map
   correctly instead of assuming every character is the same width.
-- **Real-time live preview** — every slider (width, brightness, contrast), the character-set choice and the
+- **Real-time live preview**: every slider (width, brightness, contrast), the character-set choice and the
   font all update the preview immediately, no re-render delay.
-- **Batch queue** — drop multiple images at once; each converts and can be exported independently, and one
+- **Batch queue**: drop multiple images at once; each converts and can be exported independently, and one
   bad file never blocks the rest.
-- **Four export formats** — plain **TXT**, a styled **XHTML** document, **RTF** (always rendered in a fixed
-  monospace font — most RTF readers can't reliably honor an arbitrary proportional font, so this is called
+- **Four export formats**: plain **TXT**, a styled **XHTML** document, **RTF** (always rendered in a fixed
+  monospace font; most RTF readers can't reliably honor an arbitrary proportional font, so this is called
   out in the UI rather than silently looking different from the preview), and a rendered **PNG** image, which
   is the one format that can faithfully reproduce a proportional-font look since it draws the characters onto
   a canvas itself instead of relying on the viewer's own font rendering.
-- **Ten built-in character sets** — nine of them are ASCII Gen 2's own original ramps, fetched and verified
+- **Ten built-in character sets**: nine of them are ASCII Gen 2's own original ramps, fetched and verified
   byte-for-byte against its real 2011 source, weighting mechanic included: repeat a character in the ramp and
   it claims proportionally more of the brightness range, exactly like the original. Plus a bonus 70-character
-  `detailed` ramp for extra tonal range, or type your own custom character string — repeats and all.
-- **Four font choices, no bundled font files** — two monospace, two proportional, all resolving to fonts
+  `detailed` ramp for extra tonal range, or type your own custom character string, repeats and all.
+- **Four font choices, no bundled font files**: two monospace, two proportional, all resolving to fonts
   already installed on your system.
-- **Automatic downscaling** for very large source images, so the live-preview loop stays fast — the UI marks
+- **Automatic downscaling** for very large source images, so the live-preview loop stays fast. The UI marks
   a queue item as downscaled when this happens.
 
 <br>
 
 ## 4. How it works
 
-A single TypeScript/Canvas conversion engine (`core/`) is the *only* place the algorithm lives — built once,
+A single TypeScript/Canvas conversion engine (`core/`) is the *only* place the algorithm lives, built once,
 embedded into both packages, so the desktop app and the container can never drift apart or disagree on what
 a given image should look like. There's no server-side logic to speak of: every operation is "load an image,
 adjust, export," and nothing is remembered between sessions.
@@ -141,7 +141,7 @@ adjust, export," and nothing is remembered between sessions.
 
 ## 5. Requirements
 
-- **Container:** any amd64 or arm64 Docker host. No database, no volumes — the app is entirely stateless.
+- **Container:** any amd64 or arm64 Docker host. No database, no volumes; the app is entirely stateless.
 - **Desktop:** Windows 10/11, Linux (needs `libwebkit2gtk-4.1-0` at runtime), or macOS.
 
 <br>
@@ -174,7 +174,7 @@ docker run -d \
   ghcr.io/junkerderprovinz/trickwork:latest
 ```
 
-Open `http://localhost:3210/`. No environment variables, no volumes — that's the whole configuration surface.
+Open `http://localhost:3210/`. No environment variables, no volumes; that's the whole configuration surface.
 
 <br>
 
@@ -182,12 +182,12 @@ Open `http://localhost:3210/`. No environment variables, no volumes — that's t
 
 A Wails wrapper around the exact same engine and UI the container serves. Each [release](https://github.com/junkerderprovinz/trickwork/releases)
 carries a portable, no-install download per platform: a 64-bit `.exe` on Windows, a `.dmg` on macOS, a plain
-binary on Linux — download, `chmod +x` if needed, and run. Windows also gets a real installer alongside the
+binary on Linux: download, `chmod +x` if needed, and run. Windows also gets a real installer alongside the
 portable `.exe`, for anyone who'd rather have a Start Menu entry and an uninstaller than a bare download. To
 build it yourself right now, see [Development](#9-development) below.
 
 **Windows may show a "Windows protected your PC" SmartScreen prompt** the first time you run either the
-portable `.exe` or the installer — this is Microsoft's reputation check for freshly-downloaded, unsigned
+portable `.exe` or the installer. This is Microsoft's reputation check for freshly-downloaded, unsigned
 executables, not a sign anything is wrong. Click **More info**, then **Run anyway**. The warning fades on its
 own as more people download and run this exact build without incident; there's no faster free workaround, and
 code-signing (the only way to remove it immediately) isn't currently in place for this project.
@@ -226,7 +226,7 @@ Output: `desktop/build/bin/TrickWork[.exe]`.
 ## 10. Credits
 
 Directly inspired by [ASCGen2](https://sourceforge.net/projects/ascgen2/) (SourceForge, C#/.NET, GPLv2,
-abandoned since 2015) — same core differentiator, fresh implementation. UI design language is
+abandoned since 2015): same core differentiator, fresh implementation. UI design language is
 [GlimStone](https://github.com/junkerderprovinz/glimstone), shared across every app in this house.
 
 <br>
