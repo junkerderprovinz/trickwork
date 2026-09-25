@@ -8,6 +8,11 @@ All notable changes to TrickWork are documented here.
 
 - Rotate takes any angle. A field beside the four steps accepts degrees, negative ones and tenths included, and the arrow keys turn by 1° or, with Shift, by 15°. The image grows to hold the whole turn, and the corners that adds stay blank, inverted or not.
 
+### 🐛 Fixed
+
+- Every animation answers every Animations setting. Storm and Subtle had borrowed Wild's numbers in a few places (hovering buttons, lifting a dragged card, opening a window, sliding in a label), and a handful of transitions ran at a fixed speed whatever the setting said.
+- The App and About buttons' sheen follows the Animations setting, and their names stand still when the system asks for less motion.
+
 ### 🎨 Design
 
 - Settings has three tabs: General with the presets and the About card, Look with the language, shape, theme, animations, labels and colours, and App.

@@ -759,6 +759,7 @@ body {
        keeps its ease; the shorter duration carries the change. */
     --motion-page-travel: 6px;
     --motion-page-ease: cubic-bezier(.2, .6, .2, 1);
+    --motion-toast-ease: cubic-bezier(.2, .6, .2, 1);
     --glim-toast-slide: 12px;
   }
   :root[data-motion='subtle'][dir="rtl"] { --glim-toast-slide: -12px; }
@@ -771,8 +772,10 @@ body {
     --motion-page-ease: linear;
     --motion-toast-ease: ease;
     --glim-toast-slide: 0px;
-    /* The pulse gets no zero: `.glim-live` means "this is happening now", so
-       it stops fully opaque instead (below). */
+    /* Declared so this level does not inherit the lively number, but never
+       read: `.glim-live` means "this is happening now", so here it stops
+       fully opaque instead (below). */
+    --motion-pulse-dur: 3.2s;
   }
 
   /* Two animations per element, one duration: the movement on the level's
@@ -797,10 +800,39 @@ body {
 
   :root[data-motion='off'] .glim-live { animation: none; opacity: 1; }
 
-  /* Every transition reads one number, so the setting reaches all of them. */
-  :root { --motion-control-dur: 150ms; }
-  :root[data-motion='subtle'] { --motion-control-dur: 80ms; }
-  :root[data-motion='off'] { --motion-control-dur: 0s; }
+  /* Every transition reads one number, so the setting reaches all of them.
+     The other dials here: a window's entrance, the reactive label's reveal and
+     the sheen that crosses a README-shaped button once under the pointer. */
+  :root {
+    --motion-control-dur: 150ms;
+    --motion-modal-dur: 260ms;
+    --motion-modal-travel: 10px;
+    --motion-label-dur: 320ms;
+    --motion-label-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --motion-label-shift: -0.4rem;
+    --motion-label-squash: 0.82;
+    --motion-button-sheen-dur: 800ms;
+  }
+  :root[data-motion='subtle'] {
+    --motion-control-dur: 80ms;
+    --motion-modal-dur: 150ms;
+    --motion-modal-travel: 0px;
+    --motion-label-dur: 160ms;
+    --motion-label-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --motion-label-shift: 0rem;
+    --motion-label-squash: 1;
+    --motion-button-sheen-dur: 1100ms;
+  }
+  :root[data-motion='off'] {
+    --motion-control-dur: 0s;
+    --motion-modal-dur: 0s;
+    --motion-modal-travel: 0px;
+    --motion-label-dur: 0s;
+    --motion-label-ease: linear;
+    --motion-label-shift: 0rem;
+    --motion-label-squash: 1;
+    --motion-button-sheen-dur: 0s;
+  }
   :root[data-motion='off'] * { transition-duration: 0s !important; }
   :root[data-motion='subtle'] .transition,
   :root[data-motion='subtle'] .transition-colors,
@@ -830,6 +862,14 @@ body {
   /* The only level where the toast springs past the screen edge. */
   --motion-toast-ease: cubic-bezier(.22, 1.94, .45, 1);
   --glim-toast-slide: 44px;
+  --motion-control-dur: 300ms;
+  --motion-modal-dur: 420ms;
+  --motion-modal-travel: 18px;
+  --motion-label-dur: 480ms;
+  --motion-label-ease: cubic-bezier(.22, 1.94, .45, 1);
+  --motion-label-shift: -0.6rem;
+  --motion-label-squash: 0.7;
+  --motion-button-sheen-dur: 550ms;
 }
 :root[data-motion='storm'][dir="rtl"] { --glim-toast-slide: -44px; }
 
@@ -885,11 +925,11 @@ body {
 }
 @media (prefers-reduced-motion: no-preference) {
   :root { --drag-settle-dur: 220ms; }
-  :root[data-motion='subtle'] { --drag-settle-dur: 130ms; }
+  :root[data-motion='subtle'] { --drag-settle-dur: 130ms; --drag-lift-scale: 1.015; }
   :root[data-motion='off'] { --drag-settle-dur: 0ms; --drag-lift-scale: 1; }
 }
 /* Outside the gate for the same reason as storm's other numbers. */
-:root[data-motion='storm'] { --drag-settle-dur: 400ms; }
+:root[data-motion='storm'] { --drag-settle-dur: 400ms; --drag-lift-scale: 1.06; }
 @media (prefers-reduced-motion: reduce) {
   :root:not([data-motion='storm']) { --drag-lift-scale: 1; }
 }
@@ -1294,43 +1334,34 @@ body {
   margin-inline-start: var(--btn-gap);
 }
 
-/* Under reduced motion the words simply appear. */
+/* Under reduced motion the words simply appear. Every level runs the same
+   reveal with its own numbers: the width opens along the level's curve, which
+   overshoots from wild up, while the text slides in and unsquashes from the
+   level's shift and squash, which subtle sets to nothing. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Subtle: one duration, no overshoot. */
-  :root[data-motion="subtle"] .glim-label-reactive {
+  .glim-label-reactive {
     transition:
-      max-width 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
-      opacity 120ms ease-out,
-      margin-inline-start 160ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      max-width var(--motion-label-dur) var(--motion-label-ease),
+      opacity calc(var(--motion-label-dur) * 0.6) ease-out,
+      margin-inline-start var(--motion-label-dur) var(--motion-label-ease),
+      transform var(--motion-label-dur) var(--motion-label-ease);
+    transform: translateX(var(--motion-label-shift)) scaleX(var(--motion-label-squash));
   }
 
-  /* Above subtle the label's width bounces, with the overshoot in the easing
-     curve, while the text slides in and unsquashes. The selector excludes the
-     quiet levels rather than naming the lively ones, so it covers wild, storm,
-     a missing attribute and any level added later. */
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-label-reactive {
-    transition:
-      max-width 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      opacity 180ms ease-out,
-      margin-inline-start 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform: translateX(-0.4rem) scaleX(0.82);
-  }
-
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive.glim-active .glim-label-reactive,
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:hover .glim-label-reactive,
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:focus-visible .glim-label-reactive,
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:focus-within .glim-label-reactive {
-    transform: translateX(0) scaleX(1);
+  .glim-reactive.glim-active .glim-label-reactive,
+  .glim-reactive:hover .glim-label-reactive,
+  .glim-reactive:focus-visible .glim-label-reactive,
+  .glim-reactive:focus-within .glim-label-reactive {
+    transform: none;
   }
 }
 
 /* The confirm surface. The backdrop fades and the card rises a short way and
-   settles; at the subtle level both become a short fade, so something new is
-   still visibly on screen. */
+   settles; at subtle it only fades, since its travel is nothing. No scale: a
+   scaled ancestor makes every animated child inside it resample. */
 @keyframes glim-modal-in {
-  from { opacity: 0; transform: translateY(10px) scale(.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(var(--motion-modal-travel, 10px)); }
+  to   { opacity: 1; transform: none; }
 }
 
 /* The blur takes the page's detail away and the scrim its contrast, so the
@@ -1347,13 +1378,8 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* The quiet levels are excluded rather than the lively ones named, as in the
-     label rule above. */
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-modal-backdrop { animation: glim-fade-in 200ms ease both; }
-  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-modal-card { animation: glim-modal-in 260ms cubic-bezier(.2, .6, .2, 1) both; }
-
-  :root[data-motion="subtle"] .glim-modal-backdrop { animation: glim-fade-in 150ms ease both; }
-  :root[data-motion="subtle"] .glim-modal-card { animation: glim-fade-in 150ms ease both; }
+  .glim-modal-backdrop { animation: glim-fade-in var(--motion-modal-dur) ease both; }
+  .glim-modal-card { animation: glim-modal-in var(--motion-modal-dur) cubic-bezier(.2, .6, .2, 1) both; }
 }
 
 /* The card-wide reveal in reactive rainbow mode. A heading notch that lit up
