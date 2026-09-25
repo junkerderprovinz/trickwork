@@ -202,7 +202,7 @@ test('Settings sorts its cards into three tabs, with the brand card in the top l
   await expect(page.getByText('Presets', { exact: true })).toBeVisible()
   await expect(page.getByText('About TrickWork', { exact: true })).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
-  await expect(page.locator('.app-tiles')).toBeHidden()
+  await expect(page.locator('.dl-rows')).toBeHidden()
 
   await settingsTab(page, 'Look').click()
   await expect(page.getByText('Shape', { exact: true })).toBeVisible()
@@ -210,7 +210,7 @@ test('Settings sorts its cards into three tabs, with the brand card in the top l
 
   await page.keyboard.press('ArrowRight')
   await expect(settingsTab(page, 'App')).toHaveAttribute('aria-selected', 'true')
-  await expect(page.locator('.app-tiles')).toBeVisible()
+  await expect(page.locator('.dl-rows')).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
 
   const onSettings = await brand.boundingBox()
@@ -519,12 +519,29 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await page.goto('/')
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
-  const tiles = page.locator('.app-tiles a.app-tile')
-  await expect(tiles).toHaveCount(5)
+  const buttons = page.locator('.dl-rows a.dl-part')
+  await expect(buttons).toHaveCount(5)
   const version = await page.locator('.about-versions a').first().textContent()
-  for (const href of await tiles.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
+  for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
+  await expect(page.getByRole('link', { name: 'ARM64 Windows' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
+})
+
+test('an App card button shows its second line only under the pointer, over the whole unit', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
+  const windows = page.locator('.dl-unit').first()
+  const lines = windows.locator('.dl-sub')
+  await expect(lines).toHaveCount(3)
+  for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0')
+
+  // The pointer on a segment brings in the lines of the button it hangs on too.
+  await page.getByRole('link', { name: 'Portable Windows' }).hover()
+  for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0.9')
+  await expect(windows.locator('.dl-part').first()).toHaveCSS('background-color', 'rgb(0, 120, 212)')
+  await expect(page.locator('.dl-unit').nth(1).locator('.dl-sub')).toHaveCSS('opacity', '0')
 })
 
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {

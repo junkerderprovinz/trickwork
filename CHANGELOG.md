@@ -8,6 +8,8 @@ All notable changes to TrickWork are documented here.
 
 - Settings has three tabs: General with the language, the presets and the About card, Look with shape, theme, animations, labels and colours, and App.
 - On the Settings page the logo card moves to the top left corner, beside the tabs.
+- The App tab offers its downloads as buttons in the shape of the README's, with Windows on ARM and the portable build as segments of the Windows button. At rest a button shows its mark and name; under the pointer it lights up in its brand's colour, the name moves up to make room for the second line, and a sheen runs across it once.
+- Settings is a little wider, so the Windows button and its segments, macOS and Linux fit in one row.
 
 ## 1.2.0 - 2026-09-25
 

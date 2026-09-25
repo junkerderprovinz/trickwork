@@ -1,9 +1,10 @@
-// The App card in Settings: every other way to get TrickWork. In the container
-// it offers the desktop app; in the desktop app it offers a server install.
+// The App card in Settings: every other way to get TrickWork, as buttons in the
+// shape of the README's. In the container it offers the desktop app; in the
+// desktop app it offers a server install.
 
 import { APPLE_SVG, DOCKER_SVG, LINUX_SVG, UNRAID_SVG, WINDOWS_SVG, ZIP_SVG } from './design/appMarks'
 import { infoIcon } from './design/tooltip'
-import { subscribeLocale, t, type TranslationKey } from './i18n'
+import { subscribeLocale, t } from './i18n'
 import { APP_VERSION } from './version'
 
 declare global {
@@ -18,24 +19,15 @@ const RELEASE = `${REPO}/releases/download/${TAG}`
 const UNRAID_CA = 'https://ca.unraid.net/apps/trickwork-0h072450hg59wx'
 const DOCKER_RUN = 'docker run -d --name trickwork --restart unless-stopped -p 3210:3210 ghcr.io/junkerderprovinz/trickwork:latest'
 
-// The brand each tile lights up in under the pointer ("Brand tiles").
-const TILE = {
-  windows: 'glim-tile-windows',
-  apple: 'glim-tile-apple',
-  linux: 'glim-tile-linux',
-  docker: 'glim-tile-docker',
-  unraid: 'glim-tile-unraid',
-  zip: 'glim-tile-zip',
-} as const
-type Brand = keyof typeof TILE
+type Brand = 'windows' | 'apple' | 'linux' | 'docker' | 'unraid' | 'zip'
 
-const DESKTOP: { key: TranslationKey; file: string; mark: string; tint: string; brand: Brand }[] = [
-  { key: 'apps.windows', file: 'trickwork-windows-amd64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
-  { key: 'apps.windowsPortable', file: 'trickwork-windows-amd64-portable.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
-  { key: 'apps.windowsArm', file: 'trickwork-windows-arm64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
-  { key: 'apps.macos', file: 'trickwork-macos-universal.dmg', mark: APPLE_SVG, tint: '', brand: 'apple' },
-  { key: 'apps.linux', file: 'trickwork-linux-amd64', mark: LINUX_SVG, tint: '', brand: 'linux' },
-]
+interface Part {
+  name: string
+  sub: string
+  /** Left out on a segment, which names what differs from the button it hangs on. */
+  mark?: string
+  tint?: string
+}
 
 /** The desktop build binds its Go methods on window.go; the container has none. */
 export function isDesktop(): boolean {
@@ -51,60 +43,84 @@ function followExternal(event: MouseEvent, href: string): void {
   open(href)
 }
 
-function mark(svg: string, tint: string): HTMLSpanElement {
-  const el = document.createElement('span')
-  el.className = `app-tile-mark ${tint}`.trim()
-  el.setAttribute('aria-hidden', 'true')
-  el.innerHTML = svg
-  return el
+function partBody(el: HTMLElement, p: Part): HTMLSpanElement {
+  el.className = `dl-part glim-brand-tile${p.mark ? '' : ' dl-seg'}`
+  el.setAttribute('aria-label', `${p.name} ${p.sub}`)
+  if (p.mark) {
+    const mark = document.createElement('span')
+    mark.className = `dl-mark ${p.tint ?? ''}`.trim()
+    mark.setAttribute('aria-hidden', 'true')
+    mark.innerHTML = p.mark
+    el.appendChild(mark)
+  }
+  const text = document.createElement('span')
+  text.className = 'dl-text'
+  const name = document.createElement('span')
+  name.className = 'dl-name'
+  name.textContent = p.name
+  const sub = document.createElement('span')
+  sub.className = 'dl-sub'
+  sub.textContent = p.sub
+  text.append(name, sub)
+  el.appendChild(text)
+  return sub
 }
 
-function tileBody(tile: HTMLElement, name: string, svg: string, tint: string): HTMLSpanElement {
-  const label = document.createElement('span')
-  label.className = 'app-tile-name'
-  label.textContent = name
-  tile.append(mark(svg, tint), label)
-  return label
-}
-
-function linkTile(name: string, href: string, svg: string, brand: Brand, tint = ''): HTMLElement {
+function linkPart(p: Part, href: string): HTMLAnchorElement {
   const a = document.createElement('a')
-  a.className = 'app-tile glim-brand-tile'
   a.href = href
   a.target = '_blank'
   a.rel = 'noreferrer noopener'
-  a.setAttribute('aria-label', name)
-  tileBody(a, name, svg, tint)
+  partBody(a, p)
   a.addEventListener('click', (event) => followExternal(event, href))
-  const wrap = document.createElement('div')
-  wrap.className = `app-tile-wrap group ${TILE[brand]}`
-  wrap.appendChild(a)
-  return wrap
+  return a
 }
 
-// The Docker tile does something on the page, so its name says so for a
-// moment after the click.
-function dockerTile(): HTMLElement {
+// A button with its segments lights up as one, and the sheen crosses all of it.
+function unit(brand: Brand, parts: HTMLElement[]): HTMLDivElement {
+  const el = document.createElement('div')
+  el.className = `dl-unit group glim-tile-${brand}${parts.length > 1 ? ' dl-group' : ''}`
+  const sheen = document.createElement('span')
+  sheen.className = 'dl-sheen'
+  sheen.setAttribute('aria-hidden', 'true')
+  el.append(...parts, sheen)
+  return el
+}
+
+// The Docker button does something on the page, so its second line says so
+// for a moment after the click, and stays out while it does.
+function dockerUnit(): HTMLDivElement {
   const btn = document.createElement('button')
   btn.type = 'button'
-  btn.className = 'app-tile glim-brand-tile'
-  const name = t('apps.docker')
-  btn.setAttribute('aria-label', name)
-  const label = tileBody(btn, name, DOCKER_SVG, 'glim-docker-mark')
+  const sub = partBody(btn, { name: t('apps.docker'), sub: t('apps.dockerSub'), mark: DOCKER_SVG, tint: 'glim-docker-mark' })
+  const el = unit('docker', [btn])
   let timer: number | undefined
   btn.addEventListener('click', () => {
     void navigator.clipboard?.writeText(DOCKER_RUN).then(() => {
-      label.textContent = t('apps.copied')
+      sub.textContent = t('apps.copied')
+      el.classList.add('dl-unit--note')
       window.clearTimeout(timer)
-      timer = window.setTimeout(() => (label.textContent = t('apps.docker')), 1800)
+      timer = window.setTimeout(() => {
+        sub.textContent = t('apps.dockerSub')
+        el.classList.remove('dl-unit--note')
+      }, 1800)
     })
   })
-  const wrap = document.createElement('div')
-  wrap.className = `app-tile-wrap group ${TILE.docker}`
   const hint = infoIcon(`${t('apps.dockerHint')} ${DOCKER_RUN}`)
-  hint.classList.add('app-tile-hint')
-  wrap.append(btn, hint)
-  return wrap
+  hint.classList.add('dl-hint')
+  el.appendChild(hint)
+  return el
+}
+
+// A translation longer than its button shrinks its own line instead of being
+// cut off. Hidden lines measure nothing, so this runs again once they show.
+function fitText(root: HTMLElement): void {
+  for (const line of root.querySelectorAll<HTMLElement>('.dl-name, .dl-sub')) {
+    line.style.fontSize = ''
+    if (line.clientWidth === 0) continue
+    const over = line.scrollWidth / line.clientWidth
+    if (over > 1) line.style.fontSize = `${parseFloat(getComputedStyle(line).fontSize) / over}px`
+  }
 }
 
 export function mountAppPanel(container: HTMLElement): void {
@@ -115,26 +131,37 @@ export function mountAppPanel(container: HTMLElement): void {
   const eyebrow = document.createElement('span')
   eyebrow.className = 'glim-eyebrow'
   eyebrowRow.appendChild(eyebrow)
-  const tiles = document.createElement('div')
-  tiles.className = 'app-tiles'
-  container.append(eyebrowRow, tiles)
+  const rows = document.createElement('div')
+  rows.className = 'dl-rows'
+  container.append(eyebrowRow, rows)
 
   function render(): void {
     eyebrow.textContent = t(desktop ? 'apps.serverTitle' : 'apps.desktopTitle')
     eyebrowRow.querySelector('.glim-info-icon')?.remove()
     eyebrowRow.appendChild(infoIcon(t(desktop ? 'apps.serverHint' : 'apps.desktopHint')))
-    tiles.innerHTML = ''
     if (desktop) {
-      tiles.append(
-        linkTile(t('apps.unraid'), UNRAID_CA, UNRAID_SVG, 'unraid', 'glim-unraid-mark'),
-        dockerTile(),
-        linkTile(t('apps.zip'), `${REPO}/archive/refs/tags/${TAG}.zip`, ZIP_SVG, 'zip'),
+      rows.replaceChildren(
+        unit('unraid', [linkPart({ name: t('apps.unraid'), sub: t('apps.unraidSub'), mark: UNRAID_SVG }, UNRAID_CA)]),
+        dockerUnit(),
+        unit('zip', [linkPart({ name: t('apps.source'), sub: t('apps.zipSub'), mark: ZIP_SVG }, `${REPO}/archive/refs/tags/${TAG}.zip`)]),
       )
     } else {
-      for (const d of DESKTOP) tiles.appendChild(linkTile(t(d.key), `${RELEASE}/${d.file}`, d.mark, d.brand, d.tint))
+      const windows = t('apps.windows')
+      rows.replaceChildren(
+        unit('windows', [
+          linkPart({ name: windows, sub: 'x64', mark: WINDOWS_SVG, tint: 'glim-windows-mark' }, `${RELEASE}/trickwork-windows-amd64-installer.exe`),
+          linkPart({ name: 'ARM64', sub: windows }, `${RELEASE}/trickwork-windows-arm64-installer.exe`),
+          linkPart({ name: t('apps.portable'), sub: windows }, `${RELEASE}/trickwork-windows-amd64-portable.exe`),
+        ]),
+        unit('apple', [linkPart({ name: t('apps.macos'), sub: 'Universal', mark: APPLE_SVG }, `${RELEASE}/trickwork-macos-universal.dmg`)]),
+        unit('linux', [linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`)]),
+      )
     }
+    fitText(rows)
   }
 
   render()
   subscribeLocale(render)
+  new ResizeObserver(() => fitText(rows)).observe(rows)
+  void document.fonts?.ready.then(() => fitText(rows))
 }

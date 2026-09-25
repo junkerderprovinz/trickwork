@@ -186,14 +186,14 @@ html, body {
 }
 
 /* Settings is a width-capped column, and roomier than the dense Convert cards:
-   it is read, not glanced at mid-drag. The cap fits the App card's five desktop
-   tiles in one row, and the tabs span it. The tabs' top lines up with the brand
-   card's, and the first card keeps the one vertical rhythm below them. */
+   it is read, not glanced at mid-drag. The cap fits the App card's desktop row
+   of four button places, and the tabs span it. The tabs' top lines up with the
+   brand card's, and the first card keeps the one vertical rhythm below them. */
 .settings-view {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
-  max-width: 42rem;
+  max-width: 48rem;
 }
 
 .settings-cards {
@@ -1231,63 +1231,193 @@ button:focus-visible {
   color: var(--carbon-text-sub);
 }
 
-/* The App card's tiles: a mark above a name, one shape for every way to get
-   the app. Under the pointer each lights up in its brand's colour
-   (.glim-brand-tile in design/tokens.css). */
-.app-tiles {
+/* The App card's buttons, in the shape of the README's: 160 by 46.6 pixels
+   like the donation buttons, a segment 87, so a button and two segments take
+   two places in a row. At rest the mark keeps its colours and the name stands
+   alone in the middle. Under the pointer the whole unit fills with its brand's
+   colour (.glim-brand-tile in design/tokens.css), the name moves up and the
+   second line comes in below it. */
+.dl-rows {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.8125rem;
 }
 
-.app-tile-wrap {
+.dl-unit {
   position: relative;
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.app-tile {
-  width: 7rem;
-  height: 7rem;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: var(--radius-control);
+.dl-part {
+  position: relative;
+  flex: none;
+  width: 10rem;
+  height: 2.9125rem;
+  padding: 0;
+  border-radius: 0;
   background-color: var(--carbon-surface2);
   color: var(--carbon-text);
+  font: inherit;
+  text-align: start;
   text-decoration: none;
 }
 
-.app-tile-mark {
-  width: 3.5rem;
-  height: 3.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* The unit clips everything at its edge, a ring outside the button too. */
+.dl-part:focus-visible {
+  outline-offset: -3px;
 }
 
-.app-tile-mark svg {
+.dl-part.dl-seg {
+  width: 5.4375rem;
+}
+
+.dl-seg::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 1.5px;
+  background-color: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* The height is the README's mark, and the box is wider than tall, so a wide
+   mark such as Unraid's or Docker's is not shrunk to a sliver. */
+.dl-mark {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 1.5rem;
+  width: 2rem;
+  height: 1.5625rem;
+  translate: 0 -50%;
+  display: flex;
+}
+
+.dl-mark svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.app-tile-name {
-  font-size: var(--text-dense);
-  font-weight: 500;
-  line-height: 1.2;
+.dl-text {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 3.9375rem 0.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+}
+
+.dl-seg .dl-text {
+  inset-inline: 0.375rem;
+  align-items: center;
   text-align: center;
 }
 
-.app-tile-hint {
-  position: absolute;
-  top: 0.4rem;
-  inset-inline-end: 0.4rem;
+.dl-unit:has(.dl-hint) .dl-text {
+  inset-inline-end: 1.75rem;
 }
 
-.group:hover .app-tile-hint {
+.dl-name,
+.dl-sub {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Half the second line's height down, so the name alone sits in the middle. */
+.dl-name {
+  font-size: var(--text-body);
+  font-weight: 700;
+  translate: 0 0.4375rem;
+  transition: translate calc(var(--motion-page-dur, 420ms) / 2) var(--motion-page-ease, ease);
+}
+
+.dl-sub {
+  font-size: 0.75rem;
+  opacity: 0;
+  translate: 0 0.25rem;
+  transition:
+    opacity calc(var(--motion-page-dur, 420ms) / 2) ease,
+    translate calc(var(--motion-page-dur, 420ms) / 2) var(--motion-page-ease, ease);
+}
+
+.dl-unit:is(:hover, :focus-within, .dl-unit--note) .dl-name {
+  translate: 0 0;
+}
+
+.dl-unit:is(:hover, :focus-within, .dl-unit--note) .dl-sub {
+  opacity: 0.9;
+  translate: 0 0;
+}
+
+/* Without a pointer there is no hover to bring the second line in. */
+@media (hover: none) {
+  .dl-name {
+    translate: 0 0;
+  }
+  .dl-sub {
+    opacity: 0.9;
+    translate: 0 0;
+  }
+}
+
+.dl-hint {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 0.625rem;
+  z-index: 2;
+  translate: 0 -50%;
+}
+
+.group:hover .dl-hint {
   color: var(--tile-ink);
+}
+
+/* The sheen of the README's buttons, here once per visit of the pointer and
+   across the whole unit. */
+.dl-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dl-sheen::after {
+  content: '';
+  position: absolute;
+  top: -0.75rem;
+  bottom: -0.75rem;
+  left: -4rem;
+  width: 2.0625rem;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.28) 45%, rgb(255 255 255 / 0.28) 55%, transparent);
+  transform: skewX(-16deg);
+}
+
+@keyframes dl-sheen {
+  to {
+    left: calc(100% + 2rem);
+  }
+}
+
+@media (hover: hover) {
+  /* A segment under the pointer is a shade deeper than the unit it lights. */
+  .dl-group > .dl-part:hover {
+    background-color: color-mix(in srgb, var(--tile) 86%, black);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='off']) .dl-unit:hover .dl-sheen::after {
+    animation: dl-sheen 0.8s linear;
+  }
+  :root:not([data-motion='off']) .dl-group:hover .dl-sheen::after {
+    animation-duration: 1.5s;
+  }
 }
 
 /* The About card: each sentence sits right above the buttons it asks for, and
