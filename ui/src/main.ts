@@ -54,15 +54,19 @@ function section(hue: number, extra = ''): HTMLDivElement {
   return el
 }
 
-// With only two destinations, a corner Settings badge stands in for
-// GlimStone's sidebar, as GlimStone allows for a single-workspace app.
-const header = document.createElement('header')
-header.className = 'app-header glim-card'
-app.appendChild(header)
+const body = document.createElement('div')
+body.className = 'app-body'
+app.appendChild(body)
+
+// With only two destinations, the brand card at the top of the side column
+// carries the Settings badge in place of GlimStone's sidebar, as GlimStone
+// allows for a single-workspace app.
+const brandCard = document.createElement('header')
+brandCard.className = 'glim-card brand-card'
 
 // An empty column matching the badge on the right keeps the brand centred.
-const headerSpacer = document.createElement('div')
-header.appendChild(headerSpacer)
+const brandSpacer = document.createElement('div')
+brandCard.appendChild(brandSpacer)
 
 const brand = document.createElement('div')
 brand.className = 'app-brand'
@@ -72,20 +76,16 @@ const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
 brand.append(brandLogoWrap, brandName)
-header.appendChild(brand)
+brandCard.appendChild(brand)
 
 const settingsBadge = document.createElement('button')
 settingsBadge.type = 'button'
 settingsBadge.className = 'settings-badge'
-header.appendChild(settingsBadge)
+brandCard.appendChild(settingsBadge)
 
-const body = document.createElement('div')
-body.className = 'app-body'
-app.appendChild(body)
-
-// The Convert view: the preview and every card that affects the output.
-const convertView = document.createElement('div')
-convertView.className = 'convert-view'
+// The main area shows the preview and its source cards, or the Settings page.
+const main = document.createElement('div')
+main.className = 'app-main'
 
 const primary = document.createElement('section')
 primary.className = 'app-primary'
@@ -116,9 +116,6 @@ makeReorderable(secondary, [
   { id: 'export', el: exportCard },
 ])
 
-convertView.append(primary, secondary)
-body.appendChild(convertView)
-
 // The Settings view: theming, language and presets, without a preview.
 const settingsView = document.createElement('div')
 settingsView.className = 'settings-view'
@@ -127,7 +124,8 @@ const presetsCard = section(1, 'settings-card')
 const appCard = section(2, 'settings-card')
 const aboutCard = section(3, 'settings-card')
 settingsView.append(settingsCard, presetsCard, appCard, aboutCard)
-body.appendChild(settingsView)
+main.append(primary, settingsView)
+body.append(brandCard, main, secondary)
 
 let onSettings = false
 
@@ -141,15 +139,17 @@ function applyBadgeLabel(): void {
 let leaveSettings = (): void => {}
 
 function render(): void {
-  convertView.style.display = onSettings ? 'none' : ''
+  primary.style.display = onSettings ? 'none' : ''
+  secondary.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
   applyBadgeLabel()
   // The page entrance runs on every arrival, so it is restarted by taking the
   // class off and forcing a style pass before putting it back.
-  const shown = onSettings ? settingsView : convertView
-  shown.classList.remove('glim-page-enter')
-  void shown.offsetWidth
-  shown.classList.add('glim-page-enter')
+  for (const shown of onSettings ? [settingsView] : [primary, secondary]) {
+    shown.classList.remove('glim-page-enter')
+    void shown.offsetWidth
+    shown.classList.add('glim-page-enter')
+  }
 }
 
 settingsBadge.addEventListener('click', () => {
