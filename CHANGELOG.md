@@ -4,10 +4,6 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
-### 🐛 Fixed
-
-- A card's heading badge follows the chosen corner shape, where it stayed a pill in every shape.
-
 ## 1.2.0 - 2026-09-25
 
 ### ✨ Added
