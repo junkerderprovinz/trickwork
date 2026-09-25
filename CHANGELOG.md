@@ -4,6 +4,10 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- A new teal logo, in the README banner, the header, the desktop app's icon and the Unraid icon.
+
 ### ⚡ Improved
 
 - Tidied the code comments and log messages.

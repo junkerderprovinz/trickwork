@@ -9,8 +9,8 @@
  * variant is always generated alongside the README banners.
  *
  * One logo file serves both themes. Unlike the ring logos of the other repos, whose
- * ring has to match the surface, this one is a self-contained gold and bronze
- * graphic that reads on white and on near-black alike.
+ * ring has to match the surface, this one is a self-contained teal graphic that
+ * reads on white and on near-black alike.
  *
  * Text is converted to SVG paths (opentype.js) so the SVG needs no font and renders
  * the same in resvg and a browser. Bree Serif (name) and Lato (claim) are the brand
