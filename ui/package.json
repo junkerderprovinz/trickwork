@@ -16,6 +16,7 @@
     "@fontsource-variable/noto-sans-hebrew": "^5.3.0",
     "@fontsource-variable/noto-sans-thai": "^5.3.0",
     "noto-color-emoji-flags": "^1.0.0",
+    "qrcode-generator": "^2.0.4",
     "trickwork-core": "*"
   },
   "devDependencies": {

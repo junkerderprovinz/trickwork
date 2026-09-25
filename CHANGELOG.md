@@ -8,6 +8,7 @@ All notable changes to TrickWork are documented here.
 
 - An App card in Settings. In the browser it offers the desktop app for Windows (installer or portable), macOS and Linux; in the desktop app it offers Unraid's Community Applications, the Docker command and the source code.
 - Settings for how much the interface moves (Off, Subtle, Wild) and for what the buttons show: their words, their symbol, both, or the symbol with the words sliding in under the pointer.
+- An About card in Settings, in place of the version line: what TrickWork is, three ways to give (Buy Me a Coffee, PayPal once, monthly or yearly, and crypto), a way to report a problem on GitHub or by email, and the versions. Each way to give opens a window inside the app; in the desktop app on macOS and Linux PayPal opens its own page instead.
 - Three more accent colours: Orange, Teal and Magenta.
 - Reactive Mode and Colour Rotation for the rainbow palette. Reactive shows a colour only under the pointer or on what is active; rotation starts the palette one colour further along at every visit.
 - A dragged card floats under the pointer while the others make room, and slides into its gap when let go. Escape puts everything back, and with the handle focused the arrow keys move a card one place.

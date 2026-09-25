@@ -19,6 +19,7 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
+import { mountAboutPanel } from './aboutPanel'
 import { mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
@@ -26,7 +27,6 @@ import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
 import { iconAppearance, iconBack } from './icons'
-import { APP_VERSION, GLIMSTONE_VERSION } from './version'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -125,12 +125,8 @@ settingsView.className = 'settings-view'
 const settingsCard = section(0, 'settings-card')
 const presetsCard = section(1, 'settings-card')
 const appCard = section(2, 'settings-card')
-// The versions belong to the whole app, so they sit below the cards rather
-// than inside the last one.
-const versionLine = document.createElement('p')
-versionLine.className = 'settings-version'
-versionLine.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
-settingsView.append(settingsCard, presetsCard, appCard, versionLine)
+const aboutCard = section(3, 'settings-card')
+settingsView.append(settingsCard, presetsCard, appCard, aboutCard)
 body.appendChild(settingsView)
 
 let onSettings = false
@@ -198,6 +194,7 @@ mountExportPanel(exportCard, store)
 leaveSettings = mountAppearanceSettings(settingsCard)
 mountPresetsPanel(presetsCard, store)
 mountAppPanel(appCard)
+mountAboutPanel(aboutCard)
 
 // Every card heading is its section badge, and in the reactive rainbow mode it
 // lights up while the pointer is anywhere in its card.

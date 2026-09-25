@@ -919,7 +919,7 @@ button:focus-visible {
   background-color: var(--carbon-surface3);
   color: var(--carbon-text);
 }
-.glim-tone-neutral:hover:not(:disabled) {
+.glim-tone-neutral:not(.glim-brand-btn):hover:not(:disabled) {
   background-color: var(--carbon-hover-raised);
 }
 .glim-tone-accent,
@@ -1188,13 +1188,6 @@ button:focus-visible {
   color: var(--carbon-text);
 }
 
-/* The versions sit in Settings below the cards (GlimStone keeps them out of a
-   persistent footer); the view's gap spaces them. */
-.settings-version {
-  margin: 0;
-  font-size: var(--text-caption);
-  color: var(--carbon-text-muted);
-}
 
 .switch-row {
   display: flex;
@@ -1267,4 +1260,258 @@ button:focus-visible {
 
 .group:hover .app-tile-hint {
   color: var(--carbon-tile-hover-ink);
+}
+
+/* The About card: each sentence sits right above the buttons it asks for, and
+   a blank line's worth of space above the report sentence keeps the give
+   buttons from pairing with it. */
+.about-text {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--carbon-text-sub);
+}
+
+.about-report {
+  margin-top: 0.5rem;
+}
+
+.about-versions {
+  margin: 0.25rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+}
+
+.about-versions a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.about-versions a:hover {
+  color: var(--carbon-text);
+}
+
+/* The giving windows. The card reuses the section heading, so its title sits on
+   the window's top edge like every card heading. */
+.donate-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--glim-scrim);
+}
+
+.donate-window {
+  width: 100%;
+  max-width: 32rem;
+  max-height: 85vh;
+  padding: 1.75rem 1.25rem 1.25rem;
+}
+
+.donate-window:focus {
+  outline: none;
+}
+
+.donate-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* The coffee widget needs the height of the screen, not of its content. */
+.donate-window:has(.donate-body--frame) {
+  height: calc(100vh - 7rem);
+}
+
+.donate-body--frame {
+  flex: 1;
+}
+
+.donate-frame-well {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  padding: 0.5rem;
+  border-radius: var(--radius-card);
+  background-color: var(--carbon-surface2);
+}
+
+/* White behind the frame, so its first paint is not a dark hole on the dark
+   theme; the widget page is light either way. */
+.donate-frame-well iframe {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-control);
+  background-color: #fff;
+}
+
+.donate-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+}
+
+.donate-appeal,
+.donate-intro {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+
+.donate-appeal {
+  color: var(--carbon-text);
+}
+
+.donate-intro {
+  color: var(--carbon-text-sub);
+}
+
+.donate-amount-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.donate-amount-row .control-slider {
+  gap: 0;
+}
+
+/* Filled and borderless like every field (rule 14); a valid amount is marked
+   with the accent, one that is not with the fail colour. */
+.donate-amount-row .donate-other {
+  width: 9rem;
+  box-shadow: inset 0 0 0 2px transparent;
+}
+
+.donate-amount-row .donate-other.is-valid {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.donate-amount-row .donate-other.is-invalid {
+  box-shadow: inset 0 0 0 2px var(--status-fail-solid);
+}
+
+.donate-paypal-buttons {
+  margin-top: 0.75rem;
+  min-height: 7rem;
+  color-scheme: light;
+}
+
+.donate-loading {
+  margin: 0;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--carbon-text-muted);
+}
+
+.donate-status {
+  margin: 0;
+  font-size: var(--text-body);
+}
+
+.donate-status.is-ok {
+  color: var(--status-ok-text);
+}
+
+.donate-status.is-fail {
+  color: var(--status-fail-text);
+}
+
+.donate-crypto-well {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radius-card);
+  background-color: var(--carbon-surface2);
+}
+
+.donate-qr svg {
+  display: block;
+  border-radius: var(--radius-control);
+}
+
+.donate-address {
+  width: 100%;
+  margin: 0;
+  word-break: break-all;
+  text-align: center;
+  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+  font-size: var(--text-caption);
+  color: var(--carbon-text);
+}
+
+.donate-chains {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.donate-chain {
+  padding: 0.25rem 0.75rem;
+  font-size: var(--text-dense);
+  font-weight: 500;
+  background-color: var(--carbon-surface3);
+  color: var(--carbon-text-sub);
+}
+
+.donate-chain:hover {
+  background-color: var(--carbon-hover-raised);
+  color: var(--carbon-text);
+}
+
+.donate-chain.is-active,
+.donate-coin.is-active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.donate-note {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--status-warn-text);
+}
+
+.donate-coin-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.donate-coin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: var(--radius-control);
+  font-size: var(--text-dense);
+  font-weight: 500;
+  color: var(--carbon-text-sub);
+}
+
+.donate-coin:hover {
+  color: var(--carbon-text);
+}
+
+/* A coin tile follows the label engine: its mark alone in glyph mode, its
+   ticker alone in text mode. */
+[data-labels-buttons='text'] .donate-coin svg,
+[data-labels-buttons='glyph'] .donate-coin span {
+  display: none;
 }

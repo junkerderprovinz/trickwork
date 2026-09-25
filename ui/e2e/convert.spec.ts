@@ -178,7 +178,7 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
   await expect(page.getByText('Shape', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Back')
-  await expect(page.getByText(/TrickWork v.* · GlimStone v/)).toBeVisible()
+  await expect(page.locator('.about-versions')).toContainText('GlimStone')
 
   await badge.click()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
@@ -477,8 +477,21 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await settingsBadge(page).click()
   const tiles = page.locator('.app-tiles a.app-tile')
   await expect(tiles).toHaveCount(4)
-  const version = (await page.locator('.settings-version').textContent())?.match(/TrickWork v(\S+)/)?.[1]
+  const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await tiles.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-v${version}-`)
   }
+})
+
+test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {
+  await page.goto('/')
+  await settingsBadge(page).click()
+  await page.getByRole('button', { name: 'Crypto' }).click()
+  const window = page.getByRole('dialog')
+  await expect(window).toBeVisible()
+  await expect(window.locator('.donate-address')).toHaveText(/^bc1q/)
+  await window.getByRole('option', { name: 'Solana (SOL)' }).click()
+  await expect(window.locator('.donate-address')).toHaveText('GrTyhSbZVArdaZAr3TqWDrkEGahomLtNZJ41qPLm3dHd')
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
 })
