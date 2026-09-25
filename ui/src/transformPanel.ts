@@ -42,17 +42,15 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
     store.setState({ options: { ...store.getState().options, rotate: turn } })
   }
 
-  // The four steps and a field for any other angle share one row, as the
-  // PayPal window's amounts do: a valid angle in the field takes the selection
-  // away from the steps, and a step clears the field.
-  function rotateBlock(): HTMLElement {
+  // The four steps keep the card's width, and a field for any other angle
+  // stands at the end of the row below: a valid angle in the field takes the
+  // selection away from the steps, and a step clears the field.
+  function rotateParts(): { steps: HTMLElement; field: HTMLElement } {
     const turn = tidyTurn(store.getState().options.rotate ?? 0)
     const wrap = document.createElement('div')
     wrap.className = 'control-slider'
     const label = document.createElement('span')
     label.textContent = t('controls.rotate')
-    const row = document.createElement('div')
-    row.className = 'preset-free-row'
 
     const field = document.createElement('span')
     field.className = 'free-value'
@@ -142,9 +140,8 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       showStep(String(stored))
     })
 
-    row.append(steps, field)
-    wrap.append(label, row)
-    return wrap
+    wrap.append(label, steps)
+    return { steps: wrap, field }
   }
 
   function build(): void {
@@ -175,9 +172,10 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
       () => store.commitOptionsSnapshot(t('history.entryFlipVertical')),
       1,
     )
-    flipRow.append(flipH, flipV)
+    const rotate = rotateParts()
+    flipRow.append(flipH, flipV, rotate.field)
 
-    panel.append(rotateBlock(), flipRow)
+    panel.append(rotate.steps, flipRow)
   }
 
   build()
