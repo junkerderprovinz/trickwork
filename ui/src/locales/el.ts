@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Πίσω',
   'nav.undo': 'Αναίρεση',
   'nav.redo': 'Επανάληψη',
+  'settings.section': 'Ενότητα ρυθμίσεων',
+  'settings.general': 'Γενικά',
+  'settings.look': 'Εμφάνιση',
+  'settings.app': 'Εφαρμογή',
 
   'history.eyebrow': 'Ιστορικό',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Μαζική εξαγωγή: {succeeded} επιτυχείς, {failed} απέτυχαν{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} ακυρώθηκαν',
 
-  'appearance.eyebrow': 'Εμφάνιση',
   'appearance.shape': 'Σχήμα',
   'appearance.round': 'Στρογγυλό',
   'appearance.soft': 'Απαλό',

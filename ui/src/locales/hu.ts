@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Vissza',
   'nav.undo': 'Visszavonás',
   'nav.redo': 'Ismétlés',
+  'settings.section': 'Beállítási szakasz',
+  'settings.general': 'Általános',
+  'settings.look': 'Megjelenés',
+  'settings.app': 'Alkalmazás',
 
   'history.eyebrow': 'Előzmények',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Tömeges exportálás: {succeeded} sikeres, {failed} sikertelen{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} megszakítva',
 
-  'appearance.eyebrow': 'Megjelenés',
   'appearance.shape': 'Alak',
   'appearance.round': 'Kerek',
   'appearance.soft': 'Lágy',

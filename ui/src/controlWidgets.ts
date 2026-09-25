@@ -27,7 +27,9 @@ const MIN_SEGMENT = 200
 
 export interface SegmentedRowOptions<T extends string> {
   label?: string
-  choices: { value: T; label: string }[]
+  /** The strip's name where no label stands above it. */
+  ariaLabel?: string
+  choices: { value: T; label: string; glyph?: string }[]
   value: T
   onChange: (value: T) => void
   /** Fires once per change, before onChange, so the caller can record an undo step. */
@@ -42,16 +44,25 @@ export interface SegmentedRowOptions<T extends string> {
    * for a strip inside a narrow card.
    */
   scale?: 'big' | 'small'
+  /**
+   * `well` is one groove holding the segments. `chip` has no groove, so every
+   * segment is a badge of its own and owns a palette position, as the tabs
+   * over a page do.
+   */
+  variant?: 'well' | 'chip'
+  /** Stretch the segments across the box, for a strip as wide as the cards under it. */
+  fill?: boolean
   /** Content for the label row, such as an info icon. */
   labelExtra?: HTMLElement
 }
 
 /**
- * GlimStone's horizontal selector in its well styling: one groove, the idle
- * segments transparent in it, only the chosen one filled.
+ * GlimStone's horizontal selector: one groove with only the chosen segment
+ * filled, or as tabs, a row of badges.
  */
 export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HTMLElement {
-  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, scale = 'small' } = opts
+  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, scale = 'small', variant = 'well' } = opts
+  const chip = variant === 'chip'
   const wrap = document.createElement('div')
   wrap.className = 'control-slider'
 
@@ -66,9 +77,10 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   }
 
   const row = document.createElement('div')
-  row.className = `segmented-row glim-well segmented-row--${scale}`
+  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}`
   row.setAttribute('role', 'tablist')
-  if (opts.label) row.setAttribute('aria-label', opts.label)
+  const name = opts.label ?? opts.ariaLabel
+  if (name) row.setAttribute('aria-label', name)
   wrap.appendChild(row)
 
   let active = opts.value
@@ -95,13 +107,25 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       btn.setAttribute('role', 'tab')
       btn.setAttribute('aria-selected', String(isActive))
       btn.tabIndex = isActive ? 0 : -1
+      if (choice.glyph) {
+        const glyph = document.createElement('span')
+        glyph.className = 'segmented-button-glyph'
+        glyph.innerHTML = choice.glyph
+        btn.appendChild(glyph)
+      }
       const labelSpan = document.createElement('span')
       labelSpan.className = 'segmented-button-label'
       labelSpan.textContent = choice.label
       btn.appendChild(labelSpan)
-      // Only the chosen segment is coloured; its fill already marks the pick,
-      // and washing the rest would be noise.
-      if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
+      if (chip && rainbowBaseIndex !== undefined) {
+        // A tab keeps its colour at rest on its glyph, so every tab owns its
+        // position whatever the mode; the variables only answer under rainbow.
+        for (const [prop, value] of Object.entries(hueVars(rainbowBaseIndex + index))) btn.style.setProperty(prop, value)
+        btn.classList.add('glim-hue', 'glim-hue-icon')
+        if (isActive) btn.classList.add('glim-active')
+      } else if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
+        // In the well only the chosen segment is coloured; its fill already
+        // marks the pick, and washing the rest would be noise.
         btn.classList.add('glim-hue', 'glim-active')
       }
       btn.addEventListener('click', () => choose(choice.value))
@@ -169,6 +193,7 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       // segment of a full row down; the growth takes it back.
       b.style.flex = `1 0 calc((100% - ${perRow} * ${gap}px) / ${perRow})`
     }
+    if (opts.fill) row.style.width = '100%'
   }
 
   if (scale === 'big') {

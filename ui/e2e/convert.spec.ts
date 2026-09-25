@@ -11,6 +11,10 @@ function settingsButton(page: import('@playwright/test').Page) {
   return page.locator('.settings-button')
 }
 
+function settingsTab(page: import('@playwright/test').Page, name: string) {
+  return page.getByRole('tablist', { name: 'Settings section' }).getByRole('tab', { name, exact: true })
+}
+
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
   await page.goto('/')
 
@@ -176,14 +180,52 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   // the DOM and toBeHidden is the check.
   await expect(page.getByText('Width (columns)', { exact: true })).toBeHidden()
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
-  await expect(page.getByText('Shape', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Back')
   await expect(page.locator('.about-versions')).toContainText('GlimStone')
 
   await badge.click()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
-  await expect(page.getByText('Shape', { exact: true })).toBeHidden()
+  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeHidden()
   await expect(badge).toHaveAccessibleName('Settings')
+})
+
+test('Settings sorts its cards into three tabs, with the brand card in the top left corner', async ({ page }) => {
+  await page.goto('/')
+  const brand = page.locator('.brand-card')
+  const onConvert = await brand.boundingBox()
+
+  await settingsButton(page).click()
+  const tabs = page.getByRole('tablist', { name: 'Settings section' })
+  await expect(tabs.getByRole('tab')).toHaveText(['General', 'Look', 'App'])
+  await expect(settingsTab(page, 'General')).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByText('Presets', { exact: true })).toBeVisible()
+  await expect(page.getByText('About TrickWork', { exact: true })).toBeVisible()
+  await expect(page.getByText('Shape', { exact: true })).toBeHidden()
+  await expect(page.locator('.app-tiles')).toBeHidden()
+
+  await settingsTab(page, 'Look').click()
+  await expect(page.getByText('Shape', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeHidden()
+
+  await page.keyboard.press('ArrowRight')
+  await expect(settingsTab(page, 'App')).toHaveAttribute('aria-selected', 'true')
+  await expect(page.locator('.app-tiles')).toBeVisible()
+  await expect(page.getByText('Shape', { exact: true })).toBeHidden()
+
+  const onSettings = await brand.boundingBox()
+  const strip = await tabs.boundingBox()
+  if (!onConvert || !onSettings || !strip) throw new Error('boxes missing')
+  // Beside the preview the card stands on the right; on Settings it takes the
+  // top left corner, level with the tabs.
+  expect(onConvert.x).toBeGreaterThan(strip.x)
+  expect(onSettings.x + onSettings.width).toBeLessThanOrEqual(strip.x)
+  expect(Math.abs(onSettings.y - strip.y)).toBeLessThan(2)
+
+  // Settings opens on the tab it was left on.
+  await settingsButton(page).click()
+  await settingsButton(page).click()
+  await expect(settingsTab(page, 'App')).toHaveAttribute('aria-selected', 'true')
 })
 
 test('switching language updates the badge label and every card, including ones on the other page', async ({ page }) => {
@@ -378,6 +420,7 @@ test('rainbow mode gives each queue row its own hue, and the language picker sho
   expect(Array.from(firstOptionText ?? '').some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(true)
   await page.keyboard.press('Escape')
 
+  await settingsTab(page, 'Look').click()
   await page.getByRole('switch', { name: 'Rainbow' }).click()
   await settingsButton(page).click()
 
@@ -475,6 +518,7 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
 test('the App card in the browser offers the desktop downloads of the running version', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
   const tiles = page.locator('.app-tiles a.app-tile')
   await expect(tiles).toHaveCount(5)
   const version = await page.locator('.about-versions a').first().textContent()

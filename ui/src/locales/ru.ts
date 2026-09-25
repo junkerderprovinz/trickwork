@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Назад',
   'nav.undo': 'Отменить',
   'nav.redo': 'Повторить',
+  'settings.section': 'Раздел настроек',
+  'settings.general': 'Общие',
+  'settings.look': 'Внешний вид',
+  'settings.app': 'Приложение',
 
   'history.eyebrow': 'История',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Пакетный экспорт: {succeeded} успешно, {failed} с ошибкой{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} отменено',
 
-  'appearance.eyebrow': 'Внешний вид',
   'appearance.shape': 'Форма',
   'appearance.round': 'Круглая',
   'appearance.soft': 'Мягкая',

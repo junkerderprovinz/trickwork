@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Quay lại',
   'nav.undo': 'Hoàn tác',
   'nav.redo': 'Làm lại',
+  'settings.section': 'Phần cài đặt',
+  'settings.general': 'Chung',
+  'settings.look': 'Giao diện',
+  'settings.app': 'Ứng dụng',
 
   'history.eyebrow': 'Lịch sử',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Xuất hàng loạt: {succeeded} thành công, {failed} thất bại{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} đã hủy',
 
-  'appearance.eyebrow': 'Giao diện',
   'appearance.shape': 'Hình dạng',
   'appearance.round': 'Tròn',
   'appearance.soft': 'Mềm mại',

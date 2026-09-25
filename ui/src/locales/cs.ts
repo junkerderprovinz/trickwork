@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Zpět',
   'nav.undo': 'Zpět',
   'nav.redo': 'Znovu',
+  'settings.section': 'Oddíl nastavení',
+  'settings.general': 'Obecné',
+  'settings.look': 'Vzhled',
+  'settings.app': 'Aplikace',
 
   'history.eyebrow': 'Historie',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Hromadný export: {succeeded} úspěšně, {failed} neúspěšně{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} zrušeno',
 
-  'appearance.eyebrow': 'Vzhled',
   'appearance.shape': 'Tvar',
   'appearance.round': 'Kulatý',
   'appearance.soft': 'Jemný',

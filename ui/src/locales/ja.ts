@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': '戻る',
   'nav.undo': '元に戻す',
   'nav.redo': 'やり直す',
+  'settings.section': '設定の区分',
+  'settings.general': '一般',
+  'settings.look': '外観',
+  'settings.app': 'アプリ',
 
   'history.eyebrow': '履歴',
 
@@ -144,7 +148,6 @@ const dict: Translations = {
   'export.batchSummary': '一括エクスポート: 成功{succeeded}件、失敗{failed}件{cancelledSuffix}。',
   'export.batchCancelledSuffix': '、キャンセル{cancelled}件',
 
-  'appearance.eyebrow': '外観',
   'appearance.shape': '形状',
   'appearance.round': '丸型',
   'appearance.soft': 'ソフト',

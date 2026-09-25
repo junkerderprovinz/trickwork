@@ -12,6 +12,10 @@ export const en = {
   'nav.backToConvert': 'Back',
   'nav.undo': 'Undo',
   'nav.redo': 'Redo',
+  'settings.section': 'Settings section',
+  'settings.general': 'General',
+  'settings.look': 'Look',
+  'settings.app': 'App',
 
   'history.eyebrow': 'History',
 
@@ -147,7 +151,6 @@ export const en = {
   'export.batchSummary': 'Batch export: {succeeded} succeeded, {failed} failed{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} cancelled',
 
-  'appearance.eyebrow': 'Appearance',
   'appearance.shape': 'Shape',
   'appearance.round': 'Round',
   'appearance.soft': 'Soft',
@@ -258,6 +261,10 @@ export const de: Translations = {
   'nav.backToConvert': 'Zurück',
   'nav.undo': 'Rückgängig',
   'nav.redo': 'Wiederherstellen',
+  'settings.section': 'Einstellungsbereich',
+  'settings.general': 'Allgemein',
+  'settings.look': 'Aussehen',
+  'settings.app': 'App',
 
   'history.eyebrow': 'Verlauf',
 
@@ -393,7 +400,6 @@ export const de: Translations = {
   'export.batchSummary': 'Batch-Export: {succeeded} erfolgreich, {failed} fehlgeschlagen{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} abgebrochen',
 
-  'appearance.eyebrow': 'Erscheinungsbild',
   'appearance.shape': 'Form',
   'appearance.round': 'Rund',
   'appearance.soft': 'Abgerundet',

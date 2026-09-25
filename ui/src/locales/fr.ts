@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Retour',
   'nav.undo': 'Annuler',
   'nav.redo': 'Rétablir',
+  'settings.section': 'Section des réglages',
+  'settings.general': 'Général',
+  'settings.look': 'Apparence',
+  'settings.app': 'App',
 
   'history.eyebrow': 'Historique',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Export groupé : {succeeded} réussis, {failed} échoués{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} annulés',
 
-  'appearance.eyebrow': 'Apparence',
   'appearance.shape': 'Forme',
   'appearance.round': 'Rond',
   'appearance.soft': 'Doux',

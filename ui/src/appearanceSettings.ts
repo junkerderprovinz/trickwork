@@ -20,13 +20,12 @@ import {
 import { applyDisco, discoTap } from './design/disco'
 import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
-import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
-import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
+import { repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { iconReset } from './icons'
-import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
+import { subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
 const HEX_RE = /^#[0-9a-fA-F]{6}$/
@@ -122,12 +121,13 @@ function swatchReset(onClick: () => void): HTMLButtonElement {
 }
 
 // Where each picker starts in the palette, so stacked pickers do not repeat
-// one colour straight down the page.
-const HUE_OFFSET = { shape: 0, theme: 3, motion: 5, labels: 1 }
+// one colour straight down the page. The settings tabs stand above them all,
+// so they start where none of the pickers does.
+export const HUE_OFFSET = { tabs: 6, shape: 0, theme: 3, motion: 5, labels: 1 }
 
 /**
- * Mounts the appearance card. The returned function is for leaving the
- * Settings view: an egg found there is offered only until then.
+ * Mounts the appearance card. The returned function is for leaving it, to
+ * another tab or out of Settings: an egg found here is offered only until then.
  */
 export function mountAppearanceSettings(container: HTMLElement): () => void {
   const heading = document.createElement('div')
@@ -174,7 +174,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
   // each label.
   function build(): void {
     if (pickerOpen) return
-    heading.textContent = t('appearance.eyebrow')
+    heading.textContent = t('settings.look')
     panel.innerHTML = ''
 
     const shapes = shape === 'leaf' || leafFound ? [...SHAPES, 'leaf' as const] : SHAPES
@@ -247,7 +247,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
     })
 
-    panel.append(languageBlock(), shapeRow, themeRow, motionRow, labelsRow, colourBlock())
+    panel.append(shapeRow, themeRow, motionRow, labelsRow, colourBlock())
   }
 
   // The accent row and the rainbow block. The accent row stays, dimmed, while
@@ -432,23 +432,6 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
 
     block.append(accentWrap, rainbowWrap)
     return block
-  }
-
-  function languageBlock(): HTMLElement {
-    const languageWrap = document.createElement('div')
-    languageWrap.className = 'control-slider'
-    const languageLabel = document.createElement('span')
-    languageLabel.textContent = t('appearance.language')
-    const languageOptions = LOCALES.map((locale) => ({
-      value: locale.code,
-      label: locale.label,
-      flag: flagEmoji(locale.flag),
-    }))
-    const languageDropdown = customDropdown(languageOptions, currentLocale(), (value) => {
-      void setLocale(value)
-    }, t('appearance.language'))
-    languageWrap.append(languageLabel, languageDropdown)
-    return languageWrap
   }
 
   build()

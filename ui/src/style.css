@@ -143,6 +143,14 @@ html, body {
   grid-area: side;
 }
 
+/* On Settings the brand card holds the top left corner, and the tabs and cards
+   stand to its right. */
+.app-body--settings {
+  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-rows: auto;
+  grid-template-areas: "brand main";
+}
+
 @media (max-width: 860px) {
   .app-body {
     grid-template-columns: minmax(0, 1fr);
@@ -177,20 +185,24 @@ html, body {
   }
 }
 
-/* Settings is a centred, width-capped page, and roomier than the dense
-   Convert cards: it is read, not glanced at mid-drag. The cap fits the App
-   card's five desktop tiles in one row. */
+/* Settings is a width-capped column, and roomier than the dense Convert cards:
+   it is read, not glanced at mid-drag. The cap fits the App card's five desktop
+   tiles in one row, and the tabs span it. The tabs' top lines up with the brand
+   card's, and the first card keeps the one vertical rhythm below them. */
 .settings-view {
-  padding-top: 0.75rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 2.5rem;
+  max-width: 42rem;
+}
+
+.settings-cards {
+  display: flex;
+  flex-direction: column;
   gap: 2.5rem;
 }
 
 .settings-card {
-  width: 100%;
-  max-width: 42rem;
   padding: 1.75rem 2rem;
 }
 
@@ -986,6 +998,46 @@ button:focus-visible {
 .segmented-button--active:hover {
   background-color: var(--accent);
   color: var(--accent-contrast);
+}
+
+/* The tabs over a page: no groove, every tab a badge of its own at rest. */
+.segmented-row.segmented-row--chip {
+  gap: 0.25rem;
+  padding: 0;
+}
+
+.segmented-row--chip .segmented-button {
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-weight: 500;
+  background-color: var(--carbon-surface2);
+}
+
+.segmented-row--chip .segmented-button:hover {
+  background-color: var(--carbon-surface3);
+}
+
+.segmented-row--chip .segmented-button--active,
+.segmented-row--chip .segmented-button--active:hover {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* A tab's glyph is the rail's size, 20px. Idle, it wears the tab's colour in
+   every mode; the reactive rainbow rests it through --accent. Chosen, it takes
+   the fill's ink, where its own colour would vanish. */
+.segmented-button-glyph {
+  display: inline-flex;
+  flex: none;
+}
+
+.segmented-button-glyph svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.segmented-button:not(.segmented-button--active) .segmented-button-glyph {
+  color: var(--accent);
 }
 
 /* The eight accent presets, wrapping on narrow widths, with the reset button

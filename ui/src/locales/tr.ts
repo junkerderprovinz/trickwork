@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Geri',
   'nav.undo': 'Geri al',
   'nav.redo': 'Yinele',
+  'settings.section': 'Ayar bölümü',
+  'settings.general': 'Genel',
+  'settings.look': 'Görünüm',
+  'settings.app': 'Uygulama',
 
   'history.eyebrow': 'Geçmiş',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Toplu dışa aktarım: {succeeded} başarılı, {failed} başarısız{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} iptal edildi',
 
-  'appearance.eyebrow': 'Görünüm',
   'appearance.shape': 'Şekil',
   'appearance.round': 'Yuvarlak',
   'appearance.soft': 'Yumuşak',

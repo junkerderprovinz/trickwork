@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Înapoi',
   'nav.undo': 'Anulează',
   'nav.redo': 'Refă',
+  'settings.section': 'Secțiune setări',
+  'settings.general': 'General',
+  'settings.look': 'Aspect',
+  'settings.app': 'Aplicație',
 
   'history.eyebrow': 'Istoric',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Export în lot: {succeeded} reușite, {failed} eșuate{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} anulate',
 
-  'appearance.eyebrow': 'Aspect',
   'appearance.shape': 'Formă',
   'appearance.round': 'Rotund',
   'appearance.soft': 'Moale',

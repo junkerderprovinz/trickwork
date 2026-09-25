@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'กลับ',
   'nav.undo': 'เลิกทำ',
   'nav.redo': 'ทำซ้ำ',
+  'settings.section': 'ส่วนของการตั้งค่า',
+  'settings.general': 'ทั่วไป',
+  'settings.look': 'รูปลักษณ์',
+  'settings.app': 'แอป',
 
   'history.eyebrow': 'ประวัติ',
 
@@ -144,7 +148,6 @@ const dict: Translations = {
   'export.batchSummary': 'ส่งออกเป็นชุด: สำเร็จ {succeeded} รายการ ล้มเหลว {failed} รายการ{cancelledSuffix}',
   'export.batchCancelledSuffix': ' ยกเลิก {cancelled} รายการ',
 
-  'appearance.eyebrow': 'ลักษณะที่ปรากฏ',
   'appearance.shape': 'รูปทรง',
   'appearance.round': 'มน',
   'appearance.soft': 'นุ่มนวล',

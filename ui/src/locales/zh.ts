@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': '返回',
   'nav.undo': '撤销',
   'nav.redo': '重做',
+  'settings.section': '设置分区',
+  'settings.general': '常规',
+  'settings.look': '外观',
+  'settings.app': '应用',
 
   'history.eyebrow': '历史',
 
@@ -143,7 +147,6 @@ const dict: Translations = {
   'export.batchSummary': '批量导出：成功 {succeeded} 个，失败 {failed} 个{cancelledSuffix}。',
   'export.batchCancelledSuffix': '，已取消 {cancelled} 个',
 
-  'appearance.eyebrow': '外观',
   'appearance.shape': '形状',
   'appearance.round': '圆形',
   'appearance.soft': '柔和',

@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Takaisin',
   'nav.undo': 'Kumoa',
   'nav.redo': 'Tee uudelleen',
+  'settings.section': 'Asetusosio',
+  'settings.general': 'Yleiset',
+  'settings.look': 'Ulkoasu',
+  'settings.app': 'Sovellus',
 
   'history.eyebrow': 'Historia',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Eräajovienti: {succeeded} onnistui, {failed} epäonnistui{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} peruutettu',
 
-  'appearance.eyebrow': 'Ulkoasu',
   'appearance.shape': 'Muoto',
   'appearance.round': 'Pyöreä',
   'appearance.soft': 'Pehmeä',

@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'Tilbake',
   'nav.undo': 'Angre',
   'nav.redo': 'Gjør om',
+  'settings.section': 'Innstillingsdel',
+  'settings.general': 'Generelt',
+  'settings.look': 'Utseende',
+  'settings.app': 'App',
 
   'history.eyebrow': 'Historikk',
 
@@ -145,7 +149,6 @@ const dict: Translations = {
   'export.batchSummary': 'Batcheksport: {succeeded} vellykket, {failed} mislyktes{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} avbrutt',
 
-  'appearance.eyebrow': 'Utseende',
   'appearance.shape': 'Form',
   'appearance.round': 'Rund',
   'appearance.soft': 'Myk',

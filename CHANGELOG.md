@@ -4,6 +4,11 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- Settings has three tabs: General with the language, the presets and the About card, Look with shape, theme, animations, labels and colours, and App.
+- On the Settings page the logo card moves to the top left corner, beside the tabs.
+
 ## 1.2.0 - 2026-09-25
 
 ### ✨ Added

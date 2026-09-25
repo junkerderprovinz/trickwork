@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': '뒤로',
   'nav.undo': '실행 취소',
   'nav.redo': '다시 실행',
+  'settings.section': '설정 구역',
+  'settings.general': '일반',
+  'settings.look': '모양',
+  'settings.app': '앱',
 
   'history.eyebrow': '기록',
 
@@ -144,7 +148,6 @@ const dict: Translations = {
   'export.batchSummary': '일괄 내보내기: 성공 {succeeded}건, 실패 {failed}건{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', 취소 {cancelled}건',
 
-  'appearance.eyebrow': '모양',
   'appearance.shape': '형태',
   'appearance.round': '둥근형',
   'appearance.soft': '부드러운형',

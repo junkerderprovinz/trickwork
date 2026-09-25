@@ -10,6 +10,10 @@ const dict: Translations = {
   'nav.backToConvert': 'חזרה',
   'nav.undo': 'בטל',
   'nav.redo': 'בצע שוב',
+  'settings.section': 'מקטע הגדרות',
+  'settings.general': 'כללי',
+  'settings.look': 'מראה',
+  'settings.app': 'אפליקציה',
 
   'history.eyebrow': 'היסטוריה',
 
@@ -144,7 +148,6 @@ const dict: Translations = {
   'export.batchSummary': 'ייצוא מרוכז: {succeeded} הצליחו, {failed} נכשלו{cancelledSuffix}.',
   'export.batchCancelledSuffix': ', {cancelled} בוטלו',
 
-  'appearance.eyebrow': 'מראה',
   'appearance.shape': 'צורה',
   'appearance.round': 'עגול',
   'appearance.soft': 'רך',

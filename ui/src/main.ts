@@ -18,7 +18,8 @@ import { mountTransformPanel } from './transformPanel'
 import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
-import { mountAppearanceSettings } from './appearanceSettings'
+import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
+import { mountGeneralSettings } from './generalSettings'
 import { mountAboutPanel } from './aboutPanel'
 import { mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
@@ -26,8 +27,8 @@ import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
-import { iconAppearance, iconBack } from './icons'
-import { glimButton, updateButton } from './controlWidgets'
+import { iconApp, iconAppearance, iconBack, iconGeneral, iconLook } from './icons'
+import { glimButton, segmentedRow, updateButton } from './controlWidgets'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -111,18 +112,32 @@ makeReorderable(secondary, [
   { id: 'export', el: exportCard },
 ])
 
-// The Settings view: theming, language and presets, without a preview.
+// The Settings view, without a preview: a strip of tabs over the cards of the
+// open one. Each tab's cards count their rainbow positions from the start.
+type SettingsTab = 'general' | 'look' | 'app'
 const settingsView = document.createElement('div')
 settingsView.className = 'settings-view'
-const settingsCard = section(0, 'settings-card')
+const tabSlot = document.createElement('div')
+tabSlot.className = 'settings-tabs'
+const settingsCards = document.createElement('div')
+settingsCards.className = 'settings-cards'
+const generalCard = section(0, 'settings-card')
 const presetsCard = section(1, 'settings-card')
-const appCard = section(2, 'settings-card')
-const aboutCard = section(3, 'settings-card')
-settingsView.append(settingsCard, presetsCard, appCard, aboutCard)
+const aboutCard = section(2, 'settings-card')
+const lookCard = section(0, 'settings-card')
+const appCard = section(0, 'settings-card')
+const tabCards: Record<SettingsTab, HTMLElement[]> = {
+  general: [generalCard, presetsCard, aboutCard],
+  look: [lookCard],
+  app: [appCard],
+}
+settingsCards.append(generalCard, presetsCard, aboutCard, lookCard, appCard)
+settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandCard, main, secondary)
 
 let onSettings = false
+let settingsTab: SettingsTab = 'general'
 
 function applyButtonLabel(): void {
   updateButton(settingsButton, {
@@ -131,28 +146,63 @@ function applyButtonLabel(): void {
   })
 }
 
-let leaveSettings = (): void => {}
+let leaveLook = (): void => {}
+
+// The page entrance runs on every arrival, so it is restarted by taking the
+// class off and forcing a style pass before putting it back.
+function enter(el: HTMLElement): void {
+  el.classList.remove('glim-page-enter')
+  void el.offsetWidth
+  el.classList.add('glim-page-enter')
+}
+
+function showTab(): void {
+  for (const [tab, cards] of Object.entries(tabCards)) {
+    for (const card of cards) card.style.display = tab === settingsTab ? '' : 'none'
+  }
+}
+
+function buildTabs(): void {
+  const tabs = segmentedRow<SettingsTab>({
+    ariaLabel: t('settings.section'),
+    choices: [
+      { value: 'general', label: t('settings.general'), glyph: iconGeneral() },
+      { value: 'look', label: t('settings.look'), glyph: iconLook() },
+      { value: 'app', label: t('settings.app'), glyph: iconApp() },
+    ],
+    value: settingsTab,
+    scale: 'big',
+    variant: 'chip',
+    fill: true,
+    rainbowBaseIndex: HUE_OFFSET.tabs,
+    onChange: (tab) => {
+      if (settingsTab === 'look') leaveLook()
+      settingsTab = tab
+      showTab()
+      enter(settingsCards)
+    },
+  })
+  tabSlot.replaceChildren(tabs)
+}
 
 function render(): void {
   primary.style.display = onSettings ? 'none' : ''
   secondary.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
+  body.classList.toggle('app-body--settings', onSettings)
   applyButtonLabel()
-  // The page entrance runs on every arrival, so it is restarted by taking the
-  // class off and forcing a style pass before putting it back.
-  for (const shown of onSettings ? [settingsView] : [primary, secondary]) {
-    shown.classList.remove('glim-page-enter')
-    void shown.offsetWidth
-    shown.classList.add('glim-page-enter')
-  }
+  for (const shown of onSettings ? [settingsView] : [primary, secondary]) enter(shown)
 }
 
 settingsButton.addEventListener('click', () => {
-  if (onSettings) leaveSettings()
+  if (onSettings && settingsTab === 'look') leaveLook()
   onSettings = !onSettings
   render()
 })
 subscribeLocale(applyButtonLabel)
+subscribeLocale(buildTabs)
+buildTabs()
+showTab()
 render()
 
 // Ctrl+Z, Ctrl+Shift+Z and Ctrl+Y, or Cmd on macOS. A focused text field
@@ -186,10 +236,11 @@ mountTransformPanel(transformCard, store)
 mountFiltersPanel(filtersCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
-leaveSettings = mountAppearanceSettings(settingsCard)
+mountGeneralSettings(generalCard)
 mountPresetsPanel(presetsCard, store)
-mountAppPanel(appCard)
 mountAboutPanel(aboutCard)
+leaveLook = mountAppearanceSettings(lookCard)
+mountAppPanel(appCard)
 
 // Every card heading is its section badge, and in the reactive rainbow mode it
 // lights up while the pointer is anywhere in its card.
