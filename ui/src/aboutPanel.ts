@@ -2,7 +2,8 @@
 // is, then the money with its own buttons, then the way to report something,
 // then the versions as a footer. It replaces the version line.
 
-import { COFFEE_BUTTON_ART, GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
+import { COFFEE_BUTTON_SVG, MAIL_SVG } from './design/appMarks'
+import { GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
 import { openCoffeeWindow, openCryptoWindow, openExternal, openPaypalWindow } from './donateWindows'
 import { subscribeLocale, t } from './i18n'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
@@ -45,9 +46,9 @@ export function mountAboutPanel(container: HTMLElement): void {
   for (const p of [body, coffeeText, reportText]) p.classList.add('about-text')
 
   const giveRow = document.createElement('div')
-  giveRow.className = 'readme-btn-rows about-give'
+  giveRow.className = 'glim-readme-btn-rows glim-about-give'
   const reportRow = document.createElement('div')
-  reportRow.className = 'readme-btn-rows'
+  reportRow.className = 'glim-readme-btn-rows'
 
   const versions = document.createElement('p')
   versions.className = 'about-versions glim-num'
@@ -60,14 +61,14 @@ export function mountAboutPanel(container: HTMLElement): void {
     coffeeText.textContent = t('about.coffee')
     reportText.textContent = t('about.report')
     giveRow.replaceChildren(
-      actionUnit('coffee', { name: t('about.coffeeButton'), art: COFFEE_BUTTON_ART }, openCoffeeWindow),
-      actionUnit('paypal', { name: t('about.paypal'), mark: GLYPHS.paypal, tint: 'about-mark-paypal' }, openPaypalWindow),
-      actionUnit('bitcoin', { name: t('about.crypto'), mark: GLYPHS.bitcoin, tint: 'about-mark-bitcoin' }, openCryptoWindow),
+      actionUnit('coffee', { name: t('about.coffeeButton'), art: COFFEE_BUTTON_SVG }, openCoffeeWindow),
+      actionUnit('paypal', { name: t('about.paypal'), mark: GLYPHS.paypal, tint: 'glim-paypal-mark' }, openPaypalWindow),
+      actionUnit('bitcoin', { name: t('about.crypto'), mark: GLYPHS.bitcoin, tint: 'glim-bitcoin-mark' }, openCryptoWindow),
     )
     const mailto = `mailto:${MAIL}?subject=${encodeURIComponent(`TrickWork ${t('about.mailSubject')}`)}`
     reportRow.replaceChildren(
-      actionUnit('github', { name: t('about.repo'), mark: GLYPHS.github, tint: 'about-mark-github' }, () => openExternal(REPO)),
-      actionUnit('house', { name: t('about.mail'), mark: GLYPHS.mail, tint: 'about-mark-house' }, () => openExternal(mailto)),
+      actionUnit('github', { name: t('about.repo'), mark: GLYPHS.github, tint: 'glim-github-mark' }, () => openExternal(REPO)),
+      actionUnit('house', { name: t('about.mail'), mark: MAIL_SVG, tint: 'glim-house-mark' }, () => openExternal(mailto)),
     )
     fitButtonText(giveRow)
     fitButtonText(reportRow)

@@ -171,8 +171,8 @@ export function openPaypalWindow(): void {
     },
   })
 
-  // The free amount sits right of the presets, and a valid entry takes the
-  // selection away from them.
+  // The presets keep the window's width and the free amount stands at the end
+  // of the row under them. A valid entry takes the selection away from them.
   const amountWrap = document.createElement('div')
   amountWrap.className = 'control-slider'
   const amountLabel = document.createElement('span')

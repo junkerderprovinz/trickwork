@@ -109,7 +109,7 @@
   --brand-bitcoin: #f7931a;
   --brand-paypal:  #4fb5f0;
 
-  /* The app tiles' marks that are one flat colour or one gradient, at rest.
+  /* The App tab's marks that are one flat colour or one gradient, at rest.
      The dark theme lifts a colour a dark tile would swallow; the light theme
      keeps the brand's own ("Brand tiles"). */
   --brand-android:           #32de84;
@@ -1270,34 +1270,16 @@ body {
 .glim-btn-md { min-width: var(--btn-w-md); }
 .glim-btn-lg { min-width: var(--btn-w-lg); }
 
-/* A button carrying somebody else's mark: the About card's give routes and its
-   repository link. The adjusted colour (--brand, a theme token) paints the mark
-   at rest, since a published brand colour fails on one of the two grounds. On
-   hover the true colour becomes the fill (--brand-fill), the ground it was drawn
-   for, and label and mark switch to its measured ink (--brand-ink).
-
-   The `svg path` selector is needed because a path that sets its own
-   fill="currentColor" ignores the fill on its <svg>. Every mark here is a
-   single-colour drawing, so painting both levels is safe. A mark with its own
-   ground, such as a coin disc, takes none of these classes. */
-.glim-brand-btn .glim-btn-glyph svg,
-.glim-brand-btn .glim-btn-glyph svg path {
-  fill: var(--brand);
-  transition: fill 120ms;
-}
-.glim-brand-btn:hover:not(:disabled) {
-  background-color: var(--brand-fill);
-  color: var(--brand-ink);
-}
-.glim-brand-btn:hover:not(:disabled) .glim-btn-glyph svg,
-.glim-brand-btn:hover:not(:disabled) .glim-btn-glyph svg path {
-  fill: currentColor;
-}
-
-/* The app tiles' single-colour marks at rest. */
+/* The single-colour marks at rest. A published brand colour fails on one of
+   the two grounds, so the About card's marks take the adjusted theme tokens,
+   and the house mark follows the accent. */
 .glim-android-mark { color: var(--brand-android); }
 .glim-docker-mark { color: var(--brand-docker); }
 .glim-windows-mark { color: var(--brand-windows); }
+.glim-paypal-mark { color: var(--brand-paypal); }
+.glim-bitcoin-mark { color: var(--brand-bitcoin); }
+.glim-github-mark { color: var(--brand-github); }
+.glim-house-mark { color: var(--accent-ink); }
 
 /* A tile carrying a brand mark ("Brand tiles"): under the pointer it fills with
    the brand's own colour (--tile), the same on both themes, and its name and
@@ -1328,7 +1310,7 @@ body {
    single-colour version for the hover. */
 .glim-mark-hover { display: none; }
 
-/* The app tiles' brands: the true colour and the ink that holds on it, white
+/* The brands' tile colours: the true colour and the ink that holds on it, white
    wherever white reaches 2:1 and near-black below that. */
 .glim-tile-windows { --tile: #0078d4; --tile-ink: #ffffff; } /* 4.5:1 */
 .glim-tile-apple   { --tile: #6e6e73; --tile-ink: #ffffff; } /* 5.1:1 */
@@ -1339,39 +1321,237 @@ body {
 .glim-tile-unraid  { --tile: #f15a2c; --tile-ink: #ffffff; } /* 3.4:1 */
 .glim-tile-zip     { --tile: #4d5562; --tile-ink: #ffffff; } /* 7.5:1 */
 .glim-tile-github  { --tile: #181717; --tile-ink: #ffffff; } /* 17.9:1 */
+.glim-tile-paypal  { --tile: #003087; --tile-ink: #ffffff; } /* 13.4:1 */
+.glim-tile-bitcoin { --tile: #f7931a; --tile-ink: #161616; } /* 7.9:1 */
+/* Buy Me a Coffee's own near-black, the ink of their button. 13.8:1. */
+.glim-tile-coffee  { --tile: #ffdd00; --tile-ink: #0d0c22; }
+/* The button that reaches the app's own authors follows the colour engine. */
+.glim-tile-house   { --tile: var(--accent); --tile-ink: var(--accent-contrast); }
 
-/* One block per brand: the adjusted resting mark (a token, because it changes
-   with the theme), then the true colour and its measured ink, which do not. */
-.glim-brand-coffee {
-  --brand: var(--brand-coffee);
-  --brand-fill: #ffdd00;
-  /* Buy Me a Coffee's own near-black, the ink their button uses. 13.8:1. */
-  --brand-ink: #0d0c22;
-}
-.glim-brand-bitcoin {
-  --brand: var(--brand-bitcoin);
-  --brand-fill: #f7931a;
-  --brand-ink: #161616; /* 7.9:1 */
-}
-.glim-brand-paypal {
-  --brand: var(--brand-paypal);
-  --brand-fill: #003087;
-  --brand-ink: #ffffff; /* 13.4:1 */
-}
-.glim-brand-github {
-  --brand: var(--brand-github);
-  --brand-fill: #181717;
-  --brand-ink: #ffffff; /* 18.3:1 */
+/* The README button ("The App tab"): the proportions of the download buttons in
+   the family's READMEs, 160 by 46.6 with a segment of 87 on a 16px rem, so a
+   button and two segments take two places in a row. At rest the mark keeps its
+   colours and the name stands alone in the middle. Under the pointer the whole
+   unit fills with its brand's colour, the name moves up and the second line
+   comes in below it. The unit carries `group` and a `.glim-tile-<brand>`; each
+   button or segment in it is a `.glim-brand-tile`. */
+.glim-readme-btn-rows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8125rem;
 }
 
-/* The house's own button, reaching the app's authors rather than a third
-   party. It follows the colour engine, so all three values are accent tokens:
-   --accent-ink at rest and the ordinary accent pair on hover. */
-.glim-brand-house {
-  --brand: var(--accent-ink);
-  --brand-fill: var(--accent);
-  --brand-ink: var(--accent-contrast);
+.glim-readme-btn-unit {
+  position: relative;
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  isolation: isolate;
 }
+
+.glim-readme-btn {
+  position: relative;
+  flex: none;
+  width: 10rem;
+  height: 2.9125rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The unit clips everything at its edge, a ring outside the button too. */
+.glim-readme-btn:focus-visible {
+  outline-offset: -3px;
+}
+
+.glim-readme-btn.glim-readme-btn-seg {
+  width: 5.4375rem;
+}
+
+.glim-readme-btn-seg::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 1.5px;
+  background-color: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* The height is the README's mark, and the box is wider than tall, so a wide
+   mark such as Unraid's or Docker's is not shrunk to a sliver. */
+.glim-readme-btn-mark {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 1.5rem;
+  width: 2rem;
+  height: 1.5625rem;
+  translate: 0 -50%;
+  display: flex;
+}
+
+.glim-readme-btn-mark svg,
+.glim-readme-btn-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glim-readme-btn-mark svg:not(.glim-mark-hover),
+.glim-readme-btn-art svg {
+  display: block;
+}
+
+/* A vendor's own button artwork, drawn on the README's canvas, which is the
+   button's: Buy Me a Coffee's cup and lettering. */
+.glim-readme-btn-art {
+  position: absolute;
+  inset: 0;
+}
+
+@media (hover: hover) {
+  .group:hover > .glim-brand-tile .glim-readme-btn-mark,
+  .group:hover .glim-readme-btn-hint {
+    color: var(--tile-ink);
+  }
+  /* A segment under the pointer is a shade deeper than the unit it lights. */
+  .glim-readme-btn-group > .glim-readme-btn:hover {
+    background-color: color-mix(in srgb, var(--tile) 86%, black);
+  }
+}
+
+.glim-readme-btn-text {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 3.9375rem 0.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+}
+
+.glim-readme-btn-seg .glim-readme-btn-text {
+  inset-inline: 0.375rem;
+  align-items: center;
+  text-align: center;
+}
+
+.glim-readme-btn-unit:has(.glim-readme-btn-hint) .glim-readme-btn-text {
+  inset-inline-end: 1.75rem;
+}
+
+.glim-readme-btn-name,
+.glim-readme-btn-sub {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.glim-readme-btn-name {
+  font-size: var(--text-body);
+  font-weight: 700;
+  transition: translate calc(var(--motion-page-dur, 0ms) / 2) var(--motion-page-ease, ease);
+}
+
+/* Half the second line's height down, so the name alone sits in the middle. */
+.glim-readme-btn-name:not(:only-child) {
+  translate: 0 0.4375rem;
+}
+
+.glim-readme-btn-sub {
+  font-size: 0.75rem;
+  opacity: 0;
+  translate: 0 0.25rem;
+  transition:
+    opacity calc(var(--motion-page-dur, 0ms) / 2) ease,
+    translate calc(var(--motion-page-dur, 0ms) / 2) var(--motion-page-ease, ease);
+}
+
+/* `--note` holds the second line in view while it reports something, such as
+   a command just copied. A button still to come says so at rest. */
+.glim-readme-btn-unit:is(:hover, :focus-within, .glim-readme-btn-unit--note, .glim-readme-btn-soon) .glim-readme-btn-name {
+  translate: 0 0;
+}
+
+.glim-readme-btn-unit:is(:hover, :focus-within, .glim-readme-btn-unit--note, .glim-readme-btn-soon) .glim-readme-btn-sub {
+  opacity: 0.9;
+  translate: 0 0;
+}
+
+.glim-readme-btn-soon .glim-readme-btn {
+  color: var(--carbon-text-muted);
+  cursor: default;
+}
+
+.glim-readme-btn-soon .glim-readme-btn-mark {
+  opacity: 0.45;
+}
+
+/* Without a pointer there is no hover to bring the second line in. */
+@media (hover: none) {
+  .glim-readme-btn-name:not(:only-child) {
+    translate: 0 0;
+  }
+  .glim-readme-btn-sub {
+    opacity: 0.9;
+    translate: 0 0;
+  }
+}
+
+.glim-readme-btn-hint {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 0.625rem;
+  z-index: 2;
+  translate: 0 -50%;
+}
+
+/* The README's sheen, here once per visit of the pointer and across the whole
+   unit, a group at nearly twice the time so it crosses at the same speed. */
+.glim-readme-btn-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.glim-readme-btn-sheen::after {
+  content: '';
+  position: absolute;
+  top: -0.75rem;
+  bottom: -0.75rem;
+  left: -4rem;
+  width: 2.0625rem;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.28) 45%, rgb(255 255 255 / 0.28) 55%, transparent);
+  transform: skewX(-16deg);
+}
+
+@keyframes glim-readme-sheen {
+  to {
+    left: calc(100% + 2rem);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='off']) .glim-readme-btn-unit:not(.glim-readme-btn-soon):hover .glim-readme-btn-sheen::after {
+    animation: glim-readme-sheen var(--motion-button-sheen-dur) linear;
+  }
+  :root:not([data-motion='off']) .glim-readme-btn-group:hover .glim-readme-btn-sheen::after {
+    animation-duration: calc(var(--motion-button-sheen-dur) * 1.9);
+  }
+}
+
+/* The About card's give buttons stand a blank line of the card's text apart
+   from the sentences above and below them ("The About card"). */
+.glim-about-give {
+  margin-block: calc(var(--text-body) * 1.5);
+}
+
 
 /* The row action while the label mode shows no words: a square at the button
    height, sized by its glyph. In a mode that shows words it is an ordinary

@@ -55,16 +55,16 @@ function dockerUnit(): HTMLDivElement {
   btn.addEventListener('click', () => {
     void navigator.clipboard?.writeText(DOCKER_RUN).then(() => {
       sub.textContent = t('apps.copied')
-      el.classList.add('readme-btn-unit--note')
+      el.classList.add('glim-readme-btn-unit--note')
       window.clearTimeout(timer)
       timer = window.setTimeout(() => {
         sub.textContent = t('apps.dockerSub')
-        el.classList.remove('readme-btn-unit--note')
+        el.classList.remove('glim-readme-btn-unit--note')
       }, 1800)
     })
   })
   const hint = infoIcon(`${t('apps.dockerHint')} ${DOCKER_RUN}`)
-  hint.classList.add('readme-btn-hint')
+  hint.classList.add('glim-readme-btn-hint')
   el.appendChild(hint)
   return el
 }
@@ -78,7 +78,7 @@ export function mountAppPanel(container: HTMLElement): void {
   eyebrow.className = 'glim-eyebrow'
   eyebrowRow.appendChild(eyebrow)
   const rows = document.createElement('div')
-  rows.className = 'readme-btn-rows app-rows'
+  rows.className = 'glim-readme-btn-rows app-rows'
   container.append(eyebrowRow, rows)
 
   function render(): void {

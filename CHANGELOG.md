@@ -16,6 +16,8 @@ All notable changes to TrickWork are documented here.
 
 ### 🎨 Design
 
+- The look follows GlimStone 2.13.0.
+- In the PayPal window the amounts keep the window's width, and your own amount stands at the end of the row under them.
 - Settings has three tabs: General with the presets and the About card, Look with the language, shape, theme, animations, labels and colours, and App.
 - On the Settings page the logo card moves to the top left corner and the Back button to the top right one, with the tabs and cards in the middle of the screen.
 - The App tab offers its downloads as buttons in the shape of the README's, with Windows on ARM and the portable build as segments of the Windows button. At rest a button shows its mark and name; under the pointer it lights up in its brand's colour, the name moves up to make room for the second line, and a sheen runs across it once.

@@ -1,5 +1,6 @@
 // The button in the shape of the README's, used by the App and About cards. Its
-// look and its answer to the pointer are in style.css.
+// look and its answer to the pointer are GlimStone's .glim-readme-btn rules in
+// design/tokens.css.
 
 export interface ButtonFace {
   name: string
@@ -14,33 +15,33 @@ export interface ButtonFace {
 
 /** Fills a link or button with its face. Returns the second line, if it has one. */
 export function buttonFace(el: HTMLElement, face: ButtonFace, segment = false): HTMLSpanElement | undefined {
-  el.classList.add('readme-btn', 'glim-brand-tile')
-  if (segment) el.classList.add('readme-btn-seg')
+  el.classList.add('glim-readme-btn', 'glim-brand-tile')
+  if (segment) el.classList.add('glim-readme-btn-seg')
   el.setAttribute('aria-label', face.sub ? `${face.name} ${face.sub}` : face.name)
   if (face.art) {
     const art = document.createElement('span')
-    art.className = 'readme-btn-art'
+    art.className = 'glim-readme-btn-art'
     art.innerHTML = face.art
     el.appendChild(art)
     return undefined
   }
   if (face.mark) {
     const mark = document.createElement('span')
-    mark.className = `readme-btn-mark ${face.tint ?? ''}`.trim()
+    mark.className = `glim-readme-btn-mark ${face.tint ?? ''}`.trim()
     mark.setAttribute('aria-hidden', 'true')
     mark.innerHTML = face.mark
     el.appendChild(mark)
   }
   const text = document.createElement('span')
-  text.className = 'readme-btn-text'
+  text.className = 'glim-readme-btn-text'
   const name = document.createElement('span')
-  name.className = 'readme-btn-name'
+  name.className = 'glim-readme-btn-name'
   name.textContent = face.name
   text.appendChild(name)
   el.appendChild(text)
   if (face.sub === undefined) return undefined
   const sub = document.createElement('span')
-  sub.className = 'readme-btn-sub'
+  sub.className = 'glim-readme-btn-sub'
   sub.textContent = face.sub
   text.appendChild(sub)
   return sub
@@ -49,9 +50,9 @@ export function buttonFace(el: HTMLElement, face: ButtonFace, segment = false): 
 /** A button, or a button with its segments, which lights up as one in `brand`'s colour. */
 export function buttonUnit(brand: string, parts: HTMLElement[]): HTMLDivElement {
   const el = document.createElement('div')
-  el.className = `readme-btn-unit group glim-tile-${brand}${parts.length > 1 ? ' readme-btn-group' : ''}`
+  el.className = `glim-readme-btn-unit group glim-tile-${brand}${parts.length > 1 ? ' glim-readme-btn-group' : ''}`
   const sheen = document.createElement('span')
-  sheen.className = 'readme-btn-sheen'
+  sheen.className = 'glim-readme-btn-sheen'
   sheen.setAttribute('aria-hidden', 'true')
   el.append(...parts, sheen)
   return el
@@ -63,7 +64,7 @@ export function buttonUnit(brand: string, parts: HTMLElement[]): HTMLDivElement 
  * show.
  */
 export function fitButtonText(root: HTMLElement): void {
-  for (const line of root.querySelectorAll<HTMLElement>('.readme-btn-name, .readme-btn-sub')) {
+  for (const line of root.querySelectorAll<HTMLElement>('.glim-readme-btn-name, .glim-readme-btn-sub')) {
     line.style.fontSize = ''
     if (line.clientWidth === 0) continue
     const over = line.scrollWidth / line.clientWidth
