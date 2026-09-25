@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
-ARG NODE_VERSION=24
+ARG NODE_VERSION=24-slim
 ARG GO_VERSION=1.27@sha256:3680233e3204827fbdc66088528ae6d4b3d034f51d03a99d454f6de034888244
 
-FROM node:${NODE_VERSION}-slim AS client
+FROM node:${NODE_VERSION} AS client
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
