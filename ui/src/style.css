@@ -1488,6 +1488,12 @@ button:focus-visible {
   margin-top: 0.5rem;
 }
 
+/* The give buttons stand a blank line of the card's text apart from the
+   sentences above and below them. */
+.about-give {
+  margin-block: calc(var(--text-body) * 1.5);
+}
+
 .about-versions {
   margin: 0.25rem 0 0;
   display: flex;

@@ -45,7 +45,7 @@ export function mountAboutPanel(container: HTMLElement): void {
   for (const p of [body, coffeeText, reportText]) p.classList.add('about-text')
 
   const giveRow = document.createElement('div')
-  giveRow.className = 'readme-btn-rows'
+  giveRow.className = 'readme-btn-rows about-give'
   const reportRow = document.createElement('div')
   reportRow.className = 'readme-btn-rows'
 
