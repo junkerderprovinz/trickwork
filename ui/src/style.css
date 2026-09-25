@@ -998,9 +998,26 @@ button:focus-visible {
   gap: 0.5rem;
 }
 
-.accent-row > .glim-btn,
-.palette-swatch-row > .glim-btn {
+/* The reset at the end of a colour row is the swatches' size and never shows
+   words, whatever the label mode says. */
+.swatch-reset {
+  width: var(--swatch-size);
+  height: var(--swatch-size);
+  padding: 0;
+  flex-shrink: 0;
   margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--carbon-text-sub);
+}
+.swatch-reset:hover {
+  color: var(--carbon-text);
+}
+/* A glyph alone fills half its box. */
+.swatch-reset svg {
+  width: calc(var(--swatch-size) / 2);
+  height: calc(var(--swatch-size) / 2);
 }
 
 /* The colour row the rainbow switch is not using: dimmed, and a click lands on

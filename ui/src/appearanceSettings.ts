@@ -23,7 +23,7 @@ import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './desig
 import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
-import { customDropdown, glimButton, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
+import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { iconReset } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
@@ -106,6 +106,19 @@ function nearestPreset(hex: string): number {
     }
   })
   return best
+}
+
+// The reset at the end of a colour row stands among swatches, so it takes
+// their size and shows only its glyph in every label mode.
+function swatchReset(onClick: () => void): HTMLButtonElement {
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  btn.className = 'swatch-reset'
+  btn.innerHTML = iconReset()
+  btn.setAttribute('aria-label', t('appearance.resetToDefault'))
+  btn.setAttribute('data-tip', t('appearance.resetToDefault'))
+  btn.addEventListener('click', onClick)
+  return btn
 }
 
 // Where each picker starts in the palette, so stacked pickers do not repeat
@@ -289,16 +302,11 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       accentRow.appendChild(sw)
     })
     accentRow.appendChild(
-      glimButton({
-        label: t('appearance.resetToDefault'),
-        glyph: iconReset(),
-        variant: 'icon',
-        onClick: () => {
-          accent = ''
-          applyAccent(undefined)
-          persist()
-          build()
-        },
+      swatchReset(() => {
+        accent = ''
+        applyAccent(undefined)
+        persist()
+        build()
       }),
     )
     if (rainbowOn) {
@@ -359,15 +367,10 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       paletteRow.appendChild(sw)
     })
     paletteRow.appendChild(
-      glimButton({
-        label: t('appearance.resetToDefault'),
-        glyph: iconReset(),
-        variant: 'icon',
-        onClick: () => {
-          applyRainbow({ ...rainbowState(), palette: [...RAINBOW] })
-          persist()
-          applyDisco(discoOn)
-        },
+      swatchReset(() => {
+        applyRainbow({ ...rainbowState(), palette: [...RAINBOW] })
+        persist()
+        applyDisco(discoOn)
       }),
     )
     if (!rainbowOn) paletteRow.classList.add('is-dimmed')
