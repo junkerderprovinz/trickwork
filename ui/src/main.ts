@@ -57,7 +57,7 @@ function section(hue: number, extra = ''): HTMLDivElement {
 // With only two destinations, a corner Settings badge stands in for
 // GlimStone's sidebar, as GlimStone allows for a single-workspace app.
 const header = document.createElement('header')
-header.className = 'app-header'
+header.className = 'app-header glim-card'
 app.appendChild(header)
 
 // An empty column matching the badge on the right keeps the brand centred.

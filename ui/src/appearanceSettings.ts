@@ -250,8 +250,9 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     panel.append(languageBlock(), shapeRow, themeRow, motionRow, labelsRow, colourBlock())
   }
 
-  // The accent row and the palette row: whichever one the rainbow switch does
-  // not use is dimmed and inert.
+  // The accent row and the rainbow block. The accent row stays, dimmed, while
+  // the rainbow owns the colours, since its value still paints what takes no
+  // hue.
   function colourBlock(): HTMLElement {
     const block = document.createElement('div')
     block.className = 'appearance-colours'
@@ -383,8 +384,6 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
         applyDisco(discoOn)
       }),
     )
-    if (!rainbowOn) paletteRow.classList.add('is-dimmed')
-
     const reactiveRow = switchRow(
       t('appearance.rainbowReactive'),
       rainbowState().reactive,
@@ -405,7 +404,14 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
       infoIcon(t('appearance.rainbowRotateHint')),
     )
-    rainbowWrap.append(rainbowRow, reactiveRow, rotateRow)
+    // What hangs off the rainbow is absent while it is off, since none of it
+    // would answer; its own switch stays.
+    rainbowWrap.append(rainbowRow)
+    if (!rainbowOn) {
+      block.append(accentWrap, rainbowWrap)
+      return block
+    }
+    rainbowWrap.append(reactiveRow, rotateRow)
 
     if (discoFound || discoOn) {
       rainbowWrap.appendChild(

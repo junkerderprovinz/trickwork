@@ -4,6 +4,12 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- The logo and the Settings button sit in a card of their own at the top.
+- A switch is a little smaller, and its knob takes the page's ground, so it is dark on the dark theme.
+- Reactive Mode, Colour Rotation and the rainbow palette show only while rainbow mode is on, since none of them does anything while it is off.
+
 ## 1.2.0 - 2026-09-25
 
 ### ✨ Added

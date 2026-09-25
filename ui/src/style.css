@@ -57,7 +57,8 @@ html, body {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem 1.5rem 0;
+  margin: 1rem 1.5rem 0;
+  padding: 0.75rem 1rem;
 }
 
 .app-header .settings-badge {
@@ -164,7 +165,7 @@ html, body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 2.5rem 1rem;
-  padding: 1.75rem 1.5rem 1.5rem;
+  padding: 2.5rem 1.5rem 1.5rem;
   align-items: start;
 }
 
@@ -1088,8 +1089,8 @@ button:focus-visible {
 .toggle-switch {
   position: relative;
   flex-shrink: 0;
-  width: 2.75rem;
-  height: 1.5rem;
+  width: 2.25rem;
+  height: 1.25rem;
   padding: 0;
   background-color: var(--carbon-surface3);
   border-radius: var(--radius-pill);
@@ -1104,18 +1105,20 @@ button:focus-visible {
 .toggle-switch--on:hover {
   background-color: var(--accent);
 }
+/* The knob takes the page's ground, dark on the dark theme, and sits at the
+   logical start, so it mirrors under a right-to-left language. */
 .toggle-switch-knob {
   position: absolute;
-  top: 0.1875rem;
-  left: 0.1875rem;
-  width: 1.125rem;
-  height: 1.125rem;
-  background-color: #fff;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 0.875rem;
+  height: 0.875rem;
+  background-color: var(--carbon-bg);
   border-radius: var(--radius-pill);
-  transition: left 150ms ease;
+  transition: inset-inline-start 150ms ease;
 }
 .toggle-switch--on .toggle-switch-knob {
-  left: 1.4375rem;
+  inset-inline-start: 18px;
 }
 
 /* The custom dropdown of the language picker (customDropdown), roomier than a
