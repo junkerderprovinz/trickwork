@@ -50,8 +50,6 @@ export interface SegmentedRowOptions<T extends string> {
    * over a page do.
    */
   variant?: 'well' | 'chip'
-  /** Stretch the segments across the box, for a strip as wide as the cards under it. */
-  fill?: boolean
   /** Content for the label row, such as an info icon. */
   labelExtra?: HTMLElement
 }
@@ -158,7 +156,6 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       b.style.minWidth = ''
       b.style.flex = ''
     }
-    row.style.width = ''
     row.style.flexWrap = ''
     if (scale === 'small') return
 
@@ -182,7 +179,6 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
     const pinned = share > 0 ? Math.min(Math.max(widest, MIN_SEGMENT), share) : widest
     const { byContent, perRow } = segmentLayout(room, pinned, segments, gap)
     if (byContent) {
-      row.style.width = '100%'
       row.style.flexWrap = 'nowrap'
       for (const b of buttons) b.style.flex = '1 0 auto'
       return
@@ -193,7 +189,6 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       // segment of a full row down; the growth takes it back.
       b.style.flex = `1 0 calc((100% - ${perRow} * ${gap}px) / ${perRow})`
     }
-    if (opts.fill) row.style.width = '100%'
   }
 
   if (scale === 'big') {

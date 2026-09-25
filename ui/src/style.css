@@ -983,16 +983,16 @@ button:focus-visible {
   gap: 1.5rem;
 }
 
-/* The selector's well: one groove holding the segments, sized to them rather
-   than stretched to the card, idle segments transparent in it and only the
-   chosen one filled. Big pickers pin their segments in controlWidgets.ts. */
+/* The selector's well: one groove across the whole width of its card, a
+   narrower one reads as a control that stopped short. Idle segments are
+   transparent in it and only the chosen one is filled. Big pickers pin their
+   segments in controlWidgets.ts. */
 .segmented-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.2rem;
   padding: 0.2rem;
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
   border-radius: var(--radius-pill);
 }
 
@@ -1178,9 +1178,9 @@ button:focus-visible {
   inset-inline-start: 18px;
 }
 
-/* The custom dropdown of the language picker (customDropdown), roomier than a
-   native <select>. The list is absolutely positioned, so opening it does not
-   push the content below. */
+/* The custom dropdown of the language picker (customDropdown). The trigger is a
+   field, so it has a field's height (rule 19); the list is absolutely
+   positioned, so opening it does not push the content below. */
 .dropdown-wrap {
   position: relative;
   width: 100%;
@@ -1193,13 +1193,13 @@ button:focus-visible {
   /* A space character is too narrow a gap between flag and label. */
   gap: 0.6rem;
   text-align: start;
+  height: var(--btn-h);
   background-color: var(--carbon-surface2);
   border-radius: var(--radius-control);
   color: var(--carbon-text);
   font: inherit;
-  /* Larger than body text for this control alone. */
-  font-size: 1rem;
-  padding: 1.1rem 1.2rem;
+  font-size: var(--text-body);
+  padding: 0 0.75rem;
 }
 .dropdown-trigger:hover {
   background-color: var(--carbon-surface3);
@@ -1228,8 +1228,8 @@ button:focus-visible {
   background-color: transparent;
   color: var(--carbon-text-sub);
   border-radius: var(--radius-control);
-  padding: 0.9rem 1rem;
-  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--text-body);
 }
 
 .dropdown-option-flag,

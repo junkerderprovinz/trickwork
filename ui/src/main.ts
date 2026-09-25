@@ -171,7 +171,6 @@ function buildTabs(): void {
     value: settingsTab,
     scale: 'big',
     variant: 'chip',
-    fill: true,
     rainbowBaseIndex: HUE_OFFSET.tabs,
     onChange: (tab) => {
       if (settingsTab === 'look') leaveLook()
