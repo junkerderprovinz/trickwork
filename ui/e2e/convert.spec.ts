@@ -479,7 +479,7 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await expect(tiles).toHaveCount(4)
   const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await tiles.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
-    expect(href).toContain(`/releases/download/v${version}/trickwork-v${version}-`)
+    expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
 })
 

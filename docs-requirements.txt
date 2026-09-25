@@ -1,0 +1,4 @@
+# The documentation site's toolchain, pinned to a stable major line rather than
+# one exact patch, so a build a year from now still resolves. Material 10 is
+# excluded because it rewrites the theming system with no migration path.
+mkdocs-material>=9.5,<10

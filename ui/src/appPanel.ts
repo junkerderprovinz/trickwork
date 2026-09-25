@@ -19,10 +19,10 @@ const UNRAID_CA = 'https://ca.unraid.net/apps/trickwork-0h072450hg59wx'
 const DOCKER_RUN = 'docker run -d --name trickwork --restart unless-stopped -p 3210:3210 ghcr.io/junkerderprovinz/trickwork:latest'
 
 const DESKTOP: { key: TranslationKey; file: string; mark: string; tint: string }[] = [
-  { key: 'apps.windows', file: `trickwork-${TAG}-windows-amd64-installer.exe`, mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
-  { key: 'apps.windowsPortable', file: `trickwork-${TAG}-windows-amd64-portable.exe`, mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
-  { key: 'apps.macos', file: `trickwork-${TAG}-macos-universal.dmg`, mark: APPLE_SVG, tint: '' },
-  { key: 'apps.linux', file: `trickwork-${TAG}-linux-amd64`, mark: LINUX_SVG, tint: '' },
+  { key: 'apps.windows', file: 'trickwork-windows-amd64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
+  { key: 'apps.windowsPortable', file: 'trickwork-windows-amd64-portable.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
+  { key: 'apps.macos', file: 'trickwork-macos-universal.dmg', mark: APPLE_SVG, tint: '' },
+  { key: 'apps.linux', file: 'trickwork-linux-amd64', mark: LINUX_SVG, tint: '' },
 ]
 
 /** The desktop build binds its Go methods on window.go; the container has none. */

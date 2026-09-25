@@ -43,13 +43,36 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 <br>
 
+<!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(0,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.62"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(4320,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(841.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.62"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5161.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(1683.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.62"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(6003.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
+<!-- /give-buttons -->
+
+<br>
+
+<!-- download-buttons: written by scripts/gen_download_buttons.py -->
+<p align="center">
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(0,0,720,245.3))" alt="Download the Windows installer" width="195" height="66.435"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(720,0,720,245.3))" alt="Download the portable Windows app" width="195" height="66.435"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(1440,0,720,245.3))" alt="Download for macOS" width="195" height="66.435"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(2160,0,720,245.3))" alt="Download for Linux" width="195" height="66.435"></a>
+</p>
+<p align="center">
+  <a href="https://github.com/junkerderprovinz/trickwork/pkgs/container/trickwork"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(2880,0,720,245.3))" alt="Run it with Docker" width="195" height="66.435"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(3600,0,720,245.3))" alt="Download the source archive for this release" width="195" height="66.435"></a>
+  <br>
+  <sub>Always the latest release &nbsp;·&nbsp; <a href="https://github.com/junkerderprovinz/trickwork/releases/latest">release notes</a> &nbsp;·&nbsp; <a href="#8-desktop-app">how to run the desktop app</a></sub>
+</p>
+<!-- /download-buttons -->
 
 <br>
 
@@ -73,8 +96,9 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 ## 1. What is this?
 
-TrickWork is a self-hosted, single-purpose tool that converts an image into ASCII (character-based) art. Drop
-an image, tune the sliders, watch the preview update live, export in whichever format you need.
+TrickWork is a free, open-source ASCII art generator. It converts an image into ASCII (character-based) art,
+as a desktop app for Windows, macOS and Linux or as a self-hosted container. Drop an image, tune the sliders,
+watch the preview update live, export in whichever format you need.
 
 The name is a heraldic term: **"tricking"** is the historical practice of sketching a coat of arms in outline
 and marking its colours with letter abbreviations instead of paint, a near-literal description of what this
@@ -112,6 +136,8 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
   correctly instead of assuming every character is the same width.
 - **Real-time live preview**: every slider (width, brightness, contrast), the character-set choice and the
   font all update the preview immediately, no re-render delay.
+- **Image adjustments**: crop, rotate and flip, levels, brightness and contrast, invert, dithering, colour
+  output and sharpening, all with undo and redo.
 - **Batch queue**: drop multiple images at once; each converts and can be exported independently, and one
   bad file never blocks the rest.
 - **Four export formats**: plain **TXT**, a styled **XHTML** document, **RTF** (always rendered in a fixed
@@ -148,7 +174,10 @@ adjust, export," and nothing is remembered between sessions.
 
 ## 6. Install on Unraid
 
-Pull the template into Unraid via the console / SSH:
+TrickWork is in Unraid's Community Applications: open **Apps**, search for **TrickWork** and install it
+([its page in the catalogue](https://ca.unraid.net/apps/trickwork-0h072450hg59wx)).
+
+Or pull the template by hand via the console / SSH:
 
 ```bash
 mkdir -p /boot/config/plugins/dockerMan/templates-user && \

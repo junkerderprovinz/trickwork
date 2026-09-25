@@ -1,0 +1,54 @@
+site_name: TrickWork
+site_description: Free, open-source ASCII art generator. Turns images into proportional-font-aware ASCII art with a live preview and TXT, XHTML, RTF and PNG export, as a desktop app for Windows, macOS and Linux or a self-hosted Docker container.
+site_url: https://junkerderprovinz.github.io/trickwork/
+site_author: Junker der Provinz
+
+repo_url: https://github.com/junkerderprovinz/trickwork
+repo_name: junkerderprovinz/trickwork
+edit_uri: edit/main/docs/
+
+copyright: Copyright (C) 2026 Junker der Provinz. Licensed AGPL-3.0.
+
+theme:
+  name: material
+  language: en
+  # The ribbon reads on both palettes, so one file serves both headers.
+  logo: assets/logo.svg
+  favicon: assets/favicon.png
+  font:
+    text: Noto Sans
+    code: Noto Sans Mono
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: yellow
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: yellow
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - Start here: index.md
+  - Installing: installing.md

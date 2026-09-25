@@ -113,14 +113,14 @@ jobs:
           set -eu
           mkdir -p dist
           cp bundles/trickwork-windows-amd64/TrickWork.exe \
-            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-portable.exe"
+            "dist/trickwork-windows-amd64-portable.exe"
           cp bundles/trickwork-windows-amd64/*-installer.exe \
-            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
+            "dist/trickwork-windows-amd64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
-            "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
+            "dist/trickwork-macos-universal.dmg"
           cp bundles/trickwork-linux-amd64/TrickWork \
-            "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
-          chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
+            "dist/trickwork-linux-amd64"
+          chmod +x "dist/trickwork-linux-amd64"
           ls -lh dist
 
       # release.yml creates the release in parallel, and a runner queue can put
