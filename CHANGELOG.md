@@ -21,8 +21,8 @@ All notable changes to TrickWork are documented here.
 - A new teal logo, in the README banner, the header, the desktop app's icon and the Unraid icon.
 - The look follows GlimStone 2.10.1. Noto Sans ships with the app, so the interface looks the same on every system. In the round shape everything you press is a true pill, and a fresh install starts on soft corners.
 - Every card heading is a filled badge sitting on the card's top edge, and in rainbow mode each card takes its own colour.
-- The language list opens the Settings page, and the header logo is larger.
-- The logo and the Settings button sit in a card of their own at the top of the side column.
+- The language list opens the Settings page.
+- The logo sits in a card of its own at the top of the side column, as wide as the card, with the Settings button and its label below it.
 - The browser tab shows the square TrickWork icon.
 - A switch is a little smaller, and its knob takes the page's ground, so it is dark on the dark theme.
 - Reactive Mode, Colour Rotation and the rainbow palette show only while rainbow mode is on, since none of them does anything while it is off.

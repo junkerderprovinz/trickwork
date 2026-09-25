@@ -27,6 +27,7 @@ import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
 import { iconAppearance, iconBack } from './icons'
+import { glimButton, updateButton } from './controlWidgets'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -59,29 +60,23 @@ body.className = 'app-body'
 app.appendChild(body)
 
 // With only two destinations, the brand card at the top of the side column
-// carries the Settings badge in place of GlimStone's sidebar, as GlimStone
+// carries the Settings button in place of GlimStone's sidebar, as GlimStone
 // allows for a single-workspace app.
 const brandCard = document.createElement('header')
 brandCard.className = 'glim-card brand-card'
 
-// An empty column matching the badge on the right keeps the brand centred.
-const brandSpacer = document.createElement('div')
-brandCard.appendChild(brandSpacer)
-
 const brand = document.createElement('div')
 brand.className = 'app-brand'
-const brandLogoWrap = document.createElement('span')
-brandLogoWrap.innerHTML = brandLogo()
+brand.innerHTML = brandLogo()
 const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
-brand.append(brandLogoWrap, brandName)
+brand.append(brandName)
 brandCard.appendChild(brand)
 
-const settingsBadge = document.createElement('button')
-settingsBadge.type = 'button'
-settingsBadge.className = 'settings-badge'
-brandCard.appendChild(settingsBadge)
+const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconAppearance(), tone: 'neutral', stage: 'none' })
+settingsButton.classList.add('settings-button')
+brandCard.appendChild(settingsButton)
 
 // The main area shows the preview and its source cards, or the Settings page.
 const main = document.createElement('div')
@@ -129,11 +124,11 @@ body.append(brandCard, main, secondary)
 
 let onSettings = false
 
-function applyBadgeLabel(): void {
-  const label = onSettings ? t('nav.backToConvert') : t('nav.settings')
-  settingsBadge.setAttribute('aria-label', label)
-  settingsBadge.setAttribute('data-tip', label)
-  settingsBadge.innerHTML = onSettings ? iconBack() : iconAppearance()
+function applyButtonLabel(): void {
+  updateButton(settingsButton, {
+    label: onSettings ? t('nav.backToConvert') : t('nav.settings'),
+    glyph: onSettings ? iconBack() : iconAppearance(),
+  })
 }
 
 let leaveSettings = (): void => {}
@@ -142,7 +137,7 @@ function render(): void {
   primary.style.display = onSettings ? 'none' : ''
   secondary.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
-  applyBadgeLabel()
+  applyButtonLabel()
   // The page entrance runs on every arrival, so it is restarted by taking the
   // class off and forcing a style pass before putting it back.
   for (const shown of onSettings ? [settingsView] : [primary, secondary]) {
@@ -152,12 +147,12 @@ function render(): void {
   }
 }
 
-settingsBadge.addEventListener('click', () => {
+settingsButton.addEventListener('click', () => {
   if (onSettings) leaveSettings()
   onSettings = !onSettings
   render()
 })
-subscribeLocale(applyBadgeLabel)
+subscribeLocale(applyButtonLabel)
 render()
 
 // Ctrl+Z, Ctrl+Shift+Z and Ctrl+Y, or Cmd on macOS. A focused text field

@@ -7,8 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The badge's name switches between Settings and Back and follows the locale,
 // so it is found by its class.
-function settingsBadge(page: import('@playwright/test').Page) {
-  return page.locator('.settings-badge')
+function settingsButton(page: import('@playwright/test').Page) {
+  return page.locator('.settings-button')
 }
 
 test('drop an image, see ASCII output, export as TXT', async ({ page }) => {
@@ -167,7 +167,7 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await page.goto('/')
 
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
-  const badge = settingsBadge(page)
+  const badge = settingsButton(page)
   await expect(badge).toHaveAccessibleName('Settings')
 
   await badge.click()
@@ -191,7 +191,7 @@ test('switching language updates the badge label and every card, including ones 
 
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
 
-  const badge = settingsBadge(page)
+  const badge = settingsButton(page)
   await badge.click()
   // The language picker is a custom dropdown: open it, then pick the option.
   await page.getByRole('button', { name: 'Language', exact: true }).click()
@@ -213,7 +213,7 @@ test('exporting then importing settings round-trips a change through a real JSON
   await rotate90.click()
   await expect(rotate90).toHaveClass(/segmented-button--active/)
 
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export settings' }).click()
   const download = await downloadPromise
@@ -221,22 +221,22 @@ test('exporting then importing settings round-trips a change through a real JSON
   expect(exportedPath).not.toBeNull()
 
   // Change the setting again so the import below has something real to undo.
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   await rotate0.click()
   await expect(rotate0).toHaveClass(/segmented-button--active/)
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
 
   await page.locator('input[type="file"][accept*="json"]').setInputFiles(exportedPath as string)
   await expect(page.getByText('Settings imported.')).toBeVisible()
 
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   await expect(rotate90).toHaveClass(/segmented-button--active/)
 })
 
 test('a malformed settings file is rejected with an error, not a silent crash', async ({ page }) => {
   await page.goto('/')
 
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   const badFile = {
     name: 'bad-preset.json',
     mimeType: 'application/json',
@@ -371,7 +371,7 @@ test('rainbow mode gives each queue row its own hue, and the language picker sho
   await page.goto('/')
 
   // The language options carry a flag emoji.
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   await page.getByRole('button', { name: 'Language', exact: true }).click()
   const firstOptionText = await page.getByRole('option').first().textContent()
   // A flag emoji is two regional indicator symbols, both above 0xFFFF.
@@ -379,7 +379,7 @@ test('rainbow mode gives each queue row its own hue, and the language picker sho
   await page.keyboard.press('Escape')
 
   await page.getByRole('switch', { name: 'Rainbow' }).click()
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
 
   const fileInput = page.locator('input[type="file"][accept="image/*"]')
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
@@ -474,7 +474,7 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
 
 test('the App card in the browser offers the desktop downloads of the running version', async ({ page }) => {
   await page.goto('/')
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   const tiles = page.locator('.app-tiles a.app-tile')
   await expect(tiles).toHaveCount(5)
   const version = await page.locator('.about-versions a').first().textContent()
@@ -485,7 +485,7 @@ test('the App card in the browser offers the desktop downloads of the running ve
 
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {
   await page.goto('/')
-  await settingsBadge(page).click()
+  await settingsButton(page).click()
   await page.getByRole('button', { name: 'Crypto' }).click()
   const window = page.getByRole('dialog')
   await expect(window).toBeVisible()
