@@ -7,9 +7,10 @@
   ],
   "packageRules": [
     {
-      "description": "Keep @types/node on the major the CI workflows actually run, so the typechecker cannot accept APIs the runtime does not have. Raise this bound together with node-version in ci.yml and desktop.yml.",
+      "description": "Keep @types/node and the node image the container builds with on the major the CI workflows actually run, so neither the typechecker nor the image build can rely on what the runtime does not have. Raise this bound together with node-version in ci.yml and desktop.yml.",
       "matchPackageNames": [
-        "@types/node"
+        "@types/node",
+        "node"
       ],
       "allowedVersions": "<25"
     },
