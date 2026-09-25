@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Bir sunucuda',
   'apps.serverHint': "Ağdaki her tarayıcının açabileceği bir sunucuda TrickWork: Unraid'in Community Applications bölümünden, Docker imajı olarak ya da kaynak koddan derlenerek.",
   'apps.windowsPortable': 'Windows taşınabilir',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Bir tıklama, onu başlatan komutu kopyalar:',
   'apps.copied': 'Kopyalandı',
   'apps.zip': 'Kaynak kod.zip',

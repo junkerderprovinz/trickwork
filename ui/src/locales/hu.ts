@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Szerveren',
   'apps.serverHint': 'A TrickWork szerveren, ahol a hálózat bármely böngészője megnyithatja: az Unraid Community Applications kínálatából, Docker-képként vagy a forráskódból fordítva.',
   'apps.windowsPortable': 'Windows hordozható',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Egy kattintás kimásolja az indító parancsot:',
   'apps.copied': 'Másolva',
   'apps.zip': 'Forráskód.zip',

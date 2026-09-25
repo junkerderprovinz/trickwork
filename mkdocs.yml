@@ -52,3 +52,4 @@ markdown_extensions:
 nav:
   - Start here: index.md
   - Installing: installing.md
+  - How it works and building it: development.md

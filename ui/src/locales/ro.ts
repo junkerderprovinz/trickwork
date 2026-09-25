@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Pe un server',
   'apps.serverHint': 'TrickWork pe un server, unde orice browser din rețea îl poate deschide: din Community Applications de pe Unraid, ca imagine Docker sau compilat din codul sursă.',
   'apps.windowsPortable': 'Windows portabil',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Un clic copiază comanda care îl pornește:',
   'apps.copied': 'Copiat',
   'apps.zip': 'Cod sursă.zip',

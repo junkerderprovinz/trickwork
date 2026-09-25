@@ -1,7 +1,6 @@
 """Generate the README's download buttons from one template.
 
-Two rows: the manual and the Windows and macOS builds, then Linux, the
-container and the source.
+Two rows: Windows and macOS, then Linux, the container, the source and the manual.
 
 Height and corner radius are the Buy Me a Coffee button's (245.3 tall, rx 38.2),
 so both stand the same height at the same width. The width is 720 rather than
@@ -124,15 +123,12 @@ STEP = (RENDER_PX + GAP_PX) / SPEED
 # where the button leads (see write_readme()). One list per row, top to bottom.
 RELEASE = "https://github.com/junkerderprovinz/trickwork/releases/latest/download/"
 FIRST = [
-    # "Docs" rather than "Documentation": 13 characters at font-size 82 need
-    # more than the 482 units left of the right edge. The yellow is the coffee
-    # button's #fd0, and white on yellow fails contrast, so the ink is dark.
-    ("docs", "book", "#fd0", "#0d0c23", "Docs", "online manual", "Read the documentation",
-     "https://junkerderprovinz.github.io/trickwork/"),
     ("windows-installer", "windows", "#0078d4", "#ffffff", "Windows", "Installer", "Download the Windows installer",
      RELEASE + "trickwork-windows-amd64-installer.exe"),
     ("windows-portable", "windows", "#0078d4", "#ffffff", "Windows", "Portable", "Download the portable Windows app",
      RELEASE + "trickwork-windows-amd64-portable.exe"),
+    ("windows-arm", "windows", "#0078d4", "#ffffff", "Windows", "ARM", "Download for Windows on ARM",
+     RELEASE + "trickwork-windows-arm64-installer.exe"),
     # Space grey, since black vanishes against GitHub's dark theme.
     ("macos", "apple", "#6e6e73", "#ffffff", "macOS", "Universal", "Download for macOS",
      RELEASE + "trickwork-macos-universal.dmg"),
@@ -150,6 +146,11 @@ SECOND = [
     # that lists it. Slate, since GitHub's black vanishes in the dark theme.
     ("source-zip", "zip", "#4d5562", "#ffffff", "Source", "zip archive", "Download the source archive for this release",
      "https://github.com/junkerderprovinz/trickwork/releases/latest"),
+    # "Docs" rather than "Documentation": 13 characters at font-size 82 need
+    # more than the 482 units left of the right edge. The yellow is the coffee
+    # button's #fd0, and white on yellow fails contrast, so the ink is dark.
+    ("docs", "book", "#fd0", "#0d0c23", "Docs", "online manual", "Read the documentation",
+     "https://junkerderprovinz.github.io/trickwork/"),
 ]
 ROWS = [FIRST, SECOND]
 BUTTONS = [button for buttons in ROWS for button in buttons]

@@ -197,6 +197,7 @@ const dict: Translations = {
   'apps.serverTitle': '在服务器上',
   'apps.serverHint': '在服务器上运行 TrickWork，网络中的任何浏览器都能打开它：可通过 Unraid 的 Community Applications 安装，也可使用 Docker 镜像或从源代码构建。',
   'apps.windowsPortable': 'Windows 便携版',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': '点击即可复制启动命令：',
   'apps.copied': '已复制',
   'apps.zip': '源代码.zip',

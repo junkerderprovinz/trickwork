@@ -476,7 +476,7 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await page.goto('/')
   await settingsBadge(page).click()
   const tiles = page.locator('.app-tiles a.app-tile')
-  await expect(tiles).toHaveCount(4)
+  await expect(tiles).toHaveCount(5)
   const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await tiles.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)

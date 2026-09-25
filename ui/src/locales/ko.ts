@@ -198,6 +198,7 @@ const dict: Translations = {
   'apps.serverTitle': '서버에서',
   'apps.serverHint': 'TrickWork를 서버에서 실행하면 네트워크의 모든 브라우저에서 열 수 있습니다. Unraid의 Community Applications, Docker 이미지 또는 소스 코드 빌드로 설치할 수 있습니다.',
   'apps.windowsPortable': 'Windows 포터블',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': '클릭하면 실행 명령을 복사합니다:',
   'apps.copied': '복사됨',
   'apps.zip': '소스 코드.zip',

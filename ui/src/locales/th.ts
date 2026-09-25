@@ -198,6 +198,7 @@ const dict: Translations = {
   'apps.serverTitle': 'บนเซิร์ฟเวอร์',
   'apps.serverHint': 'TrickWork บนเซิร์ฟเวอร์ ซึ่งเบราว์เซอร์ใดก็ได้ในเครือข่ายเปิดใช้ได้: จาก Community Applications ของ Unraid เป็นอิมเมจ Docker หรือบิลด์จากซอร์สโค้ด',
   'apps.windowsPortable': 'Windows แบบพกพา',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'คลิกเพื่อคัดลอกคำสั่งที่ใช้เริ่มทำงาน:',
   'apps.copied': 'คัดลอกแล้ว',
   'apps.zip': 'ซอร์สโค้ด.zip',

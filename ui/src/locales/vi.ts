@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Trên máy chủ',
   'apps.serverHint': 'TrickWork trên máy chủ, nơi mọi trình duyệt trong mạng đều mở được: từ Community Applications của Unraid, dưới dạng image Docker hoặc biên dịch từ mã nguồn.',
   'apps.windowsPortable': 'Windows di động',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Một cú nhấp sẽ sao chép lệnh khởi động:',
   'apps.copied': 'Đã sao chép',
   'apps.zip': 'Mã nguồn.zip',

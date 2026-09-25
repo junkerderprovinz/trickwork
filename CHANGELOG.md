@@ -11,6 +11,7 @@ All notable changes to TrickWork are documented here.
 - An App card in Settings. In the browser it offers the desktop app for Windows (installer or portable), macOS and Linux; in the desktop app it offers Unraid's Community Applications, the Docker command and the source code.
 - Settings for how much the interface moves (Off, Subtle, Wild) and for what the buttons show: their words, their symbol, both, or the symbol with the words sliding in under the pointer.
 - An About card in Settings, in place of the version line: what TrickWork is, three ways to give (Buy Me a Coffee, PayPal once, monthly or yearly, and crypto), a way to report a problem on GitHub or by email, and the versions. Each way to give opens a window inside the app; in the desktop app on macOS and Linux PayPal opens its own page instead.
+- A desktop build for Windows on ARM, as an installer and as a portable app, with its own download button and a tile on the App card.
 - Three more accent colours: Orange, Teal and Magenta.
 - Reactive Mode and Colour Rotation for the rainbow palette. Reactive shows a colour only under the pointer or on what is active; rotation starts the palette one colour further along at every visit.
 - A dragged card floats under the pointer while the others make room, and slides into its gap when let go. Escape puts everything back, and with the handle focused the arrow keys move a card one place.
@@ -22,6 +23,7 @@ All notable changes to TrickWork are documented here.
 - Every card heading is a filled badge sitting on the card's top edge, and in rainbow mode each card takes its own colour.
 - The language list opens the Settings page, and the header logo is larger.
 - The logo and the Settings button sit in a card of their own at the top of the side column.
+- The browser tab shows the square TrickWork icon.
 - A switch is a little smaller, and its knob takes the page's ground, so it is dark on the dark theme.
 - Reactive Mode, Colour Rotation and the rainbow palette show only while rainbow mode is on, since none of them does anything while it is off.
 - A selector's options sit in one groove sized to them, rather than stretched across the card.
@@ -34,7 +36,8 @@ All notable changes to TrickWork are documented here.
 ### ⚡ Improved
 
 - Every desktop download is also attached without the version in its name, so a link to the latest release always reaches the newest build.
-- The README has download buttons for every system, and TrickWork has a documentation site at https://junkerderprovinz.github.io/trickwork/.
+- The README has download buttons for every system, and TrickWork has a documentation site at https://junkerderprovinz.github.io/trickwork/. The README is shorter and points to it for installing and building.
+- The screenshots show a knight's helmet turned into ASCII art.
 - Tidied the code comments and log messages.
 
 ### 🐛 Fixed

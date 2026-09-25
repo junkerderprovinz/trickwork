@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Σε διακομιστή',
   'apps.serverHint': 'Το TrickWork σε διακομιστή, όπου κάθε πρόγραμμα περιήγησης στο δίκτυο μπορεί να το ανοίξει: από τα Community Applications του Unraid, ως εικόνα Docker ή χτισμένο από τον πηγαίο κώδικα.',
   'apps.windowsPortable': 'Windows φορητό',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Ένα κλικ αντιγράφει την εντολή που το ξεκινά:',
   'apps.copied': 'Αντιγράφηκε',
   'apps.zip': 'Πηγαίος κώδικας.zip',

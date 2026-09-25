@@ -198,6 +198,7 @@ const dict: Translations = {
   'apps.serverTitle': 'على خادم',
   'apps.serverHint': 'TrickWork على خادم يستطيع أي متصفح في الشبكة فتحه: من Community Applications في Unraid، أو كصورة Docker، أو مبنيًا من الشيفرة المصدرية.',
   'apps.windowsPortable': 'Windows محمول',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'نقرة واحدة تنسخ الأمر الذي يشغّله:',
   'apps.copied': 'تم النسخ',
   'apps.zip': 'الشيفرة المصدرية.zip',

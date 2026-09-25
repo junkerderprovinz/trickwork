@@ -20,6 +20,12 @@ jobs:
             slug: windows-amd64
             # -nsis builds an NSIS installer next to the portable TrickWork.exe.
             extra: "-nsis"
+          # Built on an ARM runner rather than cross-compiled, so a build that
+          # only breaks on ARM breaks here.
+          - os: windows-11-arm
+            platform: windows/arm64
+            slug: windows-arm64
+            extra: "-nsis"
           - os: macos-latest
             platform: darwin/universal
             slug: macos-universal
@@ -116,6 +122,10 @@ jobs:
             "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-portable.exe"
           cp bundles/trickwork-windows-amd64/*-installer.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
+          cp bundles/trickwork-windows-arm64/TrickWork.exe \
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-arm64-portable.exe"
+          cp bundles/trickwork-windows-arm64/*-installer.exe \
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-arm64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
             "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
           cp bundles/trickwork-linux-amd64/TrickWork \

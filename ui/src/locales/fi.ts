@@ -199,6 +199,7 @@ const dict: Translations = {
   'apps.serverTitle': 'Palvelimella',
   'apps.serverHint': 'TrickWork palvelimella, josta mikä tahansa verkon selain voi avata sen: Unraidin Community Applicationsista, Docker-levykuvana tai lähdekoodista käännettynä.',
   'apps.windowsPortable': 'Windows (siirrettävä)',
+  'apps.windowsArm': 'Windows ARM',
   'apps.dockerHint': 'Napsautus kopioi käynnistyskomennon:',
   'apps.copied': 'Kopioitu',
   'apps.zip': 'Lähdekoodi.zip',

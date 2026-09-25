@@ -35,11 +35,11 @@ database, no accounts, nothing to configure beyond the port.
 
 <!-- download-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://junkerderprovinz.github.io/trickwork/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(0,0,720,245.3))" alt="Read the documentation" width="195" height="66.435"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(0,0,720,245.3))" alt="Download the Windows installer" width="195" height="66.435"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(720,0,720,245.3))" alt="Download the Windows installer" width="195" height="66.435"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(720,0,720,245.3))" alt="Download the portable Windows app" width="195" height="66.435"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(1440,0,720,245.3))" alt="Download the portable Windows app" width="195" height="66.435"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(1440,0,720,245.3))" alt="Download for Windows on ARM" width="195" height="66.435"></a>
   &nbsp;
   <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(2160,0,720,245.3))" alt="Download for macOS" width="195" height="66.435"></a>
 </p>
@@ -49,6 +49,8 @@ database, no accounts, nothing to configure beyond the port.
   <a href="https://github.com/junkerderprovinz/trickwork/pkgs/container/trickwork"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(3600,0,720,245.3))" alt="The container image on ghcr.io" width="195" height="66.435"></a>
   &nbsp;
   <a href="https://github.com/junkerderprovinz/trickwork/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(4320,0,720,245.3))" alt="Download the source archive for this release" width="195" height="66.435"></a>
+  &nbsp;
+  <a href="https://junkerderprovinz.github.io/trickwork/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5040,0,720,245.3))" alt="Read the documentation" width="195" height="66.435"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -66,11 +68,11 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5040,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5760,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5881.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(6601.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(6723.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(7443.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -82,16 +84,12 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 1. [What is this?](#1-what-is-this)
 2. [Screenshots](#2-screenshots)
 3. [Features](#3-features)
-4. [How it works](#4-how-it-works)
-5. [Requirements](#5-requirements)
-6. [Install on Unraid](#6-install-on-unraid)
-7. [Plain Docker (no Unraid)](#7-plain-docker-no-unraid)
-8. [Desktop app](#8-desktop-app)
-9. [Development](#9-development)
-10. [Credits](#10-credits)
-11. [License](#11-license)
-12. [How AI is used here](#12-how-ai-is-used-here)
-13. [Support this project](#13-support-this-project)
+4. [Getting started](#4-getting-started)
+5. [Documentation](#5-documentation)
+6. [Credits](#6-credits)
+7. [License](#7-license)
+8. [How AI is used here](#8-how-ai-is-used-here)
+9. [Support this project](#9-support-this-project)
 
 <br>
 
@@ -117,14 +115,14 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
 ## 2. Screenshots
 
 <p align="center">
-  <img src=".github/assets/screenshot-dark.png" alt="TrickWork in dark mode, a converted image, live preview and export options" width="90%">
+  <img src=".github/assets/screenshot-dark.png" alt="TrickWork in dark mode, turning a knight's helmet into ASCII art with the live preview" width="90%">
   <br><em>Dark mode: every slider updates the live preview instantly; export the active image or the whole queue at once.</em>
 </p>
 
 <br>
 
 <p align="center">
-  <img src=".github/assets/screenshot-light.png" alt="TrickWork in light mode, the same conversion, light theme" width="90%">
+  <img src=".github/assets/screenshot-light.png" alt="TrickWork in light mode, the same knight's helmet as ASCII art" width="90%">
   <br><em>Light mode, the same working layout. Theme, shape and accent are all yours to pick in Settings.</em>
 </p>
 
@@ -157,111 +155,48 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
 
 <br>
 
-## 4. How it works
+## 4. Getting started
 
-A single TypeScript/Canvas conversion engine (`core/`) is the *only* place the algorithm lives, built once,
-embedded into both packages, so the desktop app and the container can never drift apart or disagree on what
-a given image should look like. There's no server-side logic to speak of: every operation is "load an image,
-adjust, export," and nothing is remembered between sessions.
+- **Desktop app:** pick your system from the buttons at the top. The portable Windows file and the Linux
+  binary run without installing anything. Windows may warn about an unsigned download the first time; click
+  **More info**, then **Run anyway**.
+- **Docker:**
 
-<br>
+  ```bash
+  docker run -d --name trickwork --restart unless-stopped -p 3210:3210 ghcr.io/junkerderprovinz/trickwork:latest
+  ```
 
-## 5. Requirements
+  Then open `http://localhost:3210/`. No environment variables, no volumes.
+- **Unraid:** open **Apps**, search for **TrickWork** and install it from Community Applications.
 
-- **Container:** any amd64 or arm64 Docker host. No database, no volumes; the app is entirely stateless.
-- **Desktop:** Windows 10/11, Linux (needs `libwebkit2gtk-4.1-0` at runtime), or macOS.
-
-<br>
-
-## 6. Install on Unraid
-
-TrickWork is in Unraid's Community Applications: open **Apps**, search for **TrickWork** and install it
-([its page in the catalogue](https://ca.unraid.net/apps/trickwork-0h072450hg59wx)).
-
-Or pull the template by hand via the console / SSH:
-
-```bash
-mkdir -p /boot/config/plugins/dockerMan/templates-user && \
-curl -fsSL -o /boot/config/plugins/dockerMan/templates-user/my-trickwork.xml \
-  https://raw.githubusercontent.com/junkerderprovinz/unraid-apps/main/trickwork/trickwork.xml
-```
-
-Then **Docker → Add Container → trickwork** under *User templates*, pick a port, hit **Apply**, open the
-WebUI.
-
-The template filename **must** keep the `my-` prefix (`my-trickwork.xml`) so Unraid treats it as a user
-template.
+Every way in detail, including the requirements and the Unraid template by hand, is on the
+[installing page](https://junkerderprovinz.github.io/trickwork/installing/).
 
 <br>
 
-## 7. Plain Docker (no Unraid)
+## 5. Documentation
 
-```bash
-docker run -d \
-  --name trickwork \
-  --restart unless-stopped \
-  -p 3210:3210 \
-  ghcr.io/junkerderprovinz/trickwork:latest
-```
+The [documentation site](https://junkerderprovinz.github.io/trickwork/) has the full guide:
 
-Open `http://localhost:3210/`. No environment variables, no volumes; that's the whole configuration surface.
+- [Start here](https://junkerderprovinz.github.io/trickwork/): what TrickWork does and what sets it apart
+- [Installing](https://junkerderprovinz.github.io/trickwork/installing/): desktop, Docker and Unraid
+- [How it works and building it](https://junkerderprovinz.github.io/trickwork/development/): the engine and the development commands
 
 <br>
 
-## 8. Desktop app
-
-A Wails wrapper around the exact same engine and UI the container serves. Each [release](https://github.com/junkerderprovinz/trickwork/releases)
-carries a portable, no-install download per platform: a 64-bit `.exe` on Windows, a `.dmg` on macOS, a plain
-binary on Linux: download, `chmod +x` if needed, and run. Windows also gets a real installer alongside the
-portable `.exe`, for anyone who'd rather have a Start Menu entry and an uninstaller than a bare download. To
-build it yourself right now, see [Development](#9-development) below.
-
-**Windows may show a "Windows protected your PC" SmartScreen prompt** the first time you run either the
-portable `.exe` or the installer. This is Microsoft's reputation check for freshly-downloaded, unsigned
-executables, not a sign anything is wrong. Click **More info**, then **Run anyway**. The warning fades on its
-own as more people download and run this exact build without incident; there's no faster free workaround, and
-code-signing (the only way to remove it immediately) isn't currently in place for this project.
-
-<br>
-
-## 9. Development
-
-```bash
-npm install
-npm run build              # builds core/ then ui/
-npm run test --workspace core
-npm run typecheck
-npm run e2e --workspace ui  # Playwright, needs `npx playwright install --with-deps chromium` first
-```
-
-**Container image:**
-
-```bash
-docker build -t trickwork:dev -f container/Dockerfile .
-docker run -p 3210:3210 trickwork:dev
-```
-
-**Desktop app:**
-
-```bash
-npm run build --workspace core
-rm -rf webembed/dist && cp -r ui/dist webembed/dist
-cd desktop && go mod tidy && wails build
-```
-
-Output: `desktop/build/bin/TrickWork[.exe]`.
-
-<br>
-
-## 10. Credits
+## 6. Credits
 
 Directly inspired by [ASCGen2](https://sourceforge.net/projects/ascgen2/) (SourceForge, C#/.NET, GPLv2,
 abandoned since 2015): same core differentiator, fresh implementation. UI design language is
 [GlimStone](https://github.com/junkerderprovinz/glimstone), shared across every app in this house.
 
+The helmet in the screenshots is a
+[close helmet by Hans Maystetter](https://commons.wikimedia.org/wiki/File:Close_Helmet_MET_DP-12880-038.jpg)
+from The Metropolitan Museum of Art, which released the photo under CC0.
+
 <br>
 
-## 11. License
+## 7. License
 
 **Copyright (C) 2026 Junker der Provinz.**
 
@@ -276,7 +211,7 @@ present itself as TrickWork.
 
 <br>
 
-## 12. How AI is used here
+## 8. How AI is used here
 
 One knight builds this, and AI is one of the tools I work with, the same way I work with an editor or a compiler. It helps me write code and documentation and it checks my work, and that saves me a good many evenings. It does not make the decisions, though. I read and understand everything before it ships, and if something here breaks, that is on me and not on the tool.
 
@@ -284,7 +219,7 @@ You do not have to take my word for it. The code is open and every release note 
 
 <br>
 
-## 13. Support this project
+## 9. Support this project
 
 Bugs, ideas or feature requests? Please [open a GitHub issue](https://github.com/junkerderprovinz/trickwork/issues).
 
@@ -292,10 +227,12 @@ A one-knight job: I build it, keep it running, work through the issues and add w
 
 If it has earned a place on your server or computer, toss a coin to your knight: it helps cover the costs and keeps the project alive. It also makes this knight's heart beat a little faster. Three ways below, whichever suits you.
 
+<!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(0,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.62"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(5760,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(841.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.62"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(6601.9,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/give.svg#svgView(viewBox(1683.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.62"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg#svgView(viewBox(7443.8,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
+<!-- /give-buttons -->
