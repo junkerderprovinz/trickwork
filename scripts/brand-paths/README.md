@@ -7,8 +7,8 @@ widths to one optical size.
 ## Source and licence
 
 **Font Awesome Free 6.7.2**, from <https://fontawesome.com>. Windows, Apple,
-Linux and Docker come from the `brands` set; `zip.txt` is `file-zipper` from the
-`solid` set, a picture of an archive and nobody's mark. The icons are
+Linux and Docker come from the `brands` set; `zip.txt` is `file-zipper` and
+`book.txt` is `book`, both from the `solid` set and nobody's mark. The icons are
 **CC BY 4.0**, which asks for attribution and nothing else. Copyright 2024
 Fonticons, Inc.
 

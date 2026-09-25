@@ -1,6 +1,7 @@
 """Generate the README's download buttons from one template.
 
-Two rows: the desktop builds, then the container and the source.
+Two rows: the manual and the Windows and macOS builds, then Linux, the
+container and the source.
 
 Height and corner radius are the Buy Me a Coffee button's (245.3 tall, rx 38.2),
 so both stand the same height at the same width. The width is 720 rather than
@@ -122,7 +123,12 @@ STEP = (RENDER_PX + GAP_PX) / SPEED
 # slug, brand file, background, ink, heading, second line, accessible name, and
 # where the button leads (see write_readme()). One list per row, top to bottom.
 RELEASE = "https://github.com/junkerderprovinz/trickwork/releases/latest/download/"
-DESKTOP = [
+FIRST = [
+    # "Docs" rather than "Documentation": 13 characters at font-size 82 need
+    # more than the 482 units left of the right edge. The yellow is the coffee
+    # button's #fd0, and white on yellow fails contrast, so the ink is dark.
+    ("docs", "book", "#fd0", "#0d0c23", "Docs", "online manual", "Read the documentation",
+     "https://junkerderprovinz.github.io/trickwork/"),
     ("windows-installer", "windows", "#0078d4", "#ffffff", "Windows", "Installer", "Download the Windows installer",
      RELEASE + "trickwork-windows-amd64-installer.exe"),
     ("windows-portable", "windows", "#0078d4", "#ffffff", "Windows", "Portable", "Download the portable Windows app",
@@ -130,14 +136,14 @@ DESKTOP = [
     # Space grey, since black vanishes against GitHub's dark theme.
     ("macos", "apple", "#6e6e73", "#ffffff", "macOS", "Universal", "Download for macOS",
      RELEASE + "trickwork-macos-universal.dmg"),
+]
+SECOND = [
     # Tux yellow, with dark ink for contrast.
     ("linux", "linux", "#fcc624", "#1b1b1b", "Linux", "amd64", "Download for Linux",
      RELEASE + "trickwork-linux-amd64"),
-]
-SERVER = [
-    # The container has no file to download, so this one leads to the image's
-    # own page, which carries the pull command and every tag.
-    ("docker", "docker", "#1d63ed", "#ffffff", "Docker", "Container", "Run it with Docker",
+    # A browser cannot download an image, so this opens the package page, which
+    # carries the pull command and every tag.
+    ("docker", "docker", "#1d63ed", "#ffffff", "Docker", "ghcr.io image", "The container image on ghcr.io",
      "https://github.com/junkerderprovinz/trickwork/pkgs/container/trickwork"),
     # A release's "Source code (zip)" is the whole repository at that tag, and
     # GitHub gives the newest one no fixed address, so this leads to the release
@@ -145,13 +151,7 @@ SERVER = [
     ("source-zip", "zip", "#4d5562", "#ffffff", "Source", "zip archive", "Download the source archive for this release",
      "https://github.com/junkerderprovinz/trickwork/releases/latest"),
 ]
-ROWS = [DESKTOP, SERVER]
-
-# The line under the last row, inside its paragraph so it sits close to the
-# buttons rather than a paragraph's margin away.
-FOOTER = ('<sub>Always the latest release &nbsp;·&nbsp; '
-          '<a href="https://github.com/junkerderprovinz/trickwork/releases/latest">release notes</a> &nbsp;·&nbsp; '
-          '<a href="#8-desktop-app">how to run the desktop app</a></sub>')
+ROWS = [FIRST, SECOND]
 BUTTONS = [button for buttons in ROWS for button in buttons]
 
 # The README rows are written here too, between markers: both download rows
@@ -307,7 +307,7 @@ def read_readme():
     return text
 
 
-def row(items, nl, footer=None):
+def row(items, nl):
     """One centred row: a link per button, the separator on its own line, two
     spaces in, because that is the gap GAP_PX was measured on."""
     lines = ['<p align="center">']
@@ -317,8 +317,6 @@ def row(items, nl, footer=None):
         img = ('<img src="%s#svgView(viewBox(%s,0,%s,%s))" alt="%s" width="%s" height="%s">'
                % (SPRITE_URL, num(x), num(width), num(height), escape(alt), num(render), num(render * height / width)))
         lines.append('  <a href="%s">%s</a>' % (escape(href), img) if href else "  " + img)
-    if footer:
-        lines += ["  <br>", "  " + footer]
     lines.append("</p>")
     return nl.join(lines) + nl
 
@@ -338,8 +336,7 @@ def write_readme(text, xs, gives):
     for opener, closer, rows in ((ROW_OPEN, ROW_CLOSE, downloads), (GIVE_OPEN, GIVE_CLOSE, donations)):
         for start, end in reversed(blocks(text, opener, closer)):
             nl = "\r\n" if text[start:].split("\n", 1)[0].endswith("\r") else "\n"
-            last = len(rows) - 1
-            body = "".join(row(items, nl, FOOTER if opener == ROW_OPEN and i == last else None) for i, items in enumerate(rows))
+            body = "".join(row(items, nl) for items in rows)
             text = text[:start] + opener + nl + body + text[end:]
     io.open(README, "w", encoding="utf-8", newline="").write(text)
     print("README.md  download rows of %s, donation rows of %d" % ("+".join(str(len(r)) for r in ROWS), len(GIVE)))

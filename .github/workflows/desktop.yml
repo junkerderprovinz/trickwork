@@ -113,14 +113,19 @@ jobs:
           set -eu
           mkdir -p dist
           cp bundles/trickwork-windows-amd64/TrickWork.exe \
-            "dist/trickwork-windows-amd64-portable.exe"
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-portable.exe"
           cp bundles/trickwork-windows-amd64/*-installer.exe \
-            "dist/trickwork-windows-amd64-installer.exe"
+            "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
-            "dist/trickwork-macos-universal.dmg"
+            "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
           cp bundles/trickwork-linux-amd64/TrickWork \
-            "dist/trickwork-linux-amd64"
-          chmod +x "dist/trickwork-linux-amd64"
+            "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
+          chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
+          # releases/latest/download only resolves an exact file name, so every
+          # bundle also goes up once without the version for the README's links.
+          for f in dist/trickwork-"${GITHUB_REF_NAME}"-*; do
+            cp "$f" "$(echo "$f" | sed "s/-${GITHUB_REF_NAME}-/-/")"
+          done
           ls -lh dist
 
       # release.yml creates the release in parallel, and a runner queue can put

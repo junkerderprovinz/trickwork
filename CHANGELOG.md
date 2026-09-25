@@ -33,7 +33,7 @@ All notable changes to TrickWork are documented here.
 
 ### ⚡ Improved
 
-- The desktop downloads have fixed file names, so a link to the latest release always reaches the newest build.
+- Every desktop download is also attached without the version in its name, so a link to the latest release always reaches the newest build.
 - The README has download buttons for every system, and TrickWork has a documentation site at https://junkerderprovinz.github.io/trickwork/.
 - Tidied the code comments and log messages.
 
