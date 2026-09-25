@@ -20,12 +20,13 @@ import {
 import { applyDisco, discoTap } from './design/disco'
 import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
+import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
-import { repaintButtons, segmentedRow, switchRow } from './controlWidgets'
+import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { iconReset } from './icons'
-import { subscribeLocale, t, type TranslationKey } from './i18n'
+import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
 const HEX_RE = /^#[0-9a-fA-F]{6}$/
@@ -247,7 +248,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
     })
 
-    panel.append(shapeRow, themeRow, motionRow, labelsRow, colourBlock())
+    panel.append(languageBlock(), shapeRow, themeRow, motionRow, labelsRow, colourBlock())
   }
 
   // The accent row and the rainbow block. The accent row stays, dimmed, while
@@ -432,6 +433,23 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
 
     block.append(accentWrap, rainbowWrap)
     return block
+  }
+
+  function languageBlock(): HTMLElement {
+    const languageWrap = document.createElement('div')
+    languageWrap.className = 'control-slider'
+    const languageLabel = document.createElement('span')
+    languageLabel.textContent = t('appearance.language')
+    const languageOptions = LOCALES.map((locale) => ({
+      value: locale.code,
+      label: locale.label,
+      flag: flagEmoji(locale.flag),
+    }))
+    const languageDropdown = customDropdown(languageOptions, currentLocale(), (value) => {
+      void setLocale(value)
+    }, t('appearance.language'))
+    languageWrap.append(languageLabel, languageDropdown)
+    return languageWrap
   }
 
   build()

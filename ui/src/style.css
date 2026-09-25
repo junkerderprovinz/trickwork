@@ -143,14 +143,6 @@ html, body {
   grid-area: side;
 }
 
-/* On Settings the brand card holds the top left corner, and the tabs and cards
-   stand to its right. */
-.app-body--settings {
-  grid-template-columns: 320px minmax(0, 1fr);
-  grid-template-rows: auto;
-  grid-template-areas: "brand main";
-}
-
 @media (max-width: 860px) {
   .app-body {
     grid-template-columns: minmax(0, 1fr);
@@ -159,6 +151,39 @@ html, body {
       "brand"
       "main"
       "side";
+  }
+}
+
+/* On Settings the brand card holds the top left corner and the Back button
+   the top right one, with the tabs and cards in the middle of the screen. Where
+   the sides are too narrow for the brand card, both corners sit in a row above
+   the cards. */
+.app-body.app-body--settings {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "brand back"
+    "main main";
+}
+
+.app-body--settings > .brand-card {
+  justify-self: start;
+  width: min(320px, 100%);
+}
+
+.app-body--settings > .settings-button {
+  grid-area: back;
+  justify-self: end;
+}
+
+.app-body--settings .settings-view {
+  margin-inline: auto;
+}
+
+@media (min-width: 1280px) {
+  .app-body.app-body--settings {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 48rem) minmax(0, 1fr);
+    grid-template-areas: "brand main back";
   }
 }
 
@@ -187,8 +212,8 @@ html, body {
 
 /* Settings is a width-capped column, and roomier than the dense Convert cards:
    it is read, not glanced at mid-drag. The cap fits the App card's desktop row
-   of four button places, and the tabs span it. The tabs' top lines up with the
-   brand card's, and the first card keeps the one vertical rhythm below them. */
+   of four button places, and the tabs span it. The first card keeps the one
+   vertical rhythm below the tabs. */
 .settings-view {
   display: flex;
   flex-direction: column;

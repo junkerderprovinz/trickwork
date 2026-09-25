@@ -180,17 +180,17 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   // the DOM and toBeHidden is the check.
   await expect(page.getByText('Width (columns)', { exact: true })).toBeHidden()
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
-  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeVisible()
+  await expect(page.getByText('Presets', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Back')
   await expect(page.locator('.about-versions')).toContainText('GlimStone')
 
   await badge.click()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeHidden()
+  await expect(page.getByText('Presets', { exact: true })).toBeHidden()
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('Settings sorts its cards into three tabs, with the brand card in the top left corner', async ({ page }) => {
+test('Settings sorts its cards into three tabs between the brand card and the Back button', async ({ page }) => {
   await page.goto('/')
   const brand = page.locator('.brand-card')
   const onConvert = await brand.boundingBox()
@@ -204,9 +204,11 @@ test('Settings sorts its cards into three tabs, with the brand card in the top l
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
   await expect(page.locator('.dl-rows')).toBeHidden()
 
+  // The language is a look of the app, like theme and shape.
   await settingsTab(page, 'Look').click()
+  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Language', exact: true })).toBeHidden()
+  await expect(page.getByText('Presets', { exact: true })).toBeHidden()
 
   await page.keyboard.press('ArrowRight')
   await expect(settingsTab(page, 'App')).toHaveAttribute('aria-selected', 'true')
@@ -215,12 +217,18 @@ test('Settings sorts its cards into three tabs, with the brand card in the top l
 
   const onSettings = await brand.boundingBox()
   const strip = await tabs.boundingBox()
-  if (!onConvert || !onSettings || !strip) throw new Error('boxes missing')
-  // Beside the preview the card stands on the right; on Settings it takes the
-  // top left corner, level with the tabs.
+  const back = await settingsButton(page).boundingBox()
+  const middle = await page.evaluate(() => document.documentElement.clientWidth / 2)
+  if (!onConvert || !onSettings || !strip || !back) throw new Error('boxes missing')
+  // Beside the preview the card stands on the right. On Settings it takes the
+  // top left corner and Back the top right one, and the tabs stand in the
+  // middle of the screen.
   expect(onConvert.x).toBeGreaterThan(strip.x)
   expect(onSettings.x + onSettings.width).toBeLessThanOrEqual(strip.x)
+  expect(back.x).toBeGreaterThanOrEqual(strip.x + strip.width)
+  expect(Math.abs(strip.x + strip.width / 2 - middle)).toBeLessThan(2)
   expect(Math.abs(onSettings.y - strip.y)).toBeLessThan(2)
+  expect(Math.abs(back.y - strip.y)).toBeLessThan(2)
 
   // Settings opens on the tab it was left on.
   await settingsButton(page).click()
@@ -235,6 +243,7 @@ test('switching language updates the badge label and every card, including ones 
 
   const badge = settingsButton(page)
   await badge.click()
+  await settingsTab(page, 'Look').click()
   // The language picker is a custom dropdown: open it, then pick the option.
   await page.getByRole('button', { name: 'Language', exact: true }).click()
   await page.getByRole('option', { name: 'Deutsch' }).click()
@@ -414,13 +423,13 @@ test('rainbow mode gives each queue row its own hue, and the language picker sho
 
   // The language options carry a flag emoji.
   await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
   await page.getByRole('button', { name: 'Language', exact: true }).click()
   const firstOptionText = await page.getByRole('option').first().textContent()
   // A flag emoji is two regional indicator symbols, both above 0xFFFF.
   expect(Array.from(firstOptionText ?? '').some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(true)
   await page.keyboard.press('Escape')
 
-  await settingsTab(page, 'Look').click()
   await page.getByRole('switch', { name: 'Rainbow' }).click()
   await settingsButton(page).click()
 

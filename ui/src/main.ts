@@ -19,7 +19,6 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
-import { mountGeneralSettings } from './generalSettings'
 import { mountAboutPanel } from './aboutPanel'
 import { mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
@@ -121,17 +120,16 @@ const tabSlot = document.createElement('div')
 tabSlot.className = 'settings-tabs'
 const settingsCards = document.createElement('div')
 settingsCards.className = 'settings-cards'
-const generalCard = section(0, 'settings-card')
-const presetsCard = section(1, 'settings-card')
-const aboutCard = section(2, 'settings-card')
+const presetsCard = section(0, 'settings-card')
+const aboutCard = section(1, 'settings-card')
 const lookCard = section(0, 'settings-card')
 const appCard = section(0, 'settings-card')
 const tabCards: Record<SettingsTab, HTMLElement[]> = {
-  general: [generalCard, presetsCard, aboutCard],
+  general: [presetsCard, aboutCard],
   look: [lookCard],
   app: [appCard],
 }
-settingsCards.append(generalCard, presetsCard, aboutCard, lookCard, appCard)
+settingsCards.append(presetsCard, aboutCard, lookCard, appCard)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandCard, main, secondary)
@@ -190,6 +188,9 @@ function render(): void {
   secondary.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
   body.classList.toggle('app-body--settings', onSettings)
+  // On Settings the button leaves the brand card for the top right corner.
+  if (onSettings) body.appendChild(settingsButton)
+  else brandCard.appendChild(settingsButton)
   applyButtonLabel()
   for (const shown of onSettings ? [settingsView] : [primary, secondary]) enter(shown)
 }
@@ -236,7 +237,6 @@ mountTransformPanel(transformCard, store)
 mountFiltersPanel(filtersCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
-mountGeneralSettings(generalCard)
 mountPresetsPanel(presetsCard, store)
 mountAboutPanel(aboutCard)
 leaveLook = mountAppearanceSettings(lookCard)
