@@ -72,7 +72,7 @@ html, body {
 
 /* The logo is a wide ribbon, so the height is set and the width follows. */
 .app-brand-logo {
-  height: 2.35rem;
+  height: 3.25rem;
   width: auto;
   flex-shrink: 0;
 }
@@ -158,11 +158,13 @@ html, body {
   min-width: 0;
 }
 
+/* Stacked cards keep GlimStone's one vertical rhythm, 2.5rem, since every card
+   carries a heading badge over its top edge. Side by side they stay close. */
 .convert-view {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1rem;
-  padding: 1rem 1.5rem 1.5rem;
+  gap: 2.5rem 1rem;
+  padding: 1.75rem 1.5rem 1.5rem;
   align-items: start;
 }
 
@@ -176,7 +178,7 @@ html, body {
 .app-secondary {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2.5rem;
   min-width: 0;
 }
 
@@ -185,7 +187,7 @@ html, body {
 .app-primary-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 2.5rem 1rem;
   align-items: stretch;
 }
 
@@ -202,7 +204,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
+  gap: 2.5rem;
 }
 
 .settings-card {
@@ -228,7 +230,7 @@ html, body {
    anchors the drag handle of a sidecard. */
 .glim-section {
   position: relative;
-  padding: 1rem 1.125rem;
+  padding: 1.5rem 1.125rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -271,23 +273,40 @@ html, body {
   gap: 0.9rem;
 }
 
+/* A card's heading is its section badge: filled, centred on the card's top
+   edge whatever its height, and a pill in every shape, since it is the card's
+   chrome rather than a control. */
 .glim-section > .glim-eyebrow,
-.glim-section > .eyebrow-row > .glim-eyebrow {
-  margin-bottom: -0.15rem;
-  /* Louder than GlimStone's eyebrow, which labels a panel reached through
-     navigation: here it is the only heading of cards that are all visible at
-     once, so it reads as a title. */
+.glim-section > .eyebrow-row {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 1.125rem;
+  z-index: 1;
+  translate: 0 -50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 22px;
+  padding: 0.15rem 0.75rem;
+  border-radius: 9999px;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: var(--elevation);
   font-size: var(--text-dense);
-  color: var(--carbon-text);
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-/* An eyebrow with an info icon beside it (cropPanel.ts, exportPanel.ts). */
-.eyebrow-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+.glim-section > .eyebrow-row > .glim-eyebrow {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.glim-section > .eyebrow-row .glim-info-icon {
+  color: var(--accent-contrast);
 }
 
 /* A label row with a trailing info icon (the Font field), not a <label>, so

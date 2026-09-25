@@ -130,9 +130,11 @@ const HUE_OFFSET = { shape: 0, theme: 3, motion: 5, labels: 1 }
  * Settings view: an egg found there is offered only until then.
  */
 export function mountAppearanceSettings(container: HTMLElement): () => void {
+  const heading = document.createElement('div')
+  heading.className = 'glim-eyebrow'
   const panel = document.createElement('div')
   panel.className = 'appearance-settings'
-  container.appendChild(panel)
+  container.append(heading, panel)
 
   const cached = readCachedAppearance()
   let shape: Shape = SHAPES_STORED.includes(cached.shape as Shape) ? (cached.shape as Shape) : DEFAULT_SHAPE
@@ -161,10 +163,18 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     cacheTheme(theme)
   }
 
+  // Colour rotation moves the palette on by one colour at every visit.
+  const loaded = rainbowState()
+  if (loaded.on && loaded.rotate) {
+    applyRainbow({ ...loaded, seed: (loaded.seed + 1) % RAINBOW.length })
+    persist()
+  }
+
   // A locale switch is rare, so the whole panel is rebuilt instead of patching
   // each label.
   function build(): void {
     if (pickerOpen) return
+    heading.textContent = t('appearance.eyebrow')
     panel.innerHTML = ''
 
     const shapes = shape === 'leaf' || leafFound ? [...SHAPES, 'leaf' as const] : SHAPES
@@ -237,7 +247,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
     })
 
-    panel.append(shapeRow, themeRow, motionRow, labelsRow, colourBlock(), languageBlock())
+    panel.append(languageBlock(), shapeRow, themeRow, motionRow, labelsRow, colourBlock())
   }
 
   // The accent row and the palette row: whichever one the rainbow switch does
@@ -374,12 +384,31 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       }),
     )
     if (!rainbowOn) paletteRow.classList.add('is-dimmed')
-    rainbowWrap.append(rainbowRow, paletteRow)
 
-    block.append(accentWrap, rainbowWrap)
+    const reactiveRow = switchRow(
+      t('appearance.rainbowReactive'),
+      rainbowState().reactive,
+      (checked) => {
+        applyRainbow({ ...rainbowState(), reactive: checked })
+        persist()
+      },
+      infoIcon(t('appearance.rainbowReactiveHint')),
+    )
+    const rotateRow = switchRow(
+      t('appearance.rainbowRotate'),
+      rainbowState().rotate,
+      (checked) => {
+        const now = rainbowState()
+        applyRainbow({ ...now, rotate: checked, seed: checked ? (now.seed + 1) % RAINBOW.length : 0 })
+        persist()
+        applyDisco(discoOn)
+      },
+      infoIcon(t('appearance.rainbowRotateHint')),
+    )
+    rainbowWrap.append(rainbowRow, reactiveRow, rotateRow)
 
     if (discoFound || discoOn) {
-      block.appendChild(
+      rainbowWrap.appendChild(
         switchRow(
           t('appearance.disco'),
           discoOn,
@@ -392,6 +421,10 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
         ),
       )
     }
+    // The palette comes after every switch that shapes how it is used.
+    rainbowWrap.appendChild(paletteRow)
+
+    block.append(accentWrap, rainbowWrap)
     return block
   }
 

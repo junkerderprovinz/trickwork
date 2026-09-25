@@ -2,7 +2,7 @@ import '@fontsource-variable/noto-sans'
 import '@fontsource-variable/noto-sans-arabic'
 import '@fontsource-variable/noto-sans-hebrew'
 import '@fontsource-variable/noto-sans-thai'
-import { applyCachedAppearance, applyMotion } from './design/appearance'
+import { applyCachedAppearance, applyMotion, hueVars } from './design/appearance'
 import { applyStoredLabelModes } from './design/controls'
 import { applyDisco } from './design/disco'
 import { applyCachedTheme } from './design/theme'
@@ -44,9 +44,13 @@ wireTooltips()
 
 const store = createStore()
 
-function section(): HTMLDivElement {
+// Each card owns one rainbow position for its whole subtree, fixed to the card
+// rather than to where it stands, so reordering the sidecards keeps their
+// colours.
+function section(hue: number, extra = ''): HTMLDivElement {
   const el = document.createElement('div')
-  el.className = 'glim-card glim-section'
+  el.className = `glim-card glim-section glim-notch-card glim-hue ${extra}`.trim()
+  for (const [prop, value] of Object.entries(hueVars(hue))) el.style.setProperty(prop, value)
   return el
 }
 
@@ -87,20 +91,20 @@ const primary = document.createElement('section')
 primary.className = 'app-primary'
 const topRow = document.createElement('div')
 topRow.className = 'app-primary-row'
-const dropzoneCard = section()
-const cropCard = section()
+const dropzoneCard = section(0)
+const cropCard = section(1)
 topRow.append(dropzoneCard, cropCard)
-const previewCard = section()
+const previewCard = section(2)
 primary.append(topRow, previewCard)
 
 const secondary = document.createElement('section')
 secondary.className = 'app-secondary'
-const historyCard = section()
-const adjustCard = section()
-const transformCard = section()
-const filtersCard = section()
-const queueCard = section()
-const exportCard = section()
+const historyCard = section(6)
+const adjustCard = section(3)
+const transformCard = section(4)
+const filtersCard = section(5)
+const queueCard = section(7)
+const exportCard = section(0)
 // The default order, which a saved one replaces.
 secondary.append(adjustCard, transformCard, filtersCard, historyCard, queueCard, exportCard)
 makeReorderable(secondary, [
@@ -118,12 +122,9 @@ body.appendChild(convertView)
 // The Settings view: theming, language and presets, without a preview.
 const settingsView = document.createElement('div')
 settingsView.className = 'settings-view'
-const settingsCard = document.createElement('div')
-settingsCard.className = 'glim-card glim-section settings-card'
-const presetsCard = document.createElement('div')
-presetsCard.className = 'glim-card glim-section settings-card'
-const appCard = document.createElement('div')
-appCard.className = 'glim-card glim-section settings-card'
+const settingsCard = section(0, 'settings-card')
+const presetsCard = section(1, 'settings-card')
+const appCard = section(2, 'settings-card')
 // The versions belong to the whole app, so they sit below the cards rather
 // than inside the last one.
 const versionLine = document.createElement('p')
@@ -197,6 +198,12 @@ mountExportPanel(exportCard, store)
 leaveSettings = mountAppearanceSettings(settingsCard)
 mountPresetsPanel(presetsCard, store)
 mountAppPanel(appCard)
+
+// Every card heading is its section badge, and in the reactive rainbow mode it
+// lights up while the pointer is anywhere in its card.
+for (const heading of app.querySelectorAll('.glim-section > .glim-eyebrow, .glim-section > .eyebrow-row')) {
+  heading.classList.add('glim-hue', 'glim-notch-hue')
+}
 
 // A language switch rebuilds the <select> elements, and enableSelectScroll is
 // idempotent, so the whole body is scanned again.
