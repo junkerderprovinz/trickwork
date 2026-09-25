@@ -202,7 +202,7 @@ test('Settings sorts its cards into three tabs between the brand card and the Ba
   await expect(page.getByText('Presets', { exact: true })).toBeVisible()
   await expect(page.getByText('About TrickWork', { exact: true })).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
-  await expect(page.locator('.dl-rows')).toBeHidden()
+  await expect(page.locator('.app-rows')).toBeHidden()
 
   // The language is a look of the app, like theme and shape.
   await settingsTab(page, 'Look').click()
@@ -212,7 +212,7 @@ test('Settings sorts its cards into three tabs between the brand card and the Ba
 
   await page.keyboard.press('ArrowRight')
   await expect(settingsTab(page, 'App')).toHaveAttribute('aria-selected', 'true')
-  await expect(page.locator('.dl-rows')).toBeVisible()
+  await expect(page.locator('.app-rows')).toBeVisible()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
 
   const onSettings = await brand.boundingBox()
@@ -528,7 +528,7 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await page.goto('/')
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
-  const buttons = page.locator('.dl-rows a.dl-part')
+  const buttons = page.locator('.app-rows a.readme-btn')
   await expect(buttons).toHaveCount(5)
   const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
@@ -541,16 +541,32 @@ test('an App card button shows its second line only under the pointer, over the 
   await page.goto('/')
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
-  const windows = page.locator('.dl-unit').first()
-  const lines = windows.locator('.dl-sub')
+  const windows = page.locator('.app-rows .readme-btn-unit').first()
+  const lines = windows.locator('.readme-btn-sub')
   await expect(lines).toHaveCount(3)
   for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0')
 
   // The pointer on a segment brings in the lines of the button it hangs on too.
   await page.getByRole('link', { name: 'Portable Windows' }).hover()
   for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0.9')
-  await expect(windows.locator('.dl-part').first()).toHaveCSS('background-color', 'rgb(0, 120, 212)')
-  await expect(page.locator('.dl-unit').nth(1).locator('.dl-sub')).toHaveCSS('opacity', '0')
+  await expect(windows.locator('.readme-btn').first()).toHaveCSS('background-color', 'rgb(0, 120, 212)')
+  await expect(page.locator('.app-rows .readme-btn-unit').nth(1).locator('.readme-btn-sub')).toHaveCSS('opacity', '0')
+})
+
+test('the About card gives with the README buttons, the coffee one in its own artwork', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  const coffee = page.getByRole('button', { name: 'Buy me a coffee', exact: true })
+  await expect(coffee).toHaveClass(/readme-btn/)
+  await expect(coffee.locator('.readme-btn-art svg path')).toHaveCount(7)
+  for (const name of ['PayPal', 'Crypto', 'GitHub', 'Email']) {
+    const btn = page.getByRole('button', { name, exact: true })
+    await expect(btn).toHaveClass(/readme-btn/)
+    // One line each, so the name stays in the middle.
+    await expect(btn.locator('.readme-btn-sub')).toHaveCount(0)
+  }
+  await coffee.hover()
+  await expect(coffee).toHaveCSS('background-color', 'rgb(255, 221, 0)')
 })
 
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {

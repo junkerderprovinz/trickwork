@@ -26,7 +26,7 @@ import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
-import { iconApp, iconAppearance, iconBack, iconGeneral, iconLook } from './icons'
+import { iconApp, iconSettings, iconBack, iconGeneral, iconLook } from './icons'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
 
 const app = document.getElementById('app')
@@ -74,7 +74,7 @@ brandName.textContent = 'TrickWork'
 brand.append(brandName)
 brandCard.appendChild(brand)
 
-const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconAppearance(), tone: 'neutral', stage: 'none' })
+const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconSettings(), tone: 'neutral', stage: 'none' })
 settingsButton.classList.add('settings-button')
 brandCard.appendChild(settingsButton)
 
@@ -140,7 +140,7 @@ let settingsTab: SettingsTab = 'general'
 function applyButtonLabel(): void {
   updateButton(settingsButton, {
     label: onSettings ? t('nav.backToConvert') : t('nav.settings'),
-    glyph: onSettings ? iconBack() : iconAppearance(),
+    glyph: onSettings ? iconBack() : iconSettings(),
   })
 }
 

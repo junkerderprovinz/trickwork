@@ -2,11 +2,21 @@
 // is, then the money with its own buttons, then the way to report something,
 // then the versions as a footer. It replaces the version line.
 
-import { glimButton, updateButton } from './controlWidgets'
-import { GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
+import { COFFEE_BUTTON_ART, GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
 import { openCoffeeWindow, openCryptoWindow, openExternal, openPaypalWindow } from './donateWindows'
 import { subscribeLocale, t } from './i18n'
+import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
 import { APP_VERSION, GLIMSTONE_VERSION } from './version'
+
+// One line each, like the README's give buttons, so nothing moves up under the
+// pointer.
+function actionUnit(brand: string, face: ButtonFace, onClick: () => void): HTMLDivElement {
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  buttonFace(btn, face)
+  btn.addEventListener('click', onClick)
+  return buttonUnit(brand, [btn])
+}
 
 function versionLink(label: string, version: string, repo: string): HTMLElement {
   const span = document.createElement('span')
@@ -34,33 +44,10 @@ export function mountAboutPanel(container: HTMLElement): void {
   reportText.className = 'about-report'
   for (const p of [body, coffeeText, reportText]) p.classList.add('about-text')
 
-  const coffee = glimButton({ label: t('about.coffeeButton'), glyph: GLYPHS.coffee, tone: 'neutral', onClick: openCoffeeWindow })
-  const paypal = glimButton({ label: t('about.paypal'), glyph: GLYPHS.paypal, tone: 'neutral', onClick: openPaypalWindow })
-  const crypto = glimButton({ label: t('about.crypto'), glyph: GLYPHS.bitcoin, tone: 'neutral', onClick: openCryptoWindow })
-  coffee.classList.add('glim-brand-btn', 'glim-brand-coffee')
-  paypal.classList.add('glim-brand-btn', 'glim-brand-paypal')
-  crypto.classList.add('glim-brand-btn', 'glim-brand-bitcoin')
   const giveRow = document.createElement('div')
-  giveRow.className = 'button-row'
-  giveRow.append(coffee, paypal, crypto)
-
-  const github = glimButton({
-    label: t('about.repo'),
-    glyph: GLYPHS.github,
-    tone: 'neutral',
-    onClick: () => openExternal(REPO),
-  })
-  github.classList.add('glim-brand-btn', 'glim-brand-github')
-  const mail = glimButton({
-    label: t('about.mail'),
-    glyph: GLYPHS.mail,
-    tone: 'neutral',
-    onClick: () => openExternal(`mailto:${MAIL}?subject=${encodeURIComponent(`TrickWork ${t('about.mailSubject')}`)}`),
-  })
-  mail.classList.add('glim-brand-btn', 'glim-brand-house')
+  giveRow.className = 'readme-btn-rows'
   const reportRow = document.createElement('div')
-  reportRow.className = 'button-row'
-  reportRow.append(github, mail)
+  reportRow.className = 'readme-btn-rows'
 
   const versions = document.createElement('p')
   versions.className = 'about-versions glim-num'
@@ -72,11 +59,18 @@ export function mountAboutPanel(container: HTMLElement): void {
     body.textContent = t('about.body')
     coffeeText.textContent = t('about.coffee')
     reportText.textContent = t('about.report')
-    updateButton(coffee, { label: t('about.coffeeButton') })
-    updateButton(paypal, { label: t('about.paypal') })
-    updateButton(crypto, { label: t('about.crypto') })
-    updateButton(github, { label: t('about.repo') })
-    updateButton(mail, { label: t('about.mail') })
+    giveRow.replaceChildren(
+      actionUnit('coffee', { name: t('about.coffeeButton'), art: COFFEE_BUTTON_ART }, openCoffeeWindow),
+      actionUnit('paypal', { name: t('about.paypal'), mark: GLYPHS.paypal, tint: 'about-mark-paypal' }, openPaypalWindow),
+      actionUnit('bitcoin', { name: t('about.crypto'), mark: GLYPHS.bitcoin, tint: 'about-mark-bitcoin' }, openCryptoWindow),
+    )
+    const mailto = `mailto:${MAIL}?subject=${encodeURIComponent(`TrickWork ${t('about.mailSubject')}`)}`
+    reportRow.replaceChildren(
+      actionUnit('github', { name: t('about.repo'), mark: GLYPHS.github, tint: 'about-mark-github' }, () => openExternal(REPO)),
+      actionUnit('house', { name: t('about.mail'), mark: GLYPHS.mail, tint: 'about-mark-house' }, () => openExternal(mailto)),
+    )
+    fitButtonText(giveRow)
+    fitButtonText(reportRow)
     const dot = document.createElement('span')
     dot.setAttribute('aria-hidden', 'true')
     dot.textContent = '·'
@@ -88,4 +82,6 @@ export function mountAboutPanel(container: HTMLElement): void {
   }
   render()
   subscribeLocale(render)
+  keepButtonTextFitted(giveRow)
+  keepButtonTextFitted(reportRow)
 }

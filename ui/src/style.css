@@ -1256,19 +1256,19 @@ button:focus-visible {
   color: var(--carbon-text-sub);
 }
 
-/* The App card's buttons, in the proportions of the README's (160 by 46.6, a
-   segment 87) on the app's own rem, so a button and two segments take two
-   places in a row. At rest the mark keeps its colours and the name stands
+/* The App and About cards' buttons, in the proportions of the README's (160 by
+   46.6, a segment 87) on the app's own rem, so a button and two segments take
+   two places in a row. At rest the mark keeps its colours and the name stands
    alone in the middle. Under the pointer the whole unit fills with its brand's
    colour (.glim-brand-tile in design/tokens.css), the name moves up and the
-   second line comes in below it. */
-.dl-rows {
+   second line, where there is one, comes in below it. */
+.readme-btn-rows {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8125rem;
 }
 
-.dl-unit {
+.readme-btn-unit {
   position: relative;
   display: inline-flex;
   border-radius: var(--radius-pill);
@@ -1276,7 +1276,7 @@ button:focus-visible {
   isolation: isolate;
 }
 
-.dl-part {
+.readme-btn {
   position: relative;
   flex: none;
   width: 10rem;
@@ -1291,15 +1291,15 @@ button:focus-visible {
 }
 
 /* The unit clips everything at its edge, a ring outside the button too. */
-.dl-part:focus-visible {
+.readme-btn:focus-visible {
   outline-offset: -3px;
 }
 
-.dl-part.dl-seg {
+.readme-btn.readme-btn-seg {
   width: 5.4375rem;
 }
 
-.dl-seg::before {
+.readme-btn-seg::before {
   content: '';
   position: absolute;
   inset-block: 0;
@@ -1310,7 +1310,7 @@ button:focus-visible {
 
 /* The height is the README's mark, and the box is wider than tall, so a wide
    mark such as Unraid's or Docker's is not shrunk to a sliver. */
-.dl-mark {
+.readme-btn-mark {
   position: absolute;
   top: 50%;
   inset-inline-start: 1.5rem;
@@ -1320,13 +1320,39 @@ button:focus-visible {
   display: flex;
 }
 
-.dl-mark svg {
+.readme-btn-mark svg,
+.readme-btn-art svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.dl-text {
+/* A vendor's own button artwork on the README's canvas, which is the button's. */
+.readme-btn-art {
+  position: absolute;
+  inset: 0;
+}
+
+@media (hover: hover) {
+  .group:hover > .glim-brand-tile .readme-btn-mark {
+    color: var(--tile-ink);
+  }
+}
+
+/* The About card's marks at rest, in the colours measured for each theme. */
+.about-mark-paypal { color: var(--brand-paypal); }
+.about-mark-bitcoin { color: var(--brand-bitcoin); }
+.about-mark-github { color: var(--brand-github); }
+.about-mark-house { color: var(--accent-ink); }
+
+/* The About card's brands, true colour and ink as on the README's buttons. The
+   house button follows the accent, since it reaches the app's own author. */
+.glim-tile-coffee  { --tile: #ffdd00; --tile-ink: #0d0c22; }
+.glim-tile-paypal  { --tile: #003087; --tile-ink: #ffffff; }
+.glim-tile-bitcoin { --tile: #f7931a; --tile-ink: #161616; }
+.glim-tile-house   { --tile: var(--accent); --tile-ink: var(--accent-contrast); }
+
+.readme-btn-text {
   position: absolute;
   inset-block: 0;
   inset-inline: 3.9375rem 0.625rem;
@@ -1336,32 +1362,35 @@ button:focus-visible {
   line-height: 1.15;
 }
 
-.dl-seg .dl-text {
+.readme-btn-seg .readme-btn-text {
   inset-inline: 0.375rem;
   align-items: center;
   text-align: center;
 }
 
-.dl-unit:has(.dl-hint) .dl-text {
+.readme-btn-unit:has(.readme-btn-hint) .readme-btn-text {
   inset-inline-end: 1.75rem;
 }
 
-.dl-name,
-.dl-sub {
+.readme-btn-name,
+.readme-btn-sub {
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
 }
 
-/* Half the second line's height down, so the name alone sits in the middle. */
-.dl-name {
+.readme-btn-name {
   font-size: var(--text-body);
   font-weight: 700;
-  translate: 0 0.4375rem;
   transition: translate calc(var(--motion-page-dur, 420ms) / 2) var(--motion-page-ease, ease);
 }
 
-.dl-sub {
+/* Half the second line's height down, so the name alone sits in the middle. */
+.readme-btn-name:not(:only-child) {
+  translate: 0 0.4375rem;
+}
+
+.readme-btn-sub {
   font-size: 0.75rem;
   opacity: 0;
   translate: 0 0.25rem;
@@ -1370,27 +1399,27 @@ button:focus-visible {
     translate calc(var(--motion-page-dur, 420ms) / 2) var(--motion-page-ease, ease);
 }
 
-.dl-unit:is(:hover, :focus-within, .dl-unit--note) .dl-name {
+.readme-btn-unit:is(:hover, :focus-within, .readme-btn-unit--note) .readme-btn-name {
   translate: 0 0;
 }
 
-.dl-unit:is(:hover, :focus-within, .dl-unit--note) .dl-sub {
+.readme-btn-unit:is(:hover, :focus-within, .readme-btn-unit--note) .readme-btn-sub {
   opacity: 0.9;
   translate: 0 0;
 }
 
 /* Without a pointer there is no hover to bring the second line in. */
 @media (hover: none) {
-  .dl-name {
+  .readme-btn-name:not(:only-child) {
     translate: 0 0;
   }
-  .dl-sub {
+  .readme-btn-sub {
     opacity: 0.9;
     translate: 0 0;
   }
 }
 
-.dl-hint {
+.readme-btn-hint {
   position: absolute;
   top: 50%;
   inset-inline-end: 0.625rem;
@@ -1398,13 +1427,13 @@ button:focus-visible {
   translate: 0 -50%;
 }
 
-.group:hover .dl-hint {
+.group:hover .readme-btn-hint {
   color: var(--tile-ink);
 }
 
 /* The sheen of the README's buttons, here once per visit of the pointer and
    across the whole unit. */
-.dl-sheen {
+.readme-btn-sheen {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -1412,7 +1441,7 @@ button:focus-visible {
   pointer-events: none;
 }
 
-.dl-sheen::after {
+.readme-btn-sheen::after {
   content: '';
   position: absolute;
   top: -0.75rem;
@@ -1423,7 +1452,7 @@ button:focus-visible {
   transform: skewX(-16deg);
 }
 
-@keyframes dl-sheen {
+@keyframes readme-btn-sheen {
   to {
     left: calc(100% + 2rem);
   }
@@ -1431,16 +1460,16 @@ button:focus-visible {
 
 @media (hover: hover) {
   /* A segment under the pointer is a shade deeper than the unit it lights. */
-  .dl-group > .dl-part:hover {
+  .readme-btn-group > .readme-btn:hover {
     background-color: color-mix(in srgb, var(--tile) 86%, black);
   }
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  :root:not([data-motion='off']) .dl-unit:hover .dl-sheen::after {
-    animation: dl-sheen 0.8s linear;
+  :root:not([data-motion='off']) .readme-btn-unit:hover .readme-btn-sheen::after {
+    animation: readme-btn-sheen 0.8s linear;
   }
-  :root:not([data-motion='off']) .dl-group:hover .dl-sheen::after {
+  :root:not([data-motion='off']) .readme-btn-group:hover .readme-btn-sheen::after {
     animation-duration: 1.5s;
   }
 }
