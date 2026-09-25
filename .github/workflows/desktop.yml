@@ -66,11 +66,13 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
 
-      # windows-latest defaults to pwsh, which has no `rm -rf`.
+      # windows-latest defaults to pwsh, which has no `rm -rf`. The only install
+      # script belongs to the test-only canvas package, which has no Windows ARM
+      # binary and fails to compile there.
       - name: Build ui/ and populate webembed/dist
         shell: bash
         run: |
-          npm install
+          npm install --ignore-scripts
           npm run build --workspace core
           npm run build --workspace ui
           rm -rf webembed/dist
