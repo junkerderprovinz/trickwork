@@ -178,7 +178,8 @@ html, body {
 }
 
 /* Settings is a centred, width-capped page, and roomier than the dense
-   Convert cards: it is read, not glanced at mid-drag. */
+   Convert cards: it is read, not glanced at mid-drag. The cap fits the App
+   card's five desktop tiles in one row. */
 .settings-view {
   padding-top: 0.75rem;
   display: flex;
@@ -189,7 +190,7 @@ html, body {
 
 .settings-card {
   width: 100%;
-  max-width: 34rem;
+  max-width: 42rem;
   padding: 1.75rem 2rem;
 }
 
