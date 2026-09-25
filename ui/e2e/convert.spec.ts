@@ -86,6 +86,40 @@ test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
   await expect(rotate90).toHaveClass(/segmented-button--active/)
 })
 
+test('a free angle takes over from the rotate steps, steps with the arrow keys and undoes as one step', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const field = page.getByLabel('Angle in degrees', { exact: true })
+  const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
+  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(field).toHaveValue('')
+
+  await field.fill('30')
+  await expect(field).toHaveClass(/is-active/)
+  await expect(rotate0).not.toHaveClass(/segmented-button--active/)
+  await field.press('ArrowUp')
+  await expect(field).toHaveValue('31')
+  await field.press('Shift+ArrowDown')
+  await expect(field).toHaveValue('16')
+
+  // Leaving the field shows the turn as stored.
+  await field.fill('-15')
+  await field.press('Enter')
+  await expect(field).toHaveValue('345')
+
+  // The whole visit was one step.
+  await page.keyboard.press('Control+z')
+  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(field).toHaveValue('')
+
+  await page.keyboard.press('Control+y')
+  await expect(field).toHaveValue('345')
+  await page.getByRole('tab', { name: '90°', exact: true }).click()
+  await expect(field).toHaveValue('')
+  await expect(field).not.toHaveClass(/is-active/)
+})
+
 test('undo and redo buttons reflect history state and a dragged slider undoes as one step', async ({
   page,
 }) => {

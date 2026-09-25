@@ -1,10 +1,12 @@
+import { normalizeRotation } from './filters'
 import {
   computeBlockAverageColor,
   computeBlockLuminance,
+  computeOpaqueBlock,
   mapLuminanceToChar,
   mapLuminanceToCharWithAchieved,
 } from './mapping'
-import type { FontWidthTable, Grid, MappingOptions } from './types'
+import type { FontWidthTable, Grid, MappingOptions, RGB } from './types'
 
 /**
  * Floyd-Steinberg coefficients, applied to the character grid: the error is the
@@ -51,6 +53,8 @@ export function assembleGrid(
   const errorBuffer: number[][] | null = options.dither
     ? Array.from({ length: rows }, () => new Array<number>(columns).fill(0))
     : null
+  // Only a free rotation leaves transparent corners behind.
+  const emptyCorners = normalizeRotation(options.rotate ?? 0) % 90 !== 0
 
   const grid: Grid = []
   for (let row = 0; row < rows; row++) {
@@ -62,7 +66,21 @@ export function assembleGrid(
       const nextY = row === rows - 1 ? height : Math.floor((row + 1) * blockH)
       const w = Math.max(1, nextX - x)
       const h = Math.max(1, nextY - y)
-      const rawLuminance = computeBlockLuminance(imageData, x, y, w, h)
+
+      let rawLuminance: number
+      let blockColor: RGB | undefined
+      if (emptyCorners) {
+        const block = computeOpaqueBlock(imageData, x, y, w, h)
+        // A cell mostly in a corner stays blank and takes no dither error.
+        if (block.coverage < 0.5) {
+          cells.push(options.color ? { char: ' ', font: options.font, color: block.color } : { char: ' ', font: options.font })
+          continue
+        }
+        rawLuminance = block.luminance
+        blockColor = block.color
+      } else {
+        rawLuminance = computeBlockLuminance(imageData, x, y, w, h)
+      }
       const luminance = applyBrightnessContrast(
         rawLuminance,
         options.brightness,
@@ -91,7 +109,7 @@ export function assembleGrid(
         char = mapLuminanceToChar(luminance, table)
       }
 
-      const color = options.color ? computeBlockAverageColor(imageData, x, y, w, h) : undefined
+      const color = options.color ? (blockColor ?? computeBlockAverageColor(imageData, x, y, w, h)) : undefined
       cells.push(color ? { char, font: options.font, color } : { char, font: options.font })
     }
     grid.push(cells)

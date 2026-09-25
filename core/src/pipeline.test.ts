@@ -133,6 +133,13 @@ describe('effectiveDimensions', () => {
     expect(predicted).toEqual({ width: real.width, height: real.height })
   })
 
+  it('matches applyImageFilters\'s own output size for a crop and a free angle', () => {
+    const img = makeImageData(Array.from({ length: 12 }, () => new Array<number>(30).fill(90)))
+    const options: MappingOptions = { ...baseOptions, crop: { x: 0.1, y: 0, width: 0.7, height: 1 }, rotate: -33.5 }
+    const real = applyImageFilters(img, options)
+    expect(effectiveDimensions(img.width, img.height, options)).toEqual({ width: real.width, height: real.height })
+  })
+
   it('a 180-degree rotate keeps width/height unchanged', () => {
     expect(effectiveDimensions(10, 6, { rotate: 180 })).toEqual({ width: 10, height: 6 })
   })

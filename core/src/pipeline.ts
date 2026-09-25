@@ -1,4 +1,4 @@
-import { applyLevels, cropImage, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
+import { applyLevels, cropImage, flipImage, invertImage, rotatedSize, rotateImage, sharpenImage } from './filters'
 import type { MappingOptions } from './types'
 
 /**
@@ -21,10 +21,7 @@ export function effectiveDimensions(
     w = Math.max(1, Math.min(requestedW, w - x))
     h = Math.max(1, Math.min(requestedH, h - y))
   }
-  if (options.rotate === 90 || options.rotate === 270) {
-    ;[w, h] = [h, w]
-  }
-  return { width: w, height: h }
+  return options.rotate ? rotatedSize(w, h, options.rotate) : { width: w, height: h }
 }
 
 /**

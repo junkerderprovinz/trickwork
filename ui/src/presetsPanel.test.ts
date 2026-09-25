@@ -36,6 +36,12 @@ describe('parsePresetFile', () => {
     expect(result).toEqual(full)
   })
 
+  it('accepts any angle and keeps it as the same turn within one circle', () => {
+    expect(parsePresetFile(preset({ ...VALID_OPTIONS, rotate: 37.5 }))?.rotate).toBe(37.5)
+    expect(parsePresetFile(preset({ ...VALID_OPTIONS, rotate: -15 }))?.rotate).toBe(345)
+    expect(parsePresetFile(preset({ ...VALID_OPTIONS, rotate: 'left' }))?.rotate).toBeUndefined()
+  })
+
   it('ignores a non-positive rows value instead of rejecting the whole preset (falls back to auto)', () => {
     const result = parsePresetFile(preset({ ...VALID_OPTIONS, rows: 0 }))
     expect(result).toEqual(VALID_OPTIONS)

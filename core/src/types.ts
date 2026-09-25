@@ -48,7 +48,8 @@ export interface CharCell {
 
 export type Grid = CharCell[][]
 
-export type Rotation = 0 | 90 | 180 | 270
+/** Degrees clockwise, any value; -15 and 345 are the same turn. */
+export type Rotation = number
 export type SharpenMethod = 'none' | 'sharpen' | 'unsharp'
 
 /**

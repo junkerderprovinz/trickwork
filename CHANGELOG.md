@@ -4,6 +4,10 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### ✨ Added
+
+- Rotate takes any angle. A field beside the four steps accepts degrees, negative ones and tenths included, and the arrow keys turn by 1° or, with Shift, by 15°. The image grows to hold the whole turn, and the corners that adds stay blank, inverted or not.
+
 ### 🎨 Design
 
 - Settings has three tabs: General with the presets and the About card, Look with the language, shape, theme, animations, labels and colours, and App.

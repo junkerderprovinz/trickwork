@@ -58,6 +58,50 @@ export function computeBlockAverageColor(
 }
 
 /**
+ * The block's luminance and colour over its opaque pixels only, and the share
+ * of the block those pixels cover. Only the corners a free rotation adds are
+ * transparent, so only then does the grid ask.
+ */
+export function computeOpaqueBlock(
+  imageData: ImageData,
+  x: number,
+  y: number,
+  blockW: number,
+  blockH: number,
+): { luminance: number; color: RGB; coverage: number } {
+  const { data, width, height } = imageData
+  let lum = 0
+  let r = 0
+  let g = 0
+  let b = 0
+  let opaque = 0
+  let count = 0
+  const endX = Math.min(x + blockW, width)
+  const endY = Math.min(y + blockH, height)
+  for (let py = y; py < endY; py++) {
+    for (let px = x; px < endX; px++) {
+      const i = (py * width + px) * 4
+      count++
+      if ((data[i + 3] ?? 0) === 0) continue
+      const pr = data[i] ?? 0
+      const pg = data[i + 1] ?? 0
+      const pb = data[i + 2] ?? 0
+      lum += (0.299 * pr + 0.587 * pg + 0.114 * pb) / 255
+      r += pr
+      g += pg
+      b += pb
+      opaque++
+    }
+  }
+  if (opaque === 0) return { luminance: 1, color: { r: 255, g: 255, b: 255 }, coverage: 0 }
+  return {
+    luminance: lum / opaque,
+    color: { r: Math.round(r / opaque), g: Math.round(g / opaque), b: Math.round(b / opaque) },
+    coverage: opaque / count,
+  }
+}
+
+/**
  * Picks a glyph by rank rather than by nearest coverage. Entries are sorted by
  * measured ink coverage and each claims `weight` consecutive slots, so a
  * character repeated in the charset covers a wider luminance band, as in

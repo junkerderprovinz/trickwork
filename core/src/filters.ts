@@ -44,12 +44,43 @@ export function invertImage(imageData: ImageData): ImageData {
   return out
 }
 
+/** A turn reduced to [0, 360), so -15 and 345 compare equal. */
+export function normalizeRotation(degrees: Rotation): number {
+  const turn = degrees % 360
+  return turn < 0 ? turn + 360 : turn
+}
+
+/**
+ * The size rotateImage returns: the source's for a half turn, swapped for a
+ * quarter turn, and for any other angle the box that holds the whole rotated
+ * source.
+ */
+export function rotatedSize(width: number, height: number, degrees: Rotation): { width: number; height: number } {
+  const turn = normalizeRotation(degrees)
+  if (turn === 0 || turn === 180) return { width, height }
+  if (turn === 90 || turn === 270) return { width: height, height: width }
+  const rad = (turn * Math.PI) / 180
+  const cos = Math.abs(Math.cos(rad))
+  const sin = Math.abs(Math.sin(rad))
+  return {
+    width: Math.max(1, Math.round(width * cos + height * sin)),
+    height: Math.max(1, Math.round(width * sin + height * cos)),
+  }
+}
+
+/**
+ * A quarter turn moves pixels without resampling. Any other angle is
+ * resampled, and the corners the larger box adds are transparent, which the
+ * mapping reads as empty whatever later filters do to their colour.
+ */
 export function rotateImage(imageData: ImageData, degrees: Rotation): ImageData {
-  if (degrees === 0) return cloneImageData(imageData)
+  const turn = normalizeRotation(degrees)
+  if (turn === 0) return cloneImageData(imageData)
+  if (turn % 90 !== 0) return rotateFree(imageData, turn)
 
   const { width: srcW, height: srcH, data: srcData } = imageData
-  const dstW = degrees === 180 ? srcW : srcH
-  const dstH = degrees === 180 ? srcH : srcW
+  const dstW = turn === 180 ? srcW : srcH
+  const dstH = turn === 180 ? srcH : srcW
   const dstData = new Uint8ClampedArray(dstW * dstH * 4)
 
   for (let y = 0; y < srcH; y++) {
@@ -57,10 +88,10 @@ export function rotateImage(imageData: ImageData, degrees: Rotation): ImageData 
       const srcI = (y * srcW + x) * 4
       let dstX: number
       let dstY: number
-      if (degrees === 90) {
+      if (turn === 90) {
         dstX = srcH - 1 - y
         dstY = x
-      } else if (degrees === 180) {
+      } else if (turn === 180) {
         dstX = srcW - 1 - x
         dstY = srcH - 1 - y
       } else {
@@ -77,6 +108,49 @@ export function rotateImage(imageData: ImageData, degrees: Rotation): ImageData 
   }
 
   return { data: dstData, width: dstW, height: dstH, colorSpace: imageData.colorSpace } as ImageData
+}
+
+// Each destination pixel's centre is turned back onto the source about the
+// centres of both images and sampled bilinearly. A point outside the source
+// stays transparent, white so that a filter which ignores alpha sees paper.
+function rotateFree(imageData: ImageData, turn: number): ImageData {
+  const { width: srcW, height: srcH, data: src } = imageData
+  const { width: dstW, height: dstH } = rotatedSize(srcW, srcH, turn)
+  const rad = (turn * Math.PI) / 180
+  const cos = Math.cos(rad)
+  const sin = Math.sin(rad)
+  const dst = new Uint8ClampedArray(dstW * dstH * 4)
+  const at = (x: number, y: number, channel: number): number => src[(y * srcW + x) * 4 + channel] ?? 0
+
+  for (let y = 0; y < dstH; y++) {
+    for (let x = 0; x < dstW; x++) {
+      const u = x + 0.5 - dstW / 2
+      const v = y + 0.5 - dstH / 2
+      const sx = u * cos + v * sin + srcW / 2 - 0.5
+      const sy = -u * sin + v * cos + srcH / 2 - 0.5
+      const i = (y * dstW + x) * 4
+      if (sx < -0.5 || sy < -0.5 || sx > srcW - 0.5 || sy > srcH - 0.5) {
+        dst[i] = 255
+        dst[i + 1] = 255
+        dst[i + 2] = 255
+        continue
+      }
+      const x0 = Math.min(srcW - 1, Math.max(0, Math.floor(sx)))
+      const y0 = Math.min(srcH - 1, Math.max(0, Math.floor(sy)))
+      const x1 = Math.min(srcW - 1, x0 + 1)
+      const y1 = Math.min(srcH - 1, y0 + 1)
+      const fx = Math.min(1, Math.max(0, sx - x0))
+      const fy = Math.min(1, Math.max(0, sy - y0))
+      for (let c = 0; c < 3; c++) {
+        const top = at(x0, y0, c) * (1 - fx) + at(x1, y0, c) * fx
+        const bottom = at(x0, y1, c) * (1 - fx) + at(x1, y1, c) * fx
+        dst[i + c] = top * (1 - fy) + bottom * fy
+      }
+      dst[i + 3] = 255
+    }
+  }
+
+  return { data: dst, width: dstW, height: dstH, colorSpace: imageData.colorSpace } as ImageData
 }
 
 export function flipImage(imageData: ImageData, horizontal: boolean, vertical: boolean): ImageData {

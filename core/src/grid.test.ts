@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { assembleGrid, computeAutoRows } from './grid'
+import { applyImageFilters } from './pipeline'
 import type { FontWidthTable, MappingOptions } from './types'
 
 function makeImageData(pixels: number[][]): ImageData {
@@ -30,6 +31,33 @@ const table: FontWidthTable = {
 }
 
 describe('assembleGrid', () => {
+  it('leaves the corners of a free rotation blank, even when the image is inverted', () => {
+    // No blank glyph in the table, so a blank corner can only come from the corner rule.
+    const dots: FontWidthTable = {
+      font: { family: 'monospace', sizePx: 16 },
+      entries: [
+        { char: '.', inkCoverage: 0.1 },
+        { char: '@', inkCoverage: 1 },
+      ],
+    }
+    const options: MappingOptions = {
+      columns: 7,
+      brightness: 0,
+      contrast: 0,
+      charset: ['.', '@'],
+      font: { family: 'monospace', sizePx: 16 },
+      rotate: 45,
+      invert: true,
+    }
+    const source = makeImageData(Array.from({ length: 20 }, () => new Array<number>(20).fill(200)))
+    const grid = assembleGrid(applyImageFilters(source, options), dots, options)
+    const top = grid[0] ?? []
+    const middle = grid[Math.floor(grid.length / 2)] ?? []
+    expect(top[0]?.char).toBe(' ')
+    expect(top[top.length - 1]?.char).toBe(' ')
+    expect(middle[Math.floor(middle.length / 2)]?.char).toBe('@')
+  })
+
   it('produces a grid with the requested column count, and a proportionally-scaled row count', () => {
     const img = makeImageData([
       [0, 0, 255, 255],

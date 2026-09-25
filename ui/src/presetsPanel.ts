@@ -1,7 +1,7 @@
 // Saves and loads the whole `options` object as a shareable JSON file, from its
 // own card in the Settings view.
 
-import type { MappingOptions } from 'trickwork-core'
+import { normalizeRotation, type MappingOptions } from 'trickwork-core'
 import { glimButton, updateButton } from './controlWidgets'
 import { downloadBlob } from './download'
 import { iconDownload, iconImport } from './icons'
@@ -52,7 +52,7 @@ function validateOptions(value: unknown): MappingOptions | null {
   if (isFiniteNumber(v.rows) && v.rows > 0) options.rows = v.rows
   if (typeof v.color === 'boolean') options.color = v.color
   if (typeof v.dither === 'boolean') options.dither = v.dither
-  if (v.rotate === 0 || v.rotate === 90 || v.rotate === 180 || v.rotate === 270) options.rotate = v.rotate
+  if (isFiniteNumber(v.rotate)) options.rotate = normalizeRotation(v.rotate)
   if (typeof v.flipHorizontal === 'boolean') options.flipHorizontal = v.flipHorizontal
   if (typeof v.flipVertical === 'boolean') options.flipVertical = v.flipVertical
   if (typeof v.invert === 'boolean') options.invert = v.invert

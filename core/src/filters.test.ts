@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { applyLevels, cropImage, flipImage, invertImage, rotateImage, sharpenImage } from './filters'
+import {
+  applyLevels,
+  cropImage,
+  flipImage,
+  invertImage,
+  normalizeRotation,
+  rotatedSize,
+  rotateImage,
+  sharpenImage,
+} from './filters'
 
 function makeImageData(pixels: number[][]): ImageData {
   const height = pixels.length
@@ -82,6 +91,32 @@ describe('rotateImage', () => {
     expect(out.height).toBe(1)
     expect(pixelAt(out, 0, 0)[0]).toBe(10)
     expect(pixelAt(out, 1, 0)[0]).toBe(200)
+  })
+
+  it('a negative or oversized angle is the same turn as its remainder', () => {
+    expect(normalizeRotation(-90)).toBe(270)
+    expect(normalizeRotation(450)).toBe(90)
+    expect(rotateImage(img, -90)).toEqual(rotateImage(img, 270))
+  })
+
+  it('any other angle grows the image to hold the whole turned source and leaves the corners transparent', () => {
+    const square = makeImageData(Array.from({ length: 10 }, () => new Array<number>(10).fill(40)))
+    const out = rotateImage(square, 45)
+    expect({ width: out.width, height: out.height }).toEqual(rotatedSize(10, 10, 45))
+    expect(out.width).toBe(14)
+    expect(pixelAt(out, 0, 0)[3]).toBe(0)
+    expect(pixelAt(out, 13, 13)[3]).toBe(0)
+    expect(pixelAt(out, 7, 7)).toEqual([40, 40, 40, 255])
+  })
+
+  it('a free turn goes clockwise, like the quarter turns', () => {
+    // A bright top edge ends up on the right after a little under a quarter turn.
+    const rows = Array.from({ length: 20 }, (_, y) => new Array<number>(20).fill(y < 4 ? 250 : 0))
+    const out = rotateImage(makeImageData(rows), 80)
+    const right = pixelAt(out, out.width - 4, Math.floor(out.height / 2))
+    const left = pixelAt(out, 3, Math.floor(out.height / 2))
+    expect(right[0]).toBeGreaterThan(200)
+    expect(left[0]).toBeLessThan(50)
   })
 })
 

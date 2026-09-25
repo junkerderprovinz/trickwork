@@ -107,6 +107,7 @@ const dict: Translations = {
   'controls.rotate90': '90°',
   'controls.rotate180': '180°',
   'controls.rotate270': '270°',
+  'controls.rotateFree': 'Angolo in gradi',
   'controls.flipHorizontal': 'Capovolgi orizzontalmente',
   'controls.flipVertical': 'Capovolgi verticalmente',
   'controls.filters': 'Filtri',

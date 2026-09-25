@@ -107,6 +107,7 @@ const dict: Translations = {
   'controls.rotate90': '90°',
   'controls.rotate180': '180°',
   'controls.rotate270': '270°',
+  'controls.rotateFree': 'Szög fokban',
   'controls.flipHorizontal': 'Vízszintes tükrözés',
   'controls.flipVertical': 'Függőleges tükrözés',
   'controls.filters': 'Szűrők',
