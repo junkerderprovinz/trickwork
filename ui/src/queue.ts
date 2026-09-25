@@ -1,6 +1,7 @@
 import { subscribeRainbow } from './design/appearance'
 import { applyHueVars } from './controlWidgets'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
+import { motionMs } from './motion'
 import type { BatchItem, BatchItemStatus, Store } from './state'
 
 const STATUS_KEYS: Record<BatchItemStatus, TranslationKey> = {
@@ -24,14 +25,32 @@ export function mountQueue(container: HTMLElement, store: Store): void {
   list.className = 'queue-list'
   container.appendChild(list)
 
+  // New rows come in one after another. Every render draws the rows afresh,
+  // and a conversion renders again within milliseconds, so each row keeps the
+  // moment its entrance started and a redrawn row carries on from there, or
+  // stands finished once that is past.
+  const starts = new Map<string, number>()
+
   function render() {
     eyebrow.textContent = t('queue.eyebrow')
     empty.textContent = t('queue.empty')
     const state = store.getState()
     empty.style.display = state.items.length === 0 ? '' : 'none'
     list.innerHTML = ''
+    const now = performance.now()
+    const step = motionMs('--motion-stagger-step')
+    const cap = motionMs('--motion-stagger-cap')
+    let arriving = 0
     state.items.forEach((item, index) => {
-      list.appendChild(renderItem(item, item.id === state.activeItemId, index, store))
+      const row = renderItem(item, item.id === state.activeItemId, index, store)
+      let start = starts.get(item.id)
+      if (start === undefined) {
+        start = now + Math.min(arriving++ * step, cap)
+        starts.set(item.id, start)
+      }
+      row.classList.add('glim-stagger-row')
+      row.style.animationDelay = `${start - now}ms`
+      list.appendChild(row)
     })
   }
 
@@ -63,7 +82,8 @@ function renderItem(item: BatchItem, isActive: boolean, index: number, store: St
   name.textContent = item.file.name
 
   const status = document.createElement('span')
-  status.className = 'queue-item-status'
+  // A file being converted pulses: it is happening now.
+  status.className = item.status === 'converting' ? 'queue-item-status glim-live' : 'queue-item-status'
   status.textContent =
     item.status === 'error'
       ? t('queue.errorPrefix', { message: item.errorMessage ?? t('queue.errorUnknown') })

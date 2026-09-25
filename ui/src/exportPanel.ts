@@ -16,6 +16,7 @@ import { subscribeRainbow } from './design/appearance'
 import { infoIcon } from './design/tooltip'
 import { iconCheck, iconCopy, iconDownload } from './icons'
 import { subscribeLocale, t } from './i18n'
+import { replay } from './motion'
 import type { BatchItem, Store } from './state'
 
 type ExportFormat = 'txt' | 'xhtml' | 'rtf' | 'png'
@@ -48,11 +49,11 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   ;(['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]).forEach((format, index) => {
     // The format is the label's content rather than a verb, so it shows in
     // every mode.
-    const button = glimButton({
+    const button: HTMLButtonElement = glimButton({
       label: format.toUpperCase(),
       keepLabel: true,
       stage: 'none',
-      onClick: () => void exportActive(store, format, summary),
+      onClick: () => void exportActive(store, format, summary, button),
     })
     formatRow.appendChild(button)
     formatButtons.push({ format, button })
@@ -106,6 +107,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
         if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
         updateButton(copyButton, { label: t('preview.copied'), glyph: iconCheck() })
         copyButton.classList.add('is-copied')
+        replay(copyButton, 'glim-confirm')
         copiedFeedbackTimer = setTimeout(() => {
           copiedFeedbackTimer = null
           updateButton(copyButton, { label: t('preview.copy'), glyph: iconCopy() })
@@ -177,11 +179,14 @@ async function buildOutput(item: BatchItem, store: Store, format: ExportFormat):
   }
 }
 
-async function exportActive(store: Store, format: ExportFormat, summary: HTMLElement): Promise<void> {
+// The button answers as well as the line under it: it lights up when the file
+// is out and shakes when there was nothing to export or it failed.
+async function exportActive(store: Store, format: ExportFormat, summary: HTMLElement, button: HTMLElement): Promise<void> {
   const state = store.getState()
   const item = state.items.find((i) => i.id === state.activeItemId)
   if (!item) {
     summary.textContent = t('export.noActiveImage')
+    replay(button, 'glim-shake')
     return
   }
   try {
@@ -193,10 +198,12 @@ async function exportActive(store: Store, format: ExportFormat, summary: HTMLEle
     }
     store.updateItem(item.id, { status: 'exported' })
     summary.textContent = t('export.exported', { name: item.file.name, format: format.toUpperCase() })
+    replay(button, 'glim-confirm')
   } catch (error) {
     summary.textContent = t('export.failed', {
       error: error instanceof Error ? error.message : String(error),
     })
+    replay(button, 'glim-shake')
   }
 }
 

@@ -127,9 +127,10 @@ export function iconCopy(): string {
   )
 }
 
-// A checkmark for the Copy badge's brief "copied" state.
+// A checkmark for the Copy badge's brief "copied" state. It draws itself;
+// `pathLength` lets the stroke animation ignore the path's real length.
 export function iconCheck(): string {
-  return controlSvg(`<path d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
+  return controlSvg(`<path class="glim-check-draw" pathLength="1" d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
 }
 
 // A six-dot grip for a sidecard's drag handle.

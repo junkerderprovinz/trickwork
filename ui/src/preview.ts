@@ -10,6 +10,7 @@ import {
   type FontWidthTable,
 } from 'trickwork-core'
 import { subscribeLocale, t } from './i18n'
+import { replay } from './motion'
 import type { Store } from './state'
 
 const MIN_ZOOM = 10
@@ -161,6 +162,8 @@ export function mountPreview(container: HTMLElement, store: Store): void {
     if (activeItem.id !== lastImageId) {
       lastImageId = activeItem.id
       zoomPct = DEFAULT_ZOOM
+      // A new image fades in once; later renders of it just redraw.
+      replay(canvasWrap, 'glim-content-fade')
     }
 
     const { charset, font } = state.options

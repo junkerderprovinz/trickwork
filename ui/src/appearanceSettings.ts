@@ -25,6 +25,7 @@ import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
 import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
+import { motionMs } from './motion'
 import { iconReset } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
@@ -119,6 +120,21 @@ function swatchReset(onClick: () => void): HTMLButtonElement {
   btn.setAttribute('data-tip', t('appearance.resetToDefault'))
   btn.addEventListener('click', onClick)
   return btn
+}
+
+let wipeTimer: number | undefined
+
+/**
+ * Lets the next change of the rainbow wipe across the page instead of every
+ * hued element snapping on its own. The class stays only as long as the wipe,
+ * so ordinary hovers keep their own timing. Not for a colour being dragged in
+ * the picker, which has to follow the pointer.
+ */
+function wipeColours(): void {
+  const root = document.documentElement
+  root.classList.add('glim-colour-wipe')
+  window.clearTimeout(wipeTimer)
+  wipeTimer = window.setTimeout(() => root.classList.remove('glim-colour-wipe'), motionMs('--motion-wipe-dur') + 50)
 }
 
 // Where each picker starts in the palette, so stacked pickers do not repeat
@@ -337,6 +353,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
         storeDisco(true)
       }
       // Spread the current state, or the switch would reset a custom palette.
+      wipeColours()
       applyRainbow({ ...rainbowState(), on: checked })
       persist()
       applyDisco(discoOn)
@@ -380,6 +397,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     })
     paletteRow.appendChild(
       swatchReset(() => {
+        wipeColours()
         applyRainbow({ ...rainbowState(), palette: [...RAINBOW] })
         persist()
         applyDisco(discoOn)
@@ -389,6 +407,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       t('appearance.rainbowReactive'),
       rainbowState().reactive,
       (checked) => {
+        wipeColours()
         applyRainbow({ ...rainbowState(), reactive: checked })
         persist()
       },
@@ -399,6 +418,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       rainbowState().rotate,
       (checked) => {
         const now = rainbowState()
+        wipeColours()
         applyRainbow({ ...now, rotate: checked, seed: checked ? (now.seed + 1) % RAINBOW.length : 0 })
         persist()
         applyDisco(discoOn)

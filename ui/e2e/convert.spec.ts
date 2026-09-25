@@ -329,6 +329,22 @@ test('a malformed settings file is rejected with an error, not a silent crash', 
   }
   await page.locator('input[type="file"][accept*="json"]').setInputFiles(badFile)
   await expect(page.getByText('That file is not a valid TrickWork preset.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Import settings' })).toHaveClass(/glim-shake/)
+})
+
+test('a settings tab slides in from the side it lies on, and new queue rows come in one after another', async ({ page }) => {
+  await page.goto('/')
+  const fileInput = page.locator('input[type="file"][accept="image/*"]')
+  await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+  await expect(page.locator('.queue-item').first()).toHaveClass(/glim-stagger-row/)
+
+  await settingsButton(page).click()
+  const cards = page.locator('.settings-cards')
+  await settingsTab(page, 'App').click()
+  await expect(cards).toHaveClass(/glim-tab-slide/)
+  expect(await cards.evaluate((el) => el.style.getPropertyValue('--tab-dir'))).toBe('1')
+  await settingsTab(page, 'General').click()
+  expect(await cards.evaluate((el) => el.style.getPropertyValue('--tab-dir'))).toBe('-1')
 })
 
 test('preview zoom: buttons change the displayed canvas size and the label resets on a new image', async ({

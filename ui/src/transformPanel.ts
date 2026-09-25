@@ -4,6 +4,7 @@ import { subscribeRainbow } from './design/appearance'
 import { enableWheelStep } from './design/selectScroll'
 import { iconFlipHorizontal, iconFlipVertical } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
+import { replay } from './motion'
 import type { Store } from './state'
 
 const ROTATIONS: { value: Rotation; key: TranslationKey }[] = [
@@ -128,6 +129,8 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
     input.addEventListener('blur', () => {
       committed = false
       const stored = tidyTurn(store.getState().options.rotate ?? 0)
+      // Leaving the field with text that is no angle refuses it visibly.
+      if (input.classList.contains('is-invalid')) replay(field, 'glim-shake')
       input.classList.remove('is-invalid')
       if (!isStep(stored)) {
         input.value = String(stored)

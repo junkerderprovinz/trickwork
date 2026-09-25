@@ -28,6 +28,7 @@ import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
 import { iconApp, iconSettings, iconBack, iconGeneral, iconLook } from './icons'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
+import { replay } from './motion'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -146,17 +147,17 @@ function applyButtonLabel(): void {
 
 let leaveLook = (): void => {}
 
-// The page entrance runs on every arrival, so it is restarted by taking the
-// class off and forcing a style pass before putting it back.
-function enter(el: HTMLElement): void {
-  el.classList.remove('glim-page-enter')
-  void el.offsetWidth
-  el.classList.add('glim-page-enter')
-}
+const TAB_ORDER: SettingsTab[] = ['general', 'look', 'app']
 
 function showTab(): void {
   for (const [tab, cards] of Object.entries(tabCards)) {
-    for (const card of cards) card.style.display = tab === settingsTab ? '' : 'none'
+    cards.forEach((card, i) => {
+      const shown = tab === settingsTab
+      card.style.display = shown ? '' : 'none'
+      if (!shown) return
+      card.style.setProperty('--row-i', String(i))
+      replay(card, 'glim-stagger-row')
+    })
   }
 }
 
@@ -174,9 +175,12 @@ function buildTabs(): void {
     rainbowBaseIndex: HUE_OFFSET.tabs,
     onChange: (tab) => {
       if (settingsTab === 'look') leaveLook()
+      // The new tab slides in from the side it lies on.
+      const toward = TAB_ORDER.indexOf(tab) > TAB_ORDER.indexOf(settingsTab) ? 1 : -1
+      settingsCards.style.setProperty('--tab-dir', String(toward))
       settingsTab = tab
       showTab()
-      enter(settingsCards)
+      replay(settingsCards, 'glim-tab-slide')
     },
   })
   tabSlot.replaceChildren(tabs)
@@ -191,7 +195,9 @@ function render(): void {
   if (onSettings) body.appendChild(settingsButton)
   else brandCard.appendChild(settingsButton)
   applyButtonLabel()
-  for (const shown of onSettings ? [settingsView] : [primary, secondary]) enter(shown)
+  // The page entrance runs on every arrival.
+  for (const shown of onSettings ? [settingsView] : [primary, secondary]) replay(shown, 'glim-page-enter')
+  if (onSettings) showTab()
 }
 
 settingsButton.addEventListener('click', () => {
@@ -204,6 +210,9 @@ subscribeLocale(buildTabs)
 buildTabs()
 showTab()
 render()
+// Two frames after the first paint, so the first radii never animate and every
+// later change of shape does.
+requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('glim-shape-transitions')))
 
 // Ctrl+Z, Ctrl+Shift+Z and Ctrl+Y, or Cmd on macOS. A focused text field
 // keeps its own native undo.

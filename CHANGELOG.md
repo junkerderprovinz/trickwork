@@ -7,6 +7,7 @@ All notable changes to TrickWork are documented here.
 ### ✨ Added
 
 - Rotate takes any angle. A field beside the four steps accepts degrees, negative ones and tenths included, and the arrow keys turn by 1° or, with Shift, by 15°. The image grows to hold the whole turn, and the corners that adds stay blank, inverted or not.
+- The rest of GlimStone's animations, each at every Animations level and still under the system's reduced motion: a file being converted pulses; a refused import, export or angle shakes its control, and a successful one lights up; changing the shape glides the corners; new queue rows and a tab's cards come in one after another; switching the rainbow on, off or to reactive wipes the colours across the page; the Copy checkmark draws itself; a new image fades into the preview; a settings tab slides in from its side; and every sidecard wiggles while one is being dragged.
 
 ### 🐛 Fixed
 

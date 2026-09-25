@@ -6,6 +6,7 @@ import { glimButton, updateButton } from './controlWidgets'
 import { downloadBlob } from './download'
 import { iconDownload, iconImport } from './icons'
 import { subscribeLocale, t } from './i18n'
+import { replay } from './motion'
 import type { Store } from './state'
 
 const PRESET_FORMAT_VERSION = 1
@@ -113,6 +114,7 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
       const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
       const delivered = await downloadBlob(blob, 'trickwork-preset.json')
       summary.textContent = t(delivered ? 'presets.exported' : 'presets.exportCancelled')
+      if (delivered) replay(exportButton, 'glim-confirm')
     })()
   })
 
@@ -126,11 +128,13 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
       const options = parsePresetFile(text)
       if (!options) {
         summary.textContent = t('presets.importInvalid')
+        replay(importButton, 'glim-shake')
         return
       }
       // replaceOptions records an undo step and re-syncs every control.
       store.replaceOptions(options, t('history.entrySettingsImported'))
       summary.textContent = t('presets.imported')
+      replay(importButton, 'glim-confirm')
     })()
   })
 

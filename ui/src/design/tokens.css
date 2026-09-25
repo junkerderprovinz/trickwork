@@ -801,8 +801,9 @@ body {
   :root[data-motion='off'] .glim-live { animation: none; opacity: 1; }
 
   /* Every transition reads one number, so the setting reaches all of them.
-     The other dials here: a window's entrance, the reactive label's reveal and
-     the sheen that crosses a README-shaped button once under the pointer. */
+     The other dials here: a window's entrance, the reactive label's reveal,
+     the sheen that crosses a README-shaped button once under the pointer, and
+     the round-two animations described where their keyframes are. */
   :root {
     --motion-control-dur: 150ms;
     --motion-modal-dur: 260ms;
@@ -812,6 +813,20 @@ body {
     --motion-label-shift: -0.4rem;
     --motion-label-squash: 0.82;
     --motion-button-sheen-dur: 800ms;
+    --motion-shape-dur: 260ms;
+    --motion-shape-ease: cubic-bezier(.2, .6, .2, 1);
+    --motion-confirm-dur: 420ms;
+    --motion-confirm-scale: 1;
+    --motion-stagger-step: 30ms;
+    --motion-stagger-cap: 480ms;
+    --motion-stagger-dur: 240ms;
+    --motion-wipe-dur: 320ms;
+    --motion-check-dur: 360ms;
+    --motion-content-dur: 220ms;
+    --motion-tab-dur: 220ms;
+    --motion-tab-travel: 18px;
+    --motion-wiggle-dur: 280ms;
+    --motion-wiggle-angle: .6deg;
   }
   :root[data-motion='subtle'] {
     --motion-control-dur: 80ms;
@@ -822,6 +837,20 @@ body {
     --motion-label-shift: 0rem;
     --motion-label-squash: 1;
     --motion-button-sheen-dur: 1100ms;
+    --motion-shape-dur: 140ms;
+    --motion-shape-ease: cubic-bezier(.2, .6, .2, 1);
+    --motion-confirm-dur: 260ms;
+    --motion-confirm-scale: .5;
+    --motion-stagger-step: 15ms;
+    --motion-stagger-cap: 200ms;
+    --motion-stagger-dur: 140ms;
+    --motion-wipe-dur: 160ms;
+    --motion-check-dur: 200ms;
+    --motion-content-dur: 120ms;
+    --motion-tab-dur: 130ms;
+    --motion-tab-travel: 10px;
+    --motion-wiggle-dur: 360ms;
+    --motion-wiggle-angle: .3deg;
   }
   :root[data-motion='off'] {
     --motion-control-dur: 0s;
@@ -832,6 +861,21 @@ body {
     --motion-label-shift: 0rem;
     --motion-label-squash: 1;
     --motion-button-sheen-dur: 0s;
+    --motion-shape-dur: 0s;
+    --motion-shape-ease: linear;
+    --motion-confirm-dur: 0s;
+    --motion-confirm-scale: 0;
+    --motion-stagger-step: 0s;
+    --motion-stagger-cap: 0s;
+    --motion-stagger-dur: 0s;
+    --motion-wipe-dur: 0s;
+    --motion-check-dur: 0s;
+    --motion-content-dur: 0s;
+    --motion-tab-dur: 0s;
+    --motion-tab-travel: 0px;
+    /* A long period rather than none, with no angle, so nothing moves. */
+    --motion-wiggle-dur: 400ms;
+    --motion-wiggle-angle: 0deg;
   }
   :root[data-motion='off'] * { transition-duration: 0s !important; }
   :root[data-motion='subtle'] .transition,
@@ -870,6 +914,21 @@ body {
   --motion-label-shift: -0.6rem;
   --motion-label-squash: 0.7;
   --motion-button-sheen-dur: 550ms;
+  --motion-shape-dur: 460ms;
+  --motion-shape-ease: cubic-bezier(.22, 1.94, .45, 1);
+  --motion-confirm-dur: 700ms;
+  --motion-confirm-scale: 1.9;
+  --motion-stagger-step: 55ms;
+  /* At 55ms a step a long list would stagger for seconds without the cap. */
+  --motion-stagger-cap: 700ms;
+  --motion-stagger-dur: 420ms;
+  --motion-wipe-dur: 560ms;
+  --motion-check-dur: 620ms;
+  --motion-content-dur: 380ms;
+  --motion-tab-dur: 380ms;
+  --motion-tab-travel: 34px;
+  --motion-wiggle-dur: 220ms;
+  --motion-wiggle-angle: 1deg;
 }
 :root[data-motion='storm'][dir="rtl"] { --glim-toast-slide: -44px; }
 
@@ -955,6 +1014,115 @@ body {
     box-shadow var(--drag-settle-dur) var(--drag-settle-ease);
 }
 .glim-drag-shift { transition: translate var(--drag-settle-dur) var(--drag-settle-ease); }
+
+/* The round-two animations of "The motion engine". Each reads its own dials,
+   declared at every level above, and plays only inside the no-preference gate.
+   A class that has to play again, such as the pulse on a second success, is
+   taken off and put back after forcing a style pass, the way an app restarts
+   the page entrance. */
+
+/* The shape morph. Registering the radius tokens as lengths lets them
+   transition on the root, so every corner that reads them follows without a
+   transition of its own; per-element transitions would fight each element's
+   other transitions for the shorthand. An app arms it two frames after its
+   first paint, so the first radii never animate. */
+@property --radius-card { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --radius-control { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --radius-pill { syntax: '<length>'; inherits: true; initial-value: 0px; }
+
+/* The success pulse, the shake's gentler sibling: a ring in the element's own
+   accent and a small pop. */
+@keyframes glim-confirm {
+  0%   { box-shadow: 0 0 0 0 var(--accent-soft); scale: 1; }
+  40%  { box-shadow: 0 0 0 calc(var(--motion-confirm-scale, 1) * 6px) var(--accent-soft); scale: calc(1 + var(--motion-confirm-scale, 1) * .05); }
+  100% { box-shadow: 0 0 0 0 var(--accent-soft); scale: 1; }
+}
+
+/* A row arriving in a list. The fade stays inside the keyframe on a plain
+   ease-out, since rows come in dozens and opacity never rides a spring. */
+@keyframes glim-row-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* `pathLength="1"` on the path lets a 1-to-0 dash offset draw the whole glyph. */
+@keyframes glim-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes glim-content-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* A tab change. The strip sets --tab-dir to 1 toward a later tab and -1 toward
+   an earlier one; --tab-dir-sign flips the side under a right-to-left script. */
+:root { --tab-dir-sign: 1; }
+[dir="rtl"] { --tab-dir-sign: -1; }
+@keyframes glim-tab-slide {
+  from { transform: translateX(calc(var(--tab-dir, 1) * var(--tab-dir-sign, 1) * var(--motion-tab-travel, 18px))); }
+  to   { transform: none; }
+}
+
+/* Every item of a list that is being reordered wiggles, a mode sign for the
+   whole list. It uses `rotate`, which composes with the drag's `translate`
+   and `scale`. */
+@keyframes glim-wiggle {
+  from { rotate: calc(var(--motion-wiggle-angle, .6deg) * -1); }
+  to   { rotate: var(--motion-wiggle-angle, .6deg); }
+}
+
+/* Drawn at rest outside the gate, so a checkmark is never left invisible. */
+.glim-check-draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  :root.glim-shape-transitions {
+    transition:
+      --radius-card var(--motion-shape-dur) var(--motion-shape-ease),
+      --radius-control var(--motion-shape-dur) var(--motion-shape-ease),
+      --radius-pill var(--motion-shape-dur) var(--motion-shape-ease);
+  }
+
+  .glim-confirm { animation: glim-confirm var(--motion-confirm-dur) ease-out; }
+
+  .glim-stagger-row {
+    animation: glim-row-in var(--motion-stagger-dur) ease-out both;
+    /* min() caps the whole spread however long the list is. */
+    animation-delay: min(calc(var(--row-i, 0) * var(--motion-stagger-step)), var(--motion-stagger-cap));
+  }
+
+  /* The colour wipe. An app puts .glim-colour-wipe on the root for
+     --motion-wipe-dur whenever the rainbow mode changes, so ordinary hovers
+     never get this transition. The doubled class wins a tie with a component's
+     own transition shorthand. */
+  .glim-colour-wipe,
+  .glim-colour-wipe.glim-colour-wipe * {
+    transition:
+      background-color var(--motion-wipe-dur) ease,
+      color var(--motion-wipe-dur) ease,
+      border-color var(--motion-wipe-dur) ease,
+      box-shadow var(--motion-wipe-dur) ease,
+      fill var(--motion-wipe-dur) ease,
+      stroke var(--motion-wipe-dur) ease;
+  }
+
+  .glim-check-draw {
+    stroke-dashoffset: 1;
+    animation: glim-check-draw var(--motion-check-dur) ease forwards;
+  }
+
+  .glim-content-fade { animation: glim-content-fade-in var(--motion-content-dur) ease both; }
+
+  .glim-tab-slide {
+    animation:
+      glim-tab-slide var(--motion-tab-dur) var(--motion-page-ease) both,
+      glim-fade-in var(--motion-tab-dur) ease-out both;
+  }
+
+  .glim-drag-armed > * {
+    animation: glim-wiggle var(--motion-wiggle-dur) ease-in-out infinite alternate;
+  }
+}
 
 
 /* The number field (reference/numberField.ts; docs/design-language.md, "Never a

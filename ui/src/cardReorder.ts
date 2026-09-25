@@ -167,6 +167,8 @@ function startDrag(container: HTMLElement, card: HTMLElement, startY: number): D
 
   let target = from
   let moved = false
+  // Every card wiggles while one is held: the list is being reordered.
+  container.classList.add('glim-drag-armed')
   card.classList.add('glim-drag-lift')
   for (const el of items) if (el !== card) el.classList.add('glim-drag-shift')
 
@@ -187,6 +189,7 @@ function startDrag(container: HTMLElement, card: HTMLElement, startY: number): D
   }
 
   function cleanUp(): void {
+    container.classList.remove('glim-drag-armed')
     for (const el of items) {
       el.classList.remove('glim-drag-lift', 'glim-drag-shift', 'glim-drag-settle')
       el.style.translate = ''
