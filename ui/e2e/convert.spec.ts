@@ -567,6 +567,14 @@ test('the About card gives with the README buttons, the coffee one in its own ar
   }
   await coffee.hover()
   await expect(coffee).toHaveCSS('background-color', 'rgb(255, 221, 0)')
+
+  // The envelope opens under the pointer.
+  const mail = page.getByRole('button', { name: 'Email', exact: true })
+  await expect(mail.locator('.glim-mark-rest')).toBeVisible()
+  await expect(mail.locator('.glim-mark-hover')).toBeHidden()
+  await mail.hover()
+  await expect(mail.locator('.glim-mark-hover')).toBeVisible()
+  await expect(mail.locator('.glim-mark-rest')).toBeHidden()
 })
 
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {

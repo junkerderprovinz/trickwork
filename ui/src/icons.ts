@@ -141,9 +141,10 @@ export function iconGrip(): string {
   )
 }
 
-// A glyph from Streamline's free Core Solid set (CC BY 4.0,
-// https://streamlinehq.com), the set GlimStone's glyphs.md draws from, filled
-// and cropped to its ink so marks side by side come out the same size.
+// A filled glyph from the sets GlimStone's glyphs.md draws from, Streamline's
+// free Core Solid (CC BY 4.0, https://streamlinehq.com) and Material Design
+// Icons (Apache 2.0), cropped to its ink so marks side by side come out the
+// same size.
 function solidSvg(d: string, viewBox: string, size: number): string {
   return `<svg width="${size}" height="${size}" viewBox="${viewBox}" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="${d}" /></svg>`
 }
@@ -162,11 +163,11 @@ function tabSvg(d: string, viewBox: string): string {
   return solidSvg(d, viewBox, 20)
 }
 
-// The General tab. Streamline interface-essential/vertical-slider-square.svg.
+// The General tab. Material Design Icons' tune.
 export function iconGeneral(): string {
   return tabSvg(
-    'M1.5 -0.0000010192C0.671573 -9.83e-7 -5.826e-7 0.671572 -5.464e-7 1.5l4.808e-7 11C-2.94e-8 13.3284 0.671573 14 1.5 14l11 0c0.8284 0 1.5 -0.6716 1.5 -1.5l0 -11C14 0.671572 13.3284 -5.826e-7 12.5 -5.464e-7l-11 -4.728e-7ZM3.875 5.88497 3.875 11c0 0.3452 0.27982 0.625 0.625 0.625 0.34517 0 0.625 -0.2798 0.625 -0.625l0 -5.11502c0.65784 -0.25161 1.125 -0.8888 1.125 -1.6351 0 -0.9665 -0.7835 -1.75 -1.75 -1.75s-1.75 0.7835 -1.75 1.75c0 0.7463 0.46716 1.38349 1.125 1.63509Zm7.375 1.86494c0 0.7463 -0.4672 1.38349 -1.125 1.6351l0 1.61499c0 0.3452 -0.27983 0.625 -0.625 0.625 -0.34518 0 -0.625 -0.2798 -0.625 -0.625l0 -1.615c-0.65784 -0.2516 -1.125 -0.88879 -1.125 -1.63509 0 -0.74629 0.46716 -1.38348 1.125 -1.63509L8.875 3c0 -0.34518 0.27982 -0.625 0.625 -0.625 0.34517 0 0.625 0.27982 0.625 0.625l0 3.11482c0.6578 0.2516 1.125 0.88879 1.125 1.63509Z',
-    '0 0 14 14',
+    'M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z',
+    '3 3 18 18',
   )
 }
 

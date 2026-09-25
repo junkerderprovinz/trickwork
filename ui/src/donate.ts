@@ -177,8 +177,12 @@ const GITHUB: Mark = {
   '1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95' +
   '.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z',
 }
-// An envelope whose flap is cut out, so the ground shows through.
-const ENVELOPE: Mark = { box: '0 0 16 16', d: 'M1.5 3.5h13v9h-13v-9zm1.6 1.4L8 8.4l4.9-3.5H3.1z' }
+// Material Design Icons' email and email-open (Apache 2.0). Both share one box
+// that leaves room above for the open flap, so the envelope does not jump when
+// it opens under the pointer.
+const MAIL_BOX = '2 0.64 20 19.36'
+const MAIL_CLOSED = 'M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z'
+const MAIL_OPEN = 'M4,8L12,13L20,8V8L12,3L4,8V8M22,8V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V8C2,7.27 2.39,6.64 2.97,6.29L12,0.64L21.03,6.29C21.61,6.64 22,7.27 22,8Z'
 
 // Buy Me a Coffee's own README button without its yellow ground: the cup, and
 // the lettering in their typeface, on the button's 841.9 by 245.3 canvas, which
@@ -209,5 +213,7 @@ export const GLYPHS = {
   paypal: markSvg(PAYPAL),
   bitcoin: markSvg(BTC_LETTER),
   github: markSvg(GITHUB),
-  mail: markSvg(ENVELOPE),
+  mail:
+    markSvg({ box: MAIL_BOX, d: MAIL_CLOSED }).replace('<svg ', '<svg class="glim-mark-rest" ') +
+    markSvg({ box: MAIL_BOX, d: MAIL_OPEN }).replace('<svg ', '<svg class="glim-mark-hover" '),
 }

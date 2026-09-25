@@ -1322,9 +1322,14 @@ button:focus-visible {
 
 .readme-btn-mark svg,
 .readme-btn-art svg {
-  display: block;
   width: 100%;
   height: 100%;
+}
+
+/* The mark a brand shows under the pointer stays hidden until then. */
+.readme-btn-mark svg:not(.glim-mark-hover),
+.readme-btn-art svg {
+  display: block;
 }
 
 /* A vendor's own button artwork on the README's canvas, which is the button's. */
