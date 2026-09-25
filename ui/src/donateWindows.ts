@@ -6,7 +6,7 @@
 import { hueVars } from './design/appearance'
 import { donationHandlers, loadPaypal, parseAmount, type GiveFrequency } from './design/paypal'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
-import { COFFEE_WIDGET, COIN_MARKS, CRYPTO_COINS, PAYPAL_GIVING, PAYPAL_PAGE, markSvg, type CryptoCoin, type CryptoNetwork } from './donate'
+import { COFFEE_WIDGET, COIN_MARKS, COIN_TILES, CRYPTO_COINS, PAYPAL_GIVING, PAYPAL_PAGE, markSvg, type CryptoCoin, type CryptoNetwork } from './donate'
 import { iconCheck, iconClear, iconCopy } from './icons'
 import { t } from './i18n'
 import { qrSvg } from './qr'
@@ -287,8 +287,14 @@ export function openCryptoWindow(): void {
       tile.setAttribute('aria-selected', String(c.id === coin.id))
       tile.setAttribute('aria-label', `${c.name} (${c.symbol})`)
       tile.setAttribute('data-tip', c.name)
-      tile.className = 'donate-coin glim-hue glim-hue-icon' + (c.id === coin.id ? ' glim-active is-active' : '')
+      const picked = c.id === coin.id
+      const own = COIN_TILES[c.id]
+      tile.className = 'donate-coin glim-hue glim-hue-icon' + (picked ? ' glim-active is-active' : own ? ' glim-brand-tile' : '')
       for (const [prop, value] of Object.entries(hueVars(i))) tile.style.setProperty(prop, value)
+      if (own && !picked) {
+        tile.style.setProperty('--tile', own.color)
+        tile.style.setProperty('--tile-ink', own.ink)
+      }
       const mark = COIN_MARKS[c.id]
       if (mark) tile.insertAdjacentHTML('beforeend', markSvg(mark).replace('width="14" height="14"', 'width="22" height="22"'))
       const ticker = document.createElement('span')

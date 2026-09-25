@@ -71,6 +71,19 @@ export const CRYPTO_COINS: CryptoCoin[] = [
   },
 ]
 
+/** Each coin's own colour and the ink that holds on it, which its tile lights
+ *  up in under the pointer: white wherever white reaches 2:1 ("Brand tiles"). */
+export const COIN_TILES: Record<string, { color: string; ink: string }> = {
+  btc: { color: '#f7931a', ink: '#ffffff' },
+  eth: { color: '#627eea', ink: '#ffffff' },
+  usdt: { color: '#26a17b', ink: '#ffffff' },
+  usdc: { color: '#2775ca', ink: '#ffffff' },
+  bnb: { color: '#f0b90b', ink: '#161616' },
+  sol: { color: '#9945ff', ink: '#ffffff' },
+  sui: { color: '#4da2ff', ink: '#ffffff' },
+  xrp: { color: '#23292f', ink: '#ffffff' },
+}
+
 interface Mark {
   box: string
   d: string

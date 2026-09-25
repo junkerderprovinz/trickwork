@@ -1180,8 +1180,8 @@ button:focus-visible {
 }
 
 /* The App card's tiles: a mark above a name, one shape for every way to get
-   the app. Under the pointer the tile takes the picker grey, and the marks
-   switch to the values that hold on it. */
+   the app. Under the pointer each lights up in its brand's colour
+   (.glim-brand-tile in design/tokens.css). */
 .app-tiles {
   display: flex;
   flex-wrap: wrap;
@@ -1205,12 +1205,6 @@ button:focus-visible {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text);
   text-decoration: none;
-  transition: background-color 150ms ease, color 150ms ease;
-}
-
-.group:hover .app-tile {
-  background-color: var(--carbon-tile-hover);
-  color: var(--carbon-tile-hover-ink);
 }
 
 .app-tile-mark {
@@ -1241,7 +1235,7 @@ button:focus-visible {
 }
 
 .group:hover .app-tile-hint {
-  color: var(--carbon-tile-hover-ink);
+  color: var(--tile-ink);
 }
 
 /* The About card: each sentence sits right above the buttons it asks for, and
@@ -1485,10 +1479,6 @@ button:focus-visible {
   font-size: var(--text-dense);
   font-weight: 500;
   color: var(--carbon-text-sub);
-}
-
-.donate-coin:hover {
-  color: var(--carbon-text);
 }
 
 /* A coin tile follows the label engine: its mark alone in glyph mode, its

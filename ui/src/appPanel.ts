@@ -18,12 +18,23 @@ const RELEASE = `${REPO}/releases/download/${TAG}`
 const UNRAID_CA = 'https://ca.unraid.net/apps/trickwork-0h072450hg59wx'
 const DOCKER_RUN = 'docker run -d --name trickwork --restart unless-stopped -p 3210:3210 ghcr.io/junkerderprovinz/trickwork:latest'
 
-const DESKTOP: { key: TranslationKey; file: string; mark: string; tint: string }[] = [
-  { key: 'apps.windows', file: 'trickwork-windows-amd64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
-  { key: 'apps.windowsPortable', file: 'trickwork-windows-amd64-portable.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
-  { key: 'apps.windowsArm', file: 'trickwork-windows-arm64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark' },
-  { key: 'apps.macos', file: 'trickwork-macos-universal.dmg', mark: APPLE_SVG, tint: '' },
-  { key: 'apps.linux', file: 'trickwork-linux-amd64', mark: LINUX_SVG, tint: '' },
+// The brand each tile lights up in under the pointer ("Brand tiles").
+const TILE = {
+  windows: 'glim-tile-windows',
+  apple: 'glim-tile-apple',
+  linux: 'glim-tile-linux',
+  docker: 'glim-tile-docker',
+  unraid: 'glim-tile-unraid',
+  zip: 'glim-tile-zip',
+} as const
+type Brand = keyof typeof TILE
+
+const DESKTOP: { key: TranslationKey; file: string; mark: string; tint: string; brand: Brand }[] = [
+  { key: 'apps.windows', file: 'trickwork-windows-amd64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
+  { key: 'apps.windowsPortable', file: 'trickwork-windows-amd64-portable.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
+  { key: 'apps.windowsArm', file: 'trickwork-windows-arm64-installer.exe', mark: WINDOWS_SVG, tint: 'glim-windows-mark', brand: 'windows' },
+  { key: 'apps.macos', file: 'trickwork-macos-universal.dmg', mark: APPLE_SVG, tint: '', brand: 'apple' },
+  { key: 'apps.linux', file: 'trickwork-linux-amd64', mark: LINUX_SVG, tint: '', brand: 'linux' },
 ]
 
 /** The desktop build binds its Go methods on window.go; the container has none. */
@@ -56,9 +67,9 @@ function tileBody(tile: HTMLElement, name: string, svg: string, tint: string): H
   return label
 }
 
-function linkTile(name: string, href: string, svg: string, tint = ''): HTMLElement {
+function linkTile(name: string, href: string, svg: string, brand: Brand, tint = ''): HTMLElement {
   const a = document.createElement('a')
-  a.className = 'app-tile'
+  a.className = 'app-tile glim-brand-tile'
   a.href = href
   a.target = '_blank'
   a.rel = 'noreferrer noopener'
@@ -66,7 +77,7 @@ function linkTile(name: string, href: string, svg: string, tint = ''): HTMLEleme
   tileBody(a, name, svg, tint)
   a.addEventListener('click', (event) => followExternal(event, href))
   const wrap = document.createElement('div')
-  wrap.className = 'app-tile-wrap group'
+  wrap.className = `app-tile-wrap group ${TILE[brand]}`
   wrap.appendChild(a)
   return wrap
 }
@@ -76,7 +87,7 @@ function linkTile(name: string, href: string, svg: string, tint = ''): HTMLEleme
 function dockerTile(): HTMLElement {
   const btn = document.createElement('button')
   btn.type = 'button'
-  btn.className = 'app-tile'
+  btn.className = 'app-tile glim-brand-tile'
   const name = t('apps.docker')
   btn.setAttribute('aria-label', name)
   const label = tileBody(btn, name, DOCKER_SVG, 'glim-docker-mark')
@@ -89,7 +100,7 @@ function dockerTile(): HTMLElement {
     })
   })
   const wrap = document.createElement('div')
-  wrap.className = 'app-tile-wrap group'
+  wrap.className = `app-tile-wrap group ${TILE.docker}`
   const hint = infoIcon(`${t('apps.dockerHint')} ${DOCKER_RUN}`)
   hint.classList.add('app-tile-hint')
   wrap.append(btn, hint)
@@ -115,12 +126,12 @@ export function mountAppPanel(container: HTMLElement): void {
     tiles.innerHTML = ''
     if (desktop) {
       tiles.append(
-        linkTile(t('apps.unraid'), UNRAID_CA, UNRAID_SVG, 'glim-unraid-mark'),
+        linkTile(t('apps.unraid'), UNRAID_CA, UNRAID_SVG, 'unraid', 'glim-unraid-mark'),
         dockerTile(),
-        linkTile(t('apps.zip'), `${REPO}/archive/refs/tags/${TAG}.zip`, ZIP_SVG),
+        linkTile(t('apps.zip'), `${REPO}/archive/refs/tags/${TAG}.zip`, ZIP_SVG, 'zip'),
       )
     } else {
-      for (const d of DESKTOP) tiles.appendChild(linkTile(t(d.key), `${RELEASE}/${d.file}`, d.mark, d.tint))
+      for (const d of DESKTOP) tiles.appendChild(linkTile(t(d.key), `${RELEASE}/${d.file}`, d.mark, d.brand, d.tint))
     }
   }
 
