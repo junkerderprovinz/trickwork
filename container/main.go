@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"net/http"
 	"os"
@@ -25,12 +26,26 @@ func withCacheControl(h http.Handler) http.Handler {
 	})
 }
 
-const readyBanner = `
-   _   ____   ____ ____ ___    ____                       _____
-  / \ / ___| / ___|_ _|_ _|   / ___|_   _ _ __   ___ _ __ / ____|___ _ __
- / _ \\___ \| |    | | | |   | |  _| | | | '_ \ / _ \ '__| |  _ / _ \ '_ \
-/ ___ \___) | |___ | | | |   | |_| | |_| | | | |  __/ |  | |_| |  __/ | | |
-/_/   \_\____/ \____|___|___|  \____|\__,_|_| |_|\___|_|   \____\___|_| |_|`
+// brandArt is the house ASCII banner printed at startup, a copy of the
+// shared banner-raw.txt the other images print.
+//
+//go:embed banner.txt
+var brandArt string
+
+const (
+	bannerName     = "TrickWork"
+	bannerSubtitle = "Image to ASCII art, self-hosted."
+)
+
+// printBanner prints the house ASCII art and the name line to stdout, so Docker
+// does not interleave the stderr log into the art.
+func printBanner() {
+	fmt.Println()
+	fmt.Println(strings.TrimRight(brandArt, "\n"))
+	fmt.Println()
+	fmt.Println("  " + bannerName + " · " + bannerSubtitle)
+	fmt.Println()
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -41,10 +56,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/", withCacheControl(http.FileServer(http.FS(webembed.Dist))))
 
-	fmt.Println(readyBanner)
-	fmt.Println("  TrickWork - image to ASCII art, self-hosted")
-	fmt.Println()
-	fmt.Printf("  \033[0;32m✓ TRICKWORK IS READY\033[0m - listening on http://0.0.0.0:%s\n", port)
+	printBanner()
+	fmt.Printf("  \033[0;32m✓ TRICKWORK IS READY\033[0m - Open the WebUI now (HTTP %s)\n", port)
 	fmt.Println()
 
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
