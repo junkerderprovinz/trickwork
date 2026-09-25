@@ -1231,9 +1231,9 @@ button:focus-visible {
   color: var(--carbon-text-sub);
 }
 
-/* The App card's buttons, in the shape of the README's: 160 by 46.6 pixels
-   like the donation buttons, a segment 87, so a button and two segments take
-   two places in a row. At rest the mark keeps its colours and the name stands
+/* The App card's buttons, in the proportions of the README's (160 by 46.6, a
+   segment 87) on the app's own rem, so a button and two segments take two
+   places in a row. At rest the mark keeps its colours and the name stands
    alone in the middle. Under the pointer the whole unit fills with its brand's
    colour (.glim-brand-tile in design/tokens.css), the name moves up and the
    second line comes in below it. */
