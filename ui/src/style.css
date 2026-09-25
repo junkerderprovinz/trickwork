@@ -274,8 +274,7 @@ html, body {
 }
 
 /* A card's heading is its section badge: filled, centred on the card's top
-   edge whatever its height, and a pill in every shape, since it is the card's
-   chrome rather than a control. */
+   edge whatever its height, and shaped by the pill token like every badge. */
 .glim-section > .glim-eyebrow,
 .glim-section > .eyebrow-row {
   position: absolute;
@@ -288,7 +287,7 @@ html, body {
   gap: 0.35rem;
   min-height: 22px;
   padding: 0.15rem 0.75rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   background-color: var(--accent);
   color: var(--accent-contrast);
   box-shadow: var(--elevation);
