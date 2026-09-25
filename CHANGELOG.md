@@ -4,6 +4,8 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.2.0 - 2026-09-25
+
 ### ✨ Added
 
 - An App card in Settings. In the browser it offers the desktop app for Windows (installer or portable), macOS and Linux; in the desktop app it offers Unraid's Community Applications, the Docker command and the source code.
@@ -22,6 +24,7 @@ All notable changes to TrickWork are documented here.
 - A selector's options sit in one groove sized to them, rather than stretched across the card.
 - A filled control gets lighter under the pointer, one step up the surface ramp, instead of darker.
 - A click on the chosen accent colour opens the colour picker, so the separate custom swatch is gone.
+- The reset at the end of a colour row is the size of a swatch and shows only its symbol, whatever the button labels are set to.
 - Whichever colour row rainbow mode is not using is dimmed. While rainbow mode is on, an (i) beside Accent says why.
 - A dropdown answers the mouse wheel only after it has been clicked or reached with Tab, so scrolling the page past it leaves its value alone.
 
@@ -32,7 +35,7 @@ All notable changes to TrickWork are documented here.
 ### 🐛 Fixed
 
 - The container log opens with the house banner and the name TrickWork, where it showed the old working title.
-- A tooltip no longer opens when focus arrives from a click, or when a dialog hands focus back to the control that opened it, so it cannot stay on the page where the pointer no longer is. Keyboard focus still opens it. The tooltip engine is the one from GlimStone 2.6.0.
+- A tooltip no longer opens when focus arrives from a click, or when a dialog hands focus back to the control that opened it, so it cannot stay on the page where the pointer no longer is. Keyboard focus still opens it.
 
 ## 1.1.0 — 2026-08-22
 
