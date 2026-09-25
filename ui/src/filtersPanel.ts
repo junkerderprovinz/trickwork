@@ -101,16 +101,16 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
     )
     toggleRow.append(invert, dither, color)
 
-    const sharpenRow = segmentedRow(
-      t('controls.sharpen'),
-      SHARPEN_METHODS.map((s) => ({ value: s.value, label: t(s.key) })),
-      options.sharpen ?? 'none',
-      (value) => {
+    const sharpenRow = segmentedRow({
+      label: t('controls.sharpen'),
+      choices: SHARPEN_METHODS.map((s) => ({ value: s.value, label: t(s.key) })),
+      value: options.sharpen ?? 'none',
+      onChange: (value) => {
         store.setState({ options: { ...store.getState().options, sharpen: value } })
       },
-      () => store.commitOptionsSnapshot(t('history.entrySharpen')),
-      0,
-    )
+      onBeforeChange: () => store.commitOptionsSnapshot(t('history.entrySharpen')),
+      rainbowBaseIndex: 0,
+    })
 
     panel.append(brightness, contrast, toggleRow, sharpenRow)
   }

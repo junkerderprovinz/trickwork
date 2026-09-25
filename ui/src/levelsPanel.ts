@@ -2,6 +2,8 @@
 // shown inside the Filters card instead of a separate dialog.
 
 import { computeLuminanceHistogram, type LevelsSpec } from 'trickwork-core'
+import { glimButton, updateButton } from './controlWidgets'
+import { iconReset } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -41,9 +43,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
   const labelRow = document.createElement('div')
   labelRow.className = 'levels-caption-row'
   const labelText = document.createElement('span')
-  const resetButton = document.createElement('button')
-  resetButton.type = 'button'
-  resetButton.className = 'levels-reset-button'
+  const resetButton = glimButton({ label: t('controls.levelsReset'), glyph: iconReset(), variant: 'icon' })
   labelRow.append(labelText, resetButton)
   wrap.appendChild(labelRow)
 
@@ -207,7 +207,7 @@ export function mountLevelsPanel(container: HTMLElement, store: Store): void {
 
   function applyLabels(): void {
     labelText.textContent = t('controls.levels')
-    resetButton.textContent = t('controls.levelsReset')
+    updateButton(resetButton, { label: t('controls.levelsReset') })
     const blackLabel = t('controls.levelsBlack')
     const gammaLabel = t('controls.levelsGamma')
     const whiteLabel = t('controls.levelsWhite')

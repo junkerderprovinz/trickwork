@@ -2,7 +2,9 @@
 // own card in the Settings view.
 
 import type { MappingOptions } from 'trickwork-core'
+import { glimButton, updateButton } from './controlWidgets'
 import { downloadBlob } from './download'
+import { iconDownload, iconImport } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -90,10 +92,8 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
   const buttonRow = document.createElement('div')
   buttonRow.className = 'presets-button-row'
 
-  const exportButton = document.createElement('button')
-  exportButton.type = 'button'
-  const importButton = document.createElement('button')
-  importButton.type = 'button'
+  const exportButton = glimButton({ label: t('presets.exportButton'), glyph: iconDownload() })
+  const importButton = glimButton({ label: t('presets.importButton'), glyph: iconImport() })
   buttonRow.append(exportButton, importButton)
 
   const fileInput = document.createElement('input')
@@ -136,8 +136,8 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
 
   function applyLabels(): void {
     eyebrow.textContent = t('presets.eyebrow')
-    exportButton.textContent = t('presets.exportButton')
-    importButton.textContent = t('presets.importButton')
+    updateButton(exportButton, { label: t('presets.exportButton') })
+    updateButton(importButton, { label: t('presets.importButton') })
     fileInput.setAttribute('aria-label', t('presets.importButton'))
   }
   applyLabels()

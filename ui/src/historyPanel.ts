@@ -1,5 +1,6 @@
 // The History sidecard: undo, redo and a log of the recent changes.
 
+import { glimButton, updateButton } from './controlWidgets'
 import { iconRedo, iconUndo } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
@@ -10,21 +11,12 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
   container.appendChild(eyebrow)
 
   const row = document.createElement('div')
-  row.className = 'icon-toggle-row'
+  row.className = 'button-row'
   container.appendChild(row)
 
-  const undoButton = document.createElement('button')
-  undoButton.type = 'button'
-  undoButton.className = 'history-button'
-  undoButton.innerHTML = iconUndo()
-  const redoButton = document.createElement('button')
-  redoButton.type = 'button'
-  redoButton.className = 'history-button'
-  redoButton.innerHTML = iconRedo()
+  const undoButton = glimButton({ label: t('nav.undo'), glyph: iconUndo(), variant: 'icon', onClick: () => store.undo() })
+  const redoButton = glimButton({ label: t('nav.redo'), glyph: iconRedo(), variant: 'icon', onClick: () => store.redo() })
   row.append(undoButton, redoButton)
-
-  undoButton.addEventListener('click', () => store.undo())
-  redoButton.addEventListener('click', () => store.redo())
 
   // Undo and redo are momentary actions with no checked state, so they get no
   // rainbow colour.
@@ -64,12 +56,8 @@ export function mountHistoryPanel(container: HTMLElement, store: Store): void {
 
   function applyLabels(): void {
     eyebrow.textContent = t('history.eyebrow')
-    const undoLabel = t('nav.undo')
-    const redoLabel = t('nav.redo')
-    undoButton.title = undoLabel
-    undoButton.setAttribute('aria-label', undoLabel)
-    redoButton.title = redoLabel
-    redoButton.setAttribute('aria-label', redoLabel)
+    updateButton(undoButton, { label: t('nav.undo') })
+    updateButton(redoButton, { label: t('nav.redo') })
     renderLog()
   }
   applyLabels()

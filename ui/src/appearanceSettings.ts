@@ -1,20 +1,30 @@
 import {
   SHAPES,
+  SHAPES_STORED,
+  DEFAULT_SHAPE,
   ACCENTS,
   RAINBOW,
   DEFAULT_ACCENT,
+  MOTION_LEVELS,
   applyShape,
   applyAccent,
   applyRainbow,
   cacheAppearance,
+  leafTap,
+  stormTap,
   rainbowState,
   subscribeRainbow,
+  type Motion,
   type Shape,
 } from './design/appearance'
+import { applyDisco, discoTap } from './design/disco'
+import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
 import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
-import { customDropdown, segmentedRow, toggleSwitch } from './controlWidgets'
+import { infoIcon } from './design/tooltip'
+import { customDropdown, glimButton, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
+import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { iconReset } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
@@ -40,6 +50,21 @@ const SHAPE_KEYS: Record<Shape, TranslationKey> = {
   round: 'appearance.round',
   soft: 'appearance.soft',
   square: 'appearance.square',
+  leaf: 'appearance.leaf',
+}
+
+const MOTION_KEYS: Record<Motion, TranslationKey> = {
+  off: 'appearance.motionOff',
+  subtle: 'appearance.motionSubtle',
+  wild: 'appearance.motionWild',
+  storm: 'appearance.motionStorm',
+}
+
+const LABEL_KEYS: Record<LabelMode, TranslationKey> = {
+  text: 'appearance.labelText',
+  textGlyph: 'appearance.labelTextGlyph',
+  glyph: 'appearance.labelGlyph',
+  reactive: 'appearance.labelReactive',
 }
 
 const THEME_CHOICES: { value: ThemePref; key: TranslationKey }[] = [
@@ -54,22 +79,69 @@ const ACCENT_KEYS: Record<string, TranslationKey> = {
   Green: 'appearance.accentGreen',
   Red: 'appearance.accentRed',
   Purple: 'appearance.accentPurple',
+  Orange: 'appearance.accentOrange',
+  Teal: 'appearance.accentTeal',
+  Magenta: 'appearance.accentMagenta',
 }
 
-export function mountAppearanceSettings(container: HTMLElement): void {
+function rgb(hex: string): [number, number, number] {
+  const n = parseInt(hex.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+
+/**
+ * The preset slot a colour belongs to: the nearest by plain squared RGB
+ * distance, which only has to be stable across widely separated hues.
+ */
+function nearestPreset(hex: string): number {
+  const [r, g, b] = rgb(hex)
+  let best = 0
+  let bestDistance = Infinity
+  ACCENTS.forEach((preset, i) => {
+    const [pr, pg, pb] = rgb(preset.hex)
+    const d = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2
+    if (d < bestDistance) {
+      bestDistance = d
+      best = i
+    }
+  })
+  return best
+}
+
+// Where each picker starts in the palette, so stacked pickers do not repeat
+// one colour straight down the page.
+const HUE_OFFSET = { shape: 0, theme: 3, motion: 5, labels: 1 }
+
+/**
+ * Mounts the appearance card. The returned function is for leaving the
+ * Settings view: an egg found there is offered only until then.
+ */
+export function mountAppearanceSettings(container: HTMLElement): () => void {
   const panel = document.createElement('div')
   panel.className = 'appearance-settings'
   container.appendChild(panel)
 
   const cached = readCachedAppearance()
-  let shape: Shape = SHAPES.includes(cached.shape as Shape) ? (cached.shape as Shape) : 'round'
+  let shape: Shape = SHAPES_STORED.includes(cached.shape as Shape) ? (cached.shape as Shape) : DEFAULT_SHAPE
   // '' means no custom accent: cacheAppearance needs a string, and applying ''
   // clears the override.
   let accent = cached.accent && HEX_RE.test(cached.accent) ? cached.accent : ''
   let theme: ThemePref = cachedThemePref()
-  let rainbowOn = rainbowState().on
-  // A copy, so editing it never touches the shared RAINBOW default.
-  let palette: string[] = [...rainbowState().palette]
+  let motion: Motion = storedMotion()
+  let labelMode: LabelMode = getLabelMode('buttons')
+  let discoOn = storedDisco()
+
+  // The eggs are offered while chosen, and otherwise only while this screen
+  // stays open, so what was found lives here and never in storage.
+  const leafState = { taps: 0 }
+  const stormState = { taps: 0 }
+  const discoState = { taps: 0, last: 0 }
+  let leafFound = shape === 'leaf'
+  let stormFound = motion === 'storm'
+  let discoFound = discoOn
+  // A rebuild would detach the swatch an open picker is anchored to, so the
+  // rainbow's own rebuild waits until the picker closes.
+  let pickerOpen = false
 
   function persist(): void {
     cacheAppearance(shape, accent, rainbowState())
@@ -79,187 +151,248 @@ export function mountAppearanceSettings(container: HTMLElement): void {
   // A locale switch is rare, so the whole panel is rebuilt instead of patching
   // each label.
   function build(): void {
+    if (pickerOpen) return
     panel.innerHTML = ''
 
-    // Only the active segment of each row takes a rainbow position.
-    const shapeRow = segmentedRow(
-      t('appearance.shape'),
-      SHAPES.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
-      shape,
-      (value) => {
+    const shapes = shape === 'leaf' || leafFound ? [...SHAPES, 'leaf' as const] : SHAPES
+    const shapeRow = segmentedRow({
+      label: t('appearance.shape'),
+      choices: shapes.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
+      value: shape,
+      scale: 'big',
+      rainbowBaseIndex: HUE_OFFSET.shape,
+      onTap: (tapped) => {
+        if (!leafTap(leafState, tapped, shape)) return
+        leafFound = true
+        shape = 'leaf'
+        applyShape(shape)
+        persist()
+        build()
+      },
+      onChange: (value) => {
         shape = value
         applyShape(shape)
         persist()
       },
-      undefined,
-      0,
-    )
+    })
 
-    const themeRow = segmentedRow(
-      t('appearance.theme'),
-      THEME_CHOICES.map((c) => ({ value: c.value, label: t(c.key) })),
-      theme,
-      (value) => {
+    const themeRow = segmentedRow({
+      label: t('appearance.theme'),
+      choices: THEME_CHOICES.map((c) => ({ value: c.value, label: t(c.key) })),
+      value: theme,
+      scale: 'big',
+      rainbowBaseIndex: HUE_OFFSET.theme,
+      onChange: (value) => {
         theme = value
         applyTheme(theme)
         persist()
       },
-      undefined,
-      0,
-    )
+    })
 
-    // The custom colour is a swatch like the presets and opens a floating
-    // picker anchored to it, rather than a native colour input whose dialog
-    // lies outside the page.
+    const motions = motion === 'storm' || stormFound ? [...MOTION_LEVELS, 'storm' as const] : MOTION_LEVELS
+    const motionRow = segmentedRow({
+      label: t('appearance.motion'),
+      labelExtra: infoIcon(t('appearance.motionHint')),
+      choices: motions.map((m) => ({ value: m, label: t(MOTION_KEYS[m]) })),
+      value: motion,
+      scale: 'big',
+      rainbowBaseIndex: HUE_OFFSET.motion,
+      onTap: (tapped) => {
+        if (!stormTap(stormState, tapped, motion)) return
+        stormFound = true
+        motion = 'storm'
+        setMotion(motion)
+        build()
+      },
+      onChange: (value) => {
+        motion = value
+        setMotion(motion)
+      },
+    })
+
+    const labelsRow = segmentedRow({
+      label: t('appearance.labels'),
+      labelExtra: infoIcon(t('appearance.labelsHint')),
+      choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]) })),
+      value: labelMode,
+      scale: 'big',
+      rainbowBaseIndex: HUE_OFFSET.labels,
+      onChange: (value) => {
+        labelMode = value
+        setLabelMode('buttons', labelMode)
+        repaintButtons()
+      },
+    })
+
+    panel.append(shapeRow, themeRow, motionRow, labelsRow, colourBlock(), languageBlock())
+  }
+
+  // The accent row and the palette row: whichever one the rainbow switch does
+  // not use is dimmed and inert.
+  function colourBlock(): HTMLElement {
+    const block = document.createElement('div')
+    block.className = 'appearance-colours'
+    const rainbowOn = rainbowState().on
+
     const accentWrap = document.createElement('div')
     accentWrap.className = 'control-slider'
+    const accentLabelRow = document.createElement('div')
+    accentLabelRow.className = 'control-slider-label-row'
     const accentLabel = document.createElement('span')
     accentLabel.textContent = t('appearance.accent')
+    accentLabelRow.appendChild(accentLabel)
+    // The bubble explains a temporary state, so it stands only while that
+    // state holds, and outside the dimmed parts so it stays readable.
+    if (rainbowOn) accentLabelRow.appendChild(infoIcon(t('appearance.accentRainbowHint')))
 
     const accentRow = document.createElement('div')
     accentRow.className = 'accent-row'
-
-    const customTrigger = document.createElement('button')
-    customTrigger.type = 'button'
-    customTrigger.className = 'accent-swatch'
-    function syncCustomTrigger(): void {
-      customTrigger.style.backgroundColor = accent || DEFAULT_ACCENT
-    }
-    syncCustomTrigger()
-    customTrigger.setAttribute('data-tip', t('appearance.accent'))
-    customTrigger.setAttribute('aria-label', t('appearance.accent'))
-    customTrigger.addEventListener('click', () => {
-      openColorPickerPopover(customTrigger, accent || DEFAULT_ACCENT, (hex) => {
-        accent = hex
-        applyAccent(accent)
-        persist()
-        syncCustomTrigger()
-        renderSwatches()
-      })
-    })
-
-    const presetsLabel = document.createElement('span')
-    presetsLabel.className = 'accent-presets-label'
-    presetsLabel.textContent = `${t('appearance.accentPresets')}:`
-
-    const swatchGroup = document.createElement('div')
-    swatchGroup.className = 'accent-swatch-group'
-
-    const resetBtn = document.createElement('button')
-    resetBtn.type = 'button'
-    resetBtn.className = 'icon-reset-badge'
-    resetBtn.innerHTML = iconReset()
-    resetBtn.title = t('appearance.resetToDefault')
-    resetBtn.setAttribute('aria-label', t('appearance.resetToDefault'))
-    resetBtn.addEventListener('click', () => {
-      accent = ''
-      applyAccent(undefined)
-      persist()
-      syncCustomTrigger()
-      renderSwatches()
-    })
-
-    // Presets are flat swatches; the active one gets a border, as in
-    // BombVault.
-    function renderSwatches(): void {
-      swatchGroup.innerHTML = ''
-      for (const preset of ACCENTS) {
-        const presetLabel = ACCENT_KEYS[preset.name] ? t(ACCENT_KEYS[preset.name] as TranslationKey) : preset.name
-        const btn = document.createElement('button')
-        btn.type = 'button'
-        btn.className = 'accent-swatch' + (accent === preset.hex ? ' accent-swatch--active' : '')
-        btn.style.backgroundColor = preset.hex
-        btn.setAttribute('data-tip', presetLabel)
-        btn.setAttribute('aria-label', presetLabel)
-        btn.addEventListener('click', () => {
+    const live = accent || DEFAULT_ACCENT
+    const selected = nearestPreset(live)
+    ACCENTS.forEach((preset, i) => {
+      const isSelected = i === selected
+      // The selected slot wears the live colour, which the picker may have
+      // moved off the preset; then the hex is its name.
+      const colour = isSelected ? live : preset.hex
+      const name =
+        isSelected && live.toLowerCase() !== preset.hex.toLowerCase()
+          ? live.toUpperCase()
+          : t(ACCENT_KEYS[preset.name] ?? 'appearance.accent')
+      const sw = document.createElement('button')
+      sw.type = 'button'
+      sw.className = 'accent-swatch' + (isSelected ? ' accent-swatch--active' : '')
+      sw.style.backgroundColor = colour
+      sw.setAttribute('data-tip', name)
+      sw.setAttribute('aria-label', name)
+      sw.setAttribute('aria-pressed', String(isSelected))
+      // A click selects, and a click on the one already selected edits it.
+      sw.addEventListener('click', () => {
+        if (!isSelected) {
           accent = preset.hex
           applyAccent(accent)
           persist()
-          syncCustomTrigger()
-          renderSwatches()
-        })
-        swatchGroup.appendChild(btn)
-      }
+          build()
+          return
+        }
+        openColorPickerPopover(
+          sw,
+          live,
+          (hex) => {
+            accent = hex
+            applyAccent(accent)
+            persist()
+            sw.style.backgroundColor = hex
+          },
+          build,
+        )
+      })
+      accentRow.appendChild(sw)
+    })
+    accentRow.appendChild(
+      glimButton({
+        label: t('appearance.resetToDefault'),
+        glyph: iconReset(),
+        variant: 'icon',
+        onClick: () => {
+          accent = ''
+          applyAccent(undefined)
+          persist()
+          build()
+        },
+      }),
+    )
+    if (rainbowOn) {
+      accentLabel.classList.add('is-dimmed')
+      accentRow.classList.add('is-dimmed')
     }
-    renderSwatches()
+    accentWrap.append(accentLabelRow, accentRow)
 
-    accentRow.append(customTrigger, presetsLabel, swatchGroup, resetBtn)
-    accentWrap.append(accentLabel, accentRow)
-
-    // The palette row below shows the switch's effect at once, before any
-    // image is loaded.
     const rainbowWrap = document.createElement('div')
     rainbowWrap.className = 'control-slider'
-    const rainbowLabelRow = document.createElement('div')
-    rainbowLabelRow.className = 'control-slider-row'
-    const rainbowLabelText = document.createElement('span')
-    rainbowLabelText.textContent = t('appearance.rainbow')
+    const rainbowRow = switchRow(t('appearance.rainbow'), rainbowOn, (checked) => {
+      // Counted before the rainbow's rebuild, so the disco row is in it.
+      if (discoTap(discoState, checked, { now: performance.now() })) {
+        discoFound = true
+        discoOn = true
+        storeDisco(true)
+      }
+      // Spread the current state, or the switch would reset a custom palette.
+      applyRainbow({ ...rainbowState(), on: checked })
+      persist()
+      applyDisco(discoOn)
+    })
 
     const paletteRow = document.createElement('div')
     paletteRow.className = 'palette-swatch-row'
     paletteRow.setAttribute('role', 'group')
     paletteRow.setAttribute('aria-label', t('appearance.rainbowPalette'))
-
-    const paletteResetBtn = document.createElement('button')
-    paletteResetBtn.type = 'button'
-    paletteResetBtn.className = 'icon-reset-badge'
-    paletteResetBtn.innerHTML = iconReset()
-    paletteResetBtn.title = t('appearance.resetToDefault')
-    paletteResetBtn.setAttribute('aria-label', t('appearance.resetToDefault'))
-    paletteResetBtn.addEventListener('click', () => {
-      palette = [...RAINBOW]
-      applyRainbow({ ...rainbowState(), palette: [...palette] })
-      persist()
-      renderPalette()
-    })
-
-    // Each swatch opens a floating picker for its position; only one picker
-    // is ever open.
-    function renderPalette(): void {
-      paletteRow.innerHTML = ''
-      palette.forEach((hex, index) => {
-        const sw = document.createElement('button')
-        sw.type = 'button'
-        sw.className = 'palette-swatch'
-        sw.style.backgroundColor = hex
-        sw.setAttribute('data-tip', hex)
-        sw.setAttribute('aria-label', hex)
-        sw.addEventListener('click', () => {
-          openColorPickerPopover(sw, hex, (newHex) => {
+    const palette = [...rainbowState().palette]
+    // All eight are in force at once, so there is no selection and a click can
+    // only mean edit.
+    palette.forEach((hex, index) => {
+      const sw = document.createElement('button')
+      sw.type = 'button'
+      sw.className = 'palette-swatch'
+      sw.style.backgroundColor = hex
+      sw.setAttribute('data-tip', hex.toUpperCase())
+      sw.setAttribute('aria-label', hex.toUpperCase())
+      sw.addEventListener('click', () => {
+        pickerOpen = true
+        openColorPickerPopover(
+          sw,
+          hex,
+          (newHex) => {
             palette[index] = newHex
             sw.style.backgroundColor = newHex
-            sw.setAttribute('data-tip', newHex)
-            sw.setAttribute('aria-label', newHex)
             // applyRainbow merges onto the defaults of the off state, so the
             // current state is spread first or an edit would switch it off.
             applyRainbow({ ...rainbowState(), palette: [...palette] })
             persist()
-          })
-        })
-        paletteRow.appendChild(sw)
+            applyDisco(discoOn)
+          },
+          () => {
+            pickerOpen = false
+            build()
+          },
+        )
       })
-      paletteRow.appendChild(paletteResetBtn)
-    }
-    renderPalette()
-
-    // Dimmed rather than hidden while the mode is off, so the row still
-    // shows what the mode does.
-    function syncPaletteDim(): void {
-      paletteRow.style.opacity = rainbowOn ? '1' : '0.45'
-      paletteRow.style.pointerEvents = rainbowOn ? '' : 'none'
-    }
-    syncPaletteDim()
-
-    const rainbowToggle = toggleSwitch(t('appearance.rainbow'), rainbowOn, (checked) => {
-      rainbowOn = checked
-      // Spread the current state, or the toggle would reset a custom palette.
-      applyRainbow({ ...rainbowState(), on: rainbowOn })
-      persist()
-      syncPaletteDim()
+      paletteRow.appendChild(sw)
     })
-    rainbowLabelRow.append(rainbowLabelText, rainbowToggle)
-    rainbowWrap.append(rainbowLabelRow, paletteRow)
+    paletteRow.appendChild(
+      glimButton({
+        label: t('appearance.resetToDefault'),
+        glyph: iconReset(),
+        variant: 'icon',
+        onClick: () => {
+          applyRainbow({ ...rainbowState(), palette: [...RAINBOW] })
+          persist()
+          applyDisco(discoOn)
+        },
+      }),
+    )
+    if (!rainbowOn) paletteRow.classList.add('is-dimmed')
+    rainbowWrap.append(rainbowRow, paletteRow)
 
+    block.append(accentWrap, rainbowWrap)
+
+    if (discoFound || discoOn) {
+      block.appendChild(
+        switchRow(
+          t('appearance.disco'),
+          discoOn,
+          (checked) => {
+            discoOn = checked
+            storeDisco(discoOn)
+            applyDisco(discoOn)
+          },
+          infoIcon(t('appearance.discoHint')),
+        ),
+      )
+    }
+    return block
+  }
+
+  function languageBlock(): HTMLElement {
     const languageWrap = document.createElement('div')
     languageWrap.className = 'control-slider'
     const languageLabel = document.createElement('span')
@@ -273,13 +406,19 @@ export function mountAppearanceSettings(container: HTMLElement): void {
       void setLocale(value)
     }, t('appearance.language'))
     languageWrap.append(languageLabel, languageDropdown)
-
-    panel.append(shapeRow, themeRow, accentWrap, rainbowWrap, languageWrap)
+    return languageWrap
   }
 
   build()
   subscribeLocale(build)
-  // segmentedRow reads the rainbow colour once. The picker popover lives on
-  // document.body, so a rebuild does not disturb a drag inside it.
   subscribeRainbow(build)
+
+  return () => {
+    leafFound = shape === 'leaf'
+    stormFound = motion === 'storm'
+    discoFound = discoOn
+    leafState.taps = 0
+    stormState.taps = 0
+    build()
+  }
 }

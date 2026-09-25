@@ -47,7 +47,7 @@ test('rotate, invert, and color output all still produce a non-empty preview and
   await expect(canvas).toBeVisible()
 
   // Invert and Color are icon toggle buttons named by their aria-label.
-  await page.getByRole('button', { name: '90°' }).click()
+  await page.getByRole('tab', { name: '90°' }).click()
   await page.getByRole('button', { name: 'Invert colors' }).click()
   await page.getByRole('button', { name: 'Color output' }).click()
 
@@ -68,8 +68,8 @@ test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
   await page.goto('/')
 
   // "0°" is a substring of "90°", "180°" and "270°".
-  const rotate90 = page.getByRole('button', { name: '90°', exact: true })
-  const rotate0 = page.getByRole('button', { name: '0°', exact: true })
+  const rotate90 = page.getByRole('tab', { name: '90°', exact: true })
+  const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
   await expect(rotate0).toHaveClass(/segmented-button--active/)
 
   await rotate90.click()
@@ -145,7 +145,7 @@ test('typing a character more than once keeps every repeat', async ({ page }) =>
   await expect(charsetField).toHaveValue(' .aaa@')
 })
 
-test('a closed select answers the mouse wheel without opening', async ({ page }) => {
+test('a closed select answers the mouse wheel only while it has focus', async ({ page }) => {
   await page.goto('/')
 
   // The aria-label of the Font info icon contains "font" as well.
@@ -153,9 +153,14 @@ test('a closed select answers the mouse wheel without opening', async ({ page })
   const before = await fontSelect.inputValue()
   await fontSelect.hover()
   await page.mouse.wheel(0, 100)
-  const after = await fontSelect.inputValue()
-  expect(after).not.toBe(before)
-  // The wheel changed the value without opening the select.
+  // Hovered alone it leaves the value to whatever the page scrolls past.
+  expect(await fontSelect.inputValue()).toBe(before)
+
+  // That wheel scrolled the page, so the pointer goes back over the select.
+  await fontSelect.focus()
+  await fontSelect.hover()
+  await page.mouse.wheel(0, 100)
+  expect(await fontSelect.inputValue()).not.toBe(before)
 })
 
 test('Settings replaces the whole page: no preview, no working cards', async ({ page }) => {
@@ -203,8 +208,8 @@ test('switching language updates the badge label and every card, including ones 
 test('exporting then importing settings round-trips a change through a real JSON file', async ({ page }) => {
   await page.goto('/')
 
-  const rotate90 = page.getByRole('button', { name: '90°', exact: true })
-  const rotate0 = page.getByRole('button', { name: '0°', exact: true })
+  const rotate90 = page.getByRole('tab', { name: '90°', exact: true })
+  const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
   await rotate90.click()
   await expect(rotate90).toHaveClass(/segmented-button--active/)
 
@@ -435,4 +440,45 @@ test('height slider follows width while locked, and becomes independent once unl
   await expect(lockToggle).toHaveAttribute('aria-pressed', 'true')
   await expect(heightSlider).toBeDisabled()
   await expect(heightSlider).toHaveValue('100')
+})
+
+test('a card dragged by its handle lands in its new place, and Escape puts it back', async ({ page }) => {
+  await page.goto('/')
+  const order = () => page.locator('.app-secondary > .glim-card').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.cardId))
+  const handleOf = (id: string) => page.locator(`.app-secondary > [data-card-id="${id}"] .card-drag-handle`)
+  await expect.poll(order).toEqual(['adjust', 'transform', 'filters', 'history', 'queue', 'export'])
+
+  const from = await handleOf('adjust').boundingBox()
+  const past = await page.locator('.app-secondary > [data-card-id="transform"]').boundingBox()
+  if (!from || !past) throw new Error('card boxes missing')
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(from.x + from.width / 2, past.y + past.height, { steps: 10 })
+  await expect(page.locator('.glim-drag-lift')).toHaveCount(1)
+  await page.mouse.up()
+  await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
+
+  const again = await handleOf('history').boundingBox()
+  if (!again) throw new Error('history handle missing')
+  await page.mouse.move(again.x + again.width / 2, again.y + again.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(again.x + again.width / 2, again.y + 300, { steps: 10 })
+  await page.keyboard.press('Escape')
+  await page.mouse.up()
+  await expect(page.locator('.glim-drag-lift, .glim-drag-settle')).toHaveCount(0)
+  await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
+
+  await page.reload()
+  await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
+})
+
+test('the App card in the browser offers the desktop downloads of the running version', async ({ page }) => {
+  await page.goto('/')
+  await settingsBadge(page).click()
+  const tiles = page.locator('.app-tiles a.app-tile')
+  await expect(tiles).toHaveCount(4)
+  const version = (await page.locator('.settings-version').textContent())?.match(/TrickWork v(\S+)/)?.[1]
+  for (const href of await tiles.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
+    expect(href).toContain(`/releases/download/v${version}/trickwork-v${version}-`)
+  }
 })

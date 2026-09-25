@@ -26,8 +26,20 @@ html, body {
   height: 100%;
   background: var(--carbon-bg);
   color: var(--carbon-text);
-  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   font-size: var(--text-body);
+}
+
+/* Hidden but still read out, for a button whose label mode hides its words. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 #app {
@@ -72,32 +84,10 @@ html, body {
   color: var(--carbon-text);
 }
 
-/* Undo and redo look like the icon toggles but are momentary actions, so they
-   have no active fill. Disabled greys out rather than hiding, which would
-   shift the row with every history change. */
-.history-button {
-  appearance: none;
-  border: none;
-  cursor: pointer;
-  width: var(--badge-md);
-  height: var(--badge-md);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  background-color: var(--carbon-surface2);
-  color: var(--carbon-text-sub);
-  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
-}
-
-.history-button:hover:not(:disabled) {
-  background-color: var(--carbon-hover);
-  color: var(--carbon-text);
-}
-
-.history-button:disabled {
-  cursor: default;
-  opacity: 0.35;
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 /* The log of recent actions keeps a fixed height and scrolls, so the card
@@ -150,13 +140,14 @@ html, body {
   transition: background-color 120ms ease, color 120ms ease;
 }
 
+/* A glyph alone in a badge fills half its box. */
 .settings-badge svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .settings-badge:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
   color: var(--carbon-text);
 }
 
@@ -259,19 +250,17 @@ html, body {
   color: var(--carbon-text-muted);
   opacity: 0.5;
   cursor: grab;
+  /* The script owns the gesture, so a touch drag does not scroll the page. */
+  touch-action: none;
 }
 .card-drag-handle:hover,
 .card-drag-handle:focus-visible {
   opacity: 1;
   color: var(--carbon-text);
+  background: none;
 }
 .card-drag-handle:active {
   cursor: grabbing;
-}
-
-/* The dragged card dims, so the gap it will land in stands out. */
-.card-dragging {
-  opacity: 0.4;
 }
 
 /* The rows inside a sidecard's panel; .glim-section's gap only spaces its
@@ -282,7 +271,8 @@ html, body {
   gap: 0.9rem;
 }
 
-.glim-section > .glim-eyebrow {
+.glim-section > .glim-eyebrow,
+.glim-section > .eyebrow-row > .glim-eyebrow {
   margin-bottom: -0.15rem;
   /* Louder than GlimStone's eyebrow, which labels a panel reached through
      navigation: here it is the only heading of cards that are all visible at
@@ -337,13 +327,6 @@ html, body {
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-}
-
-.crop-clear-button {
-  flex-shrink: 0;
-  padding: 0.3rem 0.6rem;
-  font-size: var(--text-caption);
-  background-color: var(--carbon-surface2);
 }
 
 /* The drop zone: a centred icon over the label, filling the height of its
@@ -431,26 +414,9 @@ canvas.preview-canvas[width="0"] {
   margin-top: -0.25rem;
 }
 
-/* The Copy badge at the end of the export format row, at --badge-md like the
-   format buttons beside it. */
-.preview-copy-button {
-  width: var(--badge-md);
-  height: var(--badge-md);
-  padding: 0;
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--carbon-surface2);
-  color: var(--carbon-text-sub);
-  /* An icon-only badge is round, unlike the base button. */
-  border-radius: var(--radius-pill);
-}
-.preview-copy-button .control-icon {
-  width: 19px;
-  height: 19px;
-}
-.preview-copy-button--copied {
+/* Copy says Copied for a moment, in the finished colour. */
+.glim-btn.is-copied,
+.glim-btn.is-copied:hover {
   background-color: var(--status-ok-bg);
   color: var(--status-ok-text);
 }
@@ -600,10 +566,12 @@ input[type="text"] {
   padding: 0.5rem 0.65rem;
 }
 
+/* Focus steps up the surface ramp (rule 21), which --carbon-hover sits below
+   on the dark theme. */
 select:focus-visible,
 input[type="text"]:focus-visible {
   outline: none;
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
 }
 
 /* The editable character ramp, shown in the active font at a size where a
@@ -626,7 +594,7 @@ input[type="text"]:focus-visible {
 
 .charset-field:focus-visible {
   outline: none;
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
 }
 
 .controls-note {
@@ -734,15 +702,6 @@ input.levels-handle-input::-moz-range-thumb {
   color: var(--carbon-text-muted);
 }
 
-.levels-reset-button {
-  padding: 0.2rem 0.55rem;
-  font-size: var(--text-caption);
-  background-color: transparent;
-}
-.levels-reset-button:hover {
-  background-color: var(--carbon-hover);
-}
-
 /* The black, gamma and white values under the track, roughly below their
    handles. */
 .levels-readout-row {
@@ -784,7 +743,7 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 .icon-toggle-button:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
   color: var(--carbon-text);
 }
 
@@ -833,7 +792,7 @@ input.levels-handle-input::-moz-range-thumb {
 
 .queue-item--converted:hover,
 .queue-item--exported:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
 }
 
 .queue-item--active {
@@ -847,6 +806,7 @@ input.levels-handle-input::-moz-range-thumb {
   height: 0.65rem;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
+  background-color: var(--item-hue);
 }
 
 .queue-item-name {
@@ -898,6 +858,8 @@ input.levels-handle-input::-moz-range-thumb {
   gap: 0.4rem;
 }
 
+/* Everything somebody presses reads --radius-pill, so it is a true pill in
+   the round shape. A filled control hovers one step up the surface ramp. */
 button {
   appearance: none;
   border: none;
@@ -907,13 +869,13 @@ button {
   font-size: var(--text-body);
   color: var(--carbon-text);
   background-color: var(--carbon-surface2);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.8rem;
-  transition: background-color 120ms ease;
+  transition: background-color var(--motion-control-dur, 120ms) ease;
 }
 
 button:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
 }
 
 button:focus-visible {
@@ -921,26 +883,42 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* A fixed --badge-md height, so the format buttons match the Copy badge, with
-   flex centring the label in it. */
-.export-format-row button {
-  flex: 1;
-  min-width: 4.5rem;
-  height: var(--badge-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* The engine's button sets its own height, so the base padding keeps only its
+   sides. */
+.glim-btn {
+  padding-block: 0;
 }
 
-/* The Copy badge keeps its circle instead of stretching like the format
-   buttons. */
-.export-format-row .preview-copy-button {
+.glim-tone-subtle {
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text);
+}
+.glim-tone-subtle:hover:not(:disabled) {
+  background-color: var(--carbon-surface3);
+}
+.glim-tone-neutral {
+  background-color: var(--carbon-surface3);
+  color: var(--carbon-text);
+}
+.glim-tone-neutral:hover:not(:disabled) {
+  background-color: var(--carbon-hover-raised);
+}
+.glim-tone-accent,
+.glim-tone-accent:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+.glim-tone-accent:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* The format buttons share their row evenly; Copy keeps its own width. */
+.export-format-row .glim-btn {
+  flex: 1 0 3.5rem;
+}
+.export-format-row .glim-btn-icon,
+.export-format-row .glim-btn-glyph:only-child {
   flex: none;
-  min-width: 0;
-}
-
-.export-batch-button {
-  width: 100%;
 }
 
 .export-summary {
@@ -958,89 +936,80 @@ button:focus-visible {
 
 .presets-button-row {
   display: flex;
-  gap: 0.4rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.presets-button-row button {
-  flex: 1;
-}
-
-.appearance-settings {
+.appearance-settings,
+.appearance-colours {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* One shared well reads as a single control, with only the active segment
-   filled. */
+/* The selector's well: one groove holding the segments, sized to them rather
+   than stretched to the card, idle segments transparent in it and only the
+   chosen one filled. Big pickers pin their segments in controlWidgets.ts. */
 .segmented-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.2rem;
   padding: 0.2rem;
-  background-color: var(--carbon-surface2);
-  border-radius: var(--radius-control);
+  width: fit-content;
+  max-width: 100%;
+  border-radius: var(--radius-pill);
 }
 
 .segmented-button {
-  flex: 1;
-  min-width: 0;
-  /* A fixed --badge-md height, so a segmented row matches the icon toggles
-     and swatches beside it; min-height would let the padding push past it. */
-  height: var(--badge-md);
+  min-height: var(--badge-md);
+  padding: 0.35rem 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  line-height: 1.25;
   background-color: transparent;
+  color: var(--carbon-text-sub);
 }
 
-/* One line, truncated with an ellipsis, which needs a child of the flex
-   button; min-width: 0 lets the item shrink below its content. The button's
-   data-tip carries the full text when it is cut. */
-.segmented-button-label {
-  min-width: 0;
+/* A small strip hugs its labels and grows into a wrapped row's leftover room. */
+.segmented-row--small .segmented-button {
+  flex: 1 0 auto;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .segmented-button:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
+  color: var(--carbon-text);
 }
 
-.segmented-button--active {
+.segmented-button--active,
+.segmented-button--active:hover {
   background-color: var(--accent);
   color: var(--accent-contrast);
 }
 
-.segmented-button--active:hover {
-  background-color: var(--accent);
-}
-
-/* The accent row: the custom swatch, a muted "Presets:" label and the preset
-   swatches, wrapping on narrow widths, with the reset badge pushed to the
-   right. */
+/* The eight accent presets, wrapping on narrow widths, with the reset button
+   pushed to the end. */
 .accent-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem;
-}
-
-.icon-reset-badge {
-  margin-left: auto;
-}
-
-.accent-presets-label {
-  font-size: var(--text-caption);
-  color: var(--carbon-text-muted);
-  white-space: nowrap;
-}
-
-.accent-swatch-group {
-  display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.accent-row > .glim-btn,
+.palette-swatch-row > .glim-btn {
+  margin-inline-start: auto;
+}
+
+/* The colour row the rainbow switch is not using: dimmed, and a click lands on
+   nothing. The dimming sits on the parts, never on a row holding the bubble
+   that explains it. */
+.is-dimmed {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 150ms ease;
 }
 
 /* Swatches follow the shape, and the active preset gets a border, as in
@@ -1068,35 +1037,8 @@ button:focus-visible {
   border-color: var(--carbon-text);
 }
 
-/* The reset badge of the accent and palette rows, at the swatches' size. */
-.icon-reset-badge {
-  width: var(--badge-md);
-  height: var(--badge-md);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--carbon-surface2);
-  color: var(--carbon-text-sub);
-  border: none;
-  border-radius: var(--radius-pill);
-}
-
-/* An SVG with no CSS size can shrink to a sliver inside a flex container, so
-   the glyph gets the 19px of every other --badge-md icon. */
-.icon-reset-badge .control-icon {
-  width: 19px;
-  height: 19px;
-  flex-shrink: 0;
-}
-
-.icon-reset-badge:hover {
-  background-color: var(--carbon-hover);
-  color: var(--carbon-text);
-}
-
 /* The editable rainbow palette, one swatch per position, styled like the
-   accent swatches. appearanceSettings.ts dims it while the mode is off. */
+   accent swatches. */
 .palette-swatch-row {
   display: flex;
   flex-wrap: wrap;
@@ -1165,7 +1107,7 @@ button:focus-visible {
   padding: 1.1rem 1.2rem;
 }
 .dropdown-trigger:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--carbon-surface3);
 }
 
 .dropdown-listbox {
@@ -1199,7 +1141,7 @@ button:focus-visible {
 .dropdown-trigger .dropdown-option-flag {
   flex-shrink: 0;
   /* The flag font first, so Windows shows flags rather than two letters. */
-  font-family: 'Noto Color Emoji Flags', "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: 'Noto Color Emoji Flags', var(--font-sans);
 }
 .dropdown-option:hover {
   background-color: var(--carbon-hover);
@@ -1216,4 +1158,77 @@ button:focus-visible {
   margin: 0;
   font-size: var(--text-caption);
   color: var(--carbon-text-muted);
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--carbon-text-sub);
+}
+
+/* The App card's tiles: a mark above a name, one shape for every way to get
+   the app. Under the pointer the tile takes the picker grey, and the marks
+   switch to the values that hold on it. */
+.app-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.app-tile-wrap {
+  position: relative;
+}
+
+.app-tile {
+  width: 7rem;
+  height: 7rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-control);
+  background-color: var(--carbon-surface2);
+  color: var(--carbon-text);
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.group:hover .app-tile {
+  background-color: var(--carbon-tile-hover);
+  color: var(--carbon-tile-hover-ink);
+}
+
+.app-tile-mark {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-tile-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.app-tile-name {
+  font-size: var(--text-dense);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.app-tile-hint {
+  position: absolute;
+  top: 0.4rem;
+  inset-inline-end: 0.4rem;
+}
+
+.group:hover .app-tile-hint {
+  color: var(--carbon-tile-hover-ink);
 }

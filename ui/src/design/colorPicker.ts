@@ -182,6 +182,7 @@ export function openColorPickerPopover(
   trigger: HTMLElement,
   initialHex: string,
   onChange: (hex: string) => void,
+  onClose?: () => void,
 ): ColorPickerPopoverHandle {
   openPopover?.close();
 
@@ -226,13 +227,20 @@ export function openColorPickerPopover(
   }
   position();
 
+  let closed = false;
   function close(): void {
+    if (closed) return;
+    closed = true;
     panel.remove();
     document.removeEventListener('pointerdown', onPointerDown, true);
     document.removeEventListener('keydown', onKeyDown);
     window.removeEventListener('scroll', close, true);
     window.removeEventListener('resize', close);
     if (openPopover?.el === panel) openPopover = null;
+    // Re-rendering the trigger's row while the popover is open strands the
+    // outside-click handler on a detached node, so a caller that redraws the
+    // row applies the colour in `onChange` and redraws here.
+    onClose?.();
   }
   // The trigger is excluded so a second click on it reaches the caller's own
   // click handler and reopens the picker.

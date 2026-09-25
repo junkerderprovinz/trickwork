@@ -27,16 +27,16 @@ export function mountTransformPanel(container: HTMLElement, store: Store): void 
     panel.innerHTML = ''
     const options = store.getState().options
 
-    const rotateRow = segmentedRow(
-      t('controls.rotate'),
-      ROTATIONS.map((r) => ({ value: String(r.value), label: t(r.key) })),
-      String(options.rotate ?? 0),
-      (value) => {
+    const rotateRow = segmentedRow({
+      label: t('controls.rotate'),
+      choices: ROTATIONS.map((r) => ({ value: String(r.value), label: t(r.key) })),
+      value: String(options.rotate ?? 0),
+      onChange: (value) => {
         store.setState({ options: { ...store.getState().options, rotate: Number(value) as Rotation } })
       },
-      (value) => store.commitOptionsSnapshot(t('history.entryRotated', { deg: value })),
-      0,
-    )
+      onBeforeChange: (value) => store.commitOptionsSnapshot(t('history.entryRotated', { deg: value })),
+      rainbowBaseIndex: 0,
+    })
 
     const flipRow = document.createElement('div')
     flipRow.className = 'icon-toggle-row'

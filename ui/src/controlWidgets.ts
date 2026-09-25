@@ -1,89 +1,188 @@
 // DOM builders shared by the panels and appearanceSettings.ts. They are not
 // i18n-aware; a caller rebuilds its panel when the locale changes.
 
-import { hueVars, rainbowColor } from './design/appearance'
+import { hueVars, rainbowState } from './design/appearance'
+import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from './design/controls'
+import { segmentLayout } from './design/segmentLayout'
+import { enableWheelStep, stepIndex } from './design/selectScroll'
 
 /**
  * Sets the --item-hue* properties that give an element its rainbow position.
  * Returns false when rainbow mode is off, so the caller can skip its classes.
  */
 export function applyHueVars(el: HTMLElement, index: number): boolean {
-  const hue = rainbowColor(index)
-  if (!hue) return false
-  for (const [prop, value] of Object.entries(hueVars(hue))) {
+  if (!rainbowState().on) return false
+  for (const [prop, value] of Object.entries(hueVars(index))) {
     el.style.setProperty(prop, value)
   }
   return true
 }
 
 /**
- * `onBeforeChange` fires once per click, before `onChange`, with the value
- * about to become active, so the caller can record an undo step labelled with
- * the new value.
+ * The floor for a big selector's segments, as in BombVault and ArrowLoop, so
+ * every page-level picker renders equally wide. A label that needs more still
+ * gets it, and a narrow box shrinks the segments together before it wraps one.
  */
-export function segmentedRow<T extends string>(
-  label: string,
-  choices: { value: T; label: string }[],
-  initial: T,
-  onChange: (value: T) => void,
-  onBeforeChange?: (value: T) => void,
-  // Each choice owns a rainbow position from this index on; without it the
-  // row keeps the single accent.
-  rainbowBaseIndex?: number,
-): HTMLElement {
+const MIN_SEGMENT = 200
+
+export interface SegmentedRowOptions<T extends string> {
+  label?: string
+  choices: { value: T; label: string }[]
+  value: T
+  onChange: (value: T) => void
+  /** Fires once per change, before onChange, so the caller can record an undo step. */
+  onBeforeChange?: (value: T) => void
+  /** Fires on every click, the chosen segment included, for the storm and leaf gestures. */
+  onTap?: (value: T) => void
+  /** Each choice owns a rainbow position from this index on; without it the row keeps the single accent. */
+  rainbowBaseIndex?: number
+  /**
+   * `big` pins every segment to the widest label or the app-wide floor, for a
+   * picker that stands once on a page; `small` lets each segment hug its label,
+   * for a strip inside a narrow card.
+   */
+  scale?: 'big' | 'small'
+  /** Content for the label row, such as an info icon. */
+  labelExtra?: HTMLElement
+}
+
+/**
+ * GlimStone's horizontal selector in its well styling: one groove, the idle
+ * segments transparent in it, only the chosen one filled.
+ */
+export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HTMLElement {
+  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, scale = 'small' } = opts
   const wrap = document.createElement('div')
   wrap.className = 'control-slider'
 
-  if (label) {
+  if (opts.label) {
+    const labelRow = document.createElement('div')
+    labelRow.className = 'control-slider-label-row'
     const labelEl = document.createElement('span')
-    labelEl.textContent = label
-    wrap.appendChild(labelEl)
+    labelEl.textContent = opts.label
+    labelRow.appendChild(labelEl)
+    if (opts.labelExtra) labelRow.appendChild(opts.labelExtra)
+    wrap.appendChild(labelRow)
   }
 
   const row = document.createElement('div')
-  row.className = 'segmented-row'
+  row.className = `segmented-row glim-well segmented-row--${scale}`
+  row.setAttribute('role', 'tablist')
+  if (opts.label) row.setAttribute('aria-label', opts.label)
   wrap.appendChild(row)
 
-  let active = initial
+  let active = opts.value
+  let buttons: HTMLButtonElement[] = []
+
+  function choose(value: T): void {
+    onTap?.(value)
+    if (value === active) return
+    onBeforeChange?.(value)
+    active = value
+    onChange(active)
+    render()
+    buttons.find((b) => b.dataset.value === active)?.focus()
+  }
 
   function render(): void {
     row.innerHTML = ''
-    choices.forEach((choice, index) => {
+    buttons = choices.map((choice, index) => {
       const btn = document.createElement('button')
       btn.type = 'button'
+      btn.dataset.value = choice.value
       const isActive = choice.value === active
       btn.className = 'segmented-button' + (isActive ? ' segmented-button--active' : '')
-      // text-overflow does not apply to the text of a flex container, so the
-      // label gets its own span to truncate.
+      btn.setAttribute('role', 'tab')
+      btn.setAttribute('aria-selected', String(isActive))
+      btn.tabIndex = isActive ? 0 : -1
       const labelSpan = document.createElement('span')
       labelSpan.className = 'segmented-button-label'
       labelSpan.textContent = choice.label
       btn.appendChild(labelSpan)
-      // Only the active segment is coloured; its fill already marks the pick,
+      // Only the chosen segment is coloured; its fill already marks the pick,
       // and washing the rest would be noise.
       if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
         btn.classList.add('glim-hue', 'glim-active')
       }
-      btn.addEventListener('click', () => {
-        if (choice.value === active) return
-        onBeforeChange?.(choice.value)
-        active = choice.value
-        onChange(active)
-        render()
-      })
+      btn.addEventListener('click', () => choose(choice.value))
       row.appendChild(btn)
-      // A tooltip only for a label the ellipsis actually cuts. Measured on the
-      // next frame, because the caller attaches the row to the document only
-      // after segmentedRow returns.
-      requestAnimationFrame(() => {
-        if (labelSpan.isConnected && labelSpan.scrollWidth > labelSpan.clientWidth) {
-          btn.setAttribute('data-tip', choice.label)
-        }
-      })
+      return btn
     })
+    layout()
   }
-  render()
 
+  row.addEventListener('keydown', (event) => {
+    const at = choices.findIndex((c) => c.value === active)
+    const rtl = getComputedStyle(row).direction === 'rtl'
+    let next = at
+    if (event.key === 'ArrowRight') next = rtl ? at - 1 : at + 1
+    else if (event.key === 'ArrowLeft') next = rtl ? at + 1 : at - 1
+    else if (event.key === 'Home') next = 0
+    else if (event.key === 'End') next = choices.length - 1
+    else return
+    event.preventDefault()
+    const choice = choices[Math.max(0, Math.min(choices.length - 1, next))]
+    if (choice) choose(choice.value)
+  })
+
+  // The pinned width comes from the DOM, and how many segments share a row
+  // from the room, so both are worked out again when the box resizes or a late
+  // web font changes what a label needs.
+  function layout(): void {
+    if (!row.isConnected || buttons.length === 0) return
+    for (const b of buttons) {
+      b.style.minWidth = ''
+      b.style.flex = ''
+    }
+    row.style.width = ''
+    row.style.flexWrap = ''
+    if (scale === 'small') return
+
+    const cs = getComputedStyle(row)
+    const gap = parseFloat(cs.columnGap) || 0
+    const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
+    const room = wrap.clientWidth - pad
+    const segments = buttons.map((b) => {
+      b.style.width = 'max-content'
+      const oneLine = b.getBoundingClientRect().width
+      b.style.width = 'min-content'
+      const narrowest = b.getBoundingClientRect().width
+      b.style.width = ''
+      return { oneLine, narrowest }
+    })
+    const n = segments.length
+    const widest = Math.max(...segments.map((s) => s.oneLine))
+    const share = (room - gap * (n - 1)) / n
+    // Capped at this strip's share of the room: where that would break a label
+    // and the labels fit side by side, segmentLayout lays them out by content.
+    const pinned = share > 0 ? Math.min(Math.max(widest, MIN_SEGMENT), share) : widest
+    const { byContent, perRow } = segmentLayout(room, pinned, segments, gap)
+    if (byContent) {
+      row.style.width = '100%'
+      row.style.flexWrap = 'nowrap'
+      for (const b of buttons) b.style.flex = '1 0 auto'
+      return
+    }
+    for (const b of buttons) {
+      b.style.minWidth = `${pinned}px`
+      // One gap of slack in the basis, so rounding cannot push the last
+      // segment of a full row down; the growth takes it back.
+      b.style.flex = `1 0 calc((100% - ${perRow} * ${gap}px) / ${perRow})`
+    }
+  }
+
+  if (scale === 'big') {
+    // A panel rebuilt for a new locale drops its old rows, so an observer
+    // whose row has left the page lets go of it.
+    const observer = new ResizeObserver(() => {
+      if (wrap.isConnected) layout()
+      else observer.disconnect()
+    })
+    observer.observe(wrap)
+    void document.fonts?.ready.then(() => layout())
+  }
+
+  render()
   return wrap
 }
 
@@ -134,7 +233,7 @@ export function iconToggleButton(
 
 /**
  * A sliding switch (`role="switch"`). Track and knob read --radius-pill, so the
- * switch follows the Round, Soft and Square shapes.
+ * switch follows the shape engine.
  */
 export function toggleSwitch(label: string, initial: boolean, onChange: (checked: boolean) => void): HTMLButtonElement {
   const btn = document.createElement('button')
@@ -161,6 +260,20 @@ export function toggleSwitch(label: string, initial: boolean, onChange: (checked
   })
 
   return btn
+}
+
+/** A label with a switch at the end of its row, as the rainbow and disco rows use. */
+export function switchRow(label: string, initial: boolean, onChange: (checked: boolean) => void, extra?: HTMLElement): HTMLElement {
+  const row = document.createElement('div')
+  row.className = 'control-slider-row switch-row'
+  const labelRow = document.createElement('span')
+  labelRow.className = 'control-slider-label-row'
+  const text = document.createElement('span')
+  text.textContent = label
+  labelRow.appendChild(text)
+  if (extra) labelRow.appendChild(extra)
+  row.append(labelRow, toggleSwitch(label, initial, onChange))
+  return row
 }
 
 export interface DropdownOption<T extends string> {
@@ -220,6 +333,15 @@ export function customDropdown<T extends string>(
     }
   }
 
+  function select(value: T): void {
+    if (value === current) return
+    current = value
+    const selected = currentOption()
+    if (selected) fillOptionContent(trigger, selected)
+    renderOptions()
+    onChange(current)
+  }
+
   function renderOptions(): void {
     listbox.innerHTML = ''
     for (const opt of options) {
@@ -230,12 +352,11 @@ export function customDropdown<T extends string>(
       row.setAttribute('role', 'option')
       row.setAttribute('aria-selected', String(opt.value === current))
       row.addEventListener('click', () => {
-        current = opt.value
-        const selected = currentOption()
-        if (selected) fillOptionContent(trigger, selected)
-        renderOptions()
+        select(opt.value)
         closeList()
-        onChange(current)
+        // Focus goes back to the trigger, which is what lets the wheel step
+        // the value from here on.
+        trigger.focus()
       })
       listbox.appendChild(row)
     }
@@ -259,10 +380,118 @@ export function customDropdown<T extends string>(
   document.addEventListener('keydown', (event) => {
     if (isOpen && event.key === 'Escape') closeList()
   })
+  enableWheelStep(trigger, (delta) => {
+    const at = options.findIndex((o) => o.value === current)
+    const next = options[stepIndex(options.length, at, delta)]
+    if (next) select(next.value)
+  })
 
   const initialOption = currentOption()
   if (initialOption) fillOptionContent(trigger, initialOption)
   renderOptions()
   wrap.append(trigger, listbox)
   return wrap
+}
+
+export type ButtonTone = 'subtle' | 'neutral' | 'accent'
+
+export interface ButtonOptions {
+  /** The words, present in every mode: visible, or hidden but announced and shown as the tooltip. */
+  label: string
+  glyph?: string
+  onClick?: () => void
+  /** `subtle` sits on a card, `neutral` is one step louder, `accent` is the one hero. */
+  tone?: ButtonTone
+  /** `icon` is a row action: where the mode hides the words it is a square instead of hugging its glyph. */
+  variant?: 'default' | 'icon'
+  /** For a label that is content rather than a verb, such as a file format. */
+  keepLabel?: boolean
+  /** A width stage for buttons that should match, or `none` for one that shares a row by flex. */
+  stage?: WidthStage | 'none'
+}
+
+const buttonOptions = new WeakMap<HTMLButtonElement, ButtonOptions>()
+
+function buttonLabelMode(): LabelMode {
+  const mode = document.documentElement.getAttribute('data-labels-buttons')
+  return mode === 'text' || mode === 'glyph' || mode === 'reactive' ? mode : 'textGlyph'
+}
+
+// The label engine's answer for one button, applied from the root attribute,
+// so a mode change reaches every button without it subscribing to anything.
+function paintButton(btn: HTMLButtonElement, opts: ButtonOptions): void {
+  const mode = buttonLabelMode()
+  const hasGlyph = !!opts.glyph
+  const effective: LabelMode = opts.keepLabel
+    ? hasGlyph
+      ? 'textGlyph'
+      : 'text'
+    : hidesLabel(mode) && !hasGlyph
+      ? 'text'
+      : mode
+  const reactive = effective === 'reactive'
+  const showText = effective !== 'glyph' && !reactive
+  const showGlyph = effective !== 'text' && hasGlyph
+
+  const stage =
+    effective === 'glyph'
+      ? opts.variant === 'icon'
+        ? 'glim-btn-icon'
+        : ''
+      : reactive || opts.stage === 'none'
+        ? ''
+        : `glim-btn-${opts.stage ?? widthStage(opts.label)}`
+  // Only the engine's own classes are replaced, so a caller's, such as a
+  // rainbow tint, survive a repaint.
+  for (const cls of [...btn.classList]) {
+    if (cls.startsWith('glim-btn') || cls.startsWith('glim-tone-') || cls === 'glim-reactive') btn.classList.remove(cls)
+  }
+  btn.classList.add('glim-btn', `glim-tone-${opts.tone ?? 'subtle'}`)
+  if (stage) btn.classList.add(stage)
+  if (reactive) btn.classList.add('glim-reactive')
+  btn.style.setProperty('--reactive-chars', reactive ? String(labelWidth(opts.label)) : '')
+
+  btn.innerHTML = ''
+  if (showGlyph && opts.glyph) {
+    const glyph = document.createElement('span')
+    glyph.className = 'glim-btn-glyph'
+    glyph.innerHTML = opts.glyph
+    btn.appendChild(glyph)
+  }
+  const label = document.createElement('span')
+  label.className = showText ? 'glim-btn-label' : reactive ? 'glim-label-reactive' : 'sr-only'
+  label.textContent = opts.label
+  btn.appendChild(label)
+
+  // Where the words are hidden the bubble says them; where they show, or slide
+  // in on hover, a bubble would say the same thing twice.
+  if (showText || reactive) btn.removeAttribute('data-tip')
+  else btn.setAttribute('data-tip', opts.label)
+}
+
+/** A GlimStone button that follows the label engine's `buttons` axis. */
+export function glimButton(opts: ButtonOptions): HTMLButtonElement {
+  const btn = document.createElement('button')
+  btn.type = 'button'
+  buttonOptions.set(btn, opts)
+  paintButton(btn, opts)
+  if (opts.onClick) btn.addEventListener('click', opts.onClick)
+  return btn
+}
+
+/** Changes a button's words or glyph in place, such as a Copy that briefly says Copied. */
+export function updateButton(btn: HTMLButtonElement, change: Partial<ButtonOptions>): void {
+  const opts = buttonOptions.get(btn)
+  if (!opts) return
+  const next = { ...opts, ...change }
+  buttonOptions.set(btn, next)
+  paintButton(btn, next)
+}
+
+/** Repaints every button on the page after the label mode changed. */
+export function repaintButtons(): void {
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('button.glim-btn')) {
+    const opts = buttonOptions.get(btn)
+    if (opts) paintButton(btn, opts)
+  }
 }

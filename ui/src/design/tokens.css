@@ -13,15 +13,32 @@
 /* Every rounded corner reads one of these three tokens, so switching the shape
    changes cards, buttons, tabs, inputs, pills, badges and toggles together.
 
+   --radius-card is for cards, windows and menus, --radius-control for fields,
+   panels and tiles, and --radius-pill for everything somebody presses: buttons,
+   tabs, badges, selector segments and switches. Only round tells the last two
+   apart, and there the pressable things are true pills while a text field
+   keeps a corner a paragraph can sit in.
+
    Use the raw token even on a short or non-square element. The browser scales
    an oversized radius down with one factor for all four corners, so 9999px
    gives a circle on a square and a stadium on a rectangle. A cap such as
    min(var(--radius-pill), 50%) resolves per axis first and renders an
    ellipse. */
 :root {
-  --radius-card: 1rem;
-  --radius-control: 0.625rem;
+  --radius-card: 1.25rem;
+  --radius-control: 0.75rem;
   --radius-pill: 9999px;
+
+  /* The distance from the window edge to everything on it, and between the
+     rail and the content, set on the frame that holds both (see "The rail is
+     a CARD, not a wall" in docs/design-language.md). The content's own padding
+     is a separate distance. */
+  --page-gutter: 1rem;
+
+  /* The rail's width in glyph mode. A fixed number so every app's rail is the
+     same width; the brand mark fits the rail. The wide rail is 14rem, on
+     Tailwind's own scale. */
+  --rail-narrow: 85px;
 
   /* The type scale, a fixed table. --text-caption serves a plain caption,
      .glim-eyebrow's uppercase label and the info bubble; the treatment carries
@@ -45,6 +62,24 @@
   --radius-pill: 0;
 }
 
+/* The hidden shape (leafTap in appearance.ts): two opposite corners rounded,
+   the other two sharp. The tokens stay single lengths, so a calc() on them and
+   a phone app's numbers keep working, and one rule takes the other diagonal
+   away from every element. It is physical rather than logical so the leaf
+   leans the same way in every language. */
+:root[data-shape="leaf"] {
+  --radius-card: 1.25rem;
+  --radius-control: 0.75rem;
+  --radius-pill: 1.125rem;
+}
+
+:root[data-shape="leaf"] *,
+:root[data-shape="leaf"] *::before,
+:root[data-shape="leaf"] *::after {
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
@@ -57,7 +92,39 @@
   --carbon-surface2:   #393939;
   --carbon-surface3:   #525252;
   --carbon-hover:      #353535;
+  --carbon-hover-raised: #6f6f6f;
+  --carbon-tile-hover: #a8a8a8;
+  --carbon-tile-hover-ink: #161616;
   --carbon-border:     #393939;
+
+  /* The About card's brand marks at rest, adjusted from the published brand
+     colours. A brand colour is designed against white or its own fill, so on
+     the neutral button ground it fails 3:1 in one theme: #FFDD00 reads 1.14:1
+     on the light #d1d1d1, and PayPal's navy fails on the dark #525252. Warm
+     brands are deepened for the light theme and dark ones lightened for the
+     dark theme. Contrast: 5.7, 3.3, 3.1 and 7.7 to one on the dark ground, 3.2,
+     3.2, 8.7 and 11.9 on the light one.
+
+     The mail button has no brand colour: it reaches the app's own authors and
+     follows the user's accent. */
+  --brand-coffee:  #ffdd00;
+  --brand-bitcoin: #f7931a;
+  --brand-paypal:  #4fb5f0;
+
+  /* The marks on the app tiles that are one flat colour or one gradient, which
+     no hover grey carries: the brand value at rest, a deepened one while the
+     tile is lit ("The App tab"). */
+  --brand-android:           #32de84;
+  --brand-android-hover:     #155d37;
+  --brand-docker:            #2396ed;
+  --brand-docker-hover:      #0b5394;
+  --brand-unraid-from:       #e32929;
+  --brand-unraid-to:         #ff8d30;
+  --brand-unraid-from-hover: #9c1414;
+  --brand-unraid-to-hover:   #a84b0c;
+  --brand-windows:           #2b88d8;
+  --brand-windows-hover:     #005a9e;
+  --brand-github:  #ffffff;
 
   /* Text ramp: three steps, the last still legible at 11px. */
   --carbon-text:       #f4f4f4;
@@ -70,6 +137,16 @@
   --accent:            #FCC419;
   --accent-contrast:   #161616;
   --accent-soft:       rgba(252, 196, 25, 0.14);
+  /* The accent used as ink: text or a line-drawn glyph on the page's ground,
+     rather than a fill with computed ink on top. On a dark ground the two are
+     the same colour and the light theme is where they part, so use this rather
+     than --accent whenever the colour is read.
+
+     The theme sets only --ink-mix, which <html> passes down, so the one-line
+     mix is right in both themes and the rainbow blocks need no light twin.
+     100% of a colour mixed with black is that colour. */
+  --ink-mix:           100%;
+  --accent-ink:        color-mix(in srgb, var(--accent) var(--ink-mix), black);
 
   /* Four state hues, Carbon's dark support tones. Paused reuses neutral; its
      label and its resume control carry the difference. */
@@ -87,6 +164,12 @@
 
   --status-warn-text:    #f1c21b;
   --status-warn-bg:      rgba(241, 194, 27, 0.12);
+  /* Opaque, for a chip on a row that already carries a fill the translucent
+     wash would take on. */
+  --status-warn-bg-strong: #3a2f1c;
+  /* Quieter, for a paragraph that explains rather than warns, such as the
+     refusal box under "The second way in". */
+  --status-warn-bg-soft: rgba(241, 194, 27, 0.06);
   --status-warn-solid:   #f1c21b;
 
   --status-neutral-text: #a8a8a8;
@@ -96,13 +179,15 @@
   /* One elevation, one hairline. The shadow is neutral black, since a brown
      one under a grey card reads as a colour cast. */
   --elevation: 0 1px 2px rgba(0, 0, 0, .40), 0 18px 40px -24px rgba(0, 0, 0, .85);
+  /* The ground behind a floating window. */
+  --glim-scrim: rgba(0, 0, 0, .65);
   --hairline: inset 0 1px 0 rgba(255, 255, 255, .045);
   --focus-ring: rgba(252, 196, 25, .55);
 }
 
 /* The theme follows the system: the light ramp applies when the OS prefers
-   light and no data-theme is set. The values match [data-theme="light"]
-   below. */
+   light and no data-theme is set, and is meant to carry the same values as
+   [data-theme="light"] below. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
@@ -113,16 +198,36 @@
     --carbon-surface2:   #e8e8e8;
     --carbon-surface3:   #d1d1d1;
     --carbon-hover:      #e0e0e0;
+    --carbon-hover-raised: #c6c6c6;
+    --carbon-tile-hover: #d1d1d1;
+    --carbon-tile-hover-ink: #161616;
     --carbon-border:     #d1d1d1;
+
+    /* Warm brands deepened, dark ones left dark (see the dark block). */
+    --brand-coffee:  #8a6d00;
+    --brand-bitcoin: #a85d00;
+    --brand-paypal:  #003087;
+    --brand-android:           #1c7c4a;
+    --brand-android-hover:     #1c7c4a;
+    --brand-docker:            #1d6fbf;
+    --brand-docker-hover:      #1d6fbf;
+    --brand-unraid-from:       #c21f1f;
+    --brand-unraid-to:         #c85d12;
+    --brand-unraid-from-hover: #c21f1f;
+    --brand-unraid-to-hover:   #c85d12;
+    --brand-windows:           #0078d4;
+    --brand-windows-hover:     #0078d4;
+    --brand-github:  #181717;
 
     --carbon-text:       #161616;
     --carbon-text-sub:   #525252;
     --carbon-text-muted: #6f6f6f;
     --sidebar-text:      #393939;
 
-    --accent:            #8E6A00;
-    --accent-contrast:   #ffffff;
-    --accent-soft:       rgba(142, 106, 0, 0.12);
+    --accent:            #FCC419;
+    --accent-contrast:   #161616;
+    --accent-soft:       rgba(252, 196, 25, 0.14);
+    --ink-mix:           55%;
 
     --status-info-text:    #8E6A00;
     --status-info-bg:      rgba(142, 106, 0, 0.12);
@@ -138,6 +243,8 @@
 
     --status-warn-text:    #8E6A00;
     --status-warn-bg:      rgba(142, 106, 0, 0.10);
+    --status-warn-bg-strong: #fcf4d6;
+    --status-warn-bg-soft: rgba(142, 106, 0, 0.05);
     --status-warn-solid:   #b28600;
 
     --status-neutral-text: #6f6f6f;
@@ -145,6 +252,7 @@
     --status-neutral-solid: #8d8d8d;
 
     --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
+    --glim-scrim: rgba(0, 0, 0, .55);
     --hairline: inset 0 0 0 1px rgba(0, 0, 0, .05);
     --focus-ring: rgba(142, 106, 0, .5);
   }
@@ -161,19 +269,42 @@
   --carbon-surface2:   #e8e8e8;
   --carbon-surface3:   #d1d1d1;
   --carbon-hover:      #e0e0e0;
+  --carbon-hover-raised: #c6c6c6;
+  --carbon-tile-hover: #d1d1d1;
+  --carbon-tile-hover-ink: #161616;
   --carbon-border:     #d1d1d1;
+
+  /* The same brand values as the media block, for an explicit light choice. */
+  --brand-coffee:  #8a6d00;
+  --brand-bitcoin: #a85d00;
+  --brand-paypal:  #003087;
+  --brand-android:           #1c7c4a;
+  --brand-android-hover:     #1c7c4a;
+  --brand-docker:            #1d6fbf;
+  --brand-docker-hover:      #1d6fbf;
+  --brand-unraid-from:       #c21f1f;
+  --brand-unraid-to:         #c85d12;
+  --brand-unraid-from-hover: #c21f1f;
+  --brand-unraid-to-hover:   #c85d12;
+  --brand-windows:           #0078d4;
+  --brand-windows-hover:     #0078d4;
+  --brand-github:  #181717;
 
   --carbon-text:       #161616;
   --carbon-text-sub:   #525252;
   --carbon-text-muted: #6f6f6f;
   --sidebar-text:      #393939;
 
-  /* The dark accent is a yellow, and yellow on white is unreadable at 11px.
-     Carbon's own answer is to darken the hue rather than pick another one,
-     so the accent stays recognisably the same colour across both themes. */
-  --accent:            #8E6A00;
-  --accent-contrast:   #ffffff;
-  --accent-soft:       rgba(142, 106, 0, 0.12);
+  /* The accent is the same in both themes: a Sunflower fill with computed ink
+     reads well on white, while darkening the fill turns it olive-brown. Only
+     yellow text on white fails, so --accent-ink mixes the accent 55% toward
+     black here. Measured against white, the palest ground, Sunflower lands at
+     4.95:1 and every preset clears 4.5:1. Because it derives from --accent, it
+     follows a picked colour and --item-hue in a rainbow subtree. */
+  --accent:            #FCC419;
+  --accent-contrast:   #161616;
+  --accent-soft:       rgba(252, 196, 25, 0.14);
+  --ink-mix:           55%;
 
   --status-info-text:    #8E6A00;
   --status-info-bg:      rgba(142, 106, 0, 0.12);
@@ -189,6 +320,8 @@
 
   --status-warn-text:    #8E6A00;
   --status-warn-bg:      rgba(142, 106, 0, 0.10);
+  --status-warn-bg-strong: #fcf4d6;
+  --status-warn-bg-soft: rgba(142, 106, 0, 0.05);
   --status-warn-solid:   #b28600;
 
   --status-neutral-text: #6f6f6f;
@@ -196,19 +329,35 @@
   --status-neutral-solid: #8d8d8d;
 
   --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
+  --glim-scrim: rgba(0, 0, 0, .55);
   --hairline: inset 0 0 0 1px rgba(0, 0, 0, .05);
   --focus-ring: rgba(142, 106, 0, .5);
 }
 
-/* The font stack ends in system-ui and sans-serif, and the browser falls back
-   per character to a font the OS has for each script (docs/design-language.md,
-   "Non-Latin scripts"). The negative letter-spacing suits Latin and crowds CJK,
-   which is set in full-width cells, so CJK gets normal spacing. */
+/* The house font is Noto Sans, shipped with the app for Latin, Cyrillic,
+   Greek, Vietnamese and Devanagari, with Noto's own cuts for Arabic, Hebrew and
+   Thai. The "Variable" names are the shipped files, the plain ones an install
+   on the machine. Chinese, Japanese and Korean are too heavy to ship, so their
+   Noto cut is used where the system has it, and the system font where it does
+   not; Han characters are drawn differently per language, so the lang of the
+   page picks the cut (docs/design-language.md, "The house font"). */
+:root {
+  --font-cjk: "Noto Sans CJK SC", "Noto Sans SC";
+  --font-sans: "Noto Sans Variable", "Noto Sans", "Noto Sans Arabic Variable", "Noto Sans Arabic",
+    "Noto Sans Hebrew Variable", "Noto Sans Hebrew", "Noto Sans Thai Variable", "Noto Sans Thai",
+    var(--font-cjk), system-ui, -apple-system, sans-serif;
+}
+:lang(ja) { --font-cjk: "Noto Sans CJK JP", "Noto Sans JP"; }
+:lang(ko) { --font-cjk: "Noto Sans CJK KR", "Noto Sans KR"; }
+:lang(zh-TW), :lang(zh-Hant) { --font-cjk: "Noto Sans CJK TC", "Noto Sans TC"; }
+
+/* The negative letter-spacing suits Latin and crowds CJK, which is set in
+   full-width cells, so CJK gets normal spacing. */
 body {
   margin: 0;
   background-color: var(--carbon-bg);
   color: var(--carbon-text);
-  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.008em;
 }
@@ -218,6 +367,21 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/* The rail's glyph size, 20px rather than the 16px beside body text: a rail
+   row is a bigger target, and in glyph mode the symbol is the whole row.
+   `flex: none` because a flex line squeezes the glyph beside a long label
+   first. */
+.glim-nav-row > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+
+/* A closed reactive row must not reserve a gap beside a zero-width label. */
+.glim-nav-row.glim-reactive {
+  gap: 0;
 }
 
 /* The one raised surface. Never nest it (rule 1). */
@@ -252,8 +416,8 @@ body {
    into the viewport, flips above the trigger when below would clip
    (.glim-bubble--above), and its arrow follows the trigger when the bubble is
    clamped off-centre. A bubble is a floating card, so it takes the raised
-   surface with the card's elevation and hairline. The 110ms fade comes from
-   the separate `.glim-fade` class. */
+   surface with the card's elevation and hairline. The fade comes from the
+   separate `.glim-fade` class. */
 .glim-bubble {
   position: fixed;
   z-index: 2147483647;
@@ -419,10 +583,15 @@ body {
   --accent: var(--item-hue);
   --accent-contrast: var(--item-hue-ink);
   --accent-soft: var(--item-hue-soft);
+  /* A custom property containing var() is resolved where it is declared, so
+     the --accent-ink from :root arrives already computed; without redefining
+     it, accent-coloured text would keep the single accent. */
+  --accent-ink: color-mix(in srgb, var(--item-hue) var(--ink-mix), black);
   /* Reactive mode leaves this alone: the ring only paints on focus, which
      brings the hue back through :focus-within. */
   --focus-ring: var(--item-hue-ring);
 }
+
 
 /* The element's glyph takes the hue too; a separate class because a row's
    action icons stay quiet. The active item is filled with the hue, where an
@@ -488,6 +657,7 @@ body {
   --accent: var(--carbon-text-muted);
   --accent-contrast: var(--carbon-bg);
   --accent-soft: transparent;
+  --accent-ink: var(--carbon-text-muted);
 }
 [data-rainbow='reactive'] .glim-hue:hover,
 [data-rainbow='reactive'] .glim-hue:focus-within,
@@ -495,6 +665,8 @@ body {
   --accent: var(--item-hue);
   --accent-contrast: var(--item-hue-ink);
   --accent-soft: var(--item-hue-soft);
+  /* Restated because the resting rule above muted the ink too. */
+  --accent-ink: color-mix(in srgb, var(--item-hue) var(--ink-mix), black);
 }
 
 :focus-visible {
@@ -521,34 +693,642 @@ body {
   0%   { left: -35%; }
   100% { left: 100%; }
 }
+/* Translation only. This runs on the route wrapper while the cards inside it
+   animate their own transforms, and a scale or rotation on an ancestor makes
+   the engine resample the whole subtree, so the page trembles before it
+   settles ("An ancestor's entrance may translate, never scale" in
+   docs/design-language.md). The levels differ in distance, duration and curve.
+
+   The fade is a separate animation on a curve without spring: a spring
+   overshoots and returns, and opacity clamps at 1, so it would finish early
+   and sit flat. The same holds for glim-toast-in. */
 @keyframes glim-page-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    transform: translateY(var(--motion-page-travel, 6px));
+  }
+  to   { transform: none; }
 }
 @keyframes glim-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+/* The toast's travel is a token so it can flip with the writing direction; a
+   keyframe does not mirror on its own. */
+:root { --glim-toast-slide: 12px; }
+[dir="rtl"] { --glim-toast-slide: -12px; }
+
 @keyframes glim-toast-in {
-  from { opacity: 0; transform: translateX(12px); }
-  to   { opacity: 1; transform: none; }
+  from { transform: translateX(var(--glim-toast-slide, 12px)); }
+  to   { transform: none; }
 }
 @keyframes glim-pulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: .45; }
 }
+/* A control refusing an action it showed optimistically, because a backend
+   precondition failed. The decay reads as "pushed back" rather than a glitch.
+   Put .glim-shake on the control at the moment it reverts. */
+@keyframes glim-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-4px); }
+  40%      { transform: translateX(4px); }
+  60%      { transform: translateX(-2px); }
+  80%      { transform: translateX(2px); }
+}
+/* The reduced-motion stand-in: a brief opacity pulse. */
+@keyframes glim-shake-reduced {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .5; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  .glim-page-enter { animation: glim-page-in 280ms cubic-bezier(.2, .6, .2, 1) both; }
-  .glim-toast { animation: glim-toast-in 220ms cubic-bezier(.2, .6, .2, 1) both; }
-  .glim-live { animation: glim-pulse 2s ease-in-out infinite; }
+  /* The motion engine's numbers. Each intensity is a token set read by the
+     same keyframes, so a level is a different number, never a different
+     animation. The offered levels live inside no-preference, so a system that
+     asked for less motion never evaluates their selectors and keeps the reduce
+     block's values. Storm's numbers are the exception, below the gate. */
+  :root {
+    --motion-page-dur: 420ms;
+    --motion-toast-dur: 300ms;
+    --motion-pulse-dur: 2s;
+    --motion-fade-dur: 140ms;
+    --motion-shake-dur: 360ms;
+    /* Distance and curve set the levels apart along with duration: 18px
+       against subtle's 6px, and a spring instead of an ease. There is no scale
+       (see the keyframe above). */
+    --motion-page-travel: 18px;
+    /* The fourth control point past 1 makes the curve spring, the same shape
+       React Native's spring gives the phone. The toast has its own curve: it
+       slides in from the screen edge, and a spring would carry it back past
+       that edge, which reads as a glitch. Storm springs both. */
+    --motion-page-ease: cubic-bezier(.34, 1.56, .64, 1);
+    --motion-toast-ease: cubic-bezier(.2, .6, .2, 1);
+    /* Every toast distance needs its RTL twin, since the keyframe cannot be
+       mirrored by a class. */
+    --glim-toast-slide: 24px;
+  }
+  :root[dir="rtl"] { --glim-toast-slide: -24px; }
+  :root[data-motion='subtle'] {
+    --motion-page-dur: 140ms;
+    --motion-toast-dur: 120ms;
+    --motion-pulse-dur: 3.2s;
+    --motion-fade-dur: 70ms;
+    --motion-shake-dur: 220ms;
+    /* Less travel and a curve that only eases, not a faster bounce. The toast
+       keeps its ease; the shorter duration carries the change. */
+    --motion-page-travel: 6px;
+    --motion-page-ease: cubic-bezier(.2, .6, .2, 1);
+    --glim-toast-slide: 12px;
+  }
+  :root[data-motion='subtle'][dir="rtl"] { --glim-toast-slide: -12px; }
+  :root[data-motion='off'] {
+    --motion-page-dur: 0s;
+    --motion-toast-dur: 0s;
+    --motion-fade-dur: 0s;
+    --motion-shake-dur: 0s;
+    --motion-page-travel: 0px;
+    --motion-page-ease: linear;
+    --motion-toast-ease: ease;
+    --glim-toast-slide: 0px;
+    /* The pulse gets no zero: `.glim-live` means "this is happening now", so
+       it stops fully opaque instead (below). */
+  }
+
+  /* Two animations per element, one duration: the movement on the level's
+     curve, the fade on one that cannot overshoot. A two-animation shorthand
+     costs parse time, so for an element that appears by the dozen, such as a
+     staggered list row, keep the fade inside one keyframe on a curve without
+     spring instead. */
+  .glim-page-enter {
+    animation:
+      glim-page-in var(--motion-page-dur) var(--motion-page-ease) both,
+      glim-fade-in var(--motion-page-dur) ease-out both;
+  }
+  .glim-toast {
+    animation:
+      glim-toast-in var(--motion-toast-dur) var(--motion-toast-ease, var(--motion-page-ease)) both,
+      glim-fade-in var(--motion-toast-dur) ease-out both;
+  }
+  .glim-live { animation: glim-pulse var(--motion-pulse-dur) ease-in-out infinite; }
   /* Short, because the pointer is already waiting for the bubble. */
-  .glim-fade { animation: glim-fade-in 110ms ease both; }
+  .glim-fade { animation: glim-fade-in var(--motion-fade-dur) ease both; }
+  .glim-shake { animation: glim-shake var(--motion-shake-dur) ease-in-out; }
+
+  :root[data-motion='off'] .glim-live { animation: none; opacity: 1; }
+
+  /* Every transition reads one number, so the setting reaches all of them. */
+  :root { --motion-control-dur: 150ms; }
+  :root[data-motion='subtle'] { --motion-control-dur: 80ms; }
+  :root[data-motion='off'] { --motion-control-dur: 0s; }
+  :root[data-motion='off'] * { transition-duration: 0s !important; }
+  :root[data-motion='subtle'] .transition,
+  :root[data-motion='subtle'] .transition-colors,
+  :root[data-motion='subtle'] .transition-opacity,
+  :root[data-motion='subtle'] .transition-transform {
+    transition-duration: var(--motion-control-dur);
+  }
 }
+/* Storm, the hidden fourth level: the same keyframes with a spring that swings
+   further and settles later. No picker offers it; see "A hidden fourth level"
+   in the design language. The phone matches it with `springDamping: 0.34`
+   against wild's 0.68.
+
+   Its numbers sit outside the no-preference gate. Storm is the one level that
+   still animates under reduced motion, and the reduce block below restores its
+   animations from these tokens, which it could not read inside the gate. */
+:root[data-motion='storm'] {
+  --motion-page-dur: 760ms;
+  --motion-toast-dur: 420ms;
+  --motion-pulse-dur: 1.4s;
+  --motion-fade-dur: 200ms;
+  --motion-shake-dur: 520ms;
+  --motion-page-travel: 34px;
+  /* Further past 1 than wild's curve and slower to settle. It carries the
+     level with distance and curve, never a scale. */
+  --motion-page-ease: cubic-bezier(.22, 1.94, .45, 1);
+  /* The only level where the toast springs past the screen edge. */
+  --motion-toast-ease: cubic-bezier(.22, 1.94, .45, 1);
+  --glim-toast-slide: 44px;
+}
+:root[data-motion='storm'][dir="rtl"] { --glim-toast-slide: -44px; }
+
+/* Storm is exempt from reduced motion. The offered levels obey the OS because
+   somebody who set reduced motion never chose them; five taps on a chosen
+   option are a deliberate request. Each substitute below excludes storm, and
+   storm's full animation is restored at the end of the block, since exempting
+   without restoring would leave it with none, or invisible where the resting
+   state is hidden. */
 @media (prefers-reduced-motion: reduce) {
-  .glim-page-enter { animation: glim-fade-in 180ms ease both; }
-  .glim-toast { animation: glim-fade-in 160ms ease both; }
+  :root:not([data-motion='storm']) .glim-page-enter { animation: glim-fade-in 180ms ease both; }
+  :root:not([data-motion='storm']) .glim-toast { animation: glim-fade-in 160ms ease both; }
   /* An infinite animation stops outright, fully opaque, so "this is live"
-     reads from colour and position. */
+     reads from colour and position. Storm is not exempt here: wanting more
+     movement is not wanting something that never stops. */
   .glim-live { animation: none; opacity: 1; }
+  :root:not([data-motion='storm']) .glim-shake { animation: glim-shake-reduced 300ms ease-in-out; }
+
+  /* Storm restored, with the values from :root[data-motion='storm']. */
+  :root[data-motion='storm'] .glim-page-enter {
+    animation:
+      glim-page-in var(--motion-page-dur) var(--motion-page-ease) both,
+      glim-fade-in var(--motion-page-dur) ease-out both;
+  }
+  :root[data-motion='storm'] .glim-toast {
+    animation:
+      glim-toast-in var(--motion-toast-dur) var(--motion-toast-ease, var(--motion-page-ease)) both,
+      glim-fade-in var(--motion-toast-dur) ease-out both;
+  }
+  :root[data-motion='storm'] .glim-shake { animation: glim-shake var(--motion-shake-dur) ease-in-out; }
+}
+/* Removing and re-adding .glim-shake within a frame does not restart the
+   animation, so a repeated failure needs a fresh DOM node: key the element on
+   a per-instance failure counter. */
+
+/* The drag lift ("Reordering by dragging" in the design language). The held
+   item floats under the pointer (.glim-drag-lift), the others slide aside while
+   it passes (.glim-drag-shift), and on release it slides into the gap they left
+   (.glim-drag-settle). A script sets only each item's `translate`; the separate
+   `translate` and `scale` properties compose with a wiggle's `transform`
+   instead of replacing it.
+
+   The lift is a state rather than motion, so the shadow and the gap stay at
+   every level. Reduced motion and "off" drop only the scale, and the slides
+   take the level's duration, none where the level has none. */
+:root {
+  --drag-lift-scale: 1.03;
+  /* The card elevation alone barely shows under something one row tall. */
+  --drag-lift-shadow: 0 10px 22px -8px rgba(0, 0, 0, .45), var(--elevation);
+  --drag-lift-z: 1;
+  --drag-settle-dur: 0ms;
+  --drag-settle-ease: var(--motion-page-ease, ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root { --drag-settle-dur: 220ms; }
+  :root[data-motion='subtle'] { --drag-settle-dur: 130ms; }
+  :root[data-motion='off'] { --drag-settle-dur: 0ms; --drag-lift-scale: 1; }
+}
+/* Outside the gate for the same reason as storm's other numbers. */
+:root[data-motion='storm'] { --drag-settle-dur: 400ms; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='storm']) { --drag-lift-scale: 1; }
+}
+.glim-drag-lift {
+  position: relative;
+  z-index: var(--drag-lift-z);
+  scale: var(--drag-lift-scale);
+  box-shadow: var(--drag-lift-shadow);
+  cursor: grabbing;
+  /* No `translate` here, so the item keeps up with the pointer. */
+  transition:
+    scale var(--drag-settle-dur) var(--drag-settle-ease),
+    box-shadow var(--drag-settle-dur) var(--drag-settle-ease);
+}
+/* Still above its neighbours while it lands, or it slides under the next one
+   on the way. */
+.glim-drag-settle {
+  position: relative;
+  z-index: var(--drag-lift-z);
+  transition:
+    translate var(--drag-settle-dur) var(--drag-settle-ease),
+    scale var(--drag-settle-dur) var(--drag-settle-ease),
+    box-shadow var(--drag-settle-dur) var(--drag-settle-ease);
+}
+.glim-drag-shift { transition: translate var(--drag-settle-dur) var(--drag-settle-ease); }
+
+
+/* The number field (reference/numberField.ts; docs/design-language.md, "Never a
+   native number spinner either"): our own arrows inside the box, with no ground
+   of their own, and inline padding so the digits never run under them. */
+
+/* Chrome hides its spinner through the pseudo-elements, while Firefox ignores
+   them and needs `appearance: textfield`. */
+.glim-num-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  /* 1.75rem clears the 14px stack and its inset at every field height. */
+  padding-inline-end: 1.75rem;
+}
+.glim-num-input::-webkit-outer-spin-button,
+.glim-num-input::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* The wrapper is exactly as wide as the input, because the arrows sit against
+   its trailing edge. A labelled field is a column flex container whose default
+   stretch would widen the wrapper to the row, so it is sized by its content
+   for every kind of parent: `width: fit-content` for block, `align-self` for
+   flex, `justify-self` for grid. The width therefore lives on the input and
+   must be definite; `width: 100%` falls back to the browser's default box. */
+.glim-num-wrap {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  align-self: start;
+  justify-self: start;
+}
+
+/* Inside the field's box, vertically centred, and transparent to clicks meant
+   for the input; the buttons take pointer events back. */
+.glim-num-steppers {
+  position: absolute;
+  inset-block: 1px;
+  inset-inline-end: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+}
+
+/* No ground of its own: the arrows belong to the field, so only their ink
+   changes on hover. */
+.glim-num-step {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 11px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--carbon-text-muted, #a8a8a8);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.glim-num-step:hover:not(:disabled) { color: var(--carbon-text, #f4f4f4); }
+.glim-num-step:disabled {
+  /* A control that looks pressable and does nothing is worse. */
+  opacity: .35;
+  cursor: default;
+}
+/* The field owns the focus ring, and the arrows are out of the tab order. */
+.glim-num-step:focus { outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glim-num-step { transition: none; }
+}
+
+/* The button box and the reactive label. The components in reference/react/
+   carry no dimensions of their own, so changing the box here changes every
+   button.
+
+   The four width stages are a floor (`min-width`), so a longer translation is
+   never clipped. The height is what an ordinary text field measures
+   (`px-3 py-1.5 text-sm`: a 20px line box plus 12px of padding), so a button
+   beside a field matches it. */
+:root {
+  --btn-h: 2rem;
+  /* The second and last height; see `.glim-btn-key`. */
+  --btn-h-key: 2.5rem;
+  --btn-pad-x: 0.875rem;
+  --btn-gap: 0.5rem;
+
+  --btn-w-xs: 5.5rem;
+  --btn-w-sm: 8rem;
+  --btn-w-md: 11.5rem;
+  --btn-w-lg: 15rem;
+}
+
+.glim-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+  height: var(--btn-h);
+  padding-inline: var(--btn-pad-x);
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  box-sizing: border-box;
+  transition: opacity 120ms, background-color 120ms;
+}
+
+.glim-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The key control, one step up for the button a page is about. Raising
+   `--btn-h` would put every button out of line with the fields beside it, so
+   this is a second height, and there is no third: two read as a deliberate
+   difference, three as a ladder. The half-rem step is too large to pass for a
+   rounding error, where 4px between neighbours reads as a bug.
+
+   It is for the one control that creates what the page lists, and for a
+   control whose press is hard to undo or easy to get wrong. In a row with form
+   fields it must be centred against its neighbours. A glyph-only key control is
+   square at this height; one with words keeps its width stage. */
+.glim-btn-key {
+  height: var(--btn-h-key);
+}
+
+/* The mark grows with the box, or a text-sized glyph in a 40px frame reads as
+   a small symbol in a large button. */
+.glim-btn-key .glim-btn-glyph > svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.glim-btn-xs { min-width: var(--btn-w-xs); }
+.glim-btn-sm { min-width: var(--btn-w-sm); }
+.glim-btn-md { min-width: var(--btn-w-md); }
+.glim-btn-lg { min-width: var(--btn-w-lg); }
+
+/* A button carrying somebody else's mark: the About card's give routes and its
+   repository link. The adjusted colour (--brand, a theme token) paints the mark
+   at rest, since a published brand colour fails on one of the two grounds. On
+   hover the true colour becomes the fill (--brand-fill), the ground it was drawn
+   for, and label and mark switch to its measured ink (--brand-ink).
+
+   The `svg path` selector is needed because a path that sets its own
+   fill="currentColor" ignores the fill on its <svg>. Every mark here is a
+   single-colour drawing, so painting both levels is safe. A mark with its own
+   ground, such as a coin disc, takes none of these classes. */
+.glim-brand-btn .glim-btn-glyph svg,
+.glim-brand-btn .glim-btn-glyph svg path {
+  fill: var(--brand);
+  transition: fill 120ms;
+}
+.glim-brand-btn:hover:not(:disabled) {
+  background-color: var(--brand-fill);
+  color: var(--brand-ink);
+}
+.glim-brand-btn:hover:not(:disabled) .glim-btn-glyph svg,
+.glim-brand-btn:hover:not(:disabled) .glim-btn-glyph svg path {
+  fill: currentColor;
+}
+
+/* The app tiles' single-colour marks. The deepened value only under a real
+   pointer, or a tap on a touch screen would leave it on a resting tile. */
+.glim-android-mark { color: var(--brand-android); }
+.glim-docker-mark { color: var(--brand-docker); }
+.glim-windows-mark { color: var(--brand-windows); }
+@media (hover: hover) {
+  .group:hover .glim-android-mark { color: var(--brand-android-hover); }
+  .group:hover .glim-docker-mark { color: var(--brand-docker-hover); }
+  .group:hover .glim-windows-mark { color: var(--brand-windows-hover); }
+  .group:hover .glim-unraid-mark {
+    --brand-unraid-from: var(--brand-unraid-from-hover);
+    --brand-unraid-to: var(--brand-unraid-to-hover);
+  }
+}
+
+/* One block per brand: the adjusted resting mark (a token, because it changes
+   with the theme), then the true colour and its measured ink, which do not. */
+.glim-brand-coffee {
+  --brand: var(--brand-coffee);
+  --brand-fill: #ffdd00;
+  /* Buy Me a Coffee's own near-black, the ink their button uses. 13.8:1. */
+  --brand-ink: #0d0c22;
+}
+.glim-brand-bitcoin {
+  --brand: var(--brand-bitcoin);
+  --brand-fill: #f7931a;
+  --brand-ink: #161616; /* 7.9:1 */
+}
+.glim-brand-paypal {
+  --brand: var(--brand-paypal);
+  --brand-fill: #003087;
+  --brand-ink: #ffffff; /* 13.4:1 */
+}
+.glim-brand-github {
+  --brand: var(--brand-github);
+  --brand-fill: #181717;
+  --brand-ink: #ffffff; /* 18.3:1 */
+}
+
+/* The house's own button, reaching the app's authors rather than a third
+   party. It follows the colour engine, so all three values are accent tokens:
+   --accent-ink at rest and the ordinary accent pair on hover. */
+.glim-brand-house {
+  --brand: var(--accent-ink);
+  --brand-fill: var(--accent);
+  --brand-ink: var(--accent-contrast);
+}
+
+/* The row action while the label mode shows no words: a square at the button
+   height, sized by its glyph. In a mode that shows words it is an ordinary
+   button with its label (see `ButtonVariant` in reference/react/Button.tsx). */
+.glim-btn-icon {
+  width: var(--btn-h);
+  min-width: 0;
+  padding-inline: 0;
+}
+
+/* A row action promoted to a key control stays square at the other height. */
+.glim-btn-icon.glim-btn-key {
+  width: var(--btn-h-key);
+}
+
+/* A glyph alone in a square fills half its box, as on a 32px icon badge with a
+   16px drawing. Beside words the glyph is the text's size; a glyph alone
+   carries the button by itself and takes half the box instead. */
+.glim-btn-icon .glim-btn-glyph > svg {
+  width: 1rem;
+  height: 1rem;
+}
+.glim-btn-icon.glim-btn-key .glim-btn-glyph > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* The dismiss control inside a chip takes no width stage and no button height,
+   so it fits the 0.75rem-text pill. It inherits the pill's ink rather than
+   painting a surface, which keeps it right on an accent or a neutral chip. */
+.glim-btn-chip {
+  height: 1.125rem;
+  width: 1.125rem;
+  min-width: 0;
+  padding-inline: 0;
+  border-radius: 999px;
+  opacity: 0.7;
+  transition: opacity 120ms, background-color 120ms;
+}
+.glim-btn-chip:hover:not(:disabled) {
+  opacity: 1;
+  background-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+.glim-btn-chip svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+/* A glyph beside a button's words is as tall as the words, 14px. A larger one
+   outweighs the label, and a row of buttons reads as a row of icons. One size
+   everywhere, so the same symbol never arrives in two sizes on one row. */
+.glim-btn-glyph {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+.glim-btn-glyph > svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: none;
+}
+
+/* Long text ellipsises rather than breaking the row. The label sets its own
+   line height: `.glim-btn`'s `line-height: 1` gives a 14px line box where
+   Segoe UI needs about 18.6px, and a box that hides its overflow cuts off the
+   descenders of p, g, y and j. 1.4 clears the tallest face in the stack, and
+   the button keeps its height. */
+.glim-btn-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* The collapsed reactive label is still a flex item, and the gap beside it
+   would push the glyph off centre. The gap returns as the label's margin when
+   it opens. */
+.glim-btn.glim-reactive {
+  gap: 0;
+}
+
+/* Reactive labels, the fourth label mode. The words collapse to nothing and
+   come back on hover, on focus, and for the active item, so a tab strip still
+   says which tab is open. The text stays in the DOM, which keeps the
+   accessible name while the width is zero. */
+.glim-label-reactive {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  margin-inline-start: 0;
+  transform-origin: left center;
+  /* This box hides its overflow too; see `.glim-btn-label`. */
+  line-height: 1.4;
+}
+
+/* Keep these states in step with the motion block below, which restores the
+   transform; a state in only one list leaves the label revealed but
+   displaced. */
+.glim-reactive.glim-active .glim-label-reactive,
+.glim-reactive:hover .glim-label-reactive,
+.glim-reactive:focus-visible .glim-label-reactive,
+.glim-reactive:focus-within .glim-label-reactive {
+  /* The ceiling follows the text: a fixed one clips long labels and makes
+     short ones snap open while long ones crawl. `--reactive-chars` is the
+     label's visual length, set inline. `em` rather than `ch`, which is the
+     advance of "0" and narrower than the average letter. */
+  max-width: calc(var(--reactive-chars, 24) * 0.62em + 0.75rem);
+  opacity: 1;
+  margin-inline-start: var(--btn-gap);
+}
+
+/* Under reduced motion the words simply appear. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Subtle: one duration, no overshoot. */
+  :root[data-motion="subtle"] .glim-label-reactive {
+    transition:
+      max-width 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 120ms ease-out,
+      margin-inline-start 160ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Above subtle the label's width bounces, with the overshoot in the easing
+     curve, while the text slides in and unsquashes. The selector excludes the
+     quiet levels rather than naming the lively ones, so it covers wild, storm,
+     a missing attribute and any level added later. */
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-label-reactive {
+    transition:
+      max-width 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 180ms ease-out,
+      margin-inline-start 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateX(-0.4rem) scaleX(0.82);
+  }
+
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive.glim-active .glim-label-reactive,
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:hover .glim-label-reactive,
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:focus-visible .glim-label-reactive,
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-reactive:focus-within .glim-label-reactive {
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+/* The confirm surface. The backdrop fades and the card rises a short way and
+   settles; at the subtle level both become a short fade, so something new is
+   still visibly on screen. */
+@keyframes glim-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* The scrim reads the --glim-scrim token, so darkening it is one edit. At .60
+   the eye keeps reading the page behind the card, hence .65. */
+.glim-modal-backdrop { background: var(--glim-scrim); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The quiet levels are excluded rather than the lively ones named, as in the
+     label rule above. */
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-modal-backdrop { animation: glim-fade-in 200ms ease both; }
+  :root:not([data-motion="subtle"]):not([data-motion="off"]) .glim-modal-card { animation: glim-modal-in 260ms cubic-bezier(.2, .6, .2, 1) both; }
+
+  :root[data-motion="subtle"] .glim-modal-backdrop { animation: glim-fade-in 150ms ease both; }
+  :root[data-motion="subtle"] .glim-modal-card { animation: glim-fade-in 150ms ease both; }
+}
+
+/* The card-wide reveal in reactive rainbow mode. A heading notch that lit up
+   only under the pointer would need hovering its ~22px badge, so
+   `.glim-notch-card` makes the whole card the hover zone and `.glim-notch-hue`
+   marks the heading that takes the colour. The card also redefines `--accent`
+   for its subtree, so without the second class the hover would repaint every
+   accent-coloured control inside it. */
+[data-rainbow="reactive"] .glim-notch-card:hover .glim-notch-hue,
+[data-rainbow="reactive"] .glim-notch-card:focus-within .glim-notch-hue {
+  --accent: var(--item-hue);
+  --accent-contrast: var(--item-hue-ink);
+  --accent-soft: var(--item-hue-soft);
+  --color-accent: var(--item-hue);
+  --color-accentContrast: var(--item-hue-ink);
+  --color-accentSoft: var(--item-hue-soft);
 }

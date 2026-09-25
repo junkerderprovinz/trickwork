@@ -1,4 +1,5 @@
-import { hueVars, rainbowColor, subscribeRainbow } from './design/appearance'
+import { subscribeRainbow } from './design/appearance'
+import { applyHueVars } from './controlWidgets'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { BatchItem, BatchItemStatus, Store } from './state'
 
@@ -48,19 +49,12 @@ function renderItem(item: BatchItem, isActive: boolean, index: number, store: St
 
   // Each row owns one palette position. .glim-hue redefines --accent-soft,
   // which the active highlight reads, so it takes on the row's hue.
-  const hue = rainbowColor(index)
-  if (hue) {
+  if (applyHueVars(li, index)) {
     li.classList.add('glim-hue', 'glim-tint')
-    for (const [prop, value] of Object.entries(hueVars(hue))) {
-      li.style.setProperty(prop, value)
-    }
-  }
-
-  // A solid dot as well, since the faint wash is easy to miss on some displays.
-  if (hue) {
+    // A solid dot as well, since the faint wash is easy to miss on some
+    // displays. It paints from --item-hue, so disco walks it with the rest.
     const dot = document.createElement('span')
     dot.className = 'queue-item-dot'
-    dot.style.backgroundColor = hue
     li.appendChild(dot)
   }
 

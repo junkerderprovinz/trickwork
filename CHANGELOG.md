@@ -4,9 +4,22 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### ✨ Added
+
+- An App card in Settings. In the browser it offers the desktop app for Windows (installer or portable), macOS and Linux; in the desktop app it offers Unraid's Community Applications, the Docker command and the source code.
+- Settings for how much the interface moves (Off, Subtle, Wild) and for what the buttons show: their words, their symbol, both, or the symbol with the words sliding in under the pointer.
+- Three more accent colours: Orange, Teal and Magenta.
+- A dragged card floats under the pointer while the others make room, and slides into its gap when let go. Escape puts everything back, and with the handle focused the arrow keys move a card one place.
+
 ### 🎨 Design
 
 - A new teal logo, in the README banner, the header, the desktop app's icon and the Unraid icon.
+- The look follows GlimStone 2.10.1. Noto Sans ships with the app, so the interface looks the same on every system. In the round shape everything you press is a true pill, and a fresh install starts on soft corners.
+- A selector's options sit in one groove sized to them, rather than stretched across the card.
+- A filled control gets lighter under the pointer, one step up the surface ramp, instead of darker.
+- A click on the chosen accent colour opens the colour picker, so the separate custom swatch is gone.
+- Whichever colour row rainbow mode is not using is dimmed. While rainbow mode is on, an (i) beside Accent says why.
+- A dropdown answers the mouse wheel only after it has been clicked or reached with Tab, so scrolling the page past it leaves its value alone.
 
 ### ⚡ Improved
 

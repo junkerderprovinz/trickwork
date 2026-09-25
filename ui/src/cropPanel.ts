@@ -3,7 +3,9 @@
 // inside moves it, and one anywhere else draws a new one.
 
 import type { CropSpec } from 'trickwork-core'
+import { glimButton, updateButton } from './controlWidgets'
 import { infoIcon } from './design/tooltip'
+import { iconClear } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'
 
@@ -88,9 +90,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
 
   const footer = document.createElement('div')
   footer.className = 'crop-footer'
-  const clearButton = document.createElement('button')
-  clearButton.type = 'button'
-  clearButton.className = 'crop-clear-button'
+  const clearButton = glimButton({ label: t('crop.clearButton'), glyph: iconClear() })
   footer.append(clearButton)
   container.appendChild(footer)
 
@@ -309,7 +309,7 @@ export function mountCropPanel(container: HTMLElement, store: Store): void {
     empty.textContent = t('preview.empty')
     eyebrowInfo.setAttribute('data-tip', t('crop.hint'))
     eyebrowInfo.setAttribute('aria-label', t('crop.hint'))
-    clearButton.textContent = t('crop.clearButton')
+    updateButton(clearButton, { label: t('crop.clearButton') })
   }
   applyLabels()
   subscribeLocale(applyLabels)

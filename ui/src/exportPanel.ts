@@ -11,10 +11,10 @@ import {
   toXHTML,
 } from 'trickwork-core'
 import { downloadBlob } from './download'
-import { applyHueVars } from './controlWidgets'
+import { applyHueVars, glimButton, updateButton } from './controlWidgets'
 import { subscribeRainbow } from './design/appearance'
 import { infoIcon } from './design/tooltip'
-import { iconCheck, iconCopy } from './icons'
+import { iconCheck, iconCopy, iconDownload } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { BatchItem, Store } from './state'
 
@@ -40,18 +40,20 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
 
   // Copying the text is an export too, so Copy sits at the end of the format
   // row.
-  const copyButton = document.createElement('button')
-  copyButton.type = 'button'
-  copyButton.className = 'preview-copy-button'
-  copyButton.innerHTML = iconCopy()
+  const copyButton = glimButton({ label: t('preview.copy'), glyph: iconCopy(), variant: 'icon' })
 
   const formatRow = document.createElement('div')
   formatRow.className = 'export-format-row'
   const formatButtons: { format: ExportFormat; button: HTMLButtonElement }[] = []
   ;(['txt', 'xhtml', 'rtf', 'png'] as ExportFormat[]).forEach((format, index) => {
-    const button = document.createElement('button')
-    button.textContent = format.toUpperCase()
-    button.addEventListener('click', () => void exportActive(store, format, summary))
+    // The format is the label's content rather than a verb, so it shows in
+    // every mode.
+    const button = glimButton({
+      label: format.toUpperCase(),
+      keepLabel: true,
+      stage: 'none',
+      onClick: () => void exportActive(store, format, summary),
+    })
     formatRow.appendChild(button)
     formatButtons.push({ format, button })
   })
@@ -63,9 +65,11 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
   })
   panel.appendChild(formatRow)
 
-  const batchButton = document.createElement('button')
-  batchButton.className = 'export-batch-button'
-  batchButton.addEventListener('click', () => void exportAllAsText(store, summary))
+  const batchButton = glimButton({
+    label: t('export.batchButton'),
+    glyph: iconDownload(),
+    onClick: () => void exportAllAsText(store, summary),
+  })
   panel.appendChild(batchButton)
 
   panel.appendChild(summary)
@@ -82,14 +86,11 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
       button.setAttribute('aria-label', label)
       button.title = label
     }
-    batchButton.textContent = t('export.batchButton')
+    updateButton(batchButton, { label: t('export.batchButton') })
     eyebrowInfo.setAttribute('data-tip', t('controls.colorTxtNote'))
     eyebrowInfo.setAttribute('aria-label', t('controls.colorTxtNote'))
     // Skipped while "copied" shows, or a locale switch would cut it short.
-    if (!copiedFeedbackTimer) {
-      copyButton.title = t('preview.copy')
-      copyButton.setAttribute('aria-label', t('preview.copy'))
-    }
+    if (!copiedFeedbackTimer) updateButton(copyButton, { label: t('preview.copy') })
   }
   applyLabels()
   subscribeLocale(applyLabels)
@@ -103,17 +104,12 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
       .then((text) => navigator.clipboard.writeText(text))
       .then(() => {
         if (copiedFeedbackTimer) clearTimeout(copiedFeedbackTimer)
-        copyButton.innerHTML = iconCheck()
-        copyButton.classList.add('preview-copy-button--copied')
-        const copiedLabel = t('preview.copied')
-        copyButton.title = copiedLabel
-        copyButton.setAttribute('aria-label', copiedLabel)
+        updateButton(copyButton, { label: t('preview.copied'), glyph: iconCheck() })
+        copyButton.classList.add('is-copied')
         copiedFeedbackTimer = setTimeout(() => {
           copiedFeedbackTimer = null
-          copyButton.innerHTML = iconCopy()
-          copyButton.classList.remove('preview-copy-button--copied')
-          copyButton.title = t('preview.copy')
-          copyButton.setAttribute('aria-label', t('preview.copy'))
+          updateButton(copyButton, { label: t('preview.copy'), glyph: iconCopy() })
+          copyButton.classList.remove('is-copied')
         }, COPIED_FEEDBACK_MS)
       })
   })

@@ -1,4 +1,10 @@
-import { applyCachedAppearance } from './design/appearance'
+import '@fontsource-variable/noto-sans'
+import '@fontsource-variable/noto-sans-arabic'
+import '@fontsource-variable/noto-sans-hebrew'
+import '@fontsource-variable/noto-sans-thai'
+import { applyCachedAppearance, applyMotion } from './design/appearance'
+import { applyStoredLabelModes } from './design/controls'
+import { applyDisco } from './design/disco'
 import { applyCachedTheme } from './design/theme'
 import { enableSelectScrollForAll } from './design/selectScroll'
 import { wireTooltips } from './design/tooltip'
@@ -13,6 +19,8 @@ import { mountFiltersPanel } from './filtersPanel'
 import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { mountAppearanceSettings } from './appearanceSettings'
+import { mountAppPanel } from './appPanel'
+import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { makeReorderable } from './cardReorder'
@@ -27,6 +35,9 @@ if (!app) {
 
 applyCachedAppearance()
 applyCachedTheme()
+applyMotion(storedMotion())
+applyStoredLabelModes()
+applyDisco(storedDisco())
 applyCachedLocale()
 // Turns the native `title` of every icon-only button into the styled bubble.
 wireTooltips()
@@ -111,12 +122,14 @@ const settingsCard = document.createElement('div')
 settingsCard.className = 'glim-card glim-section settings-card'
 const presetsCard = document.createElement('div')
 presetsCard.className = 'glim-card glim-section settings-card'
+const appCard = document.createElement('div')
+appCard.className = 'glim-card glim-section settings-card'
 // The versions belong to the whole app, so they sit below the cards rather
 // than inside the last one.
 const versionLine = document.createElement('p')
 versionLine.className = 'settings-version'
 versionLine.textContent = `TrickWork v${APP_VERSION} · GlimStone v${GLIMSTONE_VERSION}`
-settingsView.append(settingsCard, presetsCard, versionLine)
+settingsView.append(settingsCard, presetsCard, appCard, versionLine)
 body.appendChild(settingsView)
 
 let onSettings = false
@@ -124,17 +137,26 @@ let onSettings = false
 function applyBadgeLabel(): void {
   const label = onSettings ? t('nav.backToConvert') : t('nav.settings')
   settingsBadge.setAttribute('aria-label', label)
-  settingsBadge.title = label
+  settingsBadge.setAttribute('data-tip', label)
   settingsBadge.innerHTML = onSettings ? iconBack() : iconAppearance()
 }
+
+let leaveSettings = (): void => {}
 
 function render(): void {
   convertView.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
   applyBadgeLabel()
+  // The page entrance runs on every arrival, so it is restarted by taking the
+  // class off and forcing a style pass before putting it back.
+  const shown = onSettings ? settingsView : convertView
+  shown.classList.remove('glim-page-enter')
+  void shown.offsetWidth
+  shown.classList.add('glim-page-enter')
 }
 
 settingsBadge.addEventListener('click', () => {
+  if (onSettings) leaveSettings()
   onSettings = !onSettings
   render()
 })
@@ -172,8 +194,9 @@ mountTransformPanel(transformCard, store)
 mountFiltersPanel(filtersCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
-mountAppearanceSettings(settingsCard)
+leaveSettings = mountAppearanceSettings(settingsCard)
 mountPresetsPanel(presetsCard, store)
+mountAppPanel(appCard)
 
 // A language switch rebuilds the <select> elements, and enableSelectScroll is
 // idempotent, so the whole body is scanned again.
