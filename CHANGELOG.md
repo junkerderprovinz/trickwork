@@ -2,30 +2,32 @@
 
 All notable changes to TrickWork are documented here.
 
-## Unreleased
+## 1.3.0 - 2026-09-26
+
+Rotate takes any angle, Settings sorts itself into three tabs, the App and About cards offer their links as the README's buttons, and every animation answers the Animations setting.
 
 ### ✨ Added
 
-- Rotate takes any angle. A field at the end of the row under the four steps accepts degrees, negative ones and tenths included, and the arrow keys turn by 1° or, with Shift, by 15°. The image grows to hold the whole turn, and the corners that adds stay blank, inverted or not.
+- Rotate takes any angle. A field at the end of the row under the four steps accepts degrees, negative ones and tenths included, and the arrow keys turn by 1° or, with Shift, by 15°. The image grows to hold the whole turn, and the corners this adds stay blank, inverted or not.
 - The rest of GlimStone's animations, each at every Animations level and still under the system's reduced motion: a file being converted pulses; a refused import, export or angle shakes its control, and a successful one lights up; changing the shape glides the corners; new queue rows and a tab's cards come in one after another; switching the rainbow on, off or to reactive wipes the colours across the page; the Copy checkmark draws itself; a new image fades into the preview; a settings tab slides in from its side; and every sidecard wiggles while one is being dragged.
+
+### 🎨 Design
+
+- The look follows GlimStone 2.13.0.
+- Settings has three tabs: General with the presets and the About card, Look with the language, shape, theme, animations, labels and colours, and App.
+- On the Settings page the logo card moves to the top left corner and the Back button to the top right one, with the tabs and cards in the middle of the screen.
+- The App tab offers its downloads as buttons in the shape of the README's, with Windows on ARM and the portable build as segments of the Windows button. At rest a button shows its mark and name; under the pointer it lights up in its brand's colour, the name moves up to make room for the second line, and a sheen runs across it once.
+- Settings is a little wider, so the Windows button and its segments, macOS and Linux fit in one row.
+- The About card gives and reports with the same buttons as the App tab, one line each. Buy Me a Coffee's button wears its own cup and lettering, as in the README, and the Email button's envelope opens under the pointer.
+- In the PayPal window the amounts keep the window's width, and your own amount stands at the end of the row under them.
+- The General tab and the Settings button wear the glyphs every app of the family shares: sliders for General, Streamline's cog for Settings.
+- Every selector spans the whole width of its card.
+- The language list is as tall as a field, not a head taller.
 
 ### 🐛 Fixed
 
 - Every animation answers every Animations setting. Storm and Subtle had borrowed Wild's numbers in a few places (hovering buttons, lifting a dragged card, opening a window, sliding in a label), and a handful of transitions ran at a fixed speed whatever the setting said.
 - The App and About buttons' sheen follows the Animations setting, and their names stand still when the system asks for less motion.
-
-### 🎨 Design
-
-- The look follows GlimStone 2.13.0.
-- In the PayPal window the amounts keep the window's width, and your own amount stands at the end of the row under them.
-- Settings has three tabs: General with the presets and the About card, Look with the language, shape, theme, animations, labels and colours, and App.
-- On the Settings page the logo card moves to the top left corner and the Back button to the top right one, with the tabs and cards in the middle of the screen.
-- The App tab offers its downloads as buttons in the shape of the README's, with Windows on ARM and the portable build as segments of the Windows button. At rest a button shows its mark and name; under the pointer it lights up in its brand's colour, the name moves up to make room for the second line, and a sheen runs across it once.
-- Settings is a little wider, so the Windows button and its segments, macOS and Linux fit in one row.
-- The About card gives and reports with the same buttons as the App tab, one line each. Buy Me a Coffee's button wears its own cup and lettering, as in the README.
-- The General tab and the Settings button wear the glyphs every app of the family shares: sliders for General, Streamline's cog for Settings.
-- Every selector spans the whole width of its card.
-- The language list is as tall as a field, not a head taller.
 
 ## 1.2.0 - 2026-09-25
 
