@@ -7,6 +7,7 @@ All notable changes to TrickWork are documented here.
 ### ✨ Added
 
 - The Windows installer asks which shortcuts to create: an entry in the Start menu and one on the desktop, both ticked. The choice is kept, so a later installation over the old one, silent or not, starts from it and does not bring back a shortcut that was left out. Uninstalling removes both.
+- The Windows installer installs for the person running it, under AppData\Local\Programs, without asking for an administrator, so an update can replace the program without asking either. A version installed for all users under Program Files is uninstalled on the way, which asks for an administrator once.
 
 ## 1.3.0 - 2026-09-26
 
