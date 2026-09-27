@@ -21,23 +21,23 @@ func useConfigDir(t *testing.T) string {
 
 func TestAutoUpdateIsOnWithoutASettingsFile(t *testing.T) {
 	useConfigDir(t)
-	if !loadUpdateSettings().autoUpdate() {
+	if !loadUpdateSettings(userSettingsPath()).autoUpdate() {
 		t.Error("off without a settings file")
 	}
 }
 
 func TestAutoUpdateSurvivesARestart(t *testing.T) {
 	useConfigDir(t)
-	if err := loadUpdateSettings().setAutoUpdate(false); err != nil {
+	if err := loadUpdateSettings(userSettingsPath()).setAutoUpdate(false); err != nil {
 		t.Fatal(err)
 	}
-	if loadUpdateSettings().autoUpdate() {
+	if loadUpdateSettings(userSettingsPath()).autoUpdate() {
 		t.Error("turned off, but on after loading again")
 	}
-	if err := loadUpdateSettings().setAutoUpdate(true); err != nil {
+	if err := loadUpdateSettings(userSettingsPath()).setAutoUpdate(true); err != nil {
 		t.Fatal(err)
 	}
-	if !loadUpdateSettings().autoUpdate() {
+	if !loadUpdateSettings(userSettingsPath()).autoUpdate() {
 		t.Error("turned on, but off after loading again")
 	}
 }
@@ -50,7 +50,37 @@ func TestAutoUpdateIsOnWhenTheFileDoesNotSay(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "update.json"), []byte(`{}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if !loadUpdateSettings().autoUpdate() {
+	if !loadUpdateSettings(userSettingsPath()).autoUpdate() {
 		t.Error("off with a file that does not name the setting")
+	}
+}
+
+func TestAutoUpdateIsOnWhenTheFileIsCorrupt(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	if err := os.WriteFile(path, []byte(`{"autoUpdate":`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if !readAutoUpdate(path) {
+		t.Error("off with a corrupt file")
+	}
+}
+
+func TestTheScheduledUpdateReadsWhatTheWindowWrote(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	if err := loadUpdateSettings(path, nil).setAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+	if readAutoUpdate(path) {
+		t.Error("turned off in the window, but on for the scheduled update")
+	}
+}
+
+func TestAutoUpdateCannotChangeWithoutAFile(t *testing.T) {
+	s := loadUpdateSettings("", os.ErrNotExist)
+	if !s.autoUpdate() {
+		t.Error("off without a file")
+	}
+	if err := s.setAutoUpdate(false); err == nil {
+		t.Error("turned off with nowhere to keep it")
 	}
 }

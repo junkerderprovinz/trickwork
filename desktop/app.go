@@ -13,15 +13,21 @@ import (
 type App struct {
 	ctx      context.Context
 	settings *updateSettings
-	updater  *update.Updater
-	log      *log.Logger
-	swapping sync.Mutex
+	// installed marks the copy under Program Files, which the scheduled task
+	// updates; updater and log are nil there.
+	installed bool
+	updater   *update.Updater
+	log       *log.Logger
+	swapping  sync.Mutex
 }
 
 func NewApp() *App {
-	logger := openUpdateLog()
+	if isInstalled() {
+		return &App{installed: true, settings: loadUpdateSettings(machineSettingsPath())}
+	}
+	logger := userUpdateLog()
 	return &App{
-		settings: loadUpdateSettings(),
+		settings: loadUpdateSettings(userSettingsPath()),
 		updater:  newUpdater(logger),
 		log:      logger,
 	}
@@ -29,10 +35,15 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	a.updater.Cleanup()
-	if version != "" {
-		go a.keepUpdated(ctx)
+	if version == "" {
+		return
 	}
+	if a.installed {
+		go a.followInstalled(ctx)
+		return
+	}
+	a.updater.Cleanup()
+	go a.keepUpdated(ctx)
 }
 
 // shutdown takes the swap lock and keeps it, so a swap under way finishes and

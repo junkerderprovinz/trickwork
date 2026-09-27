@@ -30,23 +30,36 @@ func configDir() (string, error) {
 	return filepath.Join(dir, "TrickWork"), nil
 }
 
-func loadUpdateSettings() *updateSettings {
-	s := &updateSettings{on: true}
+// userSettingsPath is where a copy that updates itself keeps the switch.
+func userSettingsPath() (string, error) {
 	dir, err := configDir()
 	if err != nil {
-		s.err = err
-		return s
+		return "", err
 	}
-	s.path = filepath.Join(dir, "update.json")
-	data, err := os.ReadFile(s.path)
+	return filepath.Join(dir, "update.json"), nil
+}
+
+// loadUpdateSettings reads the switch from path. It takes the error of the
+// function that found path, so a store without a file refuses every change.
+func loadUpdateSettings(path string, err error) *updateSettings {
 	if err != nil {
-		return s
+		return &updateSettings{on: true, err: err}
+	}
+	return &updateSettings{path: path, on: readAutoUpdate(path)}
+}
+
+// readAutoUpdate reports the switch in the file at path. A missing, unreadable
+// or corrupt file, or one that does not name the switch, reads as on.
+func readAutoUpdate(path string) bool {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return true
 	}
 	var f updateSettingsFile
-	if json.Unmarshal(data, &f) == nil && f.AutoUpdate != nil {
-		s.on = *f.AutoUpdate
+	if json.Unmarshal(data, &f) != nil || f.AutoUpdate == nil {
+		return true
 	}
-	return s
+	return *f.AutoUpdate
 }
 
 func (s *updateSettings) autoUpdate() bool {
@@ -55,6 +68,9 @@ func (s *updateSettings) autoUpdate() bool {
 	return s.on
 }
 
+// setAutoUpdate rewrites the file in place. The installed copy's file sits in
+// a folder only administrators may write to, so there is no room for a
+// temporary file beside it.
 func (s *updateSettings) setAutoUpdate(on bool) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -65,7 +81,7 @@ func (s *updateSettings) setAutoUpdate(on bool) error {
 	if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil {
 		return err
 	}
-	if err := os.WriteFile(s.path, data, 0o644); err != nil {
+	if err := os.WriteFile(s.path, append(data, '\n'), 0o644); err != nil {
 		return err
 	}
 	s.on = on

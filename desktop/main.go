@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/junkerderprovinz/trickwork/webembed"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -8,6 +10,15 @@ import (
 )
 
 func main() {
+	// Read by hand rather than with the flag package: wails dev and wails
+	// build start the program with flags of their own.
+	if len(os.Args) == 2 && os.Args[1] == "--update" {
+		if err := updateInstalled(); err != nil {
+			os.Exit(1)
+		}
+		return
+	}
+
 	app := NewApp()
 
 	err := wails.Run(&options.App{
