@@ -44,6 +44,30 @@ jobs:
       - name: Typecheck (core + ui)
         run: npm run typecheck
 
+  # The desktop app replaces itself differently on each system, and only that
+  # system's runner can run its tests.
+  updater:
+    name: Desktop updater (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+
+      - name: Vet and test
+        working-directory: desktop
+        run: |
+          go vet ./update/
+          go test ./update/ -count=1
+
   e2e:
     name: E2E (ui, Playwright)
     runs-on: ubuntu-latest
