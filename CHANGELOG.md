@@ -2,6 +2,12 @@
 
 All notable changes to TrickWork are documented here.
 
+## Unreleased
+
+### ✨ Added
+
+- The Windows installer asks which shortcuts to create: an entry in the Start menu and one on the desktop, both ticked. The choice is kept, so a later installation over the old one, silent or not, starts from it and does not bring back a shortcut that was left out. Uninstalling removes both.
+
 ## 1.3.0 - 2026-09-26
 
 Rotate takes any angle, Settings sorts itself into three tabs, the App and About cards offer their links as the README's buttons, and every animation answers the Animations setting.

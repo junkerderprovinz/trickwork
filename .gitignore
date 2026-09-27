@@ -7,6 +7,12 @@ dist/
 # Wails' default icon.
 desktop/build/*
 !desktop/build/appicon.png
+# Wails writes the rest of the Windows installer on every build; the script is ours.
+!desktop/build/windows/
+desktop/build/windows/*
+!desktop/build/windows/installer/
+desktop/build/windows/installer/*
+!desktop/build/windows/installer/project.nsi
 webembed/dist/
 test-results/
 playwright-report/
