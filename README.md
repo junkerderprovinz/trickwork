@@ -155,8 +155,11 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
 ## 4. Getting started
 
 - **Desktop app:** pick your system from the buttons at the top. The portable Windows file and the Linux
-  binary run without installing anything. Windows may warn about an unsigned download the first time; click
-  **More info**, then **Run anyway**.
+  binary run without installing anything. The Windows installer puts TrickWork under Program Files for
+  everyone on the computer and asks for an administrator once. After that a scheduled task called
+  TrickWork Update keeps it current, whether TrickWork is open or not; it runs as the system account,
+  because nobody else may write to Program Files, and uninstalling removes it. Windows may warn about an
+  unsigned download the first time; click **More info**, then **Run anyway**.
 - **Docker:**
 
   ```bash
