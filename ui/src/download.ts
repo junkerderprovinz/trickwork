@@ -1,18 +1,6 @@
 // The save path for exports and presets: a native dialog in the desktop build,
 // a browser download everywhere else.
 
-declare global {
-  interface Window {
-    go?: {
-      main?: {
-        App?: {
-          SaveExport?: (suggestedFilename: string, data: number[]) => Promise<string>
-        }
-      }
-    }
-  }
-}
-
 type NativeSaveOutcome =
   /** No Go backend bound: a plain browser tab, as in the container. */
   | 'unavailable'

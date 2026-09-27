@@ -17,7 +17,8 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: webembed.Dist,
 		},
-		OnStartup: app.startup,
+		OnStartup:  app.startup,
+		OnShutdown: app.shutdown,
 		Bind: []interface{}{
 			app,
 		},

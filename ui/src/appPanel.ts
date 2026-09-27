@@ -7,12 +7,6 @@ import { subscribeLocale, t } from './i18n'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
 import { APP_VERSION } from './version'
 
-declare global {
-  interface Window {
-    runtime?: { BrowserOpenURL?: (url: string) => void }
-  }
-}
-
 const REPO = 'https://github.com/junkerderprovinz/trickwork'
 const TAG = `v${APP_VERSION}`
 const RELEASE = `${REPO}/releases/download/${TAG}`

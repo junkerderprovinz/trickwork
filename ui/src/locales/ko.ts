@@ -213,6 +213,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': '업데이트',
+  'update.auto': '자동으로 업데이트',
+  'update.autoHint': 'TrickWork는 하루에 한 번 새 버전을 찾아 백그라운드에서 내려받습니다. 새 버전은 다음에 TrickWork를 열 때 시작되므로 작업 중에는 아무것도 바뀌지 않습니다.',
+  'update.ready': '{version} 버전을 내려받았습니다. 다음에 TrickWork를 열 때 시작됩니다.',
+  'update.saveFailed': '이 설정을 저장하지 못했습니다.',
 
   'about.title': 'TrickWork 정보',
   'about.body': '기사는 한 명, 원정도 하나입니다. 원하던 모습으로는 없던 보기 좋은 오픈 소스 도구를, 빠진 것이 없을 때까지 만듭니다. 전부 무료이고 계정도, 텔레메트리도, 광고도, 유료 등급도 없습니다. 어디에도 별표는 없습니다. 읽을 수 있는 것은 결코 당신의 성벽 밖으로 나가지 않습니다. 저녁과 주말에, 마음과 고집으로 벼렸습니다.',

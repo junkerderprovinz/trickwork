@@ -25,6 +25,23 @@ Download the build for your system from the
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.
 
+### Updates
+
+The desktop app updates itself. A minute after it starts and once a day after
+that, it asks GitHub for the newest release, downloads the file for your
+system in the background and checks it against the release's `checksums.txt`.
+The new version starts the next time you open TrickWork, so nothing changes
+while it runs. **Update automatically** in the **App** tab of **Settings**
+turns this off.
+
+An update has to write to the folder the program sits in. The Windows
+installer puts TrickWork under `AppData\Local\Programs`, where it can. An older
+installation under Program Files, a read-only folder, or a macOS app your
+account cannot change stays as it is. The reason is in `update.log` next to
+the setting: `%AppData%\TrickWork` on Windows,
+`~/Library/Application Support/TrickWork` on macOS and `~/.config/TrickWork`
+on Linux.
+
 !!! note "Windows SmartScreen"
     Windows may show "Windows protected your PC" the first time you run a
     freshly downloaded, unsigned program. Click **More info**, then

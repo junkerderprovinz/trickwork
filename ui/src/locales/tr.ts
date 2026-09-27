@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Güncellemeler',
+  'update.auto': 'Otomatik güncelle',
+  'update.autoHint': "TrickWork günde bir kez yeni bir sürüm arar ve arka planda indirir. Yeni sürüm, TrickWork'ü bir sonraki açışınızda başlar, yani çalışırken hiçbir şey değişmez.",
+  'update.ready': "{version} sürümü indirildi ve TrickWork'ü bir sonraki açışınızda başlayacak.",
+  'update.saveFailed': 'TrickWork bu ayarı kaydedemedi.',
 
   'about.title': 'TrickWork hakkında',
   'about.body': 'Tek şövalye, tek sefer: istediğim biçimde var olmayan, düzgün görünen açık kaynak araçlar, hiçbir şey eksik kalmayana kadar inşa ediliyor. Hepsi ücretsiz, hesap yok, telemetri yok, reklam yok, ücretli katman yok. Hiçbir yerde yıldız işareti yok. Okunabilir hiçbir şey kendi duvarlarından dışarı çıkmaz. Akşamları ve hafta sonları, yürekle ve inatla dövüldü.',

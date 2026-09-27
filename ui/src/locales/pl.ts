@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Aktualizacje',
+  'update.auto': 'Aktualizuj automatycznie',
+  'update.autoHint': 'Raz dziennie TrickWork sprawdza, czy jest nowa wersja, i pobiera ją w tle. Uruchomi się przy następnym otwarciu TrickWork, więc w trakcie pracy nic się nie zmienia.',
+  'update.ready': 'Wersja {version} jest pobrana i uruchomi się przy następnym otwarciu TrickWork.',
+  'update.saveFailed': 'TrickWork nie mógł zapisać tego ustawienia.',
 
   'about.title': 'O programie TrickWork',
   'about.body': 'Jeden rycerz, jedna krucjata: dopracowane narzędzia open source, których nie było w takiej postaci, jakiej chciałem, budowane, aż niczego nie zabraknie. Wszystko za darmo, bez kont, bez telemetrii, bez reklam i bez płatnych wersji. Nigdzie żadnej gwiazdki. Nic czytelnego nigdy nie opuszcza twoich własnych murów. Kute wieczorami i w weekendy, z sercem i uporem.',

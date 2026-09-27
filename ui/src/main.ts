@@ -20,10 +20,11 @@ import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
 import { mountAboutPanel } from './aboutPanel'
-import { mountAppPanel } from './appPanel'
+import { isDesktop, mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
+import { listenForUpdates, mountUpdatePanel } from './updatePanel'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
 import { iconApp, iconSettings, iconBack, iconGeneral, iconLook } from './icons'
@@ -124,13 +125,17 @@ settingsCards.className = 'settings-cards'
 const presetsCard = section(0, 'settings-card')
 const aboutCard = section(1, 'settings-card')
 const lookCard = section(0, 'settings-card')
-const appCard = section(0, 'settings-card')
+// Only the desktop app updates itself, so only it has the Updates card.
+const desktop = isDesktop()
+const updateCard = section(0, 'settings-card')
+const appCard = section(desktop ? 1 : 0, 'settings-card')
+const appCards = desktop ? [updateCard, appCard] : [appCard]
 const tabCards: Record<SettingsTab, HTMLElement[]> = {
   general: [presetsCard, aboutCard],
   look: [lookCard],
-  app: [appCard],
+  app: appCards,
 }
-settingsCards.append(presetsCard, aboutCard, lookCard, appCard)
+settingsCards.append(presetsCard, aboutCard, lookCard, ...appCards)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandCard, main, secondary)
@@ -249,6 +254,10 @@ mountPresetsPanel(presetsCard, store)
 mountAboutPanel(aboutCard)
 leaveLook = mountAppearanceSettings(lookCard)
 mountAppPanel(appCard)
+if (desktop) {
+  mountUpdatePanel(updateCard)
+  listenForUpdates()
+}
 
 // Every card heading is its section badge, and in the reactive rainbow mode it
 // lights up while the pointer is anywhere in its card.

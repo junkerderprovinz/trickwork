@@ -639,3 +639,76 @@ test('the About card opens the crypto window, which shows the picked coin and cl
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
+
+test('the browser has no Updates card, since only the desktop app updates itself', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
+  await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
+})
+
+// Stands in for the Wails runtime of the desktop build: the two bound setting
+// methods and the event channel the updater reports on.
+async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean) {
+  await page.addInitScript((initial) => {
+    const w = window as unknown as Record<string, unknown>
+    const calls: boolean[] = []
+    const listeners: Record<string, (...data: unknown[]) => void> = {}
+    w.__calls = calls
+    w.__listeners = listeners
+    w.__refuse = false
+    w.go = {
+      main: {
+        App: {
+          AutoUpdate: async () => initial,
+          SetAutoUpdate: async (on: boolean) => {
+            calls.push(on)
+            if (w.__refuse) throw new Error('read-only')
+          },
+        },
+      },
+    }
+    w.runtime = {
+      EventsOn: (name: string, cb: (...data: unknown[]) => void) => {
+        listeners[name] = cb
+        return () => {}
+      },
+    }
+  }, stored)
+}
+
+test('the desktop App tab shows the stored update setting and saves a change', async ({ page }) => {
+  await fakeDesktop(page, false)
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
+  const toggle = page.getByRole('switch', { name: 'Update automatically' })
+  await expect(toggle).toHaveAttribute('aria-checked', 'false')
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-checked', 'true')
+  expect(await page.evaluate(() => (window as unknown as { __calls: boolean[] }).__calls)).toEqual([true])
+})
+
+test('a refused save puts the switch back and says so in a toast', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await page.goto('/')
+  await page.evaluate(() => ((window as unknown as { __refuse: boolean }).__refuse = true))
+  await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
+  const toggle = page.getByRole('switch', { name: 'Update automatically' })
+  await expect(toggle).toHaveAttribute('aria-checked', 'true')
+  await toggle.click()
+  await expect(page.getByRole('alert')).toHaveText('TrickWork could not save this setting.')
+  await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveAttribute('aria-checked', 'true')
+})
+
+test('a downloaded update shows a toast that goes away on its own', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await page.goto('/')
+  await page.evaluate(() =>
+    (window as unknown as { __listeners: Record<string, (v: string) => void> }).__listeners['update:ready']('1.4.0'),
+  )
+  const toast = page.getByRole('status').filter({ hasText: 'Version 1.4.0' })
+  await expect(toast).toHaveText('Version 1.4.0 has been downloaded and starts the next time you open TrickWork.')
+  await expect(toast).toHaveCount(0, { timeout: 6000 })
+})

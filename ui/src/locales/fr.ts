@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Mises à jour',
+  'update.auto': 'Mettre à jour automatiquement',
+  'update.autoHint': 'Une fois par jour, TrickWork cherche une nouvelle version et la télécharge en arrière-plan. Elle démarre la prochaine fois que vous ouvrez TrickWork, donc rien ne change pendant que vous travaillez.',
+  'update.ready': 'La version {version} est téléchargée et démarrera la prochaine fois que vous ouvrirez TrickWork.',
+  'update.saveFailed': "TrickWork n'a pas pu enregistrer ce réglage.",
 
   'about.title': 'À propos de TrickWork',
   'about.body': "Un seul chevalier, une croisade : des outils open source soignés qui n'existaient pas sous la forme que je voulais, construits jusqu'à ce que plus rien ne manque. Tout est gratuit, sans comptes, sans télémétrie, sans publicité et sans formule payante. Aucun astérisque nulle part. Rien de lisible ne quitte jamais tes propres murs. Forgé le soir et le week-end, avec du cœur et de l'entêtement.",

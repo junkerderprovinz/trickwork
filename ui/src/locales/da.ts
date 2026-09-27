@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Opdateringer',
+  'update.auto': 'Opdater automatisk',
+  'update.autoHint': 'Én gang om dagen søger TrickWork efter en ny version og henter den i baggrunden. Den starter næste gang du åbner TrickWork, så intet ændrer sig, mens du arbejder.',
+  'update.ready': 'Version {version} er hentet og starter næste gang du åbner TrickWork.',
+  'update.saveFailed': 'TrickWork kunne ikke gemme indstillingen.',
 
   'about.title': 'Om TrickWork',
   'about.body': 'Én ridder, ét korstog: pæne open source-værktøjer, der ikke fandtes i den form, jeg ville have, bygget indtil intet mangler. Alt gratis, uden konti, uden telemetri, uden reklamer og uden betalte niveauer. Ingen stjerne nogen steder. Intet læsbart forlader nogensinde dine egne mure. Smedet om aftenen og i weekenden, med hjerte og stædighed.',

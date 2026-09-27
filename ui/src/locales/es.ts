@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Actualizaciones',
+  'update.auto': 'Actualizar automáticamente',
+  'update.autoHint': 'Una vez al día, TrickWork busca una versión nueva y la descarga en segundo plano. Se inicia la próxima vez que abras TrickWork, así que nada cambia mientras trabajas.',
+  'update.ready': 'La versión {version} está descargada y se iniciará la próxima vez que abras TrickWork.',
+  'update.saveFailed': 'TrickWork no pudo guardar este ajuste.',
 
   'about.title': 'Acerca de TrickWork',
   'about.body': 'Un solo caballero, una cruzada: herramientas de código abierto bien hechas que no existían con la forma que yo quería, construidas hasta que no falte nada. Todo gratis, sin cuentas, sin telemetría, sin anuncios y sin planes de pago. Ningún asterisco en ninguna parte. Nada legible sale nunca de tus propios muros. Forjado en tardes y fines de semana, con corazón y terquedad.',

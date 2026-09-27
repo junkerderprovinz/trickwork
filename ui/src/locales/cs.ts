@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Aktualizace',
+  'update.auto': 'Aktualizovat automaticky',
+  'update.autoHint': 'Jednou denně TrickWork hledá novou verzi a stáhne ji na pozadí. Spustí se při příštím otevření TrickWork, takže se během práce nic nemění.',
+  'update.ready': 'Verze {version} je stažená a spustí se při příštím otevření TrickWork.',
+  'update.saveFailed': 'TrickWork nemohl uložit toto nastavení.',
 
   'about.title': 'O aplikaci TrickWork',
   'about.body': 'Jeden rytíř, jedna výprava: pěkné open source nástroje, které v podobě, jakou jsem chtěl, neexistovaly, stavěné, dokud nic nechybí. Všechno zdarma, bez účtů, bez telemetrie, bez reklam a bez placených verzí. Nikde žádná hvězdička. Nic čitelného nikdy neopustí tvoje vlastní zdi. Kováno po večerech a o víkendech, se srdcem a tvrdohlavostí.',

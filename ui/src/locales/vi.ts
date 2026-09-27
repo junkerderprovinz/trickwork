@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Cập nhật',
+  'update.auto': 'Tự động cập nhật',
+  'update.autoHint': 'Mỗi ngày một lần, TrickWork tìm phiên bản mới và tải về trong nền. Phiên bản mới sẽ chạy vào lần tới bạn mở TrickWork, nên trong lúc làm việc không có gì thay đổi.',
+  'update.ready': 'Phiên bản {version} đã được tải về và sẽ chạy vào lần tới bạn mở TrickWork.',
+  'update.saveFailed': 'TrickWork không lưu được cài đặt này.',
 
   'about.title': 'Giới thiệu về TrickWork',
   'about.body': 'Một hiệp sĩ, một cuộc viễn chinh: những công cụ mã nguồn mở gọn đẹp vốn không tồn tại theo hình dạng tôi muốn, được xây cho đến khi không còn thiếu gì. Tất cả miễn phí, không tài khoản, không đo từ xa, không quảng cáo và không gói trả phí. Không có dấu sao ở đâu cả. Không có gì đọc được rời khỏi bức tường của bạn. Được rèn vào buổi tối và cuối tuần, bằng trái tim và sự cứng đầu.',

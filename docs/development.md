@@ -37,3 +37,7 @@ cd desktop && go mod tidy && wails build
 ```
 
 The result is `desktop/build/bin/TrickWork` (`TrickWork.exe` on Windows).
+It is a dev build, which never updates itself; only a build with
+`-ldflags "-X main.version=x.y.z"`, as the release workflow makes, does.
+`desktop/README.md` explains how to try an update against a local stand-in
+for GitHub.

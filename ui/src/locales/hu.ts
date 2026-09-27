@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Frissítések',
+  'update.auto': 'Automatikus frissítés',
+  'update.autoHint': 'A TrickWork naponta egyszer új verziót keres, és a háttérben letölti. Az új verzió a program következő megnyitásakor indul, így munka közben semmi sem változik.',
+  'update.ready': 'Az új verzió ({version}) letöltődött, és a TrickWork következő megnyitásakor indul.',
+  'update.saveFailed': 'A TrickWork nem tudta menteni ezt a beállítást.',
 
   'about.title': 'A TrickWork névjegye',
   'about.body': 'Egy lovag, egy hadjárat: igényes nyílt forráskódú eszközök, amelyek abban a formában, ahogy én akartam, nem léteztek, addig építve, amíg semmi nem hiányzik. Minden ingyenes, fiókok, telemetria, hirdetések és fizetős szintek nélkül. Sehol egyetlen csillag sem. Semmi olvasható nem hagyja el a saját falaidat. Esténként és hétvégenként kovácsolva, szívvel és makacssággal.',

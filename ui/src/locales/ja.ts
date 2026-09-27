@@ -213,6 +213,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'アップデート',
+  'update.auto': '自動でアップデート',
+  'update.autoHint': 'TrickWork は 1 日に 1 回新しいバージョンを探し、バックグラウンドでダウンロードします。新しいバージョンは次に TrickWork を開いたときに起動するので、作業中は何も変わりません。',
+  'update.ready': 'バージョン {version} をダウンロードしました。次に TrickWork を開いたときに起動します。',
+  'update.saveFailed': 'この設定を保存できませんでした。',
 
   'about.title': 'TrickWork について',
   'about.body': '騎士はひとり、遠征もひとつ。欲しかった形では存在しなかった、見栄えのするオープンソースの道具を、足りないものがなくなるまで作り続けています。すべて無料で、アカウントも、テレメトリも、広告も、有料プランもありません。どこにも注釈の星印はありません。読めるものがあなたの城壁の外へ出ることは決してありません。夜と週末に、心と意地で鍛えました。',

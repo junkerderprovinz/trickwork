@@ -8,6 +8,12 @@ All notable changes to TrickWork are documented here.
 
 - The Windows installer asks which shortcuts to create: an entry in the Start menu and one on the desktop, both ticked. The choice is kept, so a later installation over the old one, silent or not, starts from it and does not bring back a shortcut that was left out. Uninstalling removes both.
 - The Windows installer installs for the person running it, under AppData\Local\Programs, without asking for an administrator, so an update can replace the program without asking either. A version installed for all users under Program Files is uninstalled on the way, which asks for an administrator once.
+- The desktop app keeps itself up to date. A minute after it starts and once a day after that, it looks for a new release, downloads it in the background and checks it against the release's checksums before using it. The new version starts the next time you open TrickWork, and a note in the corner says so as soon as it is ready. The switch is Update automatically in the App tab of Settings, on from the start. A copy in a folder you cannot write to, such as an older installation under Program Files, stays as it is, and update.log beside the setting says why.
+- Every release carries a checksums.txt with the SHA-256 of each file, and a zip of the macOS app for the updater.
+
+### 🐛 Fixed
+
+- The Windows installer's entry in the list of installed apps and the program's file details show the release's version instead of 1.0.0.
 
 ## 1.3.0 - 2026-09-26
 

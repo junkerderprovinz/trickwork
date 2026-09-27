@@ -218,6 +218,11 @@ export const en = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Updates',
+  'update.auto': 'Update automatically',
+  'update.autoHint': 'Once a day TrickWork looks for a new version and downloads it in the background. The new version starts the next time you open TrickWork, so nothing changes while you work.',
+  'update.ready': 'Version {version} has been downloaded and starts the next time you open TrickWork.',
+  'update.saveFailed': 'TrickWork could not save this setting.',
 
   'about.title': 'About TrickWork',
   'about.body': 'A one-knight crusade: good-looking open-source tools that did not exist in the shape I wanted, built until nothing is missing. It is free, with no accounts, no telemetry, no ads and no paid tier. No asterisk anywhere. Nothing readable ever leaves your own walls. Forged on evenings and weekends, with heart and stubbornness.',
@@ -470,6 +475,11 @@ export const de: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Updates',
+  'update.auto': 'Automatisch aktualisieren',
+  'update.autoHint': 'Einmal am Tag sucht TrickWork nach einer neuen Version und lädt sie im Hintergrund herunter. Sie startet beim nächsten Öffnen von TrickWork, während der Arbeit ändert sich also nichts.',
+  'update.ready': 'Version {version} ist heruntergeladen und startet beim nächsten Öffnen von TrickWork.',
+  'update.saveFailed': 'TrickWork konnte die Einstellung nicht speichern.',
 
   'about.title': 'Über TrickWork',
   'about.body': 'Ein einzelner Ritter, ein Feldzug: ansehnliche quelloffene Werkzeuge, die es in der Form, die ich wollte, nicht gab, gebaut, bis nichts mehr fehlt. Alles kostenlos, ohne Konten, ohne Telemetrie, ohne Werbung, ohne Bezahlstufen. Nirgends ein Sternchen. Nichts Lesbares verlässt je deine eigenen Mauern. An Abenden und Wochenenden geschmiedet, mit Herz und Dickkopf.',

@@ -214,6 +214,11 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
+  'update.title': 'Actualizări',
+  'update.auto': 'Actualizează automat',
+  'update.autoHint': 'O dată pe zi, TrickWork caută o versiune nouă și o descarcă în fundal. Pornește data viitoare când deschizi TrickWork, așa că nimic nu se schimbă cât lucrezi.',
+  'update.ready': 'Versiunea {version} este descărcată și pornește data viitoare când deschizi TrickWork.',
+  'update.saveFailed': 'TrickWork nu a putut salva această setare.',
 
   'about.title': 'Despre TrickWork',
   'about.body': 'Un singur cavaler, o cruciadă: unelte open source îngrijite, care nu existau în forma pe care o voiam, construite până nu mai lipsește nimic. Totul gratuit, fără conturi, fără telemetrie, fără reclame și fără abonamente. Niciun asterisc nicăieri. Nimic lizibil nu părăsește vreodată zidurile tale. Făurit seara și în weekend, cu inimă și încăpățânare.',
