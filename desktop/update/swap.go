@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 )
 
 // Swap puts a file from Fetch in place of the program, so the next start runs
@@ -99,16 +100,30 @@ func replaceFile(target, download string) error {
 	if err := os.Remove(old); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		// The .old is the running program, left by an earlier update in this
 		// run, so target is a file nothing runs and can simply be replaced.
-		return os.Rename(download, target)
+		return rename(download, target)
 	}
-	if err := os.Rename(target, old); err != nil {
+	if err := rename(target, old); err != nil {
 		return err
 	}
-	if err := os.Rename(download, target); err != nil {
-		os.Rename(old, target)
+	if err := rename(download, target); err != nil {
+		rename(old, target)
 		return err
 	}
 	return nil
+}
+
+// rename retries for a moment while Windows refuses it. A virus scanner opens
+// a program it has just seen written and holds it briefly, and until it lets
+// go the file cannot be renamed or replaced.
+func rename(from, to string) error {
+	var err error
+	for range 30 {
+		if err = os.Rename(from, to); !errors.Is(err, fs.ErrPermission) {
+			return err
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	return err
 }
 
 // replaceBundle unpacks the zip beside the running bundle and then trades the
