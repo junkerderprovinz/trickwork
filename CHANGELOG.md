@@ -4,10 +4,12 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.4.0 - 2026-09-27
+
 ### ✨ Added
 
 - The Windows installer asks which shortcuts to create: an entry in the Start menu and one on the desktop, both ticked. The choice is kept, so a later installation over the old one, silent or not, starts from it and does not bring back a shortcut that was left out. Uninstalling removes both.
-- The Windows installer puts TrickWork under Program Files for everyone on the computer, in C:\Program Files\TrickWork, and asks for an administrator once, while it installs. An installation from 1.3.0 or earlier under Program Files\TrickWork\TrickWork is removed on the way, and so is a copy installed for one user under AppData\Local\Programs. Your settings stay where they are.
+- The Windows installer puts TrickWork under Program Files for everyone on the computer, in C:\Program Files\TrickWork, and asks for an administrator once, while it installs. An older installation under Program Files\TrickWork\TrickWork is removed on the way, and so is a copy installed for one user under AppData\Local\Programs. Your settings stay where they are.
 - The desktop app keeps itself up to date. It looks for a new release, downloads it in the background and checks it against the release's checksums before using it. The new version starts the next time you open TrickWork, and a note in the corner says so as soon as it is ready. The switch is Update automatically in the App tab of Settings, on from the start.
 - On Windows a scheduled task called TrickWork Update does this for the installed app, once a day and five minutes after the computer starts, whether TrickWork is open or not. It runs as the system account, because nobody else may write to Program Files, and writes its log to %ProgramData%\TrickWork\update.log. The switch applies to everyone on the computer, and uninstalling removes the task. A portable copy and the apps for macOS and Linux update themselves while they run, a minute after they start and once a day after that.
 - Every release carries a checksums.txt with the SHA-256 of each file, and a zip of the macOS app for the updater.
