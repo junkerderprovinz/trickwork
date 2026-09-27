@@ -123,20 +123,20 @@ const tabSlot = document.createElement('div')
 tabSlot.className = 'settings-tabs'
 const settingsCards = document.createElement('div')
 settingsCards.className = 'settings-cards'
-const presetsCard = section(0, 'settings-card')
-const aboutCard = section(1, 'settings-card')
-const lookCard = section(0, 'settings-card')
 // Only the desktop app updates itself, so only it has the Updates card.
 const desktop = isDesktop()
-const updateCard = section(0, 'settings-card')
-const appCard = section(desktop ? 1 : 0, 'settings-card')
-const appCards = desktop ? [updateCard, appCard] : [appCard]
+const presetsCard = section(0, 'settings-card')
+const updateCard = section(1, 'settings-card')
+const aboutCard = section(desktop ? 2 : 1, 'settings-card')
+const generalCards = desktop ? [presetsCard, updateCard, aboutCard] : [presetsCard, aboutCard]
+const lookCard = section(0, 'settings-card')
+const appCard = section(0, 'settings-card')
 const tabCards: Record<SettingsTab, HTMLElement[]> = {
-  general: [presetsCard, aboutCard],
+  general: generalCards,
   look: [lookCard],
-  app: appCards,
+  app: [appCard],
 }
-settingsCards.append(presetsCard, aboutCard, lookCard, ...appCards)
+settingsCards.append(...generalCards, lookCard, appCard)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandCard, main, secondary)

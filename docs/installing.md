@@ -45,7 +45,7 @@ downloads the file for your system in the background and checks it against
 the release's `checksums.txt`. The new version starts the next time you open
 TrickWork, so nothing changes while it runs, and a note in the corner of the
 window says when it is ready. Pre-releases are never installed.
-**Update automatically** in the **App** tab of **Settings** turns this off; it
+**Update automatically** in the **General** tab of **Settings** turns this off; it
 is on from the start.
 
 **The installed copy** under Program Files cannot replace itself, since no

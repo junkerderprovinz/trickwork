@@ -643,7 +643,7 @@ test('the About card opens the crypto window, which shows the picked coin and cl
 test('the browser has no Updates card, since only the desktop app updates itself', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
-  await settingsTab(page, 'App').click()
+  await settingsTab(page, 'General').click()
   await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
 })
 
@@ -701,11 +701,11 @@ async function fakeDesktop(page: import('@playwright/test').Page, stored: boolea
   })
 }
 
-test('the desktop App tab shows the stored update setting and saves a change', async ({ page }) => {
+test('the desktop General tab shows the stored update setting and saves a change', async ({ page }) => {
   await fakeDesktop(page, false)
   await page.goto(DESKTOP)
   await settingsButton(page).click()
-  await settingsTab(page, 'App').click()
+  await settingsTab(page, 'General').click()
   const toggle = page.getByRole('switch', { name: 'Update automatically' })
   await expect(toggle).toHaveAttribute('aria-checked', 'false')
   await toggle.click()
@@ -717,7 +717,7 @@ test('a refused save puts the switch back and says so in a toast', async ({ page
   await fakeDesktop(page, true, true)
   await page.goto(DESKTOP)
   await settingsButton(page).click()
-  await settingsTab(page, 'App').click()
+  await settingsTab(page, 'General').click()
   const toggle = page.getByRole('switch', { name: 'Update automatically' })
   await expect(toggle).toHaveAttribute('aria-checked', 'true')
   await toggle.click()

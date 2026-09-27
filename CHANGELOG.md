@@ -4,6 +4,10 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- In the desktop app, Update automatically sits in the General tab of Settings, between the presets and the About card.
+
 ### ⚡ Improved
 
 - The desktop app runs on Wails v3. The downloads keep their names, so installed copies find their updates as before. On macOS and Linux the language, theme, look and card order you picked go back to their defaults once, because Wails v3 serves the window from a different address. Windows keeps them.
