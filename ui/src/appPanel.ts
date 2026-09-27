@@ -6,6 +6,7 @@ import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
 import { APP_VERSION } from './version'
+import { desktopRuntime, isDesktop } from './wails'
 
 const REPO = 'https://github.com/junkerderprovinz/trickwork'
 const TAG = `v${APP_VERSION}`
@@ -13,18 +14,12 @@ const RELEASE = `${REPO}/releases/download/${TAG}`
 const UNRAID_CA = 'https://ca.unraid.net/apps/trickwork-0h072450hg59wx'
 const DOCKER_RUN = 'docker run -d --name trickwork --restart unless-stopped -p 3210:3210 ghcr.io/junkerderprovinz/trickwork:latest'
 
-/** The desktop build binds its Go methods on window.go; the container has none. */
-export function isDesktop(): boolean {
-  return !!window.go?.main?.App
-}
-
 // A Wails webview has no browser behind it to open a link in, so the link
 // leaves through the shell.
 function followExternal(event: MouseEvent, href: string): void {
-  const open = window.runtime?.BrowserOpenURL
-  if (!open) return
+  if (!isDesktop()) return
   event.preventDefault()
-  open(href)
+  void desktopRuntime().then((runtime) => runtime.Browser.OpenURL(href))
 }
 
 // A segment names what differs from the button it hangs on and has no mark.

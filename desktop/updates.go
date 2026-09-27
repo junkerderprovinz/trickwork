@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/junkerderprovinz/trickwork/desktop/update"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // version is the release this binary was built from, set by the tag build with
@@ -90,7 +89,7 @@ func (a *App) keepUpdated(ctx context.Context) {
 		}
 		if a.settings.autoUpdate() {
 			if v := updateOnce(ctx, a.updater, a.log, &a.swapping); v != "" {
-				runtime.EventsEmit(ctx, updateReadyEvent, v)
+				a.app.Event.Emit(updateReadyEvent, v)
 			}
 		}
 		timer.Reset(checkEvery)
@@ -110,7 +109,7 @@ func (a *App) followInstalled(ctx context.Context) {
 		case <-tick.C:
 		}
 		if v := update.InstalledVersion(product); update.Newer(v, version) {
-			runtime.EventsEmit(ctx, updateReadyEvent, v)
+			a.app.Event.Emit(updateReadyEvent, v)
 			return
 		}
 	}

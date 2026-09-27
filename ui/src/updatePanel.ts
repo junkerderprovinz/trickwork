@@ -7,6 +7,7 @@ import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { replay } from './motion'
 import { showToast } from './toast'
+import { callApp, desktopRuntime } from './wails'
 
 const READY_EVENT = 'update:ready'
 
@@ -23,7 +24,7 @@ export function mountUpdatePanel(container: HTMLElement): void {
   // why in a toast.
   async function save(checked: boolean): Promise<void> {
     try {
-      await window.go?.main?.App?.SetAutoUpdate?.(checked)
+      await callApp('SetAutoUpdate', checked)
       on = checked
     } catch {
       render()
@@ -39,14 +40,16 @@ export function mountUpdatePanel(container: HTMLElement): void {
 
   render()
   subscribeLocale(render)
-  void window.go?.main?.App?.AutoUpdate?.().then((value) => {
+  void callApp<boolean>('AutoUpdate').then((value) => {
     on = value
     render()
   })
 }
 
 export function listenForUpdates(): void {
-  window.runtime?.EventsOn?.(READY_EVENT, (version) => {
-    showToast(t('update.ready', { version: String(version) }))
-  })
+  void desktopRuntime().then((runtime) =>
+    runtime.Events.On(READY_EVENT, (event) => {
+      showToast(t('update.ready', { version: String(event.data) }))
+    }),
+  )
 }

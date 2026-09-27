@@ -647,39 +647,63 @@ test('the browser has no Updates card, since only the desktop app updates itself
   await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
 })
 
-// Stands in for the Wails runtime of the desktop build: the two bound setting
-// methods and the event channel the updater reports on.
-async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean) {
-  await page.addInitScript((initial) => {
-    const w = window as unknown as Record<string, unknown>
-    const calls: boolean[] = []
-    const listeners: Record<string, (...data: unknown[]) => void> = {}
-    w.__calls = calls
-    w.__listeners = listeners
-    w.__refuse = false
-    w.go = {
-      main: {
-        App: {
-          AutoUpdate: async () => initial,
-          SetAutoUpdate: async (on: boolean) => {
-            calls.push(on)
-            if (w.__refuse) throw new Error('read-only')
-          },
-        },
-      },
+// Stands in for the desktop build: the page comes from Wails' own origin, and
+// /wails/runtime.js answers the two bound setting methods and keeps the event
+// listeners where a test can reach them.
+const DESKTOP = 'http://wails.localhost/'
+
+const FAKE_RUNTIME = `
+const w = window
+export const Call = {
+  ByName: async (name, ...args) => {
+    if (name === 'main.App.AutoUpdate') return w.__stored
+    if (name === 'main.App.SetAutoUpdate') {
+      w.__calls.push(args[0])
+      if (w.__refuse) throw new Error('read-only')
+      return null
     }
-    w.runtime = {
-      EventsOn: (name: string, cb: (...data: unknown[]) => void) => {
-        listeners[name] = cb
-        return () => {}
-      },
+    if (name === 'main.App.SaveExport') {
+      w.__saves.push(args)
+      return 'C:/Users/me/' + args[0]
     }
-  }, stored)
+    throw new Error('not bound: ' + name)
+  },
+}
+export const Events = {
+  On: (name, cb) => {
+    w.__listeners[name] = (data) => cb({ name, data })
+    return () => {}
+  },
+}
+export const Browser = { OpenURL: async () => {} }
+`
+
+async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false) {
+  await page.addInitScript(
+    ([initial, refused]) => {
+      const w = window as unknown as Record<string, unknown>
+      w.__stored = initial
+      w.__refuse = refused
+      w.__calls = []
+      w.__saves = []
+      w.__listeners = {}
+    },
+    [stored, refuse],
+  )
+  await page.route(`${DESKTOP}**`, async (route) => {
+    const url = new URL(route.request().url())
+    if (url.pathname === '/wails/runtime.js') {
+      await route.fulfill({ contentType: 'text/javascript', body: FAKE_RUNTIME })
+      return
+    }
+    const response = await route.fetch({ url: `http://localhost:4173${url.pathname}${url.search}` })
+    await route.fulfill({ response })
+  })
 }
 
 test('the desktop App tab shows the stored update setting and saves a change', async ({ page }) => {
   await fakeDesktop(page, false)
-  await page.goto('/')
+  await page.goto(DESKTOP)
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
   const toggle = page.getByRole('switch', { name: 'Update automatically' })
@@ -690,9 +714,8 @@ test('the desktop App tab shows the stored update setting and saves a change', a
 })
 
 test('a refused save puts the switch back and says so in a toast', async ({ page }) => {
-  await fakeDesktop(page, true)
-  await page.goto('/')
-  await page.evaluate(() => ((window as unknown as { __refuse: boolean }).__refuse = true))
+  await fakeDesktop(page, true, true)
+  await page.goto(DESKTOP)
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
   const toggle = page.getByRole('switch', { name: 'Update automatically' })
@@ -702,9 +725,26 @@ test('a refused save puts the switch back and says so in a toast', async ({ page
   await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveAttribute('aria-checked', 'true')
 })
 
+test('the desktop build exports through the native save dialog instead of a download', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await page.goto(DESKTOP)
+  await page.locator('input[type="file"][accept="image/*"]').setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
+  let downloaded = false
+  page.on('download', () => (downloaded = true))
+  await page.getByRole('button', { name: 'Export active image as TXT' }).click()
+  await page.waitForFunction(() => (window as unknown as { __saves: unknown[] }).__saves.length === 1)
+  const [filename, bytes] = await page.evaluate(() => (window as unknown as { __saves: [string, number[]][] }).__saves[0]!)
+  expect(filename).toMatch(/\.txt$/)
+  expect(bytes.length).toBeGreaterThan(0)
+  expect(bytes.every((b) => Number.isInteger(b) && b >= 0 && b < 256)).toBe(true)
+  expect(downloaded).toBe(false)
+})
+
 test('a downloaded update shows a toast that goes away on its own', async ({ page }) => {
   await fakeDesktop(page, true)
-  await page.goto('/')
+  await page.goto(DESKTOP)
+  // The listener arrives once the runtime has loaded.
+  await page.waitForFunction(() => 'update:ready' in (window as unknown as { __listeners: object }).__listeners)
   await page.evaluate(() =>
     (window as unknown as { __listeners: Record<string, (v: string) => void> }).__listeners['update:ready']('1.4.0'),
   )

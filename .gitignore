@@ -2,19 +2,20 @@ node_modules/
 dist/
 *.log
 .DS_Store
-# Wails generates the platform bundles in desktop/build/, but appicon.png is
-# the source every platform icon is made from; untracked, CI falls back to
-# Wails' default icon.
+# Everything scripts/desktop.mjs has Wails generate on every build: the Windows
+# manifest, icon and version resource, the macOS Info.plist and icon, the
+# installer's helper macros and the WebView2 bootstrapper it carries, and the
+# build output. What is committed is what Wails cannot write for us: the logo
+# every icon is made from, the build configuration and the installer script.
 desktop/build/*
 !desktop/build/appicon.png
-# Wails writes the rest of the Windows installer on every build; the script is ours.
+!desktop/build/config.yml
 !desktop/build/windows/
 desktop/build/windows/*
-!desktop/build/windows/installer/
-desktop/build/windows/installer/*
-!desktop/build/windows/installer/project.nsi
+!desktop/build/windows/nsis/
+desktop/build/windows/nsis/*
+!desktop/build/windows/nsis/project.nsi
+desktop/*.syso
 webembed/dist/
 test-results/
 playwright-report/
-ui/wailsjs/
-ui/package.json.md5

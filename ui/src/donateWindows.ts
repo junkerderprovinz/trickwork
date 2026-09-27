@@ -10,11 +10,11 @@ import { COFFEE_WIDGET, COIN_MARKS, COIN_TILES, CRYPTO_COINS, PAYPAL_GIVING, PAY
 import { iconCheck, iconClear, iconCopy } from './icons'
 import { t } from './i18n'
 import { qrSvg } from './qr'
+import { desktopRuntime, isDesktop } from './wails'
 
 /** Opens a link outside the app: through the shell in the desktop build, in a new tab elsewhere. */
 export function openExternal(url: string): void {
-  const shell = window.runtime?.BrowserOpenURL
-  if (shell) shell(url)
+  if (isDesktop()) void desktopRuntime().then((runtime) => runtime.Browser.OpenURL(url))
   else if (url.startsWith('mailto:')) window.location.href = url
   else window.open(url, '_blank', 'noopener,noreferrer')
 }
@@ -97,7 +97,7 @@ const DESCRIPTION = 'TrickWork'
  * PayPal's login needs, so there the button hands over to PayPal's own page.
  */
 export function openPaypalWindow(): void {
-  if (window.runtime?.BrowserOpenURL && !/Windows/.test(navigator.userAgent)) {
+  if (isDesktop() && !/Windows/.test(navigator.userAgent)) {
     openExternal(PAYPAL_PAGE)
     return
   }

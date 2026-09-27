@@ -1,0 +1,14 @@
+# What `wails3 update build-assets` writes into the Windows manifest and version
+# resource, the macOS Info.plist and the installer. scripts/desktop.mjs runs it
+# on every build and passes the version, which only a tag build has.
+version: '3'
+
+info:
+  # The installers before 1.4.0 named their entries after company and product,
+  # and project.nsi finds them under these names.
+  companyName: "TrickWork"
+  productName: "TrickWork"
+  productIdentifier: "com.junkerderprovinz.trickwork"
+  description: "Turns images into proportional-font-aware ASCII art"
+  copyright: "junkerderprovinz"
+  comments: "Turns images into proportional-font-aware ASCII art"

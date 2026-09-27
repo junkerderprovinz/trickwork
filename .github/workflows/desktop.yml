@@ -15,25 +15,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # --installer builds an NSIS installer next to the portable TrickWork.exe.
           - os: windows-latest
-            platform: windows/amd64
             slug: windows-amd64
-            # -nsis builds an NSIS installer next to the portable TrickWork.exe.
-            extra: "-nsis"
+            args: "--arch amd64 --installer"
           # Built on an ARM runner rather than cross-compiled, so a build that
           # only breaks on ARM breaks here.
           - os: windows-11-arm
-            platform: windows/arm64
             slug: windows-arm64
-            extra: "-nsis"
+            args: "--arch arm64 --installer"
           - os: macos-latest
-            platform: darwin/universal
             slug: macos-universal
-            extra: ""
+            args: ""
           - os: ubuntu-latest
-            platform: linux/amd64
             slug: linux-amd64
-            extra: "-tags webkit2_41"
+            args: "--arch amd64"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -51,60 +47,54 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
-      # -nsis needs makensis, and the runner image has dropped its
+      # The installer needs makensis, and the runner image has dropped its
       # preinstalled NSIS before (actions/runner-images#11754).
       - name: Install NSIS
         if: runner.os == 'Windows'
         run: |
           choco install nsis -y
-          # The running job does not see choco's PATH change, and wails only
-          # warns "makensis not found" and skips the installer.
+          # The running job does not see choco's PATH change.
           echo "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      # Keep in step with wails/v2 in desktop/go.mod: Renovate bumps the
-      # library but not this pin, and the CLI generates bindings against it.
+      # Keep in step with wails/v3 in desktop/go.mod: Renovate bumps the
+      # library but not this pin, and the CLI writes the build assets for it.
+      # The CLI links the Linux webview too, and without the tag it wants GTK 4,
+      # which the runner does not have. Elsewhere the tag changes nothing.
       - name: Install Wails CLI
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
+        run: go install -tags gtk3 github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.26
 
-      # windows-latest defaults to pwsh, which has no `rm -rf`. The only install
-      # script belongs to the test-only canvas package, which has no Windows ARM
-      # binary and fails to compile there.
-      - name: Build ui/ and populate webembed/dist
-        shell: bash
-        run: |
-          npm install --ignore-scripts
-          npm run build --workspace core
-          npm run build --workspace ui
-          rm -rf webembed/dist
-          cp -r ui/dist webembed/dist
+      # The only install script belongs to the test-only canvas package, which
+      # has no Windows ARM binary and fails to compile there.
+      - name: Install the interface dependencies
+        run: npm install --ignore-scripts
 
       # Only a tag build knows its version. Every other build stamps an empty
-      # one, which makes it a dev build that never updates itself. wails.json
-      # carries the version into the exe's details and the installer's entry.
+      # one, which makes it a dev build that never updates itself. The script
+      # builds the interface, has Wails write the manifest, icons, version
+      # resource and Info.plist, and compiles; on Windows it also makes the
+      # installer.
       - name: Build
-        working-directory: desktop
         shell: bash
         run: |
           set -eu
-          version=""
+          args="${{ matrix.args }}"
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            version="${GITHUB_REF_NAME#v}"
-            node -e 'const fs = require("fs"); const j = JSON.parse(fs.readFileSync("wails.json", "utf8")); j.info.productVersion = process.argv[1]; fs.writeFileSync("wails.json", JSON.stringify(j, null, 2) + "\n")' "$version"
+            args="--version ${GITHUB_REF_NAME#v} $args"
           fi
-          go mod tidy
-          wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }} -ldflags "-X main.version=$version"
+          node scripts/desktop.mjs $args
 
-      # Wails has no macOS installer step, so the .app goes into a .dmg for a
-      # first install and into a zip for the updater, which unpacks it beside
-      # the running app. ditto keeps the bundle's symlinks; --norsrc leaves out
-      # the AppleDouble files that would land inside the unpacked bundle.
+      # The .app goes into a .dmg for a first install and into a zip for the
+      # updater, which unpacks it beside the running app. ditto keeps the
+      # bundle's symlinks; --norsrc and --noextattr leave out the resource forks
+      # and extended attributes that would land in the bundle as files its
+      # signature does not cover.
       - name: Package macOS .app into a .dmg and a .zip
         if: runner.os == 'macOS'
         working-directory: desktop
         run: |
           set -eu
           hdiutil create -volname "TrickWork" -srcfolder build/bin/TrickWork.app -ov -format UDZO build/bin/TrickWork.dmg
-          ditto -c -k --norsrc --keepParent build/bin/TrickWork.app build/bin/TrickWork.zip
+          ditto -c -k --norsrc --noextattr --keepParent build/bin/TrickWork.app build/bin/TrickWork.zip
           rm -rf build/bin/TrickWork.app
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

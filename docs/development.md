@@ -31,13 +31,11 @@ docker run -p 3210:3210 trickwork:dev
 ### Desktop app
 
 ```bash
-npm run build --workspace core
-rm -rf webembed/dist && cp -r ui/dist webembed/dist
-cd desktop && go mod tidy && wails build
+node scripts/desktop.mjs
 ```
 
 The result is `desktop/build/bin/TrickWork` (`TrickWork.exe` on Windows).
 It is a dev build, which never updates itself; only a build with
-`-ldflags "-X main.version=x.y.z"`, as the release workflow makes, does.
-`desktop/README.md` explains how to try an update against a local stand-in
-for GitHub.
+`--version x.y.z`, as the release workflow makes, does.
+`desktop/README.md` names the Wails CLI the script needs and explains how to
+try an update against a local stand-in for GitHub.

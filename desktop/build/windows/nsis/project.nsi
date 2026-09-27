@@ -1,8 +1,8 @@
 ﻿Unicode true
 
-# Wails fills in the project's name, version and binaries in wails_tools.nsh,
-# which it writes on every -nsis build. This file is Wails' own template with a
-# page for choosing the shortcuts, installed for all users.
+# Wails writes the project's name, version and helper macros into
+# wails_tools.nsh on every build (scripts/desktop.mjs). This file is Wails'
+# own template with a page for choosing the shortcuts, installed for all users.
 
 # Under Program Files, like any other program. Nobody but an administrator may
 # write there, so a scheduled task running as the system account keeps it
