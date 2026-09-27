@@ -12,6 +12,10 @@ All notable changes to TrickWork are documented here.
 
 - The desktop app runs on Wails v3. The downloads keep their names, so installed copies find their updates as before. On macOS and Linux the language, theme, look and card order you picked go back to their defaults once, because Wails v3 serves the window from a different address. Windows keeps them.
 
+### 🐛 Fixed
+
+- The closed envelope on the About card's Email button sits in the middle of the button. It was drawn too low.
+
 ## 1.4.0 - 2026-09-27
 
 ### ✨ Added
