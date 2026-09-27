@@ -11,9 +11,15 @@ All notable changes to TrickWork are documented here.
 - The desktop app keeps itself up to date. A minute after it starts and once a day after that, it looks for a new release, downloads it in the background and checks it against the release's checksums before using it. The new version starts the next time you open TrickWork, and a note in the corner says so as soon as it is ready. The switch is Update automatically in the App tab of Settings, on from the start. A copy in a folder you cannot write to, such as an older installation under Program Files, stays as it is, and update.log beside the setting says why.
 - Every release carries a checksums.txt with the SHA-256 of each file, and a zip of the macOS app for the updater.
 
+### 🎨 Design
+
+- The look follows GlimStone 2.15.0.
+
 ### 🐛 Fixed
 
 - The Windows installer's entry in the list of installed apps and the program's file details show the release's version instead of 1.0.0.
+- The German pages of the Windows installer show their umlauts. The installer script was read in the system's code page, so "Startmenü" and "Verknüpfung" came out garbled.
+- An update that lands while a virus scanner still holds the new program waits a moment for it instead of giving up until the next day.
 
 ## 1.3.0 - 2026-09-26
 
