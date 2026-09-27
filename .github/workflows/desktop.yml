@@ -78,20 +78,33 @@ jobs:
           rm -rf webembed/dist
           cp -r ui/dist webembed/dist
 
+      # Only a tag build knows its version. Every other build stamps an empty
+      # one, which makes it a dev build that never updates itself. wails.json
+      # carries the version into the exe's details and the installer's entry.
       - name: Build
         working-directory: desktop
+        shell: bash
         run: |
+          set -eu
+          version=""
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+            node -e 'const fs = require("fs"); const j = JSON.parse(fs.readFileSync("wails.json", "utf8")); j.info.productVersion = process.argv[1]; fs.writeFileSync("wails.json", JSON.stringify(j, null, 2) + "\n")' "$version"
+          fi
           go mod tidy
-          wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }}
+          wails build -platform ${{ matrix.platform }} -clean ${{ matrix.extra }} -ldflags "-X main.version=$version"
 
-      # Wails has no macOS installer step, so the .app goes into a .dmg and
-      # only the .dmg reaches the artifact.
-      - name: Package macOS .app into a .dmg
+      # Wails has no macOS installer step, so the .app goes into a .dmg for a
+      # first install and into a zip for the updater, which unpacks it beside
+      # the running app. ditto keeps the bundle's symlinks; --norsrc leaves out
+      # the AppleDouble files that would land inside the unpacked bundle.
+      - name: Package macOS .app into a .dmg and a .zip
         if: runner.os == 'macOS'
         working-directory: desktop
         run: |
           set -eu
           hdiutil create -volname "TrickWork" -srcfolder build/bin/TrickWork.app -ov -format UDZO build/bin/TrickWork.dmg
+          ditto -c -k --norsrc --keepParent build/bin/TrickWork.app build/bin/TrickWork.zip
           rm -rf build/bin/TrickWork.app
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -115,7 +128,8 @@ jobs:
 
       # One file per platform and option, named for the tag. Windows gets a
       # portable exe and an installer; macOS gets its drag-to-Applications
-      # .dmg and Linux the self-contained binary.
+      # .dmg and the zip the updater takes, and Linux the self-contained binary.
+      # checksums.txt lets the desktop app verify an update before using it.
       - name: Package
         run: |
           set -eu
@@ -130,6 +144,8 @@ jobs:
             "dist/trickwork-${GITHUB_REF_NAME}-windows-arm64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
             "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
+          cp bundles/trickwork-macos-universal/TrickWork.zip \
+            "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.zip"
           cp bundles/trickwork-linux-amd64/TrickWork \
             "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
           chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
@@ -138,6 +154,8 @@ jobs:
           for f in dist/trickwork-"${GITHUB_REF_NAME}"-*; do
             cp "$f" "$(echo "$f" | sed "s/-${GITHUB_REF_NAME}-/-/")"
           done
+          (cd dist && sha256sum -- * > checksums.txt)
+          cat dist/checksums.txt
           ls -lh dist
 
       # release.yml creates the release in parallel, and a runner queue can put
