@@ -1,13 +1,13 @@
 module github.com/junkerderprovinz/trickwork/desktop
 
-go 1.26
+go 1.26.0
 
 toolchain go1.27.1
 
 require (
 	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v3 v3.0.0-beta.26
-	golang.org/x/sys v0.46.0
+	golang.org/x/sys v0.48.0
 )
 
 require (
