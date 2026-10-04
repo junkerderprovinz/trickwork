@@ -579,12 +579,13 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
   const buttons = page.locator('.app-rows a.glim-readme-btn')
-  await expect(buttons).toHaveCount(5)
+  await expect(buttons).toHaveCount(6)
   const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
   await expect(page.getByRole('link', { name: 'ARM64 Windows' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
+  await expect(page.getByRole('link', { name: 'ARM64 Linux' })).toHaveAttribute('href', /linux-arm64$/)
 })
 
 test('an App card button shows its second line only under the pointer, over the whole unit', async ({ page }) => {
