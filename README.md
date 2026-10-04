@@ -12,7 +12,7 @@
   <a href="https://github.com/junkerderprovinz/trickwork/releases"><img src="https://img.shields.io/github/downloads/junkerderprovinz/trickwork/total?style=for-the-badge&logo=github&logoColor=white&label=Downloads&color=1d99f3" alt="Downloads" height="36"></a>&nbsp;
   <a href="https://github.com/junkerderprovinz/trickwork/pkgs/container/trickwork"><img src="https://img.shields.io/badge/Arch-amd64%20%7C%20arm64-success?style=for-the-badge&logo=linux&logoColor=white" alt="Arch" height="36"></a>&nbsp;
   <a href="https://wails.io"><img src="https://img.shields.io/badge/Desktop-Wails-DF0000?style=for-the-badge&logoColor=white" alt="Wails desktop" height="36"></a>&nbsp;
-  <a href="https://unraid.net"><img src="https://img.shields.io/badge/Unraid-Template-f15a2c?style=for-the-badge&logo=unraid&logoColor=white" alt="Unraid" height="36"></a>&nbsp;
+  <a href="https://ca.unraid.net/apps/trickwork-0h072450hg59wx"><img src="https://img.shields.io/badge/Unraid-Template-f15a2c?style=for-the-badge&logo=unraid&logoColor=white" alt="Unraid" height="36"></a>&nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge&logo=gnu&logoColor=white" alt="License: AGPL-3.0" height="36"></a>
 </p>
 
