@@ -42,7 +42,7 @@ preview, proportional-width awareness and several export formats in one tool.
 - [Download for Windows (portable)](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe)
 - [Download for Windows on ARM](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-installer.exe)
 - [Download for macOS](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg)
-- [Download for Linux](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64)
+- [Download for Linux](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64) ([ARM64](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64))
 - [Run it with Docker or on Unraid](installing.md)
 
 Every download is the latest release;

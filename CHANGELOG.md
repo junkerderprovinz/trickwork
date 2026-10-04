@@ -13,6 +13,7 @@ All notable changes to TrickWork are documented here.
 - The desktop app keeps itself up to date. It looks for a new release, downloads it in the background and checks it against the release's checksums before using it. The new version starts the next time you open TrickWork, and a note in the corner says so as soon as it is ready. The switch is Update automatically in the App tab of Settings, on from the start.
 - On Windows a scheduled task called TrickWork Update does this for the installed app, once a day and five minutes after the computer starts, whether TrickWork is open or not. It runs as the system account, because nobody else may write to Program Files, and writes its log to %ProgramData%\TrickWork\update.log. The switch applies to everyone on the computer, and uninstalling removes the task. A portable copy and the apps for macOS and Linux update themselves while they run, a minute after they start and once a day after that.
 - Every release carries a checksums.txt with the SHA-256 of each file, and a zip of the macOS app for the updater.
+- TrickWork for Linux comes as an ARM64 build too, and the desktop app on it finds its updates like on every other platform.
 
 ### 🎨 Design
 

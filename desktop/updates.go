@@ -41,6 +41,7 @@ func newUpdater(logger *log.Logger) *update.Updater {
 			"darwin/amd64":  "trickwork-macos-universal.zip",
 			"darwin/arm64":  "trickwork-macos-universal.zip",
 			"linux/amd64":   "trickwork-linux-amd64",
+			"linux/arm64":   "trickwork-linux-arm64",
 		},
 		API:  updateAPI,
 		Logf: logger.Printf,

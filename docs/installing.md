@@ -20,7 +20,7 @@ Download the build for your system from the
 | Windows 10/11, portable | `trickwork-windows-amd64-portable.exe` |
 | Windows 11 on ARM | `trickwork-windows-arm64-installer.exe` or `-portable.exe` |
 | macOS | `trickwork-macos-universal.dmg` |
-| Linux | `trickwork-linux-amd64` (needs `libwebkit2gtk-4.1-0`) |
+| Linux | `trickwork-linux-amd64`, on ARM `trickwork-linux-arm64` (both need `libwebkit2gtk-4.1-0`) |
 
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.

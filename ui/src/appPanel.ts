@@ -89,7 +89,10 @@ export function mountAppPanel(container: HTMLElement): void {
           linkPart({ name: t('apps.portable'), sub: windows }, `${RELEASE}/trickwork-windows-amd64-portable.exe`, true),
         ]),
         buttonUnit('apple', [linkPart({ name: t('apps.macos'), sub: 'Universal', mark: APPLE_SVG }, `${RELEASE}/trickwork-macos-universal.dmg`)]),
-        buttonUnit('linux', [linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`)]),
+        buttonUnit('linux', [
+          linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`),
+          linkPart({ name: 'ARM64', sub: t('apps.linux') }, `${RELEASE}/trickwork-linux-arm64`, true),
+        ]),
       )
     }
     fitButtonText(rows)

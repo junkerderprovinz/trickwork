@@ -155,9 +155,10 @@ RENDER_PX = 160.0
 # Two segments and the gap they replace make one button's place. Whole pixels,
 # so no browser rounds a hairline into the seams.
 SEGMENT_PX = 87.0
-# A row has four places, a segment taking half of one. Five buttons already
-# wrap in GitHub's 830px column and leave one alone below the rest.
-PLACES = 4
+# A segment takes half a place. Four buttons and a segment come to about
+# 767px and fit GitHub's 830px column; a fifth button (852px) would wrap and
+# leave one alone below the rest.
+PLACES = 4.5
 
 SCALE = W / RENDER_PX              # canvas units per screen pixel
 SEGMENT_W = SEGMENT_PX * SCALE

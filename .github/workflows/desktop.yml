@@ -30,6 +30,9 @@ jobs:
           - os: ubuntu-latest
             slug: linux-amd64
             args: "--arch amd64"
+          - os: ubuntu-24.04-arm
+            slug: linux-arm64
+            args: "--arch arm64"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -148,6 +151,8 @@ jobs:
           cp bundles/trickwork-linux-amd64/TrickWork \
             "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
           chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
+          cp bundles/trickwork-linux-arm64/TrickWork             "dist/trickwork-${GITHUB_REF_NAME}-linux-arm64"
+          chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-arm64"
           # releases/latest/download only resolves an exact file name, so every
           # bundle also goes up once without the version for the README's links.
           for f in dist/trickwork-"${GITHUB_REF_NAME}"-*; do
