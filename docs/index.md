@@ -29,9 +29,13 @@ preview, proportional-width awareness and several export formats in one tool.
   monospace font, and a rendered PNG, the one format that keeps a proportional
   font's look exactly.
 - **Ten character sets**: nine of ASCII Gen 2's original ramps, verified against
-  its source, a 70-character detailed ramp, or your own string.
+  its source, a 70-character detailed ramp, or your own string. A character
+  repeated in a ramp claims a larger share of the brightness range, as in the
+  original.
 - **Four fonts**, two monospace and two proportional, from the fonts already on
   your system.
+- **Automatic downscaling** of very large images keeps the preview fast. The
+  queue marks an image that was downscaled.
 - **26 languages**, a light and a dark theme, and appearance settings for
   corners, colours, motion and button labels.
 - **Stateless**: no database, no accounts, nothing to configure beyond the port.
@@ -56,3 +60,25 @@ list what changed.
 "Tricking" is the heraldic practice of sketching a coat of arms in outline and
 marking its colours with letter abbreviations instead of paint, which is close
 to what this tool does to a picture.
+
+## Credits and license
+
+TrickWork is inspired by [ASCGen2](https://sourceforge.net/projects/ascgen2/),
+written in C#/.NET under the GPLv2 and abandoned since 2015. It shares the idea
+and none of the code. The look is
+[GlimStone](https://github.com/junkerderprovinz/glimstone), the design language
+every app of this house shares.
+
+The helmet in the README's screenshots is a
+[close helmet by Hans Maystetter](https://commons.wikimedia.org/wiki/File:Close_Helmet_MET_DP-12880-038.jpg)
+from The Metropolitan Museum of Art, which released the photo under CC0.
+
+Copyright (C) 2026 Junker der Provinz. TrickWork is free software under the
+[GNU Affero General Public License v3.0](https://github.com/junkerderprovinz/trickwork/blob/main/LICENSE).
+You may run, study, share and change it. If you distribute it, or run a changed
+version as a network service, you must publish your source under the same terms
+and keep the existing copyright and attribution notices.
+
+The license covers the source code only. The name TrickWork, its logo and its
+branding stay reserved, so a fork or derivative needs a name and branding of its
+own and may not present itself as TrickWork.

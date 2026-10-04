@@ -81,32 +81,17 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 ## Table of Contents
 
-1. [What is this?](#1-what-is-this)
-2. [Screenshots](#2-screenshots)
+1. [What it looks like](#1-what-it-looks-like)
+2. [What it does](#2-what-it-does)
 3. [How it compares](#3-how-it-compares)
-4. [Features](#4-features)
-5. [Getting started](#5-getting-started)
-6. [Documentation](#6-documentation)
-7. [Credits](#7-credits)
-8. [License](#8-license)
-9. [How AI is used here](#9-how-ai-is-used-here)
-10. [Support this project](#10-support-this-project)
+4. [Getting started](#4-getting-started)
+5. [Documentation](#5-documentation)
+6. [How AI is used here](#6-how-ai-is-used-here)
+7. [Support this project](#7-support-this-project)
 
 <br>
 
-## 1. What is this?
-
-TrickWork is a free, open-source ASCII art generator. It converts an image into ASCII (character-based) art,
-as a desktop app for Windows, macOS and Linux or as a self-hosted container. Drop an image, tune the sliders,
-watch the preview update live, export in whichever format you need.
-
-The name is a heraldic term: **"tricking"** is the historical practice of sketching a coat of arms in outline
-and marking its colours with letter abbreviations instead of paint, a near-literal description of what this
-tool does to a picture.
-
-<br>
-
-## 2. Screenshots
+## 1. What it looks like
 
 <p align="center">
   <img src=".github/assets/screenshots/container.png" alt="TrickWork in a browser window at nas.local:3210, turning a knight's helmet into ASCII art" width="100%">
@@ -129,6 +114,19 @@ tool does to a picture.
 
 <br>
 
+## 2. What it does
+
+- **Characters picked by ink, not by brightness.** TrickWork measures how much of each character is inked at the font you chose, so proportional fonts come out right instead of stretched or squashed.
+- **A live preview.** Every slider, the character set and the font update it at once.
+- **Image adjustments.** Crop, rotate and flip, levels, brightness and contrast, invert, dithering, colour output and sharpening, all with undo and redo.
+- **A batch queue.** Drop several images at once; each converts and exports on its own, and one bad file never blocks the rest.
+- **Four export formats.** TXT, a styled XHTML document, RTF and a rendered PNG, the one format that keeps a proportional font's look exactly.
+- **Ten character sets.** Nine of ASCGen2's original ramps, a 70-character detailed ramp, or a string of your own.
+
+The full list is on the [Start here](https://junkerderprovinz.github.io/trickwork/) page of the documentation.
+
+<br>
+
 ## 3. How it compares
 
 Every actively-maintained image-to-ASCII tool (`chafa`, `ascii-image-converter`, `jp2a`, `img2txt`/libcaca) is
@@ -138,41 +136,9 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
 
 <br>
 
-## 4. Features
+## 4. Getting started
 
-- **Proportional-font-aware character mapping**: measures each candidate character's actual rendered ink
-  coverage at your chosen font and picks the closest match, so proportional (non-monospace) fonts map
-  correctly instead of assuming every character is the same width.
-- **Real-time live preview**: every slider (width, brightness, contrast), the character-set choice and the
-  font all update the preview immediately, no re-render delay.
-- **Image adjustments**: crop, rotate and flip, levels, brightness and contrast, invert, dithering, colour
-  output and sharpening, all with undo and redo.
-- **Batch queue**: drop multiple images at once; each converts and can be exported independently, and one
-  bad file never blocks the rest.
-- **Four export formats**: plain **TXT**, a styled **XHTML** document, **RTF** (always rendered in a fixed
-  monospace font; most RTF readers can't reliably honor an arbitrary proportional font, so this is called
-  out in the UI rather than silently looking different from the preview), and a rendered **PNG** image, which
-  is the one format that can faithfully reproduce a proportional-font look since it draws the characters onto
-  a canvas itself instead of relying on the viewer's own font rendering.
-- **Ten built-in character sets**: nine of them are ASCII Gen 2's own original ramps, fetched and verified
-  byte-for-byte against its real 2011 source, weighting mechanic included: repeat a character in the ramp and
-  it claims proportionally more of the brightness range, exactly like the original. Plus a bonus 70-character
-  `detailed` ramp for extra tonal range, or type your own custom character string, repeats and all.
-- **Four font choices, no bundled font files**: two monospace, two proportional, all resolving to fonts
-  already installed on your system.
-- **Automatic downscaling** for very large source images, so the live-preview loop stays fast. The UI marks
-  a queue item as downscaled when this happens.
-
-<br>
-
-## 5. Getting started
-
-- **Desktop app:** pick your system from the buttons at the top. The portable Windows file and the Linux
-  binary run without installing anything. The Windows installer puts TrickWork under Program Files for
-  everyone on the computer and asks for an administrator once. After that a scheduled task called
-  TrickWork Update keeps it current, whether TrickWork is open or not; it runs as the system account,
-  because nobody else may write to Program Files, and uninstalling removes it. Windows may warn about an
-  unsigned download the first time; click **More info**, then **Run anyway**.
+- **Desktop app:** pick your system from the buttons at the top. Windows may warn about an unsigned download the first time; click **More info**, then **Run anyway**.
 - **Docker:**
 
   ```bash
@@ -182,49 +148,21 @@ export), and nothing since has replaced it. TrickWork is that combination, rebui
   Then open `http://localhost:3210/`. No environment variables, no volumes.
 - **Unraid:** open **Apps**, search for **TrickWork** and install it from Community Applications.
 
-Every way in detail, including the requirements and the Unraid template by hand, is on the
-[installing page](https://junkerderprovinz.github.io/trickwork/installing/).
+Updates, the requirements and the Unraid template by hand are on the [installing page](https://junkerderprovinz.github.io/trickwork/installing/).
 
 <br>
 
-## 6. Documentation
+## 5. Documentation
 
 The [documentation site](https://junkerderprovinz.github.io/trickwork/) has the full guide:
 
-- [Start here](https://junkerderprovinz.github.io/trickwork/): what TrickWork does and what sets it apart
-- [Installing](https://junkerderprovinz.github.io/trickwork/installing/): desktop, Docker and Unraid
+- [Start here](https://junkerderprovinz.github.io/trickwork/): what TrickWork does, what sets it apart, the credits and the license
+- [Installing](https://junkerderprovinz.github.io/trickwork/installing/): desktop, Docker and Unraid, and how the desktop app updates itself
 - [How it works and building it](https://junkerderprovinz.github.io/trickwork/development/): the engine and the development commands
 
 <br>
 
-## 7. Credits
-
-Directly inspired by [ASCGen2](https://sourceforge.net/projects/ascgen2/) (SourceForge, C#/.NET, GPLv2,
-abandoned since 2015): same core differentiator, fresh implementation. UI design language is
-[GlimStone](https://github.com/junkerderprovinz/glimstone), shared across every app in this house.
-
-The helmet in the screenshots is a
-[close helmet by Hans Maystetter](https://commons.wikimedia.org/wiki/File:Close_Helmet_MET_DP-12880-038.jpg)
-from The Metropolitan Museum of Art, which released the photo under CC0.
-
-<br>
-
-## 8. License
-
-**Copyright (C) 2026 Junker der Provinz.**
-
-TrickWork is free software under the **GNU Affero General Public License v3.0** (AGPL-3.0); see
-[LICENSE](LICENSE). You may run, study, share and modify it. If you distribute it, or run a modified version
-as a network service, you must release your source under the same AGPL-3.0 terms and keep the existing
-copyright and attribution notices intact.
-
-**Name and branding are not licensed.** The AGPL covers the source code only. "TrickWork", its logo and its
-branding remain reserved: a fork or derivative must use its own distinct name and branding, and may not
-present itself as TrickWork.
-
-<br>
-
-## 9. How AI is used here
+## 6. How AI is used here
 
 One knight builds this, and AI is one of the tools I work with, the same way I work with an editor or a compiler. It helps me write code and documentation and it checks my work, and that saves me a good many evenings. It does not make the decisions, though. I read and understand everything before it ships, and if something here breaks, that is on me and not on the tool.
 
@@ -232,7 +170,7 @@ You do not have to take my word for it. The code is open and every release note 
 
 <br>
 
-## 10. Support this project
+## 7. Support this project
 
 Bugs, ideas or feature requests? Please [open a GitHub issue](https://github.com/junkerderprovinz/trickwork/issues).
 

@@ -19,6 +19,7 @@ All notable changes to TrickWork are documented here.
 
 - The look follows GlimStone 2.15.0.
 - The README has new screenshots of the container, the desktop app and Settings. Its download buttons are grouped with the server ones first, including a new button for Unraid's Community Applications, and How it compares has its own section.
+- The README is shorter. It keeps the screenshots, the comparison and how to get started; the full feature list, the credits and the license moved to the Start here page of the documentation.
 - In the desktop app, Update automatically sits in the General tab of Settings, between the presets and the About card.
 
 ### ⚡ Improved
