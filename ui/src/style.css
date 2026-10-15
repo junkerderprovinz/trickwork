@@ -23,6 +23,11 @@ html, body {
   height: 100%;
   background: var(--carbon-bg);
   color: var(--carbon-text);
+}
+
+/* On the body, not the root: GlimStone measures its rem sizes, such as the
+   README button's 10rem, against the browser's 16px. */
+body {
   font-size: var(--text-body);
 }
 
@@ -179,9 +184,11 @@ html, body {
   margin-inline: auto;
 }
 
+/* Beside the column each side keeps room for the 320px brand card and the
+   gap, so the column widens only into what the corners leave free. */
 @media (min-width: 1280px) {
   .app-body.app-body--settings {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 48rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, clamp(48rem, calc(100vw - 3rem - 2 * (320px + 1rem)), 64rem)) minmax(0, 1fr);
     grid-template-areas: "brand main back";
   }
 }
@@ -209,15 +216,15 @@ html, body {
   }
 }
 
-/* Settings is a width-capped column, and roomier than the dense Convert cards:
-   it is read, not glanced at mid-drag. The cap fits the App card's desktop row
-   of four button places, and the tabs span it. The first card keeps the one
-   vertical rhythm below the tabs. */
+/* Settings is a column, roomier than the dense Convert cards: it is read, not
+   glanced at mid-drag. It grows from the App card's desktop row of four button
+   places, 48rem, to 64rem where the window has the room, and the tabs span it.
+   The first card keeps the one vertical rhythm below the tabs. */
 .settings-view {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
-  max-width: 48rem;
+  max-width: 64rem;
 }
 
 .settings-cards {
@@ -510,8 +517,9 @@ canvas.preview-canvas[width="0"] {
 
 .setting-row > select,
 .setting-row > .dropdown-wrap {
-  flex: 0 1 13rem;
+  flex: 1 1 10rem;
   min-width: 9rem;
+  max-width: 14rem;
   margin-inline-start: auto;
 }
 

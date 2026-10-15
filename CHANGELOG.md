@@ -16,6 +16,8 @@ All notable changes to TrickWork are documented here.
 - The Look tab puts every choice in one row, with the name at the start and the control at the end. Shape, theme and animations show a symbol beside each option, and System has one too.
 - In rainbow mode each selector gets one colour of its own instead of one per option, and text keeps the single accent colour.
 - Text follows GlimStone's five sizes. Body text is 14px, down from 15px.
+- Every size given in rem now counts the browser's 16px, as GlimStone measures them, so buttons, gaps and fields come out a little larger and the README buttons exactly 160px wide.
+- Settings is wider: its column grows from 48rem to 64rem as far as the window leaves room beside the brand card and Back.
 - Warnings are orange instead of yellow, so yellow only marks what you can press or have picked.
 - Filled buttons hover by stepping their colour instead of turning see-through, and every button gives a little when pressed. The three give buttons and their windows stay as they were.
 - The character set's preset list stands beside its name, like the font list.
