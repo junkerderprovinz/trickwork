@@ -6,7 +6,7 @@ toolchain go1.27.2
 
 require (
 	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
-	github.com/wailsapp/wails/v3 v3.0.0-beta.29
+	github.com/wailsapp/wails/v3 v3.0.0-beta.30
 	golang.org/x/sys v0.49.0
 )
 
