@@ -1,0 +1,31 @@
+import { describe, expect, it } from 'vitest'
+import { isNewer, releaseNotes } from './releases'
+import { APP_VERSION } from './version'
+
+describe('isNewer', () => {
+  it('finds a higher patch, minor or major', () => {
+    expect(isNewer('v1.4.1', '1.4.0')).toBe(true)
+    expect(isNewer('v1.5.0', '1.4.9')).toBe(true)
+    expect(isNewer('v2.0.0', '1.9.9')).toBe(true)
+  })
+
+  it('compares numbers, not text', () => {
+    expect(isNewer('v1.10.0', '1.9.0')).toBe(true)
+    expect(isNewer('v1.9.0', '1.10.0')).toBe(false)
+  })
+
+  it('calls the running release and an older one not newer', () => {
+    expect(isNewer('v1.4.0', '1.4.0')).toBe(false)
+    expect(isNewer('v1.3.2', '1.4.0')).toBe(false)
+  })
+})
+
+describe('releaseNotes', () => {
+  it('carries the notes of the running version', () => {
+    expect(releaseNotes(APP_VERSION)).toMatch(/\S/)
+  })
+
+  it('has nothing for a version that was never released', () => {
+    expect(releaseNotes('0.0.1')).toBeUndefined()
+  })
+})

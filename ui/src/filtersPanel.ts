@@ -109,7 +109,8 @@ export function mountFiltersPanel(container: HTMLElement, store: Store): void {
         store.setState({ options: { ...store.getState().options, sharpen: value } })
       },
       onBeforeChange: () => store.commitOptionsSnapshot(t('history.entrySharpen')),
-      rainbowBaseIndex: 0,
+      // The second selector on the page; Transform's rotation is the first.
+      rainbowBaseIndex: 1,
     })
 
     panel.append(brightness, contrast, toggleRow, sharpenRow)

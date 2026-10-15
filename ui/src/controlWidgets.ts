@@ -36,8 +36,17 @@ export interface SegmentedRowOptions<T extends string> {
   onBeforeChange?: (value: T) => void
   /** Fires on every click, the chosen segment included, for the storm and leaf gestures. */
   onTap?: (value: T) => void
-  /** Each choice owns a rainbow position from this index on; without it the row keeps the single accent. */
+  /**
+   * The rainbow position: a selector's chosen segment wears it, and a tab
+   * strip counts its tabs from it. Without it the row keeps the single accent.
+   */
   rainbowBaseIndex?: number
+  /**
+   * `row` puts the label at the row's start and the selector, hugging its
+   * segments, at its end, as a setting row stands. Without it the label stands
+   * above a selector that spans its card.
+   */
+  layout?: 'stack' | 'row'
   /**
    * `big` pins every segment to the widest label or the app-wide floor, for a
    * picker that stands once on a page; `small` lets each segment hug its label,
@@ -59,10 +68,12 @@ export interface SegmentedRowOptions<T extends string> {
  * filled, or as tabs, a row of badges.
  */
 export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HTMLElement {
-  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, scale = 'small', variant = 'well' } = opts
+  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, variant = 'well' } = opts
+  const inRow = opts.layout === 'row'
+  const scale = inRow ? 'small' : (opts.scale ?? 'small')
   const chip = variant === 'chip'
   const wrap = document.createElement('div')
-  wrap.className = 'control-slider'
+  wrap.className = inRow ? 'control-slider setting-row' : 'control-slider'
 
   if (opts.label) {
     const labelRow = document.createElement('div')
@@ -121,9 +132,10 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
         for (const [prop, value] of Object.entries(hueVars(rainbowBaseIndex + index))) btn.style.setProperty(prop, value)
         btn.classList.add('glim-hue', 'glim-hue-icon')
         if (isActive) btn.classList.add('glim-active')
-      } else if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex + index)) {
-        // In the well only the chosen segment is coloured; its fill already
-        // marks the pick, and washing the rest would be noise.
+      } else if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex)) {
+        // In the well only the chosen segment is coloured, in the selector's
+        // own colour; its fill already marks the pick, and washing the rest
+        // would be noise.
         btn.classList.add('glim-hue', 'glim-active')
       }
       btn.addEventListener('click', () => choose(choice.value))
@@ -413,7 +425,8 @@ export function customDropdown<T extends string>(
   return wrap
 }
 
-export type ButtonTone = 'subtle' | 'neutral' | 'accent'
+/** `ok`, `warn` and `danger` are a verdict a button shows on itself, such as an update check's. */
+export type ButtonTone = 'subtle' | 'neutral' | 'accent' | 'ok' | 'warn' | 'danger'
 
 export interface ButtonOptions {
   /** The words, present in every mode: visible, or hidden but announced and shown as the tooltip. */

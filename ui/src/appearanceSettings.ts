@@ -26,7 +26,7 @@ import { infoIcon } from './design/tooltip'
 import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { motionMs } from './motion'
-import { iconReset } from './icons'
+import { iconReset, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
@@ -137,10 +137,9 @@ function wipeColours(): void {
   wipeTimer = window.setTimeout(() => root.classList.remove('glim-colour-wipe'), motionMs('--motion-wipe-dur') + 50)
 }
 
-// Where each picker starts in the palette, so stacked pickers do not repeat
-// one colour straight down the page. The settings tabs stand above them all,
-// so they start where none of the pickers does.
-export const HUE_OFFSET = { tabs: 6, shape: 0, theme: 3, motion: 5, labels: 1 }
+// The page's palette positions in the order things stand: the four settings
+// tabs first, then one colour for each selector of the Look card.
+export const HUE_OFFSET = { tabs: 0, shape: 4, theme: 5, motion: 6, labels: 7 }
 
 /**
  * Mounts the appearance card. The returned function is for leaving it, to
@@ -197,9 +196,9 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     const shapes = shape === 'leaf' || leafFound ? [...SHAPES, 'leaf' as const] : SHAPES
     const shapeRow = segmentedRow({
       label: t('appearance.shape'),
-      choices: shapes.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]) })),
+      choices: shapes.map((s) => ({ value: s, label: t(SHAPE_KEYS[s]), glyph: segmentGlyph(SHAPE_GLYPHS[s]) })),
       value: shape,
-      scale: 'big',
+      layout: 'row',
       rainbowBaseIndex: HUE_OFFSET.shape,
       onTap: (tapped) => {
         if (!leafTap(leafState, tapped, shape)) return
@@ -218,9 +217,9 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
 
     const themeRow = segmentedRow({
       label: t('appearance.theme'),
-      choices: THEME_CHOICES.map((c) => ({ value: c.value, label: t(c.key) })),
+      choices: THEME_CHOICES.map((c) => ({ value: c.value, label: t(c.key), glyph: segmentGlyph(THEME_GLYPHS[c.value]) })),
       value: theme,
-      scale: 'big',
+      layout: 'row',
       rainbowBaseIndex: HUE_OFFSET.theme,
       onChange: (value) => {
         theme = value
@@ -233,9 +232,9 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     const motionRow = segmentedRow({
       label: t('appearance.motion'),
       labelExtra: infoIcon(t('appearance.motionHint')),
-      choices: motions.map((m) => ({ value: m, label: t(MOTION_KEYS[m]) })),
+      choices: motions.map((m) => ({ value: m, label: t(MOTION_KEYS[m]), glyph: segmentGlyph(MOTION_GLYPHS[m]) })),
       value: motion,
-      scale: 'big',
+      layout: 'row',
       rainbowBaseIndex: HUE_OFFSET.motion,
       onTap: (tapped) => {
         if (!stormTap(stormState, tapped, motion)) return
@@ -255,7 +254,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       labelExtra: infoIcon(t('appearance.labelsHint')),
       choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]) })),
       value: labelMode,
-      scale: 'big',
+      layout: 'row',
       rainbowBaseIndex: HUE_OFFSET.labels,
       onChange: (value) => {
         labelMode = value
@@ -457,7 +456,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
 
   function languageBlock(): HTMLElement {
     const languageWrap = document.createElement('div')
-    languageWrap.className = 'control-slider'
+    languageWrap.className = 'control-slider setting-row'
     const languageLabel = document.createElement('span')
     languageLabel.textContent = t('appearance.language')
     const languageOptions = LOCALES.map((locale) => ({

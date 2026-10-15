@@ -20,6 +20,7 @@ import { mountQueue } from './queue'
 import { mountExportPanel } from './exportPanel'
 import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
 import { mountAboutPanel } from './aboutPanel'
+import { mountHelpCard, mountVersionCard } from './infoPanel'
 import { mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
@@ -28,7 +29,7 @@ import { listenForUpdates, mountUpdatePanel } from './updatePanel'
 import { isDesktop } from './wails'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
-import { iconApp, iconSettings, iconBack, iconGeneral, iconLook } from './icons'
+import { iconApp, iconSettings, iconBack, iconGeneral, iconInfoTab, iconLook } from './icons'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
 import { replay } from './motion'
 
@@ -116,7 +117,7 @@ makeReorderable(secondary, [
 
 // The Settings view, without a preview: a strip of tabs over the cards of the
 // open one. Each tab's cards count their rainbow positions from the start.
-type SettingsTab = 'general' | 'look' | 'app'
+type SettingsTab = 'general' | 'look' | 'app' | 'info'
 const settingsView = document.createElement('div')
 settingsView.className = 'settings-view'
 const tabSlot = document.createElement('div')
@@ -127,16 +128,22 @@ settingsCards.className = 'settings-cards'
 const desktop = isDesktop()
 const presetsCard = section(0, 'settings-card')
 const updateCard = section(1, 'settings-card')
-const aboutCard = section(desktop ? 2 : 1, 'settings-card')
-const generalCards = desktop ? [presetsCard, updateCard, aboutCard] : [presetsCard, aboutCard]
+const generalCards = desktop ? [presetsCard, updateCard] : [presetsCard]
 const lookCard = section(0, 'settings-card')
 const appCard = section(0, 'settings-card')
+// The Info tab is GlimStone's Info tile, last in Settings: Version, Help and
+// About, in that order.
+const versionCard = section(0, 'settings-card')
+const helpCard = section(1, 'settings-card')
+const aboutCard = section(2, 'settings-card')
+const infoCards = [versionCard, helpCard, aboutCard]
 const tabCards: Record<SettingsTab, HTMLElement[]> = {
   general: generalCards,
   look: [lookCard],
   app: [appCard],
+  info: infoCards,
 }
-settingsCards.append(...generalCards, lookCard, appCard)
+settingsCards.append(...generalCards, lookCard, appCard, ...infoCards)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandCard, main, secondary)
@@ -153,7 +160,7 @@ function applyButtonLabel(): void {
 
 let leaveLook = (): void => {}
 
-const TAB_ORDER: SettingsTab[] = ['general', 'look', 'app']
+const TAB_ORDER: SettingsTab[] = ['general', 'look', 'app', 'info']
 
 function showTab(): void {
   for (const [tab, cards] of Object.entries(tabCards)) {
@@ -174,6 +181,7 @@ function buildTabs(): void {
       { value: 'general', label: t('settings.general'), glyph: iconGeneral() },
       { value: 'look', label: t('settings.look'), glyph: iconLook() },
       { value: 'app', label: t('settings.app'), glyph: iconApp() },
+      { value: 'info', label: t('settings.info'), glyph: iconInfoTab() },
     ],
     value: settingsTab,
     scale: 'big',
@@ -252,6 +260,8 @@ mountFiltersPanel(filtersCard, store)
 mountQueue(queueCard, store)
 mountExportPanel(exportCard, store)
 mountPresetsPanel(presetsCard, store)
+mountVersionCard(versionCard)
+mountHelpCard(helpCard, store)
 mountAboutPanel(aboutCard)
 leaveLook = mountAppearanceSettings(lookCard)
 mountAppPanel(appCard)

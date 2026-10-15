@@ -137,9 +137,12 @@ export function mountControls(container: HTMLElement, store: Store): void {
 
     const charsetWrap = document.createElement('div')
     charsetWrap.className = 'control-slider'
+    const charsetRow = document.createElement('div')
+    charsetRow.className = 'setting-row'
     const charsetLabelText = document.createElement('span')
     charsetLabelText.textContent = t('controls.charset')
-    charsetWrap.appendChild(charsetLabelText)
+    charsetRow.appendChild(charsetLabelText)
+    charsetWrap.appendChild(charsetRow)
 
     const charsetSelect = document.createElement('select')
     for (const key of Object.keys(CHARSET_PRESETS) as CharsetPresetKey[]) {
@@ -152,7 +155,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     // charset matching no preset leaves the select empty. Its name differs
     // from the field's so the two controls can be told apart.
     charsetSelect.setAttribute('aria-label', t('controls.charsetPresetLabel'))
-    charsetWrap.appendChild(charsetSelect)
+    charsetRow.appendChild(charsetSelect)
     enableSelectScroll(charsetSelect)
 
     // The editable ramp, like ASCGen2's Valid Ramp Chars, as plain text. Order
@@ -220,7 +223,7 @@ export function mountControls(container: HTMLElement, store: Store): void {
     // A <div> rather than a <label>, which would add the info icon's
     // aria-label to the select's name; the select has its own aria-label.
     const fontLabel = document.createElement('div')
-    fontLabel.className = 'control-slider'
+    fontLabel.className = 'control-slider setting-row'
     const fontLabelRow = document.createElement('div')
     fontLabelRow.className = 'control-slider-label-row'
     const fontLabelText = document.createElement('span')

@@ -216,7 +216,6 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(page.locator('canvas.preview-canvas')).toBeHidden()
   await expect(page.getByText('Presets', { exact: true })).toBeVisible()
   await expect(badge).toHaveAccessibleName('Back')
-  await expect(page.locator('.about-versions')).toContainText('GlimStone')
 
   await badge.click()
   await expect(page.getByText('Width (columns)', { exact: true })).toBeVisible()
@@ -224,17 +223,17 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('Settings sorts its cards into three tabs between the brand card and the Back button', async ({ page }) => {
+test('Settings sorts its cards into four tabs between the brand card and the Back button', async ({ page }) => {
   await page.goto('/')
   const brand = page.locator('.brand-card')
   const onConvert = await brand.boundingBox()
 
   await settingsButton(page).click()
   const tabs = page.getByRole('tablist', { name: 'Settings section' })
-  await expect(tabs.getByRole('tab')).toHaveText(['General', 'Look', 'App'])
+  await expect(tabs.getByRole('tab')).toHaveText(['General', 'Look', 'App', 'Info'])
   await expect(settingsTab(page, 'General')).toHaveAttribute('aria-selected', 'true')
   await expect(page.getByText('Presets', { exact: true })).toBeVisible()
-  await expect(page.getByText('About TrickWork', { exact: true })).toBeVisible()
+  await expect(page.getByText('About TrickWork', { exact: true })).toBeHidden()
   await expect(page.getByText('Shape', { exact: true })).toBeHidden()
   await expect(page.locator('.app-rows')).toBeHidden()
 
@@ -577,10 +576,11 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
 test('the App card in the browser offers the desktop downloads of the running version', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+  const version = await page.locator('.version-number').first().textContent()
   await settingsTab(page, 'App').click()
   const buttons = page.locator('.app-rows a.glim-readme-btn')
   await expect(buttons).toHaveCount(6)
-  const version = await page.locator('.about-versions a').first().textContent()
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
@@ -607,6 +607,7 @@ test('an App card button shows its second line only under the pointer, over the 
 test('the About card gives with the README buttons, the coffee one in its own artwork', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
   const coffee = page.getByRole('button', { name: 'Buy me a coffee', exact: true })
   await expect(coffee).toHaveClass(/glim-readme-btn/)
   await expect(coffee.locator('.glim-readme-btn-art svg path')).toHaveCount(7)
@@ -631,6 +632,7 @@ test('the About card gives with the README buttons, the coffee one in its own ar
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
   await page.getByRole('button', { name: 'Crypto' }).click()
   const window = page.getByRole('dialog')
   await expect(window).toBeVisible()
@@ -639,6 +641,46 @@ test('the About card opens the crypto window, which shows the picked coin and cl
   await expect(window.locator('.donate-address')).toHaveText('GrTyhSbZVArdaZAr3TqWDrkEGahomLtNZJ41qPLm3dHd')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
+})
+
+test('the Info tab holds Version, Help and About, and Release notes opens the running version', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+  const titles = page.locator('.settings-card:visible .eyebrow-row .glim-eyebrow, .settings-card:visible > .glim-eyebrow')
+  await expect(titles).toHaveText(['Version', 'Help', 'About TrickWork'])
+  const numbers = page.locator('.version-number')
+  await expect(numbers).toHaveCount(2)
+  await expect(numbers.nth(1)).toHaveAttribute('href', /glimstone\/releases\/tag\/v\d+\.\d+\.\d+$/)
+
+  const version = await numbers.first().textContent()
+  await page.getByRole('button', { name: 'Release notes' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toContainText(`New in ${version}`)
+  await expect(dialog.locator('.notes-list li').first()).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+})
+
+test('Check for updates turns green when GitHub knows no newer release, and red with a toast when unreachable', async ({ page }) => {
+  let reachable = true
+  await page.route('https://api.github.com/**', async (route) => {
+    if (!reachable) return route.abort()
+    const version = await page.locator('.version-number').first().textContent()
+    await route.fulfill({ contentType: 'application/json', body: JSON.stringify({ tag_name: `v${version}` }) })
+  })
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+
+  const check = page.getByRole('button', { name: 'Check for updates' })
+  await check.click()
+  await expect(page.getByRole('button', { name: 'Up to date' })).toHaveClass(/glim-tone-ok/)
+
+  reachable = false
+  await page.getByRole('button', { name: 'Up to date' }).click()
+  await expect(page.getByRole('button', { name: 'Check failed' })).toHaveClass(/glim-tone-danger/)
+  await expect(page.getByRole('alert')).toContainText('GitHub could not be reached')
 })
 
 test('the browser has no Updates card, since only the desktop app updates itself', async ({ page }) => {

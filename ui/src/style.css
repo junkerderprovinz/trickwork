@@ -16,9 +16,6 @@
   --badge-md: 2.35rem;
   --badge-lg: 3rem;
   --swatch-size: var(--badge-md);
-  /* 15px rather than GlimStone's 14px body text, to match BombVault's sidebar
-     text; overridden here once instead of in every rule that reads it. */
-  --text-body: 0.9375rem;
 }
 
 html, body {
@@ -74,8 +71,10 @@ html, body {
   height: auto;
 }
 
+/* A wordmark, outside the type scale, at the size GlimStone's brand block
+   sets for the name. */
 .app-brand-name {
-  font-size: var(--text-heading);
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--carbon-text);
@@ -105,7 +104,7 @@ html, body {
   border-radius: var(--radius-control);
   background-color: var(--carbon-surface2);
   color: var(--carbon-text-sub);
-  font-size: var(--text-caption);
+  font-size: var(--text-subline);
 }
 
 .history-log-entry:first-child {
@@ -115,7 +114,7 @@ html, body {
 .history-log-empty {
   padding: 0.3rem 0.5rem;
   color: var(--carbon-text-muted);
-  font-size: var(--text-caption);
+  font-size: var(--text-subline);
 }
 
 /* The main area on the left, the brand card and the sidecards on the right.
@@ -309,7 +308,7 @@ html, body {
   background-color: var(--accent);
   color: var(--accent-contrast);
   box-shadow: var(--elevation);
-  font-size: var(--text-dense);
+  font-size: var(--text-meta);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.12em;
@@ -478,7 +477,7 @@ canvas.preview-canvas[width="0"] {
 .preview-zoom-label {
   min-width: 3rem;
   padding: 0.2rem 0.4rem;
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
   color: var(--carbon-text-muted);
   background-color: transparent;
   text-align: center;
@@ -492,9 +491,33 @@ canvas.preview-canvas[width="0"] {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  /* --text-dense is for rows that stack by the dozen, not a single label. */
   font-size: var(--text-body);
   color: var(--carbon-text-sub);
+}
+
+/* A dropdown, a one-line field or a selector beside its name (rule 35): the
+   name at the row's start, the control at its end. Where the row is too
+   narrow for both, the control moves under the name and keeps the end. */
+.setting-row,
+.control-slider.setting-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.setting-row > select,
+.setting-row > .dropdown-wrap {
+  flex: 0 1 13rem;
+  min-width: 9rem;
+  margin-inline-start: auto;
+}
+
+.setting-row > .segmented-row {
+  width: auto;
+  margin-inline-start: auto;
 }
 
 .control-slider .control-slider-row {
@@ -504,7 +527,7 @@ canvas.preview-canvas[width="0"] {
 }
 
 .control-slider .control-slider-value {
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
   color: var(--carbon-text-muted);
 }
 
@@ -636,7 +659,7 @@ input[type="text"]:focus-visible {
 .controls-note {
   margin: 0;
   padding-top: 0.25rem;
-  font-size: var(--text-caption);
+  font-size: var(--text-subline);
   line-height: 1.5;
   color: var(--carbon-text-muted);
 }
@@ -734,7 +757,7 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 .levels-caption-row .glim-num {
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
   color: var(--carbon-text-muted);
 }
 
@@ -745,7 +768,7 @@ input.levels-handle-input::-moz-range-thumb {
   align-items: center;
   justify-content: space-between;
   padding-top: 0.1rem;
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
 }
 
 .levels-readout--black {
@@ -805,7 +828,7 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 .queue-empty {
-  font-size: var(--text-dense);
+  font-size: var(--text-meta);
   color: var(--carbon-text-muted);
   padding: 0.4rem 0;
 }
@@ -817,7 +840,7 @@ input.levels-handle-input::-moz-range-thumb {
   padding: 0.5rem 0.6rem;
   border-radius: var(--radius-control);
   background-color: var(--carbon-surface2);
-  font-size: var(--text-dense);
+  font-size: var(--text-subline);
   transition: background-color var(--motion-control-dur, 120ms) ease;
 }
 
@@ -857,7 +880,7 @@ input.levels-handle-input::-moz-range-thumb {
   flex-shrink: 0;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-pill);
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
   text-transform: capitalize;
 }
 
@@ -878,7 +901,7 @@ input.levels-handle-input::-moz-range-thumb {
 
 .queue-item-downscaled {
   flex-shrink: 0;
-  font-size: var(--text-caption);
+  font-size: var(--text-meta);
   color: var(--status-warn-text);
 }
 
@@ -936,16 +959,51 @@ button:focus-visible {
   background-color: var(--carbon-surface3);
   color: var(--carbon-text);
 }
-.glim-tone-neutral:not(.glim-brand-btn):hover:not(:disabled) {
+.glim-tone-neutral:hover:not(:disabled) {
   background-color: var(--carbon-hover-raised);
 }
-.glim-tone-accent,
-.glim-tone-accent:hover:not(:disabled) {
+/* A filled tone hovers one colour step toward the text colour (rule 21), never
+   through opacity, which would let the card show through. */
+.glim-tone-accent {
   background-color: var(--accent);
   color: var(--accent-contrast);
 }
 .glim-tone-accent:hover:not(:disabled) {
-  opacity: 0.9;
+  background-color: var(--accent-hover);
+}
+.glim-tone-ok {
+  background-color: var(--status-ok-solid);
+  color: var(--carbon-bg);
+}
+.glim-tone-ok:hover:not(:disabled) {
+  background-color: var(--status-ok-hover);
+}
+.glim-tone-warn {
+  background-color: var(--status-warn-solid);
+  color: var(--carbon-bg);
+}
+.glim-tone-warn:hover:not(:disabled) {
+  background-color: var(--status-warn-hover);
+}
+.glim-tone-danger {
+  background-color: var(--status-fail-solid);
+  color: var(--carbon-bg);
+}
+.glim-tone-danger:hover:not(:disabled) {
+  background-color: var(--status-fail-hover);
+}
+
+/* Every button gives way on press. The give row and its windows keep the
+   plain press they always had. */
+button {
+  transition: background-color var(--motion-control-dur, 120ms) ease, scale var(--motion-control-dur, 120ms) ease;
+}
+button:active:not(:disabled) {
+  scale: 0.97;
+}
+.glim-about-give button:active,
+.donate-backdrop button:active {
+  scale: none;
 }
 
 /* The format buttons share their row evenly; Copy keeps its own width. */
@@ -960,7 +1018,7 @@ button:focus-visible {
 .export-summary {
   margin: 0;
   min-height: 1em;
-  font-size: var(--text-caption);
+  font-size: var(--text-subline);
   color: var(--carbon-text-muted);
 }
 
@@ -1098,8 +1156,18 @@ button:focus-visible {
   height: 1.25rem;
 }
 
-.segmented-button:not(.segmented-button--active) .segmented-button-glyph {
-  color: var(--accent);
+.segmented-row--chip .segmented-button:not(.segmented-button--active) .segmented-button-glyph {
+  color: var(--accent-glyph);
+}
+
+/* In a selector the glyph stands beside the words at their size and takes the
+   segment's ink. */
+.segmented-row:not(.segmented-row--chip) .segmented-button {
+  gap: 0.4rem;
+}
+.segmented-row:not(.segmented-row--chip) .segmented-button-glyph svg {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 /* The eight accent presets, wrapping on narrow widths, with the reset button
@@ -1358,9 +1426,8 @@ button:focus-visible {
   height: 14px;
 }
 
-/* The About card: each sentence sits right above the buttons it asks for, and
-   a blank line's worth of space above the report sentence keeps the give
-   buttons from pairing with it. */
+/* The Help and About cards: each sentence sits right above the buttons it
+   asks for. */
 .about-text {
   margin: 0;
   font-size: var(--text-body);
@@ -1368,31 +1435,128 @@ button:focus-visible {
   color: var(--carbon-text-sub);
 }
 
-.about-report {
-  margin-top: 0.5rem;
+/* The Version card: a row per version, the name at the start and the number,
+   a link to its release, at the end. */
+.version-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.about-versions {
-  margin: 0.25rem 0 0;
+.version-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.5rem;
-  font-size: var(--text-caption);
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.version-names {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.version-name {
+  font-size: var(--text-body);
+  color: var(--carbon-text);
+}
+
+.version-sub {
+  font-size: var(--text-subline);
   color: var(--carbon-text-muted);
 }
 
-.about-versions a {
-  color: inherit;
+.version-number {
+  flex-shrink: 0;
+  font-size: var(--text-body);
+  color: var(--carbon-text-sub);
   text-decoration: none;
 }
 
-.about-versions a:hover {
+.version-number:hover {
   color: var(--carbon-text);
+}
+
+.version-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* A window that is not one of the giving windows: the content as wide as the
+   window, and the actions in its foot at the end of the row. */
+.window-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.notes-window {
+  width: 100%;
+  max-width: 48rem;
+  max-height: 85vh;
+  padding: 1.75rem 1.25rem 1.25rem;
+}
+
+.notes-window:focus {
+  outline: none;
+}
+
+.notes-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  overflow-y: auto;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--carbon-text-sub);
+}
+
+.notes-paragraph {
+  margin: 0;
+  color: var(--carbon-text);
+}
+
+.notes-heading {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}
+
+.notes-list {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.window-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+}
+
+/* A link out of the app opens the foot. */
+.window-footer > :first-child:not(:last-child) {
+  margin-inline-end: auto;
 }
 
 /* The giving windows. The card reuses the section heading, so its title sits on
    the window's top edge like every card heading. */
 .donate-backdrop {
+  /* The giving windows keep the type sizes they were made with. */
+  --text-body: 0.9375rem;
+  --text-caption: 0.6875rem;
   position: fixed;
   inset: 0;
   z-index: 50;
