@@ -4,6 +4,8 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.5.0 - 2026-10-15
+
 ### ✨ Added
 
 - Settings has a fourth tab, Info, with a Version card, a Help card and the About card, in that order.
@@ -23,6 +25,10 @@ All notable changes to TrickWork are documented here.
 - The character set's preset list stands beside its name, like the font list.
 - The settings tabs, Back, Settings, the card grip and the preset buttons use the symbols GlimStone shares across its apps.
 - The About card keeps the sentence about the project and the three ways to give. The report buttons moved to the Help card, and the version line to the Version card.
+
+### ⚡ Improved
+
+- The desktop app runs on Wails v3.0.0-beta.28, and the build tools and libraries are up to date.
 
 ## 1.4.0 - 2026-09-27
 
