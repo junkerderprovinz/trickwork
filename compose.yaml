@@ -7,7 +7,7 @@
 
 services:
   trickwork:
-    image: ghcr.io/junkerderprovinz/trickwork:latest
+    image: ghcr.io/junkerderprovinz/trickwork:latest@sha256:b51cb304c60710d5aa15db1b5ef7a9046f5fe5aeb84f5e5256af693ab6478064
     container_name: trickwork
     restart: unless-stopped
     ports:
