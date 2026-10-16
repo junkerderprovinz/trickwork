@@ -19,6 +19,8 @@ BUTTONS = {
     # A browser cannot download an image, so this opens the package page, which
     # carries the pull command and every tag.
     "mos": "https://mos-official.net/apps.html?search=TrickWork",
+    "zimaos": "https://github.com/junkerderprovinz/zimaos-apps#install",
+    "umbrel": "https://github.com/junkerderprovinz/umbrel-apps#install",
     "compose": "https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/compose.yaml",
     # A release's "Source code (zip)" is the whole repository at that tag, and
     # GitHub gives the newest one no fixed address, so this leads to the release
