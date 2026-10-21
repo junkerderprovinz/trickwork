@@ -11,7 +11,7 @@ import (
 )
 
 // App is the Wails service behind the frontend's bindings: the native save
-// dialog and the "Update automatically" setting.
+// dialog, the "Update automatically" setting and the installer's language.
 type App struct {
 	app      *application.App
 	window   *application.WebviewWindow
@@ -48,6 +48,13 @@ func (a *App) ServiceStartup(ctx context.Context, _ application.ServiceOptions) 
 	a.updater.Cleanup()
 	go a.keepUpdated(ctx)
 	return nil
+}
+
+// InstallLanguage is the language the installer's welcome page chose, such as
+// "de", or "" for a copy no installer put in place. The window starts in it
+// until someone picks a language in the app.
+func (a *App) InstallLanguage() string {
+	return installLanguage()
 }
 
 // ServiceShutdown takes the swap lock and keeps it, so a swap under way

@@ -19,6 +19,9 @@ type updateSettings struct {
 type updateSettingsFile struct {
 	// A pointer, so a file without the field still means on.
 	AutoUpdate *bool `json:"autoUpdate"`
+	// Language is what the installer wrote beside the switch, kept when the
+	// switch changes so every user's first start still finds it.
+	Language string `json:"language,omitempty"`
 }
 
 // configDir is the folder TrickWork keeps its own files in.
@@ -48,18 +51,28 @@ func loadUpdateSettings(path string, err error) *updateSettings {
 	return &updateSettings{path: path, on: readAutoUpdate(path)}
 }
 
-// readAutoUpdate reports the switch in the file at path. A missing, unreadable
-// or corrupt file, or one that does not name the switch, reads as on.
-func readAutoUpdate(path string) bool {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return true
-	}
+// readSettingsFile reads the file at path. A missing, unreadable or corrupt
+// file reads as one that names nothing.
+func readSettingsFile(path string) updateSettingsFile {
 	var f updateSettingsFile
-	if json.Unmarshal(data, &f) != nil || f.AutoUpdate == nil {
-		return true
+	data, err := os.ReadFile(path)
+	if err != nil || json.Unmarshal(data, &f) != nil {
+		return updateSettingsFile{}
 	}
-	return *f.AutoUpdate
+	return f
+}
+
+// readAutoUpdate reports the switch in the file at path. A file that does not
+// name it reads as on.
+func readAutoUpdate(path string) bool {
+	f := readSettingsFile(path)
+	return f.AutoUpdate == nil || *f.AutoUpdate
+}
+
+// readLanguage returns the language an installer recorded in the file at
+// path, or "" when it recorded none.
+func readLanguage(path string) string {
+	return readSettingsFile(path).Language
 }
 
 func (s *updateSettings) autoUpdate() bool {
@@ -77,7 +90,9 @@ func (s *updateSettings) setAutoUpdate(on bool) error {
 	if s.err != nil {
 		return s.err
 	}
-	data, _ := json.Marshal(updateSettingsFile{AutoUpdate: &on})
+	f := readSettingsFile(s.path)
+	f.AutoUpdate = &on
+	data, _ := json.Marshal(f)
 	if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil {
 		return err
 	}

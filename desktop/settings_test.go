@@ -84,3 +84,32 @@ func TestAutoUpdateCannotChangeWithoutAFile(t *testing.T) {
 		t.Error("turned off with nowhere to keep it")
 	}
 }
+
+func TestTheInstallerLanguageSurvivesTheSwitch(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "settings.json")
+	if err := os.WriteFile(path, []byte(`{"autoUpdate":true,"language":"de"}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := loadUpdateSettings(path, nil).setAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+	if readAutoUpdate(path) {
+		t.Error("turned off, but on in the file")
+	}
+	if got := readLanguage(path); got != "de" {
+		t.Errorf("language = %q after turning updates off, want de", got)
+	}
+}
+
+func TestNoLanguageWithoutAnInstallerFile(t *testing.T) {
+	dir := t.TempDir()
+	corrupt := filepath.Join(dir, "install.json")
+	if err := os.WriteFile(corrupt, []byte(`{"language":`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range []string{filepath.Join(dir, "missing.json"), corrupt} {
+		if got := readLanguage(path); got != "" {
+			t.Errorf("language = %q from %s", got, filepath.Base(path))
+		}
+	}
+}

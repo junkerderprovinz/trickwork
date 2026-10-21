@@ -1,6 +1,8 @@
 // The locale is a reactive source of its own beside the Store, since the
 // language and the conversion state never need to trigger each other.
 
+import { callApp, isDesktop } from './wails'
+
 // en and de are the source languages and ship in the main bundle; the other
 // 24 load lazily, so a visitor downloads only the language they read.
 export const en = {
@@ -689,15 +691,26 @@ function persistLocale(code: string): void {
   }
 }
 
-/** Applied at boot, before the app renders anything. */
-export function applyCachedLocale(): void {
+/**
+ * Applied at boot, before the app renders anything. Until someone picks a
+ * language here, the desktop app starts in the one its installer's welcome
+ * page chose and keeps it as if it had been picked here.
+ */
+export async function applyCachedLocale(): Promise<void> {
   let code: string | null = null
   try {
     code = localStorage.getItem(CACHE_KEY)
   } catch {
     code = null
   }
-  if (code && code !== 'en' && LOCALES.some((l) => l.code === code)) {
-    void setLocale(code)
+  if (code && LOCALES.some((l) => l.code === code)) {
+    if (code !== 'en') await setLocale(code)
+    return
+  }
+  if (!isDesktop()) return
+  try {
+    await setLocale(await callApp<string>('InstallLanguage'))
+  } catch {
+    // Without an answer from the Go side the app stays in English.
   }
 }

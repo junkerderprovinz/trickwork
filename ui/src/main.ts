@@ -43,7 +43,7 @@ applyCachedTheme()
 applyMotion(storedMotion())
 applyStoredLabelModes()
 applyDisco(storedDisco())
-applyCachedLocale()
+void applyCachedLocale()
 // Turns the native `title` of every icon-only button into the styled bubble.
 wireTooltips()
 

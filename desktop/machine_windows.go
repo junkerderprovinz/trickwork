@@ -40,6 +40,19 @@ func machineData() (string, error) {
 	return filepath.Join(base, product), nil
 }
 
+// installLanguage is the language the installer's welcome page chose, which
+// it records beside the switch. A portable copy has none.
+func installLanguage() string {
+	if !isInstalled() {
+		return ""
+	}
+	path, err := machineSettingsPath()
+	if err != nil {
+		return ""
+	}
+	return readLanguage(path)
+}
+
 // updateInstalled is what the scheduled task runs as the system account, which
 // may write to Program Files: one update of the installed copy, without a
 // window, logged beside the switch it obeys.
