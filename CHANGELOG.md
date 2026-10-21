@@ -4,6 +4,18 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.5.1 - 2026-10-21
+
+### ✨ Added
+
+- **A new installer for Windows, and one for Linux.** On Windows it opens in TrickWork's own look and lets you pick the folder. On a drive where everyone may change the top folder, as on many second drives, the daily update then runs under your own account instead of the system account. On Linux it installs TrickWork for you alone, adds it to the application menu and offers to uninstall it from there.
+- **The installed desktop app starts in your system's language** instead of English, until you pick another one in the app.
+- **The README has buttons for the ZimaOS and Umbrel app stores**, and the docs show how to run TrickWork with Docker Compose on other hosts.
+
+### ⚡ Improved
+
+- The desktop app runs on Wails v3.0.0-beta.34, and the build tools and libraries are up to date.
+
 ## 1.5.0 - 2026-10-15
 
 ### ✨ Added
