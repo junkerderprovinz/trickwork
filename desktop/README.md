@@ -6,7 +6,7 @@ container serves, via the root module's `webembed` package.
 ## Build locally
 
 From the repository root, with the Wails CLI of the version `go.mod` names
-(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.27`):
+(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34`):
 
 ```
 npm install --ignore-scripts
@@ -16,9 +16,17 @@ node scripts/desktop.mjs
 The script builds `core` and `ui`, copies the bundle into `webembed/dist`, has
 Wails write the manifest, icons and version resource into `build/`, and
 compiles. Output: `desktop/build/bin/TrickWork[.exe]`, a single portable
-binary, no code signing configured. On Windows, `--installer` also builds
-`build/bin/TrickWork-amd64-installer.exe` from `build/windows/nsis/project.nsi`,
-which needs `makensis` on the PATH.
+binary, no code signing configured. On Windows and Linux, `--installer` also
+builds `build/installer/TrickWork-amd64-installer[.exe]` from `installer/`, a
+module of its own around
+[PommelPorter](https://github.com/junkerderprovinz/pommelporter) that embeds
+the binary.
+
+The installer's welcome page asks for a language and records it:
+`%ProgramData%\TrickWork\settings.json` on Windows, `install.json` beside the
+program on Linux, under the key `language`. `App.InstallLanguage` hands it to
+the window, which starts in it as long as nothing is stored under
+`trickwork-locale` yet, and then stores it as if it had been picked there.
 
 ## Updates
 
@@ -52,7 +60,7 @@ so it can sit beside a real installation:
 node scripts/desktop.mjs --version 1.4.0 --installer --updatetest
 ```
 
-That gives `build/bin/TrickWorkTest-amd64-installer.exe`. The task starts
+That gives `build/installer/TrickWorkTest-amd64-installer.exe`. The task starts
 without your environment, so it reads the stand-in's address from
 `updatetest-api` in `%ProgramData%\TrickWork Test`, which only an
 administrator can write, and `schtasks /Run /TN "TrickWork Test Update"` from

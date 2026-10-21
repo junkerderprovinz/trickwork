@@ -15,7 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # --installer builds an NSIS installer next to the portable TrickWork.exe.
+          # --installer builds the installer next to the portable TrickWork.exe
+          # and the Linux binary.
           - os: windows-latest
             slug: windows-amd64
             args: "--arch amd64 --installer"
@@ -29,10 +30,10 @@ jobs:
             args: ""
           - os: ubuntu-latest
             slug: linux-amd64
-            args: "--arch amd64"
+            args: "--arch amd64 --installer"
           - os: ubuntu-24.04-arm
             slug: linux-arm64
-            args: "--arch arm64"
+            args: "--arch arm64 --installer"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -49,15 +50,6 @@ jobs:
       - name: Install Linux system deps
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
-
-      # The installer needs makensis, and the runner image has dropped its
-      # preinstalled NSIS before (actions/runner-images#11754).
-      - name: Install NSIS
-        if: runner.os == 'Windows'
-        run: |
-          choco install nsis -y
-          # The running job does not see choco's PATH change.
-          echo "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       # The CLI writes the build assets for the library, so its version is read
       # from desktop/go.mod, which Renovate keeps current. sed rather than
@@ -83,8 +75,8 @@ jobs:
       # Only a tag build knows its version. Every other build stamps an empty
       # one, which makes it a dev build that never updates itself. The script
       # builds the interface, has Wails write the manifest, icons, version
-      # resource and Info.plist, and compiles; on Windows it also makes the
-      # installer.
+      # resource and Info.plist, and compiles; on Windows and Linux it also
+      # makes the installer.
       - name: Build
         shell: bash
         run: |
@@ -115,6 +107,14 @@ jobs:
           path: desktop/build/bin/*
           if-no-files-found: error
 
+      # An artifact of its own, so both keep their files at the top.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: runner.os != 'macOS'
+        with:
+          name: trickwork-${{ matrix.slug }}-installer
+          path: desktop/build/installer/*
+          if-no-files-found: error
+
   # Artifacts expire and are only reachable inside Actions, so the bundles go
   # onto the release the tag creates.
   attach:
@@ -130,19 +130,20 @@ jobs:
 
       # One file per platform and option, named for the tag. Windows gets a
       # portable exe and an installer; macOS gets its drag-to-Applications
-      # .dmg and the zip the updater takes, and Linux the self-contained binary.
-      # checksums.txt lets the desktop app verify an update before using it.
+      # .dmg and the zip the updater takes, and Linux the self-contained binary
+      # and an installer. checksums.txt lets the desktop app verify an update
+      # before using it.
       - name: Package
         run: |
           set -eu
           mkdir -p dist
           cp bundles/trickwork-windows-amd64/TrickWork.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-portable.exe"
-          cp bundles/trickwork-windows-amd64/*-installer.exe \
+          cp bundles/trickwork-windows-amd64-installer/*-installer.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-amd64-installer.exe"
           cp bundles/trickwork-windows-arm64/TrickWork.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-arm64-portable.exe"
-          cp bundles/trickwork-windows-arm64/*-installer.exe \
+          cp bundles/trickwork-windows-arm64-installer/*-installer.exe \
             "dist/trickwork-${GITHUB_REF_NAME}-windows-arm64-installer.exe"
           cp bundles/trickwork-macos-universal/TrickWork.dmg \
             "dist/trickwork-${GITHUB_REF_NAME}-macos-universal.dmg"
@@ -153,6 +154,11 @@ jobs:
           chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-amd64"
           cp bundles/trickwork-linux-arm64/TrickWork             "dist/trickwork-${GITHUB_REF_NAME}-linux-arm64"
           chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-arm64"
+          for arch in amd64 arm64; do
+            cp bundles/trickwork-linux-${arch}-installer/*-installer \
+              "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}-installer"
+            chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}-installer"
+          done
           # releases/latest/download only resolves an exact file name, so every
           # bundle also goes up once without the version for the README's links.
           for f in dist/trickwork-"${GITHUB_REF_NAME}"-*; do

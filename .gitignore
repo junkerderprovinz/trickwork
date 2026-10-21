@@ -3,18 +3,12 @@ dist/
 *.log
 .DS_Store
 # Everything scripts/desktop.mjs has Wails generate on every build: the Windows
-# manifest, icon and version resource, the macOS Info.plist and icon, the
-# installer's helper macros and the WebView2 bootstrapper it carries, and the
+# manifest, icon and version resource, the macOS Info.plist and icon, and the
 # build output. What is committed is what Wails cannot write for us: the logo
-# every icon is made from, the build configuration and the installer script.
+# every icon is made from and the build configuration.
 desktop/build/*
 !desktop/build/appicon.png
 !desktop/build/config.yml
-!desktop/build/windows/
-desktop/build/windows/*
-!desktop/build/windows/nsis/
-desktop/build/windows/nsis/*
-!desktop/build/windows/nsis/project.nsi
 desktop/*.syso
 webembed/dist/
 test-results/

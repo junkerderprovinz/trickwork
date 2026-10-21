@@ -2,9 +2,10 @@
 //
 //     node scripts/desktop.mjs [--version x.y.z] [--arch amd64|arm64] [--installer] [--updatetest]
 //
-// Windows gets TrickWork.exe and, with --installer, the NSIS installer. macOS
-// gets TrickWork.app holding one binary for both architectures. Linux gets the
-// bare binary. Everything lands in desktop/build/bin.
+// Windows gets TrickWork.exe, macOS TrickWork.app holding one binary for both
+// architectures, and Linux the bare binary, all in desktop/build/bin. With
+// --installer, Windows and Linux also get their installer in
+// desktop/build/installer.
 //
 // Only a build given --version knows its version, which the release workflow
 // takes from the tag. Any other build is a dev build that never updates itself.
@@ -15,13 +16,12 @@
 //
 // The interface is built first and copied into webembed/dist, which the
 // container embeds too. Wails' generated files (manifest, version resource,
-// Info.plist, the installer's helper macros, the icons) are written into
-// desktop/build on every run and ignored by git, so a build leaves the tree as
-// it found it.
+// Info.plist, the icons) are written into desktop/build on every run and
+// ignored by git, so a build leaves the tree as it found it.
 
 import { spawnSync } from 'node:child_process'
 import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
@@ -40,7 +40,7 @@ const installer = args.includes('--installer')
 const updatetest = args.includes('--updatetest')
 const tags = (extra = '') => (updatetest ? 'production,updatetest' : 'production') + extra
 
-// NSIS and Info.plist take three numbers only.
+// The version resource and Info.plist take three numbers only.
 if (version !== '' && !/^\d+\.\d+\.\d+$/.test(version)) {
   console.error(`--version wants three numbers such as 1.4.0, not ${version}`)
   process.exit(1)
@@ -61,6 +61,28 @@ function goBuild(out, { goos, goarch, cgo, tags, ldflags = '', env = {} }) {
     '-ldflags', `-s -w ${ldflags} -X main.version=${version}`,
     '-o', out, '.',
   ], { env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: cgo, ...env } })
+}
+
+// buildInstaller builds desktop/installer around the program at exe, into
+// desktop/build/installer so desktop/build/bin stays the program alone. An
+// updatetest installer installs as "TrickWork Test".
+function buildInstaller(exe, { goos, cgo, tags, ldflags = '' }) {
+  const name = `${updatetest ? 'TrickWorkTest' : 'TrickWork'}-${arch}-installer${goos === 'windows' ? '.exe' : ''}`
+  const payload = join(desktop, 'installer', 'payload')
+  rmSync(payload, { recursive: true, force: true })
+  mkdirSync(payload, { recursive: true })
+  cpSync(exe, join(payload, basename(exe)))
+  const vars = [`-X main.version=${numeric}`]
+  if (updatetest) vars.push("-X 'main.name=TrickWork Test'", '-X main.id=com.junkerderprovinz.trickwork.test')
+  try {
+    run('go', [
+      'build', '-tags', tags, '-trimpath', '-buildvcs=false',
+      '-ldflags', `-s -w ${ldflags} ${vars.join(' ')}`,
+      '-o', join(desktop, 'build', 'installer', name), '.',
+    ], { cwd: join(desktop, 'installer'), env: { GOOS: goos, GOARCH: arch, CGO_ENABLED: cgo } })
+  } finally {
+    rmSync(payload, { recursive: true, force: true })
+  }
 }
 
 // Wails writes its own version resource with the strings under the language
@@ -99,6 +121,7 @@ rmSync(embed, { recursive: true, force: true })
 cpSync(join(root, 'ui', 'dist'), embed, { recursive: true })
 
 rmSync(bin, { recursive: true, force: true })
+rmSync(join(desktop, 'build', 'installer'), { recursive: true, force: true })
 mkdirSync(bin, { recursive: true })
 
 run('wails3', [
@@ -129,16 +152,16 @@ if (process.platform === 'win32') {
   }
 
   if (installer) {
-    const nsis = join(desktop, 'build', 'windows', 'nsis')
-    run('wails3', ['generate', 'webview2bootstrapper', '-dir', nsis])
-    // project.nsi carries a byte order mark, and wails_tools.nsh, which Wails
-    // writes without one, would otherwise be read in the system code page.
-    run('makensis', [
-      '-INPUTCHARSET', 'UTF8',
-      ...(updatetest ? ['-DINFO_PRODUCTNAME=TrickWork Test', '-DINFO_PROJECTNAME=TrickWorkTest'] : []),
-      `-DARG_WAILS_${arch.toUpperCase()}_BINARY=${exe}`,
-      join(nsis, 'project.nsi'),
+    const syso = join(desktop, 'installer', `installer_windows_${arch}.syso`)
+    run('wails3', [
+      'generate', 'syso', '-arch', arch, '-icon', 'build/windows/icon.ico',
+      '-manifest', 'installer/installer.manifest', '-info', 'build/windows/info.json', '-out', syso,
     ])
+    try {
+      buildInstaller(exe, { goos: 'windows', cgo: '0', tags: '', ldflags: '-H windowsgui' })
+    } finally {
+      rmSync(syso, { force: true })
+    }
   }
 } else if (process.platform === 'darwin') {
   // Both architectures in one binary, so one download serves every Mac. The
@@ -162,6 +185,9 @@ if (process.platform === 'win32') {
   // GTK 3 and WebKitGTK 4.1, which every current distribution ships and which
   // the builds before this one already needed.
   goBuild(join(bin, 'TrickWork'), { goos: 'linux', goarch: arch, cgo: '1', tags: tags(',gtk3') })
+  if (installer) {
+    buildInstaller(join(bin, 'TrickWork'), { goos: 'linux', cgo: '1', tags: 'gtk3' })
+  }
 }
 
 console.log(`done: ${version || 'dev'}`)

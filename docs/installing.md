@@ -20,23 +20,37 @@ Download the build for your system from the
 | Windows 10/11, portable | `trickwork-windows-amd64-portable.exe` |
 | Windows 11 on ARM | `trickwork-windows-arm64-installer.exe` or `-portable.exe` |
 | macOS | `trickwork-macos-universal.dmg` |
+| Linux, installer | `trickwork-linux-amd64-installer`, on ARM `trickwork-linux-arm64-installer` |
 | Linux | `trickwork-linux-amd64`, on ARM `trickwork-linux-arm64` (both need `libwebkit2gtk-4.1-0`) |
 
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.
 
-The Windows **installer** installs for all users under
-`C:\Program Files\TrickWork` and asks for an administrator once, while it
-installs; later updates ask nobody (see [Updates](#updates)). A page asks
-whether you want a Start menu entry and a desktop shortcut, both ticked at
-first, and both go to every user on the computer. The next install, silent or
-not, starts from your answer and removes a shortcut you left out.
+The Windows **installer** puts TrickWork under `C:\Program Files\TrickWork` for
+everyone on the computer, or into another folder you pick, and asks for an
+administrator once, while it installs; later updates ask nobody (see
+[Updates](#updates)). Two switches decide on a Start menu entry and a desktop
+shortcut, both on at first, and both go to every user on the computer. The
+next install, silent or not, starts from your answer and removes a shortcut
+you left out.
+
+The installer's first page also asks which language TrickWork should start in.
+The app opens in that language until you pick another one under **Settings**,
+and then keeps yours.
 
 The installer also cleans up after older versions. An installation from 1.3.0
 or earlier under `C:\Program Files\TrickWork\TrickWork` goes, and so does a
 copy installed for you alone under `AppData\Local\Programs`, with its
 shortcuts and its entry under Apps. It never touches your settings in
 `%AppData%\TrickWork` or what the window keeps in `%AppData%\TrickWork.exe`.
+
+On Linux the installer is for you alone and asks for no password. It puts
+TrickWork in `~/.local/share/com.junkerderprovinz.trickwork` and adds it to
+the application menu, with a desktop icon if you want one. Right-clicking the
+menu entry offers to uninstall it. That copy updates itself like the bare
+binary. Make the downloaded file executable first
+(`chmod +x trickwork-linux-amd64-installer`). The installer needs
+`libwebkit2gtk-4.1-0` just like the app.
 
 ### Updates
 
@@ -48,18 +62,18 @@ window says when it is ready. Pre-releases are never installed.
 **Update automatically** in the **General** tab of **Settings** turns this off; it
 is on from the start.
 
-**The installed copy** under Program Files cannot replace itself, since no
-user may write there. A scheduled task named **TrickWork Update** does it
+**The installed copy** on Windows cannot replace itself, since no user may
+write to its folder. A scheduled task named **TrickWork Update** does it
 instead, once a day and five minutes after the computer starts, whether
 TrickWork is open or not. It replaces `TrickWork.exe`, sets the version shown
 under Apps and writes what it did, or why it did not, to
 `%ProgramData%\TrickWork\update.log`. There is one installation, so the switch
 applies to everyone on the computer: it lives in
 `%ProgramData%\TrickWork\settings.json`, which every user may change, and the
-task skips its run while it is off. An open window notices within a few
-minutes when the task has put a new version in place and shows the note. The
-replaced program waits beside the new one as `TrickWork.exe.old` until a later
-run removes it.
+task skips its run while it is off. The same file holds the language the
+installer asked for. An open window notices within a few minutes when the task
+has put a new version in place and shows the note. The replaced program waits
+beside the new one as `TrickWork.exe.old` until a later run removes it.
 
 **A portable copy**, such as `trickwork-windows-amd64-portable.exe`, updates
 itself while it runs: a minute after it starts and once a day after that, in
@@ -75,16 +89,23 @@ Program Files belongs to the administrators. A program that replaces itself
 there without asking anyone needs an account that may write there, and a
 scheduled task under the system account is how Windows provides one; Firefox's
 maintenance service and Chrome's updater task work the same way. The task
-writes to three places and nowhere else: the installation folder,
+writes to three places and nowhere else: the installation folder, usually
 `C:\Program Files\TrickWork`; the entry under Apps, in
 `HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\TrickWork`; and
 `%ProgramData%\TrickWork`, for its log. It reads nothing from any user's
 profile and never opens a window. The folder under ProgramData belongs to the
 administrators, and only `settings.json` in it is open to other users. The
-installer has no page for choosing another folder. Together that leaves no
-file a user could swap for one the system account would run or write to. It
-downloads only from GitHub over HTTPS and installs a file only when it matches
-`checksums.txt`.
+installer gives the installation folder the same rights as Program Files.
+That leaves no file a user could swap for one the system account would run or
+write to.
+
+You can install into another folder too. Many second drives let everyone
+rename what sits at their top, and whoever can rename a folder above the
+installation can swap it. On such a drive the task runs as the person who
+installed TrickWork, without administrator rights, and that person may change
+the installation folder. Updates arrive the same way; only the version under
+Apps stays at the one first installed. The task downloads only from GitHub
+over HTTPS and installs a file only when it matches `checksums.txt`.
 
 #### Uninstalling
 
