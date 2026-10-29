@@ -15,6 +15,10 @@ import {
   IconGear,
   IconGrip,
   IconInfo,
+  IconLabelGlyph,
+  IconLabelReactive,
+  IconLabelText,
+  IconLabelTextGlyph,
   IconMoon,
   IconMotionOff,
   IconMotionStorm,
@@ -216,6 +220,12 @@ export function iconInfoTab(): string {
 export const THEME_GLYPHS = { dark: IconMoon, light: IconSun, system: IconThemeSystem }
 export const SHAPE_GLYPHS = { round: IconCornerRound, soft: IconCornerSoft, square: IconCornerSquare, leaf: IconCornerLeaf }
 export const MOTION_GLYPHS = { off: IconMotionOff, subtle: IconMotionSubtle, wild: IconMotionWild, storm: IconMotionStorm }
+export const LABEL_GLYPHS = {
+  text: IconLabelText,
+  textGlyph: IconLabelTextGlyph,
+  glyph: IconLabelGlyph,
+  reactive: IconLabelReactive,
+}
 
 export function segmentGlyph(glyph: Glyph): string {
   return glyphSvg(glyph, 16)

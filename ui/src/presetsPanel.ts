@@ -105,7 +105,7 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
   const summary = document.createElement('p')
   summary.className = 'controls-note'
 
-  panel.append(buttonRow, fileInput, summary)
+  panel.append(summary, fileInput, buttonRow)
 
   exportButton.addEventListener('click', () => {
     void (async () => {

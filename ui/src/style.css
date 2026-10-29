@@ -1036,9 +1036,15 @@ button:active:not(:disabled) {
   gap: 0.85rem;
 }
 
+.presets-panel .controls-note:empty {
+  display: none;
+}
+
+/* The buttons act on the whole card, so they stand in its foot at the end. */
 .presets-button-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.5rem;
 }
 

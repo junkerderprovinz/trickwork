@@ -94,7 +94,7 @@ function renderItem(item: BatchItem, isActive: boolean, index: number, store: St
   if (item.wasDownscaled) {
     const downscaledNote = document.createElement('span')
     downscaledNote.className = 'queue-item-downscaled'
-    downscaledNote.title = t('queue.downscaledTitle')
+    downscaledNote.setAttribute('data-tip', t('queue.downscaledTitle'))
     downscaledNote.textContent = t('queue.downscaledLabel')
     li.append(downscaledNote)
   }

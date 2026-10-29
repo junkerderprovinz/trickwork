@@ -26,7 +26,7 @@ import { infoIcon } from './design/tooltip'
 import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { motionMs } from './motion'
-import { iconReset, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
+import { iconReset, LABEL_GLYPHS, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
@@ -252,7 +252,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     const labelsRow = segmentedRow({
       label: t('appearance.labels'),
       labelExtra: infoIcon(t('appearance.labelsHint')),
-      choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]) })),
+      choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]), glyph: segmentGlyph(LABEL_GLYPHS[m]) })),
       value: labelMode,
       layout: 'row',
       rainbowBaseIndex: HUE_OFFSET.labels,
