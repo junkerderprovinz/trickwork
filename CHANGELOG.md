@@ -4,9 +4,16 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.5.2 - 2026-10-29
+
 ### 🎨 Design
 
 - The look follows GlimStone 3.7.0: the card grip is two columns of dots, each choice under Settings > Look > Labels has its own symbol, and Export settings and Import settings stand at the bottom right of their card under Settings > General.
+
+### ⚡ Improved
+
+- The desktop app runs on the stable Wails v3.0.0 instead of a beta, and the libraries and build tools are up to date.
+- The compose file follows the `latest` tag again instead of a fixed image digest, so `docker compose pull` brings new versions.
 
 ## 1.5.1 - 2026-10-21
 
