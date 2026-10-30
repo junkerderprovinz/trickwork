@@ -65,11 +65,11 @@ body.className = 'app-body glim-shell'
 app.appendChild(body)
 if (drawsOwnFrame()) mountWindowBar()
 
-// With only two destinations, the brand card at the top of the side column
-// carries the Settings button in place of GlimStone's sidebar, as GlimStone
-// allows for a single-workspace app.
-const brandCard = document.createElement('header')
-brandCard.className = 'glim-card brand-card'
+// With only two destinations, the brand bar over the main area carries the
+// Settings button in place of GlimStone's sidebar, as GlimStone allows for a
+// single-workspace app.
+const brandBar = document.createElement('header')
+brandBar.className = 'glim-card brand-bar'
 
 const brand = document.createElement('div')
 brand.className = 'app-brand'
@@ -78,11 +78,11 @@ const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
 brand.append(brandName)
-brandCard.appendChild(brand)
+brandBar.appendChild(brand)
 
 const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconSettings(), tone: 'neutral', stage: 'none' })
 settingsButton.classList.add('settings-button')
-brandCard.appendChild(settingsButton)
+brandBar.appendChild(settingsButton)
 
 // The main area shows the preview and its source cards, or the Settings page.
 const main = document.createElement('div')
@@ -148,7 +148,7 @@ const tabCards: Record<SettingsTab, HTMLElement[]> = {
 settingsCards.append(...generalCards, lookCard, appCard, ...infoCards)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
-body.append(brandCard, main, secondary)
+body.append(brandBar, main, secondary)
 
 let onSettings = false
 let settingsTab: SettingsTab = 'general'
@@ -207,9 +207,6 @@ function render(): void {
   secondary.style.display = onSettings ? 'none' : ''
   settingsView.style.display = onSettings ? '' : 'none'
   body.classList.toggle('app-body--settings', onSettings)
-  // On Settings the button leaves the brand card for the top right corner.
-  if (onSettings) body.appendChild(settingsButton)
-  else brandCard.appendChild(settingsButton)
   applyButtonLabel()
   // The page entrance runs on every arrival.
   for (const shown of onSettings ? [settingsView] : [primary, secondary]) replay(shown, 'glim-page-enter')

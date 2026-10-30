@@ -223,10 +223,32 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('Settings sorts its cards into four tabs between the brand card and the Back button', async ({ page }) => {
+test('the brand bar spans the Import and Crop cards, with Settings at its end', async ({ page }) => {
+  // The page entrance slides the cards in, so the boxes are measured at rest.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1820, height: 1000 })
   await page.goto('/')
-  const brand = page.locator('.brand-card')
-  const onConvert = await brand.boundingBox()
+  const bar = (await page.locator('.brand-bar').boundingBox())!
+  const row = (await page.locator('.app-primary-row').boundingBox())!
+  const settings = (await settingsButton(page).boundingBox())!
+  expect(bar.x).toBe(row.x)
+  expect(bar.x + bar.width).toBe(row.x + row.width)
+  expect(row.y - (bar.y + bar.height)).toBe(40)
+  expect(bar.x + bar.width - (settings.x + settings.width)).toBeLessThan(20)
+  await expect(page.locator('.app-brand-name')).toBeVisible()
+
+  // On a phone the bar leads the stacked cards and the mark stands alone.
+  await page.setViewportSize({ width: 360, height: 760 })
+  const narrow = (await page.locator('.brand-bar').boundingBox())!
+  const firstCard = (await page.locator('.app-primary-row > *').first().boundingBox())!
+  expect(narrow.y).toBeLessThan(firstCard.y)
+  await expect(page.locator('.app-brand-name')).toBeHidden()
+  expect(await page.locator('.brand-bar').evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
+})
+
+test('Settings sorts its cards into four tabs under the brand bar, which keeps Back at its end', async ({ page }) => {
+  await page.goto('/')
+  const brand = page.locator('.brand-bar')
 
   await settingsButton(page).click()
   const tabs = page.getByRole('tablist', { name: 'Settings section' })
@@ -252,16 +274,15 @@ test('Settings sorts its cards into four tabs between the brand card and the Bac
   const strip = await tabs.boundingBox()
   const back = await settingsButton(page).boundingBox()
   const middle = await page.evaluate(() => document.documentElement.clientWidth / 2)
-  if (!onConvert || !onSettings || !strip || !back) throw new Error('boxes missing')
-  // Beside the preview the card stands on the right. On Settings it takes the
-  // top left corner and Back the top right one, and the tabs stand in the
-  // middle of the screen.
-  expect(onConvert.x).toBeGreaterThan(strip.x)
-  expect(onSettings.x + onSettings.width).toBeLessThanOrEqual(strip.x)
+  if (!onSettings || !strip || !back) throw new Error('boxes missing')
+  // Settings has no sidecards, so the bar spans the window with Back at its
+  // end, and the tabs stand in the middle of the screen below it.
+  expect(onSettings.y + onSettings.height).toBeLessThan(strip.y)
+  expect(onSettings.x).toBeLessThanOrEqual(strip.x)
+  expect(onSettings.x + onSettings.width).toBeGreaterThanOrEqual(strip.x + strip.width)
   expect(back.x).toBeGreaterThanOrEqual(strip.x + strip.width)
+  expect(back.y).toBeLessThan(onSettings.y + onSettings.height)
   expect(Math.abs(strip.x + strip.width / 2 - middle)).toBeLessThan(2)
-  expect(Math.abs(onSettings.y - strip.y)).toBeLessThan(2)
-  expect(Math.abs(back.y - strip.y)).toBeLessThan(2)
 
   // Settings opens on the tab it was left on.
   await settingsButton(page).click()
