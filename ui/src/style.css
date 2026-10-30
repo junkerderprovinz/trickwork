@@ -31,6 +31,17 @@ body {
   box-sizing: border-box;
 }
 
+/* Under the window bar the page scrolls inside #app, so its scrollbar starts
+   at the bar's bottom edge instead of running up behind the bar. */
+:root:has(.glim-window-bar),
+:root:has(.glim-window-bar) body {
+  overflow: hidden;
+}
+:root:has(.glim-window-bar) #app {
+  height: 100%;
+  overflow-y: auto;
+}
+
 /* On the body, not the root: GlimStone measures its rem sizes, such as the
    README button's 10rem, against the browser's 16px. */
 body {

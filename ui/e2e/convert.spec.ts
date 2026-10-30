@@ -693,6 +693,8 @@ test('the browser has no Updates card, since only the desktop app updates itself
 test('the browser draws no window bar, since the browser has its own frame', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('.glim-window-bar')).toHaveCount(0)
+  const scrolls = await page.evaluate(() => document.documentElement.scrollHeight > innerHeight)
+  expect(scrolls).toBe(true)
 })
 
 // Stands in for the desktop build: the page comes from Wails' own origin, and
@@ -831,4 +833,30 @@ test('the desktop window draws its own title bar, whose buttons reach the window
   await page.mouse.move(box.x + 80, box.y + box.height / 2)
   await page.mouse.up()
   expect(await calls()).toContain('wails:drag')
+})
+
+test('under the window bar the page scrolls in a region that starts at the bar', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await page.goto(DESKTOP)
+  const bar = page.getByRole('banner', { name: 'TrickWork' })
+  await expect(bar).toBeVisible()
+  const layout = await page.evaluate(() => {
+    const scroller = document.getElementById('app')!
+    return {
+      barBottom: document.querySelector('.glim-window-bar')!.getBoundingClientRect().bottom,
+      scrollerTop: scroller.getBoundingClientRect().top,
+      scrollerBottom: scroller.getBoundingClientRect().bottom,
+      overflows: scroller.scrollHeight > scroller.clientHeight,
+      documentScrolls: document.documentElement.scrollHeight > innerHeight,
+    }
+  })
+  expect(layout.scrollerTop).toBe(layout.barBottom)
+  expect(layout.scrollerBottom).toBe(page.viewportSize()!.height)
+  expect(layout.overflows).toBe(true)
+  expect(layout.documentScrolls).toBe(false)
+
+  await page.mouse.move(400, 400)
+  await page.mouse.wheel(0, 600)
+  await expect.poll(() => page.evaluate(() => document.getElementById('app')!.scrollTop)).toBeGreaterThan(0)
+  expect((await bar.boundingBox())!.y).toBe(0)
 })
