@@ -69,7 +69,8 @@ if (drawsOwnFrame()) mountWindowBar()
 // Settings button in place of GlimStone's sidebar, as GlimStone allows for a
 // single-workspace app.
 const brandBar = document.createElement('header')
-brandBar.className = 'glim-card brand-bar'
+brandBar.className = 'glim-card glim-hue brand-bar'
+for (const [prop, value] of Object.entries(hueVars(0))) brandBar.style.setProperty(prop, value)
 
 const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'

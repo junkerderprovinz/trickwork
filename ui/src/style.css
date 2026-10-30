@@ -70,6 +70,7 @@ body {
 /* The two outer columns share what is left evenly, so the banner stands in
    the middle of the bar itself rather than of the room beside the name. */
 .brand-bar {
+  position: relative;
   grid-area: brand;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -88,6 +89,22 @@ body {
 .brand-bar .settings-button {
   grid-column: 3;
   justify-self: end;
+}
+
+/* The rule stops short of the corners, so it reads as a line under the bar in
+   every corner shape instead of bending up into the radius. */
+.brand-bar::after {
+  content: '';
+  position: absolute;
+  inset-inline: 1rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background-color: var(--accent);
+}
+.app-brand-mark {
+  padding-inline: 2rem;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent);
 }
 
 /* On a phone the button leaves no room to centre the banner and the name
@@ -303,12 +320,29 @@ body {
   color: var(--carbon-text);
   background: none;
 }
-/* The card in hand beats at twice the pace of the others, so the grab reads at
-   once. The pace still comes from the motion level's dial, and the levels
-   without a wiggle keep it still. */
+/* The card in hand shakes, fast and a little wider than its neighbours rock,
+   so the grab reads at once. Like every dial it has a value at each motion
+   level, and none moves at off. */
 @media (prefers-reduced-motion: no-preference) {
+  :root {
+    --motion-wiggle-grab-dur: 70ms;
+    --motion-wiggle-grab-angle: 1.2deg;
+  }
+  :root[data-motion='subtle'] {
+    --motion-wiggle-grab-dur: 110ms;
+    --motion-wiggle-grab-angle: .7deg;
+  }
+  :root[data-motion='off'] {
+    --motion-wiggle-grab-dur: 400ms;
+    --motion-wiggle-grab-angle: 0deg;
+  }
+  :root[data-motion='storm'] {
+    --motion-wiggle-grab-dur: 55ms;
+    --motion-wiggle-grab-angle: 1.8deg;
+  }
   .glim-drag-armed > .glim-drag-lift {
-    animation-duration: calc(var(--motion-wiggle-dur) / 2);
+    --motion-wiggle-angle: var(--motion-wiggle-grab-angle);
+    animation-duration: var(--motion-wiggle-grab-dur);
   }
 }
 

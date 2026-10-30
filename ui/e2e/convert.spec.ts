@@ -246,7 +246,7 @@ test('the brand bar spans the Import and Crop cards, with the banner in its midd
   expect(narrow.y).toBeLessThan(firstCard.y)
   await expect(page.locator('.app-brand-name')).toBeHidden()
   expect(await page.locator('.brand-bar').evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
-  const small = (await page.locator('.brand-bar .app-brand-logo').boundingBox())!
+  const small = (await page.locator('.brand-bar .app-brand-mark').boundingBox())!
   const button = (await settingsButton(page).boundingBox())!
   expect(small.x - narrow.x).toBeLessThan(20)
   expect(small.x + small.width).toBeLessThanOrEqual(button.x)
@@ -601,20 +601,24 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
   await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
 })
 
-test('the card in hand wiggles at twice the pace of the others, and holds still under reduced motion', async ({ page }) => {
+test('the card in hand shakes faster and wider than the others rock, and holds still under reduced motion', async ({ page }) => {
   await page.goto('/')
   const handle = page.locator('.app-secondary > [data-card-id="adjust"] .card-drag-handle')
   const box = (await handle.boundingBox())!
   const beats = () =>
     page.evaluate(() => {
-      const ms = (el: Element) => parseFloat(getComputedStyle(el).animationDuration) * 1000
-      return { held: ms(document.querySelector('.glim-drag-lift')!), other: ms(document.querySelector('.glim-drag-shift')!) }
+      const of = (el: Element) => {
+        const style = getComputedStyle(el)
+        return { ms: parseFloat(style.animationDuration) * 1000, angle: parseFloat(style.getPropertyValue('--motion-wiggle-angle')) }
+      }
+      return { held: of(document.querySelector('.glim-drag-lift')!), other: of(document.querySelector('.glim-drag-shift')!) }
     })
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
   await page.mouse.down()
   const lively = await beats()
-  expect(lively.other).toBeGreaterThan(0)
-  expect(lively.held).toBeCloseTo(lively.other / 2)
+  expect(lively.other.ms).toBeGreaterThan(0)
+  expect(lively.held.ms).toBeLessThanOrEqual(lively.other.ms / 3)
+  expect(lively.held.angle).toBeGreaterThan(lively.other.angle)
   await page.mouse.up()
 
   await page.emulateMedia({ reducedMotion: 'reduce' })
