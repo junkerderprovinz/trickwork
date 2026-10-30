@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Last ned',
   'info.reportFailed': 'TrickWork kunne ikke lagre feilrapporten.',
   'common.close': 'Lukk',
+  'frame.minimise': 'Minimer',
+  'frame.maximise': 'Maksimer',
+  'frame.restore': 'Gjenopprett',
   'common.copy': 'Kopier',
 
   'cards.reorderHandle': 'Dra for å omorganisere',

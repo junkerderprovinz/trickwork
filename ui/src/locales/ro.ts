@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Descarcă',
   'info.reportFailed': 'TrickWork nu a putut salva raportul de eroare.',
   'common.close': 'Închide',
+  'frame.minimise': 'Minimizează',
+  'frame.maximise': 'Maximizează',
+  'frame.restore': 'Restabilește',
   'common.copy': 'Copiază',
 
   'cards.reorderHandle': 'Trage pentru a reordona',

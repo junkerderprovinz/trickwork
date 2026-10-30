@@ -690,6 +690,11 @@ test('the browser has no Updates card, since only the desktop app updates itself
   await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
 })
 
+test('the browser draws no window bar, since the browser has its own frame', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.glim-window-bar')).toHaveCount(0)
+})
+
 // Stands in for the desktop build: the page comes from Wails' own origin, and
 // /wails/runtime.js answers the two bound setting methods and keeps the event
 // listeners where a test can reach them.
@@ -719,6 +724,17 @@ export const Events = {
   },
 }
 export const Browser = { OpenURL: async () => {} }
+export const Window = {
+  Minimise: async () => { w.__window.push('minimise') },
+  ToggleMaximise: async () => {
+    w.__window.push('toggle')
+    w.__maximised = !w.__maximised
+    window.dispatchEvent(new Event('resize'))
+  },
+  Close: async () => { w.__window.push('close') },
+  IsMaximised: async () => w.__maximised,
+}
+export const System = { invoke: (message) => w.__window.push(message) }
 `
 
 async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false) {
@@ -730,6 +746,8 @@ async function fakeDesktop(page: import('@playwright/test').Page, stored: boolea
       w.__calls = []
       w.__saves = []
       w.__listeners = {}
+      w.__window = []
+      w.__maximised = false
     },
     [stored, refuse],
   )
@@ -794,4 +812,23 @@ test('a downloaded update shows a toast that goes away on its own', async ({ pag
   const toast = page.getByRole('status').filter({ hasText: 'Version 1.4.0' })
   await expect(toast).toHaveText('Version 1.4.0 has been downloaded and starts the next time you open TrickWork.')
   await expect(toast).toHaveCount(0, { timeout: 6000 })
+})
+
+test('the desktop window draws its own title bar, whose buttons reach the window', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await page.goto(DESKTOP)
+  const bar = page.getByRole('banner', { name: 'TrickWork' })
+  const calls = () => page.evaluate(() => (window as unknown as { __window: string[] }).__window)
+  await bar.getByRole('button', { name: 'Minimise' }).click()
+  await bar.getByRole('button', { name: 'Maximise' }).click()
+  await expect(bar.getByRole('button', { name: 'Restore' })).toBeVisible()
+  await bar.getByRole('button', { name: 'Close' }).click()
+  expect(await calls()).toEqual(['minimise', 'toggle', 'close'])
+
+  const box = (await bar.boundingBox())!
+  await page.mouse.move(box.x + 40, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + 80, box.y + box.height / 2)
+  await page.mouse.up()
+  expect(await calls()).toContain('wails:drag')
 })

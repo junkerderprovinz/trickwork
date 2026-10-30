@@ -275,6 +275,9 @@ export const en = {
   'info.download': 'Download',
   'info.reportFailed': 'TrickWork could not save the bug report.',
   'common.close': 'Close',
+  'frame.minimise': 'Minimise',
+  'frame.maximise': 'Maximise',
+  'frame.restore': 'Restore',
   'common.copy': 'Copy',
 
   'cards.reorderHandle': 'Drag to reorder',
@@ -553,6 +556,9 @@ export const de: Translations = {
   'info.download': 'Herunterladen',
   'info.reportFailed': 'TrickWork konnte den Fehlerbericht nicht speichern.',
   'common.close': 'Schließen',
+  'frame.minimise': 'Minimieren',
+  'frame.maximise': 'Maximieren',
+  'frame.restore': 'Wiederherstellen',
   'common.copy': 'Kopieren',
 
   'cards.reorderHandle': 'Zum Umsortieren ziehen',

@@ -268,6 +268,9 @@ const dict: Translations = {
   'info.download': 'تنزيل',
   'info.reportFailed': 'تعذّر على TrickWork حفظ تقرير الخطأ.',
   'common.close': 'إغلاق',
+  'frame.minimise': 'تصغير',
+  'frame.maximise': 'تكبير',
+  'frame.restore': 'استعادة',
   'common.copy': 'نسخ',
 
   'cards.reorderHandle': 'اسحب لإعادة الترتيب',

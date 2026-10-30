@@ -268,6 +268,9 @@ const dict: Translations = {
   'info.download': '다운로드',
   'info.reportFailed': 'TrickWork가 버그 리포트를 저장하지 못했습니다.',
   'common.close': '닫기',
+  'frame.minimise': '최소화',
+  'frame.maximise': '최대화',
+  'frame.restore': '이전 크기로',
   'common.copy': '복사',
 
   'cards.reorderHandle': '드래그하여 순서 변경',

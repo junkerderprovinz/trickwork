@@ -11,7 +11,8 @@ import { GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
 import { openExternal } from './donateWindows'
 import { downloadBlob } from './download'
 import { currentLocale, subscribeLocale, t } from './i18n'
-import { iconDiagnostics, iconInfo } from './icons'
+import type { Glyph } from './glyphs'
+import { buttonGlyph, iconDiagnostics, iconInfo, UPDATE_GLYPHS } from './icons'
 import { replay } from './motion'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
 import { openReleaseNotes } from './releaseNotes'
@@ -81,6 +82,16 @@ const VERDICT_TONE: Record<Verdict, ButtonTone> = {
   failed: 'danger',
 }
 
+// A failed check keeps the check's own glyph, since pressing it again is the
+// way on.
+const VERDICT_GLYPH: Record<Verdict, Glyph> = {
+  idle: UPDATE_GLYPHS.check,
+  busy: UPDATE_GLYPHS.check,
+  current: UPDATE_GLYPHS.current,
+  found: UPDATE_GLYPHS.found,
+  failed: UPDATE_GLYPHS.check,
+}
+
 /**
  * Check for updates shows its verdict on itself, like a test button: green
  * when TrickWork is current, orange when a release is newer, red with a shake
@@ -101,9 +112,9 @@ function updateCheckButton(): HTMLButtonElement {
   const stage = (): ReturnType<typeof groupStage> =>
     groupStage([t('info.check'), t('info.upToDate'), t('info.updateFound'), t('info.checkFailed')])
 
-  const btn = glimButton({ label: label(), tone: 'neutral', stage: stage() })
+  const btn = glimButton({ label: label(), glyph: buttonGlyph(VERDICT_GLYPH[verdict]), tone: 'neutral', stage: stage() })
   function paint(): void {
-    updateButton(btn, { label: label(), tone: VERDICT_TONE[verdict], stage: stage() })
+    updateButton(btn, { label: label(), glyph: buttonGlyph(VERDICT_GLYPH[verdict]), tone: VERDICT_TONE[verdict], stage: stage() })
     btn.setAttribute('aria-busy', String(verdict === 'busy'))
   }
 

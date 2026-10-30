@@ -268,6 +268,9 @@ const dict: Translations = {
   'info.download': 'הורדה',
   'info.reportFailed': 'TrickWork לא הצליח לשמור את דוח התקלה.',
   'common.close': 'סגור',
+  'frame.minimise': 'מזער',
+  'frame.maximise': 'הגדל',
+  'frame.restore': 'שחזר',
   'common.copy': 'העתק',
 
   'cards.reorderHandle': 'גרור לסידור מחדש',

@@ -4,6 +4,12 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- The look follows GlimStone 3.8.0. On Windows and Linux the desktop app draws its own title bar in TrickWork's colours, with minimise, maximise and close at its end. You can still drag it, double-click it to maximise and pull the window's edges. macOS keeps its own title bar.
+- Every button wears GlimStone's symbol for what it does, so the Symbol choice under Settings > Look > Labels reaches all of them. Check for updates shows a cloud that changes with the answer, the export buttons and Export settings an arrow out, Import settings an arrow in, and Undo, Redo, Reset, Copy, Close and Clear selection the shared drawings.
+- On a phone the four choices under Settings > Look > Labels stand two by two, and a long one wraps instead of being cut off.
+
 ## 1.5.2 - 2026-10-29
 
 ### 🎨 Design

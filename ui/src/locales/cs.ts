@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Stáhnout',
   'info.reportFailed': 'TrickWork nemohl uložit hlášení chyby.',
   'common.close': 'Zavřít',
+  'frame.minimise': 'Minimalizovat',
+  'frame.maximise': 'Maximalizovat',
+  'frame.restore': 'Obnovit',
   'common.copy': 'Kopírovat',
 
   'cards.reorderHandle': 'Přetažením přeuspořádat',

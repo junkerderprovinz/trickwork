@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"runtime"
 
 	"github.com/junkerderprovinz/trickwork/webembed"
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -19,19 +20,24 @@ func main() {
 	}
 
 	svc := NewApp()
-	app := application.New(application.Options{
+	opts := application.Options{
 		Name:        "TrickWork",
 		Description: "Turns images into proportional-font-aware ASCII art",
 		Services:    []application.Service{application.NewService(svc)},
 		Assets:      application.AssetOptions{Handler: application.AssetFileServerFS(webembed.Dist)},
 		// One window, and closing it ends the program on macOS as well.
 		Mac: application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
-	})
+	}
+	app := application.New(opts)
 	svc.app = app
+	// The page draws the title bar on Windows and Linux (ui/src/windowBar.ts),
+	// where a frameless window still keeps its shadow, corners and snapping.
+	// macOS keeps the traffic lights people reach for.
 	svc.window = app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:  "TrickWork",
-		Width:  1200,
-		Height: 800,
+		Title:     "TrickWork",
+		Width:     1200,
+		Height:    800,
+		Frameless: runtime.GOOS != "darwin",
 	})
 
 	if err := app.Run(); err != nil {

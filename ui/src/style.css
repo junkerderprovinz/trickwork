@@ -25,6 +25,12 @@ html, body {
   color: var(--carbon-text);
 }
 
+/* The window bar's room comes off the body's own height, so a page that fits
+   the window does not scroll by the height of the bar. */
+body {
+  box-sizing: border-box;
+}
+
 /* On the body, not the root: GlimStone measures its rem sizes, such as the
    README button's 10rem, against the browser's 16px. */
 body {
@@ -136,6 +142,12 @@ body {
   gap: 2.5rem 1rem;
   padding: 1.75rem 1.5rem 1.5rem;
   align-items: start;
+}
+
+/* Under the window bar the shell drops its top gutter, but a card's heading
+   badge still stands half above the card's top edge and needs that half. */
+:root:has(.glim-window-bar) .app-body.glim-shell {
+  padding-top: 0.75rem;
 }
 
 .app-main {
@@ -526,6 +538,23 @@ canvas.preview-canvas[width="0"] {
 .setting-row > .segmented-row {
   width: auto;
   margin-inline-start: auto;
+}
+
+/* A selector whose labels run long goes two to a row on a phone, so its four
+   segments make a grid of two by two and a label that does not fit its half
+   wraps instead of being cut off. */
+.segmented-row.segmented-row--pairs > .segmented-button {
+  flex: 1 0 var(--seg-basis, auto);
+}
+@media (max-width: 599.98px) {
+  .setting-row > .segmented-row--pairs {
+    width: 100%;
+    --seg-basis: calc(50% - 0.25rem);
+  }
+  .segmented-row.segmented-row--pairs > .segmented-button {
+    min-width: 0;
+    white-space: normal;
+  }
 }
 
 .control-slider .control-slider-row {
@@ -1014,6 +1043,17 @@ button:active:not(:disabled) {
   scale: none;
 }
 
+/* A window button is a blank control on the ground: the square inside it
+   hovers and gives way on press, the full-height button does neither. */
+.glim-window-button,
+.glim-window-button:hover {
+  background: none;
+  border-radius: 0;
+}
+.glim-window-button:active:not(:disabled) {
+  scale: none;
+}
+
 /* The format buttons share their row evenly; Copy keeps its own width. */
 .export-format-row .glim-btn {
   flex: 1 0 3.5rem;
@@ -1387,7 +1427,7 @@ button:active:not(:disabled) {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 100vh;
+  max-height: calc(100vh - var(--window-bar));
   overflow-y: auto;
   padding: 1rem;
   pointer-events: none;
@@ -1506,6 +1546,7 @@ button:active:not(:disabled) {
 .window-backdrop {
   position: fixed;
   inset: 0;
+  top: var(--window-bar);
   z-index: 50;
   display: flex;
   align-items: center;
@@ -1573,6 +1614,7 @@ button:active:not(:disabled) {
   --text-caption: 0.6875rem;
   position: fixed;
   inset: 0;
+  top: var(--window-bar);
   z-index: 50;
   display: flex;
   align-items: center;

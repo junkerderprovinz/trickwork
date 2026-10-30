@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'İndir',
   'info.reportFailed': 'TrickWork hata raporunu kaydedemedi.',
   'common.close': 'Kapat',
+  'frame.minimise': 'Simge durumuna küçült',
+  'frame.maximise': 'Ekranı kapla',
+  'frame.restore': 'Önceki boyut',
   'common.copy': 'Kopyala',
 
   'cards.reorderHandle': 'Yeniden sıralamak için sürükleyin',

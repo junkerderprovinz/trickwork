@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Λήψη',
   'info.reportFailed': 'Το TrickWork δεν μπόρεσε να αποθηκεύσει την αναφορά σφάλματος.',
   'common.close': 'Κλείσιμο',
+  'frame.minimise': 'Ελαχιστοποίηση',
+  'frame.maximise': 'Μεγιστοποίηση',
+  'frame.restore': 'Επαναφορά',
   'common.copy': 'Αντιγραφή',
 
   'cards.reorderHandle': 'Σύρετε για αναδιάταξη',

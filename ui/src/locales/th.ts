@@ -268,6 +268,9 @@ const dict: Translations = {
   'info.download': 'ดาวน์โหลด',
   'info.reportFailed': 'TrickWork บันทึกรายงานข้อผิดพลาดไม่ได้',
   'common.close': 'ปิด',
+  'frame.minimise': 'ย่อเล็กสุด',
+  'frame.maximise': 'ขยายใหญ่สุด',
+  'frame.restore': 'คืนค่าลง',
   'common.copy': 'คัดลอก',
 
   'cards.reorderHandle': 'ลากเพื่อจัดเรียงใหม่',

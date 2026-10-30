@@ -5,15 +5,19 @@
 
 import {
   IconBack,
+  IconClearSelection,
+  IconClose,
+  IconCopy,
   IconCornerLeaf,
   IconCornerRound,
   IconCornerSoft,
   IconCornerSquare,
   IconDiagnostics,
-  IconDownload,
+  IconExport,
   IconExternalLink,
   IconGear,
   IconGrip,
+  IconImport,
   IconInfo,
   IconLabelGlyph,
   IconLabelReactive,
@@ -24,18 +28,21 @@ import {
   IconMotionStorm,
   IconMotionSubtle,
   IconMotionWild,
+  IconRefresh,
   IconSun,
   IconTabApp,
   IconTabGeneral,
   IconTabLook,
   IconThemeSystem,
-  IconUpload,
+  IconUndo,
+  IconUpToDate,
+  IconUpdate,
+  IconUpdateAvailable,
+  IconWindowMaximise,
+  IconWindowMinimise,
+  IconWindowRestore,
   type Glyph,
 } from './glyphs'
-
-function svg(inner: string, viewBox = '0 0 20 20'): string {
-  return `<svg width="22" height="22" viewBox="${viewBox}" fill="none" class="nav-icon" aria-hidden="true">${inner}</svg>`
-}
 
 // A toggle button shows nothing but its icon, so the icon is larger.
 function controlSvg(inner: string): string {
@@ -116,51 +123,11 @@ export function iconUpload(): string {
     `</svg>`
 }
 
-// A corner-up-left arrow for Undo.
-export function iconUndo(): string {
-  return svg(
-    `<path d="M7.5 12 3.5 8l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
-      `<path d="M16.5 16v-4.5A3.5 3.5 0 0 0 13 8H3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
-  )
-}
-
-// The mirror of iconUndo() for Redo.
-export function iconRedo(): string {
-  return svg(
-    `<path d="M12.5 12 16.5 8l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />` +
-      `<path d="M3.5 16v-4.5A3.5 3.5 0 0 1 7 8h9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
-  )
-}
-
-// A counter-clockwise circular arrow for reset to default, as in
-// CannonadeCommand; the corner arrow of iconUndo() already means a step back
-// in history.
-export function iconReset(): string {
-  return controlSvg(
-    `<path d="M4 10a6 6 0 1 1 1.9 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
-      `<path d="M4 6v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />`,
-  )
-}
-
-// A clipboard for the preview's Copy badge.
-export function iconCopy(): string {
-  return controlSvg(
-    `<rect x="6" y="4.5" width="9" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none" />` +
-      `<path d="M8.5 4.5V3.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.3" fill="none" />`,
-  )
-}
-
 // A checkmark for the Copy badge's brief "copied" state. It draws itself;
 // `pathLength` lets the stroke animation ignore the path's real length.
 export function iconCheck(): string {
   return controlSvg(`<path class="glim-check-draw" pathLength="1" d="M4.5 10.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />`)
 }
-
-// A cross for clearing a selection.
-export function iconClear(): string {
-  return controlSvg(`<path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none" />`)
-}
-
 
 // A glyph from GlimStone's assortment (glyphs.ts), drawn at `size`. A glyph
 // beside a button's words takes its size from .glim-btn-glyph in tokens.css.
@@ -180,12 +147,38 @@ export function iconSettings(): string {
   return glyphSvg(IconGear, 22)
 }
 
-export function iconDownload(): string {
-  return glyphSvg(IconDownload, 19)
+export function iconExport(): string {
+  return glyphSvg(IconExport, 19)
 }
 
 export function iconImport(): string {
-  return glyphSvg(IconUpload, 19)
+  return glyphSvg(IconImport, 19)
+}
+
+export function iconUndo(): string {
+  return glyphSvg(IconUndo, 19)
+}
+
+// The assortment has no redo, so Redo wears Undo turned to face the other way.
+export function iconRedo(): string {
+  const [x = 0, , w = 0] = IconUndo.viewBox.split(' ').map(Number)
+  return glyphSvg({ ...IconUndo, body: `<g transform="matrix(-1 0 0 1 ${2 * x + w} 0)">${IconUndo.body}</g>` }, 19)
+}
+
+export function iconCopy(): string {
+  return glyphSvg(IconCopy, 19)
+}
+
+export function iconClose(): string {
+  return glyphSvg(IconClose, 19)
+}
+
+export function iconClearSelection(): string {
+  return glyphSvg(IconClearSelection, 19)
+}
+
+export function iconReset(): string {
+  return glyphSvg(IconRefresh, 19)
 }
 
 export function iconInfo(): string {
@@ -198,6 +191,19 @@ export function iconExternalLink(): string {
 
 export function iconDiagnostics(): string {
   return glyphSvg(IconDiagnostics, 19)
+}
+
+export const UPDATE_GLYPHS = { check: IconUpdate, current: IconUpToDate, found: IconUpdateAvailable }
+
+export function buttonGlyph(glyph: Glyph): string {
+  return glyphSvg(glyph, 19)
+}
+
+export const WINDOW_GLYPHS = {
+  minimise: IconWindowMinimise,
+  maximise: IconWindowMaximise,
+  restore: IconWindowRestore,
+  close: IconClose,
 }
 
 // A settings tab's glyph is the rail's size, 20px.

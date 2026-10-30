@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Tải xuống',
   'info.reportFailed': 'TrickWork không lưu được báo cáo lỗi.',
   'common.close': 'Đóng',
+  'frame.minimise': 'Thu nhỏ',
+  'frame.maximise': 'Phóng to',
+  'frame.restore': 'Khôi phục',
   'common.copy': 'Sao chép',
 
   'cards.reorderHandle': 'Kéo để sắp xếp lại',

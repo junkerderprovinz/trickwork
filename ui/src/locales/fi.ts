@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Lataa',
   'info.reportFailed': 'TrickWork ei voinut tallentaa virheraporttia.',
   'common.close': 'Sulje',
+  'frame.minimise': 'Pienennä',
+  'frame.maximise': 'Suurenna',
+  'frame.restore': 'Palauta',
   'common.copy': 'Kopioi',
 
   'cards.reorderHandle': 'Vedä järjestääksesi uudelleen',

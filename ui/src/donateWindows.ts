@@ -7,7 +7,7 @@ import { hueVars } from './design/appearance'
 import { donationHandlers, loadPaypal, parseAmount, type GiveFrequency } from './design/paypal'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
 import { COFFEE_WIDGET, COIN_MARKS, COIN_TILES, CRYPTO_COINS, PAYPAL_GIVING, PAYPAL_PAGE, markSvg, type CryptoCoin, type CryptoNetwork } from './donate'
-import { iconCheck, iconClear, iconCopy } from './icons'
+import { iconCheck, iconClose, iconCopy } from './icons'
 import { t } from './i18n'
 import { qrSvg } from './qr'
 import { desktopRuntime, isDesktop } from './wails'
@@ -56,7 +56,7 @@ function openWindow(title: string, onClose?: () => void): Win {
     onClose?.()
     opener?.focus()
   }
-  const closeButton = glimButton({ label: t('common.close'), glyph: iconClear(), tone: 'neutral', onClick: close })
+  const closeButton = glimButton({ label: t('common.close'), glyph: iconClose(), tone: 'neutral', onClick: close })
   footer.appendChild(closeButton)
   backdrop.addEventListener('click', (event) => {
     if (event.target === backdrop) close()

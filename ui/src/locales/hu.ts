@@ -269,6 +269,9 @@ const dict: Translations = {
   'info.download': 'Letöltés',
   'info.reportFailed': 'A TrickWork nem tudta menteni a hibajelentést.',
   'common.close': 'Bezárás',
+  'frame.minimise': 'Kis méret',
+  'frame.maximise': 'Teljes méret',
+  'frame.restore': 'Előző méret',
   'common.copy': 'Másolás',
 
   'cards.reorderHandle': 'Húzza az átrendezéshez',

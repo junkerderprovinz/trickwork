@@ -7,7 +7,7 @@ import { glimButton } from './controlWidgets'
 import { openExternal } from './donateWindows'
 import { REPO } from './donate'
 import { t } from './i18n'
-import { iconClear, iconExternalLink } from './icons'
+import { iconClose, iconExternalLink } from './icons'
 import { releaseNotes } from './releases'
 import { APP_VERSION } from './version'
 
@@ -97,7 +97,7 @@ export function openReleaseNotes(): void {
     glyph: iconExternalLink(),
     onClick: () => openExternal(`${REPO}/releases/tag/v${APP_VERSION}`),
   })
-  const closeButton = glimButton({ label: t('common.close'), glyph: iconClear(), tone: 'neutral', onClick: close })
+  const closeButton = glimButton({ label: t('common.close'), glyph: iconClose(), tone: 'neutral', onClick: close })
   footer.append(releasePage, closeButton)
   card.append(heading, body, footer)
   backdrop.appendChild(card)

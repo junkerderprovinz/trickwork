@@ -4,7 +4,7 @@
 import { normalizeRotation, type MappingOptions } from 'trickwork-core'
 import { glimButton, updateButton } from './controlWidgets'
 import { downloadBlob } from './download'
-import { iconDownload, iconImport } from './icons'
+import { iconExport, iconImport } from './icons'
 import { subscribeLocale, t } from './i18n'
 import { replay } from './motion'
 import type { Store } from './state'
@@ -93,7 +93,7 @@ export function mountPresetsPanel(container: HTMLElement, store: Store): void {
   const buttonRow = document.createElement('div')
   buttonRow.className = 'presets-button-row'
 
-  const exportButton = glimButton({ label: t('presets.exportButton'), glyph: iconDownload() })
+  const exportButton = glimButton({ label: t('presets.exportButton'), glyph: iconExport() })
   const importButton = glimButton({ label: t('presets.importButton'), glyph: iconImport() })
   buttonRow.append(exportButton, importButton)
 

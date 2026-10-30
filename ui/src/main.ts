@@ -26,7 +26,8 @@ import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { listenForUpdates, mountUpdatePanel } from './updatePanel'
-import { isDesktop } from './wails'
+import { drawsOwnFrame, isDesktop } from './wails'
+import { mountWindowBar } from './windowBar'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
 import { iconApp, iconSettings, iconBack, iconGeneral, iconInfoTab, iconLook } from './icons'
@@ -60,8 +61,9 @@ function section(hue: number, extra = ''): HTMLDivElement {
 }
 
 const body = document.createElement('div')
-body.className = 'app-body'
+body.className = 'app-body glim-shell'
 app.appendChild(body)
+if (drawsOwnFrame()) mountWindowBar()
 
 // With only two destinations, the brand card at the top of the side column
 // carries the Settings button in place of GlimStone's sidebar, as GlimStone

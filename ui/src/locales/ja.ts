@@ -268,6 +268,9 @@ const dict: Translations = {
   'info.download': 'ダウンロード',
   'info.reportFailed': 'TrickWork はバグレポートを保存できませんでした。',
   'common.close': '閉じる',
+  'frame.minimise': '最小化',
+  'frame.maximise': '最大化',
+  'frame.restore': '元に戻す',
   'common.copy': 'コピー',
 
   'cards.reorderHandle': 'ドラッグして並べ替え',

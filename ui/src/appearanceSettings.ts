@@ -255,6 +255,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]), glyph: segmentGlyph(LABEL_GLYPHS[m]) })),
       value: labelMode,
       layout: 'row',
+      pairs: true,
       rainbowBaseIndex: HUE_OFFSET.labels,
       onChange: (value) => {
         labelMode = value

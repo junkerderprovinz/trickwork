@@ -61,6 +61,8 @@ export interface SegmentedRowOptions<T extends string> {
   variant?: 'well' | 'chip'
   /** Content for the label row, such as an info icon. */
   labelExtra?: HTMLElement
+  /** For labels that run long: two segments to a row on a phone. */
+  pairs?: boolean
 }
 
 /**
@@ -86,7 +88,7 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   }
 
   const row = document.createElement('div')
-  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}`
+  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}${opts.pairs ? ' segmented-row--pairs' : ''}`
   row.setAttribute('role', 'tablist')
   const name = opts.label ?? opts.ariaLabel
   if (name) row.setAttribute('aria-label', name)

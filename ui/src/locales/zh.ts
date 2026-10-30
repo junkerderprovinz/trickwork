@@ -267,6 +267,9 @@ const dict: Translations = {
   'info.download': '下载',
   'info.reportFailed': 'TrickWork 无法保存错误报告。',
   'common.close': '关闭',
+  'frame.minimise': '最小化',
+  'frame.maximise': '最大化',
+  'frame.restore': '还原',
   'common.copy': '复制',
 
   'cards.reorderHandle': '拖动以重新排序',

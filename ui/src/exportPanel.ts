@@ -14,7 +14,7 @@ import { downloadBlob } from './download'
 import { applyHueVars, glimButton, updateButton } from './controlWidgets'
 import { subscribeRainbow } from './design/appearance'
 import { infoIcon } from './design/tooltip'
-import { iconCheck, iconCopy, iconDownload } from './icons'
+import { iconCheck, iconCopy, iconExport } from './icons'
 import { subscribeLocale, t } from './i18n'
 import { replay } from './motion'
 import type { BatchItem, Store } from './state'
@@ -51,6 +51,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
     // every mode.
     const button: HTMLButtonElement = glimButton({
       label: format.toUpperCase(),
+      glyph: iconExport(),
       keepLabel: true,
       stage: 'none',
       onClick: () => void exportActive(store, format, summary, button),
@@ -68,7 +69,7 @@ export function mountExportPanel(container: HTMLElement, store: Store): void {
 
   const batchButton = glimButton({
     label: t('export.batchButton'),
-    glyph: iconDownload(),
+    glyph: iconExport(),
     onClick: () => void exportAllAsText(store, summary),
   })
   panel.appendChild(batchButton)

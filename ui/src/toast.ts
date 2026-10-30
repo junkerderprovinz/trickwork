@@ -3,7 +3,7 @@
 // card holds its clock and keeps the time left, so a card under a wandering
 // pointer still runs out.
 
-import { iconClear } from './icons'
+import { iconClose } from './icons'
 import { t } from './i18n'
 
 const DURATION_MS = 4000
@@ -42,7 +42,7 @@ export function showToast(message: string, severity: ToastSeverity = 'success'):
   close.type = 'button'
   close.className = 'toast-close'
   close.setAttribute('aria-label', t('common.close'))
-  close.innerHTML = iconClear()
+  close.innerHTML = iconClose()
   card.insertAdjacentHTML('afterbegin', glyph)
   card.append(text, close)
 
