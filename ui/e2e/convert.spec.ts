@@ -223,7 +223,7 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('the brand bar spans the Import and Crop cards, with Settings at its end', async ({ page }) => {
+test('the brand bar spans the Import and Crop cards, with the banner in its middle and Settings at its end', async ({ page }) => {
   // The page entrance slides the cards in, so the boxes are measured at rest.
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 1820, height: 1000 })
@@ -235,15 +235,22 @@ test('the brand bar spans the Import and Crop cards, with Settings at its end', 
   expect(bar.x + bar.width).toBe(row.x + row.width)
   expect(row.y - (bar.y + bar.height)).toBe(40)
   expect(bar.x + bar.width - (settings.x + settings.width)).toBeLessThan(20)
+  const banner = (await page.locator('.brand-bar .app-brand-logo').boundingBox())!
+  expect(Math.abs(banner.x + banner.width / 2 - (bar.x + bar.width / 2))).toBeLessThan(1)
   await expect(page.locator('.app-brand-name')).toBeVisible()
 
-  // On a phone the bar leads the stacked cards and the mark stands alone.
+  // On a phone the bar leads the stacked cards and the banner takes the name's place.
   await page.setViewportSize({ width: 360, height: 760 })
   const narrow = (await page.locator('.brand-bar').boundingBox())!
   const firstCard = (await page.locator('.app-primary-row > *').first().boundingBox())!
   expect(narrow.y).toBeLessThan(firstCard.y)
   await expect(page.locator('.app-brand-name')).toBeHidden()
   expect(await page.locator('.brand-bar').evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
+  const small = (await page.locator('.brand-bar .app-brand-logo').boundingBox())!
+  const button = (await settingsButton(page).boundingBox())!
+  expect(small.x - narrow.x).toBeLessThan(20)
+  expect(small.x + small.width).toBeLessThanOrEqual(button.x)
+  expect(narrow.x + narrow.width - (button.x + button.width)).toBeLessThan(20)
 })
 
 test('Settings sorts its cards into four tabs under the brand bar, which keeps Back at its end', async ({ page }) => {
@@ -592,6 +599,29 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
 
   await page.reload()
   await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
+})
+
+test('the card in hand wiggles at twice the pace of the others, and holds still under reduced motion', async ({ page }) => {
+  await page.goto('/')
+  const handle = page.locator('.app-secondary > [data-card-id="adjust"] .card-drag-handle')
+  const box = (await handle.boundingBox())!
+  const beats = () =>
+    page.evaluate(() => {
+      const ms = (el: Element) => parseFloat(getComputedStyle(el).animationDuration) * 1000
+      return { held: ms(document.querySelector('.glim-drag-lift')!), other: ms(document.querySelector('.glim-drag-shift')!) }
+    })
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  const lively = await beats()
+  expect(lively.other).toBeGreaterThan(0)
+  expect(lively.held).toBeCloseTo(lively.other / 2)
+  await page.mouse.up()
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.mouse.down()
+  const still = await page.evaluate(() => getComputedStyle(document.querySelector('.glim-drag-lift')!).animationName)
+  expect(still).toBe('none')
+  await page.mouse.up()
 })
 
 test('the App card in the browser offers the desktop downloads of the running version', async ({ page }) => {

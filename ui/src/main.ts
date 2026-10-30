@@ -71,14 +71,13 @@ if (drawsOwnFrame()) mountWindowBar()
 const brandBar = document.createElement('header')
 brandBar.className = 'glim-card brand-bar'
 
-const brand = document.createElement('div')
-brand.className = 'app-brand'
-brand.innerHTML = brandLogo()
 const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
-brand.append(brandName)
-brandBar.appendChild(brand)
+const brandMark = document.createElement('div')
+brandMark.className = 'app-brand-mark'
+brandMark.innerHTML = brandLogo()
+brandBar.append(brandName, brandMark)
 
 const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconSettings(), tone: 'neutral', stage: 'none' })
 settingsButton.classList.add('settings-button')
