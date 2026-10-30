@@ -4,17 +4,19 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+## 1.6.0 - 2026-10-30
+
+### ✨ Added
+
+- On Windows and Linux the desktop app draws its own title bar in TrickWork's colours, with Minimise, Maximise and Close at its right end. You can drag it to move the window, double-click it to maximise, and pull the window's edges to resize it. macOS keeps its own title bar.
+
 ### 🎨 Design
 
-- The look follows GlimStone 3.8.0. On Windows and Linux the desktop app draws its own title bar in TrickWork's colours, with minimise, maximise and close at its end. You can still drag it, double-click it to maximise and pull the window's edges. macOS keeps its own title bar.
-- Every button wears GlimStone's symbol for what it does, so the Symbol choice under Settings > Look > Labels reaches all of them. Check for updates shows a cloud that changes with the answer, the export buttons and Export settings an arrow out, Import settings an arrow in, and Undo, Redo, Reset, Copy, Close and Clear selection the shared drawings.
+- The look follows GlimStone 3.8.0.
+- The logo, the name, TrickWork's claim and the Settings button sit in one slim bar above the Import and Crop cards, with Settings at the right end. On the Settings page the bar spans the window and Back takes Settings' place. On a narrow screen the claim and then the name make room.
+- Every button shows GlimStone's symbol for what it does, so the Symbol choice under Settings > Look > Labels now reaches all of them. Check for updates under Settings > Info shows a cloud that changes with the answer. The buttons in the Export card and Export settings under Settings > General show an arrow pointing out, Import settings one pointing in. Undo, Redo, Reset, Copy, Close and Clear selection use the shared drawings.
+- A card you grab by its handle shakes quickly while the others keep rocking gently. The speed follows Settings > Look > Animations, and nothing moves when it is set to Off or your system asks for less motion.
 - On a phone the four choices under Settings > Look > Labels stand two by two, and a long one wraps instead of being cut off.
-- The logo, the name, TrickWork's claim and the Settings button sit in one slim bar over the Import and Crop cards, with Settings at its right end. On the Settings page the bar spans the window and Back takes Settings' place. On a phone the claim and then the name make room, and the logo and the button stay.
-- A card you grab by its handle shakes quickly while the others keep rocking gently, at the pace your Animations setting gives it.
-
-### ⚡ Improved
-
-- The desktop test build keeps its settings and the window's storage in a folder of its own, so trying it leaves a real installation's look and settings alone.
 
 ## 1.5.2 - 2026-10-29
 
