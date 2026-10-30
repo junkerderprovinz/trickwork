@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/junkerderprovinz/trickwork/webembed"
@@ -27,6 +28,11 @@ func main() {
 		Assets:      application.AssetOptions{Handler: application.AssetFileServerFS(webembed.Dist)},
 		// One window, and closing it ends the program on macOS as well.
 		Mac: application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
+	}
+	if ownWebview {
+		if dir, err := configDir(); err == nil {
+			opts.Windows.WebviewUserDataPath = filepath.Join(dir, "webview")
+		}
 	}
 	app := application.New(opts)
 	svc.app = app

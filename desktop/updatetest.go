@@ -14,11 +14,13 @@ import (
 // the environment can change where an update comes from.
 //
 // It also installs under a name of its own, the one desktop/README.md gives
-// its installer, so trying it leaves a real installation alone. The scheduled
+// its installer, and keeps its settings and the window's storage in a folder
+// of that name, so trying it leaves a real installation alone. The scheduled
 // task starts it with no environment of ours and finds the stand-in's address
 // in the folder under ProgramData instead.
 func init() {
 	product = "TrickWork Test"
+	ownWebview = true
 	if api := os.Getenv("TRICKWORK_UPDATE_API"); api != "" {
 		updateAPI = api
 	} else if dir, err := machineData(); err == nil {

@@ -24,13 +24,14 @@ type updateSettingsFile struct {
 	Language string `json:"language,omitempty"`
 }
 
-// configDir is the folder TrickWork keeps its own files in.
+// configDir is the folder TrickWork keeps its own files in, named after the
+// product so the test build keeps its own.
 func configDir() (string, error) {
 	dir, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(dir, "TrickWork"), nil
+	return filepath.Join(dir, product), nil
 }
 
 // userSettingsPath is where a copy that updates itself keeps the switch.
