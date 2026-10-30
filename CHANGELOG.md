@@ -9,37 +9,23 @@ All notable changes to TrickWork are documented here.
 ### ✨ Added
 
 - On Windows and Linux the desktop app draws its own title bar in TrickWork's colours, with Minimise, Maximise and Close at its right end. You can drag it to move the window, double-click it to maximise, and pull the window's edges to resize it. macOS keeps its own title bar.
+- The desktop app has a new installer for Windows, and one for Linux. On Windows it opens in TrickWork's own look and lets you pick the folder. On a drive where everyone may change the top folder, as on many second drives, the daily update then runs under your own account instead of the system account. On Linux it installs TrickWork for you alone, adds it to the application menu and offers to uninstall it from there.
+- The installed desktop app starts in your system's language instead of English, until you pick another one in the app.
+- The README has buttons for the ZimaOS and Umbrel app stores, and the docs show how to run TrickWork with Docker Compose on other hosts.
 
 ### 🎨 Design
 
 - The look follows GlimStone 3.8.0.
 - The logo, the name, TrickWork's claim and the Settings button sit in one slim bar above the Import and Crop cards, with Settings at the right end. On the Settings page the bar spans the window and Back takes Settings' place. On a narrow screen the claim and then the name make room.
 - Every button shows GlimStone's symbol for what it does, so the Symbol choice under Settings > Look > Labels now reaches all of them. Check for updates under Settings > Info shows a cloud that changes with the answer. The buttons in the Export card and Export settings under Settings > General show an arrow pointing out, Import settings one pointing in. Undo, Redo, Reset, Copy, Close and Clear selection use the shared drawings.
-- A card you grab by its handle shakes quickly while the others keep rocking gently. The speed follows Settings > Look > Animations, and nothing moves when it is set to Off or your system asks for less motion.
-- On a phone the four choices under Settings > Look > Labels stand two by two, and a long one wraps instead of being cut off.
-
-## 1.5.2 - 2026-10-29
-
-### 🎨 Design
-
-- The look follows GlimStone 3.7.0: the card grip is two columns of dots, each choice under Settings > Look > Labels has its own symbol, and Export settings and Import settings stand at the bottom right of their card under Settings > General.
+- Each choice under Settings > Look > Labels has its own symbol. On a phone the four stand two by two, and a long one wraps instead of being cut off.
+- Export settings and Import settings stand at the bottom right of their card under Settings > General.
+- The card grip is two columns of dots. A card you grab by it shakes quickly while the others keep rocking gently. The speed follows Settings > Look > Animations, and nothing moves when it is set to Off or your system asks for less motion.
 
 ### ⚡ Improved
 
-- The desktop app runs on the stable Wails v3.0.0 instead of a beta, and the libraries and build tools are up to date.
-- The compose file follows the `latest` tag again instead of a fixed image digest, so `docker compose pull` brings new versions.
-
-## 1.5.1 - 2026-10-21
-
-### ✨ Added
-
-- **A new installer for Windows, and one for Linux.** On Windows it opens in TrickWork's own look and lets you pick the folder. On a drive where everyone may change the top folder, as on many second drives, the daily update then runs under your own account instead of the system account. On Linux it installs TrickWork for you alone, adds it to the application menu and offers to uninstall it from there.
-- **The installed desktop app starts in your system's language** instead of English, until you pick another one in the app.
-- **The README has buttons for the ZimaOS and Umbrel app stores**, and the docs show how to run TrickWork with Docker Compose on other hosts.
-
-### ⚡ Improved
-
-- The desktop app runs on Wails v3.0.0-beta.34, and the build tools and libraries are up to date.
+- The desktop app runs on the stable Wails v3.0.0, and the libraries and build tools are up to date.
+- The compose file follows the `latest` tag instead of a fixed image digest, so `docker compose pull` brings new versions.
 
 ## 1.5.0 - 2026-10-15
 
