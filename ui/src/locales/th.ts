@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'กลับ',
   'nav.undo': 'เลิกทำ',
   'nav.redo': 'ทำซ้ำ',
+  'brand.claim': 'มีค่าเท่าพันคำ? เราใช้มากกว่านั้นเยอะ',
   'settings.section': 'ส่วนของการตั้งค่า',
   'settings.general': 'ทั่วไป',
   'settings.look': 'รูปลักษณ์',

@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Takaisin',
   'nav.undo': 'Kumoa',
   'nav.redo': 'Tee uudelleen',
+  'brand.claim': 'Kertoo enemmän kuin tuhat sanaa? Me käytämme paljon enemmän.',
   'settings.section': 'Asetusosio',
   'settings.general': 'Yleiset',
   'settings.look': 'Ulkoasu',

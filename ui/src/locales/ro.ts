@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Înapoi',
   'nav.undo': 'Anulează',
   'nav.redo': 'Refă',
+  'brand.claim': 'Valorează cât o mie de cuvinte? Noi folosim mult mai multe.',
   'settings.section': 'Secțiune setări',
   'settings.general': 'General',
   'settings.look': 'Aspect',

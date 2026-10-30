@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Geri',
   'nav.undo': 'Geri al',
   'nav.redo': 'Yinele',
+  'brand.claim': 'Bin kelimeye bedel mi? Biz çok daha fazlasını kullanıyoruz.',
   'settings.section': 'Ayar bölümü',
   'settings.general': 'Genel',
   'settings.look': 'Görünüm',

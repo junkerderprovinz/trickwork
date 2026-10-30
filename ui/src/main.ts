@@ -69,16 +69,15 @@ if (drawsOwnFrame()) mountWindowBar()
 // Settings button in place of GlimStone's sidebar, as GlimStone allows for a
 // single-workspace app.
 const brandBar = document.createElement('header')
-brandBar.className = 'glim-card glim-hue brand-bar'
-for (const [prop, value] of Object.entries(hueVars(0))) brandBar.style.setProperty(prop, value)
+brandBar.className = 'glim-card brand-bar'
+brandBar.innerHTML = brandLogo()
 
 const brandName = document.createElement('span')
 brandName.className = 'app-brand-name'
 brandName.textContent = 'TrickWork'
-const brandMark = document.createElement('div')
-brandMark.className = 'app-brand-mark'
-brandMark.innerHTML = brandLogo()
-brandBar.append(brandName, brandMark)
+const brandClaim = document.createElement('span')
+brandClaim.className = 'app-brand-claim'
+brandBar.append(brandName, brandClaim)
 
 const settingsButton = glimButton({ label: t('nav.settings'), glyph: iconSettings(), tone: 'neutral', stage: 'none' })
 settingsButton.classList.add('settings-button')
@@ -153,6 +152,10 @@ body.append(brandBar, main, secondary)
 let onSettings = false
 let settingsTab: SettingsTab = 'general'
 
+function applyClaim(): void {
+  brandClaim.textContent = t('brand.claim')
+}
+
 function applyButtonLabel(): void {
   updateButton(settingsButton, {
     label: onSettings ? t('nav.backToConvert') : t('nav.settings'),
@@ -219,6 +222,8 @@ settingsButton.addEventListener('click', () => {
   render()
 })
 subscribeLocale(applyButtonLabel)
+subscribeLocale(applyClaim)
+applyClaim()
 subscribeLocale(buildTabs)
 buildTabs()
 showTab()

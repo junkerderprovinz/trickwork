@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Tilbage',
   'nav.undo': 'Fortryd',
   'nav.redo': 'Gentag',
+  'brand.claim': 'Siger mere end tusind ord? Vi bruger langt flere.',
   'settings.section': 'Indstillingsafsnit',
   'settings.general': 'Generelt',
   'settings.look': 'Udseende',

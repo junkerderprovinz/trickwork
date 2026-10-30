@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': '返回',
   'nav.undo': '撤销',
   'nav.redo': '重做',
+  'brand.claim': '胜过千言万语？我们用得更多。',
   'settings.section': '设置分区',
   'settings.general': '常规',
   'settings.look': '外观',

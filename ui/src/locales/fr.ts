@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Retour',
   'nav.undo': 'Annuler',
   'nav.redo': 'Rétablir',
+  'brand.claim': 'Vaut mille mots ? Nous en utilisons bien plus.',
   'settings.section': 'Section des réglages',
   'settings.general': 'Général',
   'settings.look': 'Apparence',

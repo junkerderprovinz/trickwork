@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': '뒤로',
   'nav.undo': '실행 취소',
   'nav.redo': '다시 실행',
+  'brand.claim': '천 마디 말의 가치? 우리는 훨씬 더 많이 씁니다.',
   'settings.section': '설정 구역',
   'settings.general': '일반',
   'settings.look': '모양',

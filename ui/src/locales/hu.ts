@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Vissza',
   'nav.undo': 'Visszavonás',
   'nav.redo': 'Ismétlés',
+  'brand.claim': 'Többet mond ezer szónál? Mi sokkal többet használunk.',
   'settings.section': 'Beállítási szakasz',
   'settings.general': 'Általános',
   'settings.look': 'Megjelenés',

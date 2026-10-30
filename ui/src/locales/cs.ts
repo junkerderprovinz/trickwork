@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Zpět',
   'nav.undo': 'Zpět',
   'nav.redo': 'Znovu',
+  'brand.claim': 'Vydá za tisíc slov? My jich používáme mnohem víc.',
   'settings.section': 'Oddíl nastavení',
   'settings.general': 'Obecné',
   'settings.look': 'Vzhled',

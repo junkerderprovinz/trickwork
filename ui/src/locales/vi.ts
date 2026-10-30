@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Quay lại',
   'nav.undo': 'Hoàn tác',
   'nav.redo': 'Làm lại',
+  'brand.claim': 'Đáng giá ngàn lời? Chúng tôi dùng nhiều hơn thế.',
   'settings.section': 'Phần cài đặt',
   'settings.general': 'Chung',
   'settings.look': 'Giao diện',

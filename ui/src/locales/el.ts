@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Πίσω',
   'nav.undo': 'Αναίρεση',
   'nav.redo': 'Επανάληψη',
+  'brand.claim': 'Αξίζει όσο χίλιες λέξεις; Εμείς χρησιμοποιούμε πολύ περισσότερες.',
   'settings.section': 'Ενότητα ρυθμίσεων',
   'settings.general': 'Γενικά',
   'settings.look': 'Εμφάνιση',

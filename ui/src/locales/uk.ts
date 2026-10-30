@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': 'Назад',
   'nav.undo': 'Скасувати',
   'nav.redo': 'Повторити',
+  'brand.claim': 'Вартий тисячі слів? Ми використовуємо значно більше.',
   'settings.section': 'Розділ налаштувань',
   'settings.general': 'Загальні',
   'settings.look': 'Вигляд',

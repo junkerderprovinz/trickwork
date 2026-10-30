@@ -223,34 +223,42 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
-test('the brand bar spans the Import and Crop cards, with the banner in its middle and Settings at its end', async ({ page }) => {
+test('the brand bar spans the Import and Crop cards: logo, name and claim in a row, Settings at its end', async ({ page }) => {
   // The page entrance slides the cards in, so the boxes are measured at rest.
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.setViewportSize({ width: 1820, height: 1000 })
+  await page.setViewportSize({ width: 2002, height: 1000 })
   await page.goto('/')
-  const bar = (await page.locator('.brand-bar').boundingBox())!
-  const row = (await page.locator('.app-primary-row').boundingBox())!
-  const settings = (await settingsButton(page).boundingBox())!
+  const box = async (selector: string) => (await page.locator(selector).boundingBox())!
+  const bar = await box('.brand-bar')
+  const row = await box('.app-primary-row')
   expect(bar.x).toBe(row.x)
   expect(bar.x + bar.width).toBe(row.x + row.width)
   expect(row.y - (bar.y + bar.height)).toBe(40)
-  expect(bar.x + bar.width - (settings.x + settings.width)).toBeLessThan(20)
-  const banner = (await page.locator('.brand-bar .app-brand-logo').boundingBox())!
-  expect(Math.abs(banner.x + banner.width / 2 - (bar.x + bar.width / 2))).toBeLessThan(1)
-  await expect(page.locator('.app-brand-name')).toBeVisible()
 
-  // On a phone the bar leads the stacked cards and the banner takes the name's place.
+  const logo = await box('.brand-bar .app-brand-logo')
+  const name = await box('.app-brand-name')
+  const claim = await box('.app-brand-claim')
+  const settings = (await settingsButton(page).boundingBox())!
+  await expect(page.locator('.app-brand-claim')).toHaveText('Worth 1,000 words? We use way more.')
+  expect(logo.x - bar.x).toBeLessThan(20)
+  expect(name.x).toBeGreaterThan(logo.x + logo.width)
+  expect(claim.x).toBeGreaterThan(name.x + name.width)
+  expect(settings.x).toBeGreaterThan(claim.x + claim.width)
+  expect(bar.x + bar.width - (settings.x + settings.width)).toBeLessThan(20)
+  const middle = bar.y + bar.height / 2
+  for (const part of [logo, name, claim, settings]) expect(Math.abs(part.y + part.height / 2 - middle)).toBeLessThan(2)
+  expect(await page.locator('.brand-bar').evaluate((el) => getComputedStyle(el, '::after').content)).toBe('none')
+
+  // On a phone the claim and then the name give way; the logo and Settings stay.
   await page.setViewportSize({ width: 360, height: 760 })
-  const narrow = (await page.locator('.brand-bar').boundingBox())!
+  const narrow = await box('.brand-bar')
   const firstCard = (await page.locator('.app-primary-row > *').first().boundingBox())!
   expect(narrow.y).toBeLessThan(firstCard.y)
+  await expect(page.locator('.app-brand-claim')).toBeHidden()
   await expect(page.locator('.app-brand-name')).toBeHidden()
+  await expect(page.locator('.brand-bar .app-brand-logo')).toBeVisible()
+  await expect(settingsButton(page)).toBeVisible()
   expect(await page.locator('.brand-bar').evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
-  const small = (await page.locator('.brand-bar .app-brand-mark').boundingBox())!
-  const button = (await settingsButton(page).boundingBox())!
-  expect(small.x - narrow.x).toBeLessThan(20)
-  expect(small.x + small.width).toBeLessThanOrEqual(button.x)
-  expect(narrow.x + narrow.width - (button.x + button.width)).toBeLessThan(20)
 })
 
 test('Settings sorts its cards into four tabs under the brand bar, which keeps Back at its end', async ({ page }) => {

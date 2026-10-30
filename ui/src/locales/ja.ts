@@ -10,6 +10,7 @@ const dict: Translations = {
   'nav.backToConvert': '戻る',
   'nav.undo': '元に戻す',
   'nav.redo': 'やり直す',
+  'brand.claim': '千の言葉に値する？ 私たちはもっとたくさん使います。',
   'settings.section': '設定の区分',
   'settings.general': '一般',
   'settings.look': '外観',
