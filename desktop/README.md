@@ -6,7 +6,7 @@ container serves, via the root module's `webembed` package.
 ## Build locally
 
 From the repository root, with the Wails CLI of the version `go.mod` names
-(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34`):
+(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.1.0`):
 
 ```
 npm install --ignore-scripts
