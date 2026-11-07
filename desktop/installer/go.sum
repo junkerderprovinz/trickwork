@@ -22,6 +22,8 @@ github.com/junkerderprovinz/pommelporter v1.1.0 h1:Ft8vp6Xxh2XONXRIJgzmvpkkftnEf
 github.com/junkerderprovinz/pommelporter v1.1.0/go.mod h1:pST7yvjn71bYW2FG2Yqc9Idud9THjldNit7xCH0P/8Y=
 github.com/junkerderprovinz/pommelporter v1.1.1 h1:8QKQ0wXaQ35hNI/1PKPb1RowJcyiwoDtadQcNr8amD8=
 github.com/junkerderprovinz/pommelporter v1.1.1/go.mod h1:f47OhoxGaaNkAyBBXY3ApvYeWLEMWlHMKAImpqtZ4/g=
+github.com/junkerderprovinz/pommelporter v1.1.2 h1:Ojy5EtiCB82HQZWSbK86rYiZDLwnGa9yJ6RGIy0pMPo=
+github.com/junkerderprovinz/pommelporter v1.1.2/go.mod h1:cMtmdiDC9XeWj9SPgRQgvKN0nYp6XVSXJFXHL8pTldw=
 github.com/matryer/is v1.4.1 h1:55ehd8zaGABKLXQUe2awZ99BD/PTc2ls+KV/dXphgEQ=
 github.com/matryer/is v1.4.1/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
