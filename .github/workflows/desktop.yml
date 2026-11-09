@@ -10,7 +10,11 @@ permissions:
   contents: read
 
 jobs:
+  pommelporter:
+    uses: junkerderprovinz/junkerderprovinz/.github/workflows/pommelporter-current.yml@32ba0f5e3065bece6650d0d30d31342f7bfb7ffc # main
+
   build:
+    needs: pommelporter
     strategy:
       fail-fast: false
       matrix:

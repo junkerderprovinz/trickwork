@@ -4,6 +4,10 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🐛 Fixed
+
+- Uninstalling the desktop app on Windows leaves nothing behind, and the installer window shows TrickWork's icon on Linux. The installer follows PommelPorter 1.1.5, and a release with an older PommelPorter stops before it builds.
+
 ## 1.6.0 - 2026-10-30
 
 ### ✨ Added
