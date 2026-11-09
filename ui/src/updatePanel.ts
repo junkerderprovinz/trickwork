@@ -1,6 +1,7 @@
-// The Updates card in the desktop build's App tab, and the toast that says a
-// downloaded version waits for the next start. The setting itself lives on the
-// Go side, which reads it before this page has loaded.
+// The desktop build's Update automatically switch, which the Version card puts
+// under TrickWork's row, and the toast that says a downloaded version waits for
+// the next start. The setting itself lives on the Go side, which reads it
+// before this page has loaded.
 
 import { switchRow } from './controlWidgets'
 import { infoIcon } from './design/tooltip'
@@ -11,12 +12,9 @@ import { callApp, desktopRuntime } from './wails'
 
 const READY_EVENT = 'update:ready'
 
-export function mountUpdatePanel(container: HTMLElement): void {
-  const heading = document.createElement('div')
-  heading.className = 'glim-eyebrow'
+export function autoUpdateSwitch(): HTMLElement {
   const wrap = document.createElement('div')
-  wrap.className = 'control-slider'
-  container.append(heading, wrap)
+  wrap.className = 'control-slider version-settings'
 
   let on = true
 
@@ -34,7 +32,6 @@ export function mountUpdatePanel(container: HTMLElement): void {
   }
 
   function render(): void {
-    heading.textContent = t('update.title')
     wrap.replaceChildren(switchRow(t('update.auto'), on, (checked) => void save(checked), infoIcon(t('update.autoHint'))))
   }
 
@@ -44,6 +41,7 @@ export function mountUpdatePanel(container: HTMLElement): void {
     on = value
     render()
   })
+  return wrap
 }
 
 export function listenForUpdates(): void {

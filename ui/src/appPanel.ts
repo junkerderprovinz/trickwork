@@ -85,13 +85,13 @@ export function mountAppPanel(container: HTMLElement): void {
       rows.replaceChildren(
         buttonUnit('windows', [
           linkPart({ name: windows, sub: 'x64', mark: WINDOWS_SVG, tint: 'glim-windows-mark' }, `${RELEASE}/trickwork-windows-amd64-installer.exe`),
-          linkPart({ name: 'ARM64', sub: windows }, `${RELEASE}/trickwork-windows-arm64-installer.exe`, true),
+          linkPart({ name: 'ARM', sub: windows }, `${RELEASE}/trickwork-windows-arm64-installer.exe`, true),
           linkPart({ name: t('apps.portable'), sub: windows }, `${RELEASE}/trickwork-windows-amd64-portable.exe`, true),
         ]),
         buttonUnit('apple', [linkPart({ name: t('apps.macos'), sub: 'Universal', mark: APPLE_SVG }, `${RELEASE}/trickwork-macos-universal.dmg`)]),
         buttonUnit('linux', [
           linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`),
-          linkPart({ name: 'ARM64', sub: t('apps.linux') }, `${RELEASE}/trickwork-linux-arm64`, true),
+          linkPart({ name: 'ARM', sub: t('apps.linux') }, `${RELEASE}/trickwork-linux-arm64`, true),
         ]),
       )
     }

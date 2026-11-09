@@ -1522,7 +1522,8 @@ button:active:not(:disabled) {
 }
 
 /* The Version card: a row per version, the name at the start and the number,
-   a link to its release, at the end. */
+   a link to its release, at the end. What keeps a version current, such as
+   the desktop app's update switch, takes a line of its own under its row. */
 .version-rows {
   list-style: none;
   margin: 0;
@@ -1534,12 +1535,20 @@ button:active:not(:disabled) {
 
 .version-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.6rem 1rem;
 }
 
+.version-settings {
+  flex-basis: 100%;
+}
+
+/* No width of its own, so a long line under the name never pushes the
+   number onto the next line of a row that wraps. */
 .version-names {
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   min-width: 0;

@@ -216,7 +216,6 @@ const dict: Translations = {
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',
-  'update.title': 'Aggiornamenti',
   'update.auto': 'Aggiorna automaticamente',
   'update.autoHint': 'Una volta al giorno TrickWork cerca una nuova versione e la scarica in background. Parte la prossima volta che apri TrickWork, quindi mentre lavori non cambia nulla.',
   'update.ready': 'La versione {version} è stata scaricata e partirà la prossima volta che apri TrickWork.',

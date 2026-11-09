@@ -59,8 +59,8 @@ downloads the file for your system in the background and checks it against
 the release's `checksums.txt`. The new version starts the next time you open
 TrickWork, so nothing changes while it runs, and a note in the corner of the
 window says when it is ready. Pre-releases are never installed.
-**Update automatically** in the **General** tab of **Settings** turns this off; it
-is on from the start.
+**Update automatically**, under TrickWork in the **Version** card on the
+**Info** tab of **Settings**, turns this off; it is on from the start.
 
 **The installed copy** on Windows cannot replace itself, since no user may
 write to its folder. A scheduled task named **TrickWork Update** does it

@@ -4,6 +4,11 @@ All notable changes to TrickWork are documented here.
 
 ## Unreleased
 
+### 🎨 Design
+
+- Update automatically sits in the Version card under Settings > Info, right under TrickWork's row, instead of in a card of its own on the General tab.
+- The ARM buttons on the App tab say ARM, as on the README.
+
 ## 1.6.0 - 2026-10-30
 
 ### ✨ Added

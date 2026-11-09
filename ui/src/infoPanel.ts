@@ -1,6 +1,7 @@
 // The Version and Help cards of the Info tab, which with the About card make
 // GlimStone's Info tile: every version TrickWork is made of with the release
-// notes and the update check, then the ways to report something.
+// notes, the update check and in the desktop app its update switch, then the
+// ways to report something.
 
 import { MAIL_SVG, MANUAL_SVG } from './design/appMarks'
 import { groupStage } from './design/controls'
@@ -19,6 +20,7 @@ import { openReleaseNotes } from './releaseNotes'
 import { isNewer } from './releases'
 import type { Store } from './state'
 import { showToast } from './toast'
+import { autoUpdateSwitch } from './updatePanel'
 import { APP_VERSION } from './version'
 import { isDesktop } from './wails'
 
@@ -43,7 +45,7 @@ function eyebrowRow(): { row: HTMLElement; fill: (title: string, hint: string) =
 }
 
 // Only the number is a link: the name in front of it is not a destination.
-function versionRow(name: string, version: string, repo: string, sub?: string): HTMLLIElement {
+function versionRow(name: string, version: string, repo: string, sub?: string, settings?: HTMLElement): HTMLLIElement {
   const li = document.createElement('li')
   li.className = 'version-row'
   const names = document.createElement('span')
@@ -69,6 +71,7 @@ function versionRow(name: string, version: string, repo: string, sub?: string): 
     openExternal(a.href)
   })
   li.append(names, a)
+  if (settings) li.appendChild(settings)
   return li
 }
 
@@ -147,6 +150,8 @@ function updateCheckButton(): HTMLButtonElement {
 }
 
 export function mountVersionCard(container: HTMLElement): void {
+  // Only the desktop app replaces itself.
+  const settings = isDesktop() ? autoUpdateSwitch() : undefined
   const rows = document.createElement('ul')
   rows.className = 'version-rows'
   const actions = document.createElement('div')
@@ -159,7 +164,7 @@ export function mountVersionCard(container: HTMLElement): void {
   function render(): void {
     heading.fill(t('about.version'), t('info.versionHint'))
     rows.replaceChildren(
-      versionRow('TrickWork', APP_VERSION, REPO),
+      versionRow('TrickWork', APP_VERSION, REPO, undefined, settings),
       versionRow('GlimStone', GLIMSTONE_VERSION, GLIMSTONE_REPO, t('info.glimstoneSub')),
     )
     updateButton(notes, { label: t('info.releaseNotes') })

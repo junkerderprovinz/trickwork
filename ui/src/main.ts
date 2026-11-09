@@ -25,7 +25,7 @@ import { mountAppPanel } from './appPanel'
 import { storedDisco, storedMotion } from './looks'
 import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
-import { listenForUpdates, mountUpdatePanel } from './updatePanel'
+import { listenForUpdates } from './updatePanel'
 import { drawsOwnFrame, isDesktop } from './wails'
 import { mountWindowBar } from './windowBar'
 import { makeReorderable } from './cardReorder'
@@ -125,11 +125,8 @@ const tabSlot = document.createElement('div')
 tabSlot.className = 'settings-tabs'
 const settingsCards = document.createElement('div')
 settingsCards.className = 'settings-cards'
-// Only the desktop app updates itself, so only it has the Updates card.
-const desktop = isDesktop()
 const presetsCard = section(0, 'settings-card')
-const updateCard = section(1, 'settings-card')
-const generalCards = desktop ? [presetsCard, updateCard] : [presetsCard]
+const generalCards = [presetsCard]
 const lookCard = section(0, 'settings-card')
 const appCard = section(0, 'settings-card')
 // The Info tab is GlimStone's Info tile, last in Settings: Version, Help and
@@ -269,10 +266,7 @@ mountHelpCard(helpCard, store)
 mountAboutPanel(aboutCard)
 leaveLook = mountAppearanceSettings(lookCard)
 mountAppPanel(appCard)
-if (desktop) {
-  mountUpdatePanel(updateCard)
-  listenForUpdates()
-}
+if (isDesktop()) listenForUpdates()
 
 // Every card heading is its section badge, and in the reactive rainbow mode it
 // lights up while the pointer is anywhere in its card.

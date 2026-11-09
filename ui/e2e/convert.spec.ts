@@ -647,8 +647,13 @@ test('the App card in the browser offers the desktop downloads of the running ve
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
-  await expect(page.getByRole('link', { name: 'ARM64 Windows' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
-  await expect(page.getByRole('link', { name: 'ARM64 Linux' })).toHaveAttribute('href', /linux-arm64$/)
+  // The segments read as on the README, and the system they belong to stays in their name.
+  const windowsArm = page.getByRole('link', { name: 'ARM Windows' })
+  await expect(windowsArm).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
+  await expect(windowsArm.locator('.glim-readme-btn-name')).toHaveText('ARM')
+  const linuxArm = page.getByRole('link', { name: 'ARM Linux' })
+  await expect(linuxArm).toHaveAttribute('href', /linux-arm64$/)
+  await expect(linuxArm.locator('.glim-readme-btn-name')).toHaveText('ARM')
 })
 
 test('an App card button shows its second line only under the pointer, over the whole unit', async ({ page }) => {
@@ -746,11 +751,13 @@ test('Check for updates turns green when GitHub knows no newer release, and red 
   await expect(page.getByRole('alert')).toContainText('GitHub could not be reached')
 })
 
-test('the browser has no Updates card, since only the desktop app updates itself', async ({ page }) => {
+test('the browser offers no update switch, since only the desktop app updates itself', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
-  await settingsTab(page, 'General').click()
-  await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
+  for (const tab of ['General', 'Info']) {
+    await settingsTab(page, tab).click()
+    await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
+  }
 })
 
 test('the browser draws no window bar, since the browser has its own frame', async ({ page }) => {
@@ -827,13 +834,26 @@ async function fakeDesktop(page: import('@playwright/test').Page, stored: boolea
   })
 }
 
-test('the desktop General tab shows the stored update setting and saves a change', async ({ page }) => {
+test('the desktop Version card keeps the update switch under TrickWork and saves a change', async ({ page }) => {
   await fakeDesktop(page, false)
   await page.goto(DESKTOP)
   await settingsButton(page).click()
   await settingsTab(page, 'General').click()
-  const toggle = page.getByRole('switch', { name: 'Update automatically' })
+  await expect(page.locator('.settings-card:visible')).toHaveCount(1)
+  await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
+
+  await settingsTab(page, 'Info').click()
+  const rows = page.locator('.version-row')
+  const toggle = rows.first().getByRole('switch', { name: 'Update automatically' })
   await expect(toggle).toHaveAttribute('aria-checked', 'false')
+  await expect(rows.nth(1).getByRole('switch')).toHaveCount(0)
+  const name = await rows.first().locator('.version-name').boundingBox()
+  const at = await toggle.boundingBox()
+  const next = await rows.nth(1).boundingBox()
+  if (!name || !at || !next) throw new Error('boxes missing')
+  expect(at.y).toBeGreaterThan(name.y + name.height)
+  expect(at.y + at.height).toBeLessThan(next.y)
+
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-checked', 'true')
   expect(await page.evaluate(() => (window as unknown as { __calls: boolean[] }).__calls)).toEqual([true])
@@ -843,7 +863,7 @@ test('a refused save puts the switch back and says so in a toast', async ({ page
   await fakeDesktop(page, true, true)
   await page.goto(DESKTOP)
   await settingsButton(page).click()
-  await settingsTab(page, 'General').click()
+  await settingsTab(page, 'Info').click()
   const toggle = page.getByRole('switch', { name: 'Update automatically' })
   await expect(toggle).toHaveAttribute('aria-checked', 'true')
   await toggle.click()
