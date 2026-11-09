@@ -7,7 +7,7 @@ toolchain go1.27.3
 require (
 	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v3 v3.1.0
-	golang.org/x/sys v0.49.0
+	golang.org/x/sys v0.50.0
 )
 
 require (
