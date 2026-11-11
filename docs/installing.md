@@ -69,14 +69,9 @@ so you don't need to install anything else. It never replaces itself, so
 next release's file the same way. Its settings live in
 `~/.var/app/io.github.junkerderprovinz.trickwork`.
 
-You can open pictures from anywhere, because the file picker hands each one
-over to the sandbox. The Save dialog for an export only reaches your Pictures,
-Documents and Downloads folders. If you'd like to save somewhere else too, one
-command opens that folder up:
-
-```sh
-flatpak override --user --filesystem=~/Art io.github.junkerderprovinz.trickwork
-```
+TrickWork opens pictures and saves exports through your desktop's own file
+dialogs. It can reach any folder you pick there, and the Flatpak gets no access
+to your files beyond that.
 
 ### Updates
 

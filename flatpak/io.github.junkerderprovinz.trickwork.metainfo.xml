@@ -27,9 +27,9 @@
     </ul>
     <p>
       TrickWork needs no account, collects no analytics and keeps your pictures
-      on your computer. The Flatpak opens pictures from anywhere through
-      your desktop's file picker and saves exports to Pictures, Documents or
-      Downloads. Your software centre brings the updates.
+      on your computer. The Flatpak opens and saves files through your
+      desktop's own dialogs, so it reaches any folder you pick and no other.
+      Your software centre brings the updates.
     </p>
   </description>
 

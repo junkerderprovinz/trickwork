@@ -21,11 +21,6 @@ finish-args:
   - --device=dri
   # Check for updates on the Info tab asks GitHub for the newest release.
   - --share=network
-  # The export's Save dialog is GTK's own rather than the portal's, so it only
-  # shows the folders the sandbox reaches. Pictures come in through the portal.
-  - --filesystem=xdg-pictures
-  - --filesystem=xdg-documents
-  - --filesystem=xdg-download
 modules:
   - name: trickwork
     buildsystem: simple

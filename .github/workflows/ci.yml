@@ -65,8 +65,8 @@ jobs:
       - name: Vet and test
         working-directory: desktop
         run: |
-          go vet ./update/ ./flatpak/
-          go test ./update/ ./flatpak/ -count=1
+          go vet ./update/ ./flatpak/ ./portal/
+          go test ./update/ ./flatpak/ ./portal/ -count=1
 
   e2e:
     name: E2E (ui, Playwright)

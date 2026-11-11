@@ -6,7 +6,7 @@ All notable changes to TrickWork are documented here.
 
 ### ✨ Added
 
-- TrickWork comes as a Flatpak for Linux too, for x64 and ARM64. It brings its own WebKitGTK, opens pictures from anywhere through your desktop's file picker and saves exports to Pictures, Documents or Downloads. Flatpak looks after its updates, so **Update automatically** stays off there and says why. The README, the docs and the App card in the container all offer the download.
+- TrickWork comes as a Flatpak for Linux too, for x64 and ARM64. It brings its own WebKitGTK and opens and saves files through your desktop's own dialogs, so it sees only the folders you pick there. Flatpak looks after its updates, so **Update automatically** stays off there and says why, and Check for updates points you to your software centre. The README, the docs and the App card in the container all offer the download.
 
 ## 1.6.1 - 2026-11-09
 
