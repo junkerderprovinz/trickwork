@@ -12,6 +12,7 @@ All notable changes to TrickWork are documented here.
 
 ### 🎨 Design
 
+- TrickWork has a new logo, a shield with a hash sign. You'll find it in the README, in the header, as the favicon and as the app icon on Windows, macOS, Linux and in the Flatpak.
 - The look follows GlimStone 4.3.6.
 - A row of choices stays on one line at every width. Where its words don't fit, as on a phone, it shows its symbols alone and names each one in its bubble. The Settings tabs and the Labels choices do this on a narrow screen.
 - While you drag a card, the other cards tremble and the one in your hand holds still under the pointer.

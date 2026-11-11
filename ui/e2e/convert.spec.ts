@@ -223,6 +223,17 @@ test('Settings replaces the whole page: no preview, no working cards', async ({ 
   await expect(badge).toHaveAccessibleName('Settings')
 })
 
+test('the brand bar shows the shield logo and the tab shows it as the favicon', async ({ page }) => {
+  await page.goto('/')
+  const logo = page.locator('.brand-bar img.app-brand-logo')
+  await expect(logo).toHaveAttribute('src', '/logo.svg')
+  const size = await logo.evaluate((img: HTMLImageElement) => ({ w: img.naturalWidth, h: img.naturalHeight }))
+  // The shield stands taller than it is wide, as its viewBox of 803.34 by 920.07 says.
+  expect(size.h / size.w).toBeCloseTo(920.07 / 803.34, 2)
+  const favicon = await page.request.get('/favicon.svg')
+  expect(await favicon.text()).toContain('viewBox="0 0 803.34 920.07"')
+})
+
 test('the brand bar spans the Import and Crop cards: logo, name and claim in a row, Settings at its end', async ({ page }) => {
   // The page entrance slides the cards in, so the boxes are measured at rest.
   await page.emulateMedia({ reducedMotion: 'reduce' })

@@ -140,7 +140,6 @@ const dataUrl = (buf, type) => `data:${type};base64,${buf.toString('base64')}`
 const bree = dataUrl(await cached('BreeSerif-Regular.ttf', 'https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf'), 'font/ttf')
 const lato = dataUrl(await cached('Lato-Regular.ttf', 'https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf'), 'font/ttf')
 const logo = dataUrl(readFileSync(join(root, '.github', 'assets', 'logo.svg')), 'image/svg+xml')
-const icon = dataUrl(readFileSync(join(root, '.github', 'assets', 'icon.svg')), 'image/svg+xml')
 
 const STYLE = `
 @font-face { font-family: "Bree Serif"; src: url(${bree}); }
@@ -167,17 +166,6 @@ h1 em { font-style: normal; color: #FCC419; }
   box-shadow: 0 0 0 1px #3c3c3c, 0 2px 4px rgba(0,0,0,.35), 0 18px 36px rgba(0,0,0,.45), 0 52px 100px rgba(0,0,0,.55); }
 .win > img { display: block; }
 .bar { position: relative; display: flex; align-items: center; background: #242424; color: #d6d6d6; font: 400 17px/1 Lato, sans-serif; }
-.bar img { width: 22px; height: 22px; }
-.app { height: 44px; gap: 10px; padding-left: 16px; border-bottom: 1px solid #111; }
-.ctl { position: absolute; top: 0; width: 46px; height: 44px; }
-.ctl::before { content: ""; position: absolute; left: 17px; top: 21px; width: 12px; height: 1.5px; background: #bdbdbd; }
-.ctl.min { right: 92px; }
-.ctl.max { right: 46px; }
-.ctl.max::before { top: 16px; height: 12px; background: none; border: 1.5px solid #bdbdbd; box-sizing: border-box; }
-.ctl.close { right: 0; }
-.ctl.close::before, .ctl.close::after { content: ""; position: absolute; left: 16px; top: 21px; width: 14px; height: 1.5px; background: #bdbdbd; }
-.ctl.close::before { transform: rotate(45deg); }
-.ctl.close::after { transform: rotate(-45deg); }
 .tabs { height: 42px; padding: 7px 0 0 12px; background: #1c1c1c; align-items: flex-end; }
 .tab { display: flex; align-items: center; gap: 10px; height: 35px; padding: 0 70px 0 14px; border-radius: 10px 10px 0 0; background: #2c2c2c; font-size: 15px; }
 .tab img { width: 18px; height: 18px; }
@@ -190,12 +178,14 @@ h1 em { font-style: normal; color: #FCC419; }
 /** The interface in a desktop window or a browser `w` wide, its top left corner at (x, y). */
 function windowed(capture, frame, { x, y, w }) {
   const h = Math.round(VIEW.height * (w / VIEW.width))
+  // The desktop window is frameless and the page draws its own title bar, so
+  // only the browser gets chrome around the capture. The tab shows the favicon.
   const chrome =
     frame === 'browser'
-      ? `<div class="bar tabs"><div class="tab"><img src="${icon}"><span>TrickWork</span></div></div>
+      ? `<div class="bar tabs"><div class="tab"><img src="${logo}"><span>TrickWork</span></div></div>
          <div class="bar address"><i class="nav"></i><i class="nav fwd"></i><div class="url">nas.local:3210</div></div>`
-      : `<div class="bar app"><img src="${icon}"><span>TrickWork</span><i class="ctl min"></i><i class="ctl max"></i><i class="ctl close"></i></div>`
-  const bar = frame === 'browser' ? 89 : 45
+      : ''
+  const bar = frame === 'browser' ? 89 : 0
   return `<div class="stage" style="left:${x}px;top:${y}px;width:${w}px;height:${h + bar}px">
   <div class="floor"></div>
   <div class="win">${chrome}<img src="${capture}" style="width:${w}px;height:${h}px"><div class="glare"></div></div>
@@ -204,7 +194,7 @@ function windowed(capture, frame, { x, y, w }) {
 
 function wideShot(capture, frame, caption, sub) {
   const w = 1240
-  const h = Math.round(VIEW.height * (w / VIEW.width)) + (frame === 'browser' ? 89 : 45)
+  const h = Math.round(VIEW.height * (w / VIEW.width)) + (frame === 'browser' ? 89 : 0)
   return `<!doctype html><html><head><meta charset="utf-8"><style>${STYLE}</style></head><body>
 <div class="backdrop"><div class="wall"></div><img class="mark" src="${logo}" style="width:62%;left:-14%;top:4%"><div class="vignette"></div></div>
 <div class="copy"><img src="${logo}"><h1>${caption}</h1><p class="sub">${sub}</p></div>
