@@ -7,7 +7,7 @@ container always produce the same art from the same image.
 
 - **Container:** any amd64 or arm64 Docker host. No database and no volumes.
 - **Desktop:** Windows 10 or 11 (x64 or ARM), macOS, or Linux with
-  `libwebkit2gtk-4.1-0`.
+  `libwebkit2gtk-4.1-0`. The Flatpak brings everything it needs.
 
 ## Desktop app
 
@@ -22,6 +22,7 @@ Download the build for your system from the
 | macOS | `trickwork-macos-universal.dmg` |
 | Linux, installer | `trickwork-linux-amd64-installer`, on ARM `trickwork-linux-arm64-installer` |
 | Linux | `trickwork-linux-amd64`, on ARM `trickwork-linux-arm64` (both need `libwebkit2gtk-4.1-0`) |
+| Linux, Flatpak | `trickwork-linux-amd64.flatpak`, on ARM `trickwork-linux-arm64.flatpak` |
 
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.
@@ -52,6 +53,31 @@ binary. Make the downloaded file executable first
 (`chmod +x trickwork-linux-amd64-installer`). The installer needs
 `libwebkit2gtk-4.1-0` just like the app.
 
+### As a Flatpak
+
+Each release also carries `trickwork-linux-amd64.flatpak` and
+`trickwork-linux-arm64.flatpak`. Open the file with your software centre, or
+install it in a terminal:
+
+```sh
+flatpak install --user trickwork-linux-amd64.flatpak
+```
+
+The Flatpak brings its own WebKitGTK and pulls the GNOME runtime from Flathub,
+so you don't need to install anything else. It never replaces itself, so
+**Update automatically** stays off there and says so. To update, install the
+next release's file the same way. Its settings live in
+`~/.var/app/io.github.junkerderprovinz.trickwork`.
+
+You can open pictures from anywhere, because the file picker hands each one
+over to the sandbox. The Save dialog for an export only reaches your Pictures,
+Documents and Downloads folders. If you'd like to save somewhere else too, one
+command opens that folder up:
+
+```sh
+flatpak override --user --filesystem=~/Art io.github.junkerderprovinz.trickwork
+```
+
 ### Updates
 
 The desktop app updates itself from GitHub. It asks for the newest release,
@@ -60,7 +86,8 @@ the release's `checksums.txt`. The new version starts the next time you open
 TrickWork, so nothing changes while it runs, and a note in the corner of the
 window says when it is ready. Pre-releases are never installed.
 **Update automatically** in the **General** tab of **Settings** turns this off; it
-is on from the start.
+is on from the start. The Flatpak is the one exception and leaves its updates
+to Flatpak (see [As a Flatpak](#as-a-flatpak)).
 
 **The installed copy** on Windows cannot replace itself, since no user may
 write to its folder. A scheduled task named **TrickWork Update** does it

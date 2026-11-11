@@ -48,6 +48,7 @@ preview, proportional-width awareness and several export formats in one tool.
 - [Download for macOS](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg)
 - [Download for Linux (installer)](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64-installer) ([ARM64](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64-installer))
 - [Download for Linux](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64) ([ARM64](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64))
+- [Download the Flatpak](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64.flatpak) ([ARM64](https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64.flatpak))
 - [Run it with Docker or on Unraid](installing.md)
 
 Every download is the latest release;

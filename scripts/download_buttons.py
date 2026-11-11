@@ -15,6 +15,8 @@ BUTTONS = {
     "macos": RELEASE + "trickwork-macos-universal.dmg",
     "linux": RELEASE + "trickwork-linux-amd64",
     "linux-arm": RELEASE + "trickwork-linux-arm64",
+    "flatpak": RELEASE + "trickwork-linux-amd64.flatpak",
+    "flatpak-arm": RELEASE + "trickwork-linux-arm64.flatpak",
     "unraid": "https://ca.unraid.net/apps/trickwork-0h072450hg59wx",
     # A browser cannot download an image, so this opens the package page, which
     # carries the pull command and every tag.
