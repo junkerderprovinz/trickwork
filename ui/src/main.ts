@@ -2,10 +2,10 @@ import '@fontsource-variable/noto-sans'
 import '@fontsource-variable/noto-sans-arabic'
 import '@fontsource-variable/noto-sans-hebrew'
 import '@fontsource-variable/noto-sans-thai'
-import { applyCachedAppearance, applyMotion, hueVars } from './design/appearance'
+import { applyCachedAppearance, applyMotion, hueVars, takePageHue } from './design/appearance'
 import { applyStoredLabelModes } from './design/controls'
 import { applyDisco } from './design/disco'
-import { applyCachedTheme } from './design/theme'
+import { applyCachedTheme } from './theme'
 import { enableSelectScrollForAll } from './design/selectScroll'
 import { wireTooltips } from './design/tooltip'
 import { applyCachedLocale, subscribeLocale, t } from './i18n'
@@ -47,6 +47,14 @@ applyDisco(storedDisco())
 void applyCachedLocale()
 // Turns the native `title` of every icon-only button into the styled bubble.
 wireTooltips()
+// Under rainbow each button takes the colour of its place on the page as the
+// pointer or the keyboard reaches it.
+for (const type of ['pointerover', 'focusin'] as const) {
+  document.addEventListener(type, (event) => {
+    const btn = event.target instanceof Element ? event.target.closest('.glim-btn-neutral, .glim-btn-subtle, .glim-btn-bare') : null
+    if (btn instanceof HTMLElement) takePageHue(btn)
+  })
+}
 
 const store = createStore()
 

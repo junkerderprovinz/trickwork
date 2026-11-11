@@ -3,7 +3,7 @@
 
 import { hueVars, rainbowState } from './design/appearance'
 import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from './design/controls'
-import { segmentLayout } from './design/segmentLayout'
+import { segmentFit } from './design/segmentLayout'
 import { enableWheelStep, stepIndex } from './design/selectScroll'
 
 /**
@@ -21,7 +21,7 @@ export function applyHueVars(el: HTMLElement, index: number): boolean {
 /**
  * The floor for a big selector's segments, as in BombVault and ArrowLoop, so
  * every page-level picker renders equally wide. A label that needs more still
- * gets it, and a narrow box shrinks the segments together before it wraps one.
+ * gets it, and a narrow box shrinks the segments together.
  */
 const MIN_SEGMENT = 200
 
@@ -61,8 +61,6 @@ export interface SegmentedRowOptions<T extends string> {
   variant?: 'well' | 'chip'
   /** Content for the label row, such as an info icon. */
   labelExtra?: HTMLElement
-  /** For labels that run long: two segments to a row on a phone. */
-  pairs?: boolean
 }
 
 /**
@@ -88,7 +86,7 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   }
 
   const row = document.createElement('div')
-  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}${opts.pairs ? ' segmented-row--pairs' : ''}`
+  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}`
   row.setAttribute('role', 'tablist')
   const name = opts.label ?? opts.ariaLabel
   if (name) row.setAttribute('aria-label', name)
@@ -116,6 +114,8 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       const isActive = choice.value === active
       btn.className = 'segmented-button' + (isActive ? ' segmented-button--active' : '')
       btn.setAttribute('role', 'tab')
+      // The words can give way to the glyph alone, and the name stays.
+      btn.setAttribute('aria-label', choice.label)
       btn.setAttribute('aria-selected', String(isActive))
       btn.tabIndex = isActive ? 0 : -1
       if (choice.glyph) {
@@ -161,60 +161,62 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
     if (choice) choose(choice.value)
   })
 
-  // The pinned width comes from the DOM, and how many segments share a row
-  // from the room, so both are worked out again when the box resizes or a late
-  // web font changes what a label needs.
+  // The strip keeps one row. How it holds its labels there comes from the
+  // room, so it is worked out again when the box resizes or a late web font
+  // changes what a label needs.
   function layout(): void {
     if (!row.isConnected || buttons.length === 0) return
+    row.classList.remove('segmented-row--squeezed', 'segmented-row--truncated')
     for (const b of buttons) {
       b.style.minWidth = ''
       b.style.flex = ''
+      b.removeAttribute('title')
     }
-    row.style.flexWrap = ''
-    if (scale === 'small') return
 
     const cs = getComputedStyle(row)
     const gap = parseFloat(cs.columnGap) || 0
     const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
+    // A setting row moves the strip under its name when both do not fit, so
+    // the strip may count on the row's whole width.
     const room = wrap.clientWidth - pad
-    const segments = buttons.map((b) => {
+    // Measured without flex, which would shrink a segment into a row too
+    // narrow for it.
+    const oneLine = buttons.map((b) => {
+      b.style.flex = 'none'
       b.style.width = 'max-content'
-      const oneLine = b.getBoundingClientRect().width
-      b.style.width = 'min-content'
-      const narrowest = b.getBoundingClientRect().width
+      const width = b.getBoundingClientRect().width
       b.style.width = ''
-      return { oneLine, narrowest }
+      b.style.flex = ''
+      return width
     })
-    const n = segments.length
-    const widest = Math.max(...segments.map((s) => s.oneLine))
-    const share = (room - gap * (n - 1)) / n
-    // Capped at this strip's share of the room: where that would break a label
-    // and the labels fit side by side, segmentLayout lays them out by content.
-    const pinned = share > 0 ? Math.min(Math.max(widest, MIN_SEGMENT), share) : widest
-    const { byContent, perRow } = segmentLayout(room, pinned, segments, gap)
-    if (byContent) {
-      row.style.flexWrap = 'nowrap'
-      for (const b of buttons) b.style.flex = '1 0 auto'
-      return
-    }
-    for (const b of buttons) {
-      b.style.minWidth = `${pinned}px`
-      // One gap of slack in the basis, so rounding cannot push the last
-      // segment of a full row down; the growth takes it back.
-      b.style.flex = `1 0 calc((100% - ${perRow} * ${gap}px) / ${perRow})`
-    }
+    const share = (room - gap * (oneLine.length - 1)) / oneLine.length
+    const widest = Math.max(...oneLine)
+    const pinned = scale === 'big' ? (share > 0 ? Math.min(Math.max(widest, MIN_SEGMENT), share) : widest) : null
+    const glyphs = choices.every((c) => c.glyph)
+    const { fit, cut } = segmentFit(room, pinned, oneLine, gap, glyphs, false)
+    buttons.forEach((b, i) => {
+      if (fit === 'even') {
+        b.style.minWidth = `${pinned}px`
+        b.style.flex = '1 0 0'
+      } else if (fit === 'content') {
+        b.style.flex = '1 0 auto'
+      } else {
+        b.style.flex = '1 1 0'
+        if (fit === 'squeezed' || cut[i]) b.title = choices[i]?.label ?? ''
+      }
+    })
+    if (fit === 'squeezed') row.classList.add('segmented-row--squeezed')
+    else if (fit === 'truncated') row.classList.add('segmented-row--truncated')
   }
 
-  if (scale === 'big') {
-    // A panel rebuilt for a new locale drops its old rows, so an observer
-    // whose row has left the page lets go of it.
-    const observer = new ResizeObserver(() => {
-      if (wrap.isConnected) layout()
-      else observer.disconnect()
-    })
-    observer.observe(wrap)
-    void document.fonts?.ready.then(() => layout())
-  }
+  // A panel rebuilt for a new locale drops its old rows, so an observer whose
+  // row has left the page lets go of it.
+  const observer = new ResizeObserver(() => {
+    if (wrap.isConnected) layout()
+    else observer.disconnect()
+  })
+  observer.observe(wrap)
+  void document.fonts?.ready.then(() => layout())
 
   render()
   return wrap
@@ -475,13 +477,16 @@ function paintButton(btn: HTMLButtonElement, opts: ButtonOptions): void {
         : ''
       : reactive || opts.stage === 'none'
         ? ''
-        : `glim-btn-${opts.stage ?? widthStage(opts.label)}`
+        : `glim-btn-${opts.stage ?? widthStage(opts.label, showGlyph)}`
   // Only the engine's own classes are replaced, so a caller's, such as a
   // rainbow tint, survive a repaint.
   for (const cls of [...btn.classList]) {
     if (cls.startsWith('glim-btn') || cls.startsWith('glim-tone-') || cls === 'glim-reactive') btn.classList.remove(cls)
   }
-  btn.classList.add('glim-btn', `glim-tone-${opts.tone ?? 'subtle'}`)
+  const tone = opts.tone ?? 'subtle'
+  btn.classList.add('glim-btn', `glim-tone-${tone}`)
+  // The surface tones take the accent when reached for (rule 40).
+  if (tone === 'subtle' || tone === 'neutral') btn.classList.add(`glim-btn-${tone}`)
   if (stage) btn.classList.add(stage)
   if (reactive) btn.classList.add('glim-reactive')
   btn.style.setProperty('--reactive-chars', reactive ? String(labelWidth(opts.label)) : '')

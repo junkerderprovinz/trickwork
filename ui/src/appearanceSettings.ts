@@ -19,7 +19,7 @@ import {
 } from './design/appearance'
 import { applyDisco, discoTap } from './design/disco'
 import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
-import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './design/theme'
+import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './theme'
 import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
@@ -255,7 +255,6 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       choices: LABEL_MODES.map((m) => ({ value: m, label: t(LABEL_KEYS[m]), glyph: segmentGlyph(LABEL_GLYPHS[m]) })),
       value: labelMode,
       layout: 'row',
-      pairs: true,
       rainbowBaseIndex: HUE_OFFSET.labels,
       onChange: (value) => {
         labelMode = value

@@ -303,32 +303,6 @@ body {
   color: var(--carbon-text);
   background: none;
 }
-/* The card in hand shakes, fast and a little wider than its neighbours rock,
-   so the grab reads at once. Like every dial it has a value at each motion
-   level, and none moves at off. */
-@media (prefers-reduced-motion: no-preference) {
-  :root {
-    --motion-wiggle-grab-dur: 70ms;
-    --motion-wiggle-grab-angle: 1.2deg;
-  }
-  :root[data-motion='subtle'] {
-    --motion-wiggle-grab-dur: 110ms;
-    --motion-wiggle-grab-angle: .7deg;
-  }
-  :root[data-motion='off'] {
-    --motion-wiggle-grab-dur: 400ms;
-    --motion-wiggle-grab-angle: 0deg;
-  }
-  :root[data-motion='storm'] {
-    --motion-wiggle-grab-dur: 55ms;
-    --motion-wiggle-grab-angle: 1.8deg;
-  }
-  .glim-drag-armed > .glim-drag-lift {
-    --motion-wiggle-angle: var(--motion-wiggle-grab-angle);
-    animation-duration: var(--motion-wiggle-grab-dur);
-  }
-}
-
 .card-drag-handle:active {
   cursor: grabbing;
 }
@@ -570,23 +544,6 @@ canvas.preview-canvas[width="0"] {
 .setting-row > .segmented-row {
   width: auto;
   margin-inline-start: auto;
-}
-
-/* A selector whose labels run long goes two to a row on a phone, so its four
-   segments make a grid of two by two and a label that does not fit its half
-   wraps instead of being cut off. */
-.segmented-row.segmented-row--pairs > .segmented-button {
-  flex: 1 0 var(--seg-basis, auto);
-}
-@media (max-width: 599.98px) {
-  .setting-row > .segmented-row--pairs {
-    width: 100%;
-    --seg-basis: calc(50% - 0.25rem);
-  }
-  .segmented-row.segmented-row--pairs > .segmented-button {
-    min-width: 0;
-    white-space: normal;
-  }
 }
 
 .control-slider .control-slider-row {
@@ -1021,15 +978,9 @@ button:focus-visible {
   background-color: var(--carbon-surface2);
   color: var(--carbon-text);
 }
-.glim-tone-subtle:hover:not(:disabled) {
-  background-color: var(--carbon-surface3);
-}
 .glim-tone-neutral {
   background-color: var(--carbon-surface3);
   color: var(--carbon-text);
-}
-.glim-tone-neutral:hover:not(:disabled) {
-  background-color: var(--carbon-hover-raised);
 }
 /* A filled tone hovers one colour step toward the text colour (rule 21), never
    through opacity, which would let the card show through. */
@@ -1133,7 +1084,7 @@ button:active:not(:disabled) {
    segments in controlWidgets.ts. */
 .segmented-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.2rem;
   padding: 0.2rem;
   width: 100%;
@@ -1152,9 +1103,29 @@ button:active:not(:disabled) {
   color: var(--carbon-text-sub);
 }
 
-/* A small strip hugs its labels and grows into a wrapped row's leftover room. */
+/* A small strip hugs its labels and grows into the row's leftover room. */
 .segmented-row--small .segmented-button {
   flex: 1 0 auto;
+  white-space: nowrap;
+}
+
+/* The strip stays on its one row ("A strip that wrapped stays on its row"):
+   where the words do not fit it shows the glyphs alone, and a strip without
+   glyphs cuts its long labels short, each whole in its bubble. */
+.segmented-button {
+  min-width: 0;
+}
+/* A strip across its card gives way inside its box instead of widening the
+   card around it. One beside its name in a setting row hugs its segments. */
+.control-slider:not(.setting-row) > .segmented-row {
+  contain: inline-size;
+}
+.segmented-row--squeezed .segmented-button-label {
+  display: none;
+}
+.segmented-row--truncated .segmented-button-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -1863,11 +1834,4 @@ button:active:not(:disabled) {
 [data-labels-buttons='text'] .donate-coin svg,
 [data-labels-buttons='glyph'] .donate-coin span {
   display: none;
-}
-
-/* Flatpak's blue, for a brand GlimStone has no tile for. White on it is 3.3:1. */
-.glim-tile-flatpak { --tile: #4a90d9; --tile-ink: #ffffff; }
-.glim-flatpak-mark { color: var(--brand-flatpak, #4a90d9); }
-@media (hover: hover) {
-  .group:hover > .glim-brand-tile { --brand-flatpak: var(--tile-ink); }
 }

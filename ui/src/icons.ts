@@ -30,13 +30,13 @@ import {
   IconMotionWild,
   IconRefresh,
   IconSun,
+  IconSync,
   IconTabApp,
   IconTabGeneral,
   IconTabLook,
   IconThemeSystem,
   IconUndo,
   IconUpToDate,
-  IconUpdate,
   IconUpdateAvailable,
   IconWindowMaximise,
   IconWindowMinimise,
@@ -193,7 +193,7 @@ export function iconDiagnostics(): string {
   return glyphSvg(IconDiagnostics, 19)
 }
 
-export const UPDATE_GLYPHS = { check: IconUpdate, current: IconUpToDate, found: IconUpdateAvailable }
+export const UPDATE_GLYPHS = { check: IconSync, current: IconUpToDate, found: IconUpdateAvailable }
 
 export function buttonGlyph(glyph: Glyph): string {
   return glyphSvg(glyph, 19)

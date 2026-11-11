@@ -609,30 +609,25 @@ test('a card dragged by its handle lands in its new place, and Escape puts it ba
   await expect.poll(order).toEqual(['transform', 'adjust', 'filters', 'history', 'queue', 'export'])
 })
 
-test('the card in hand shakes faster and wider than the others rock, and holds still under reduced motion', async ({ page }) => {
+test('the other cards tremble while one is held, the card in hand stays still, and nothing moves under reduced motion', async ({ page }) => {
   await page.goto('/')
   const handle = page.locator('.app-secondary > [data-card-id="adjust"] .card-drag-handle')
   const box = (await handle.boundingBox())!
-  const beats = () =>
+  const motion = () =>
     page.evaluate(() => {
-      const of = (el: Element) => {
-        const style = getComputedStyle(el)
-        return { ms: parseFloat(style.animationDuration) * 1000, angle: parseFloat(style.getPropertyValue('--motion-wiggle-angle')) }
-      }
-      return { held: of(document.querySelector('.glim-drag-lift')!), other: of(document.querySelector('.glim-drag-shift')!) }
+      const of = (selector: string) => getComputedStyle(document.querySelector(selector)!).animationName
+      return { held: of('.glim-drag-lift'), other: of('.glim-drag-shift') }
     })
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
   await page.mouse.down()
-  const lively = await beats()
-  expect(lively.other.ms).toBeGreaterThan(0)
-  expect(lively.held.ms).toBeLessThanOrEqual(lively.other.ms / 3)
-  expect(lively.held.angle).toBeGreaterThan(lively.other.angle)
+  const lively = await motion()
+  expect(lively.other).not.toBe('none')
+  expect(lively.held).toBe('none')
   await page.mouse.up()
 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.mouse.down()
-  const still = await page.evaluate(() => getComputedStyle(document.querySelector('.glim-drag-lift')!).animationName)
-  expect(still).toBe('none')
+  expect((await motion()).other).toBe('none')
   await page.mouse.up()
 })
 
@@ -753,6 +748,20 @@ test('the browser has no Updates card, since only the desktop app updates itself
   await settingsButton(page).click()
   await settingsTab(page, 'General').click()
   await expect(page.getByRole('switch', { name: 'Update automatically' })).toHaveCount(0)
+})
+
+test('a strip keeps its one row on a phone and shows its glyphs alone where the words do not fit', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  const strip = page.getByRole('tablist', { name: 'Labels' })
+  const tops = async () => strip.getByRole('tab').evaluateAll((tabs) => tabs.map((tab) => Math.round(tab.getBoundingClientRect().top)))
+  await expect(strip.locator('.segmented-button-label').first()).toBeVisible()
+
+  await page.setViewportSize({ width: 360, height: 760 })
+  await expect.poll(async () => new Set(await tops()).size).toBe(1)
+  await expect(strip.locator('.segmented-button-label').first()).toBeHidden()
+  await expect(strip.getByRole('tab', { name: 'Symbol', exact: true })).toBeVisible()
 })
 
 test('the browser draws no window bar, since the browser has its own frame', async ({ page }) => {

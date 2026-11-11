@@ -8,6 +8,14 @@ All notable changes to TrickWork are documented here.
 
 - TrickWork comes as a Flatpak for Linux too, for x64 and ARM64. It brings its own WebKitGTK and opens and saves files through your desktop's own dialogs, so it sees only the folders you pick there. Flatpak looks after its updates, so **Update automatically** stays off there and says why, and Check for updates points you to your software centre. The README, the docs and the App card in the container all offer the download.
 
+### 🎨 Design
+
+- The look follows GlimStone 4.3.5.
+- A row of choices stays on one line at every width. Where its words don't fit, as on a phone, it shows its symbols alone and names each one in its bubble. The Settings tabs and the Labels choices do this on a narrow screen.
+- While you drag a card, the other cards tremble and the one in your hand holds still under the pointer.
+- Check for updates wears two circling arrows.
+- A grey button takes a touch of the accent when you point at it or reach it with the keyboard, and under rainbow every button lights up in a colour of its own.
+
 ## 1.6.1 - 2026-11-09
 
 ### 🐛 Fixed

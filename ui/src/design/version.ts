@@ -1,6 +1,5 @@
 /**
- * The version of the reference files beside this one. It ships with them so an
- * app's Version card cannot drift from the copies it runs; bump it in the release
- * that changes the files.
+ * The version every GlimStone package carries, so an app's Version card names
+ * the one it runs. All packages share it and move together.
  */
-export const GLIMSTONE_VERSION = "3.8.0";
+export const GLIMSTONE_VERSION = "4.3.5";
