@@ -13,18 +13,18 @@ export function keepTabInside(card: HTMLElement | null, e: KeyboardEvent): void 
   if (!card) return;
   const focusables = Array.from(card.querySelectorAll<HTMLElement>(FOCUSABLE));
   if (focusables.length === 0) return;
-  const first = focusables[0];
-  const last = focusables[focusables.length - 1];
+  const first = focusables[0]!;
+  const last = focusables[focusables.length - 1]!;
   const active = document.activeElement;
   const inside = active instanceof Node && card.contains(active);
   if (e.shiftKey) {
     if (!inside || active === first) {
       e.preventDefault();
-      last?.focus();
+      last.focus();
     }
   } else if (!inside || active === last) {
     e.preventDefault();
-    first?.focus();
+    first.focus();
   }
 }
 

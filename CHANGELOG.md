@@ -10,7 +10,7 @@ All notable changes to TrickWork are documented here.
 
 ### 🎨 Design
 
-- The look follows GlimStone 4.3.5.
+- The look follows GlimStone 4.3.6.
 - A row of choices stays on one line at every width. Where its words don't fit, as on a phone, it shows its symbols alone and names each one in its bubble. The Settings tabs and the Labels choices do this on a narrow screen.
 - While you drag a card, the other cards tremble and the one in your hand holds still under the pointer.
 - Check for updates wears two circling arrows.
