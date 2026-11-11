@@ -217,6 +217,7 @@ const dict: Translations = {
   'update.title': '更新',
   'update.auto': '自动更新',
   'update.autoHint': 'TrickWork 每天查找一次新版本，并在后台下载。新版本会在下次打开 TrickWork 时启动，工作时不会有任何变化。',
+  'update.flatpakHint': 'Flatpak 版通过软件中心或 flatpak update 获取更新。',
   'update.ready': '版本 {version} 已下载，将在下次打开 TrickWork 时启动。',
   'update.saveFailed': '无法保存此设置。',
 

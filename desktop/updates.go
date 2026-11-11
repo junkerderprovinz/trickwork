@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -146,13 +147,23 @@ func updateOnce(ctx context.Context, u *update.Updater, logger *log.Logger, swap
 	return rel.Version
 }
 
-// AutoUpdate reports the "Update automatically" setting to the window.
+// AutoUpdate reports the "Update automatically" setting to the window. It is
+// off in a Flatpak, whose files only the software centre replaces.
 func (a *App) AutoUpdate() bool {
+	if a.Flatpak() {
+		return false
+	}
 	return a.settings.autoUpdate()
 }
 
 // SetAutoUpdate stores the setting, which the next check reads: this copy's
 // own, or the scheduled task's for the installed copy.
 func (a *App) SetAutoUpdate(on bool) error {
+	if a.Flatpak() {
+		if on {
+			return errors.ErrUnsupported
+		}
+		return nil
+	}
 	return a.settings.setAutoUpdate(on)
 }

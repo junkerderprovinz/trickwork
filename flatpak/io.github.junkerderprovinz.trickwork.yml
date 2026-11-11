@@ -1,0 +1,76 @@
+# Builds the desktop app as a Flatpak from this checkout:
+#
+#     flatpak-builder --user --install --force-clean --state-dir=flatpak/.state \
+#       flatpak/.build flatpak/io.github.junkerderprovinz.trickwork.yml
+#
+# The build has no network, so every Go module and npm package comes from
+# go-sources.json and node-sources.json. node flatpak/update-sources.mjs writes
+# both again after a dependency changes.
+id: io.github.junkerderprovinz.trickwork
+runtime: org.gnome.Platform
+runtime-version: '51'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+  - org.freedesktop.Sdk.Extension.node24
+command: trickwork
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Check for updates on the Info tab asks GitHub for the newest release.
+  - --share=network
+  # The export's Save dialog is GTK's own rather than the portal's, so it only
+  # shows the folders the sandbox reaches. Pictures come in through the portal.
+  - --filesystem=xdg-pictures
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-download
+modules:
+  - name: trickwork
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node24/bin
+      env:
+        GOTOOLCHAIN: local
+        GOFLAGS: -modcacherw
+        GOPROXY: file:///run/build/trickwork/gomod
+        GOSUMDB: 'off'
+        GOMODCACHE: /run/build/trickwork/gomodcache
+        GOCACHE: /run/build/trickwork/gocache
+        CGO_ENABLED: '1'
+    build-commands:
+      # The only install script belongs to the test-only canvas package.
+      - npm ci --offline --ignore-scripts --no-audit --no-fund --cache=$FLATPAK_BUILDER_BUILDDIR/flatpak-node/npm-cache
+      - npm run build
+      - rm -rf webembed/dist && cp -r ui/dist webembed/dist
+      # The tags of scripts/desktop.mjs on Linux. The newest release in the
+      # metainfo is the version the binary carries, so a tag cannot ship
+      # without its release entry.
+      - >-
+        version=$(sed -n 's|.*<release version="\([^"]*\)".*|\1|p' flatpak/io.github.junkerderprovinz.trickwork.metainfo.xml | head -1);
+        cd desktop && go build -tags production,gtk3 -trimpath -buildvcs=false
+        -ldflags "-s -w -X main.version=$version"
+        -o trickwork .
+      - install -Dm755 desktop/trickwork $FLATPAK_DEST/bin/trickwork
+      - install -Dm644 flatpak/$FLATPAK_ID.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
+      - install -Dm644 flatpak/$FLATPAK_ID.metainfo.xml $FLATPAK_DEST/share/metainfo/$FLATPAK_ID.metainfo.xml
+      - install -Dm644 .github/assets/trickwork-appicon.svg $FLATPAK_DEST/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg
+      - install -Dm644 desktop/installer/icon.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
+      - install -Dm644 LICENSE $FLATPAK_DEST/share/licenses/$FLATPAK_ID/LICENSE
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - node_modules
+          - core/node_modules
+          - ui/node_modules
+          - core/dist
+          - ui/dist
+          - webembed/dist
+          - flatpak/.state
+          - flatpak/.build
+          - flatpak/.repo
+      - go-sources.json
+      - node-sources.json

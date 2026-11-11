@@ -1,7 +1,7 @@
 // The App card in Settings: every other way to get TrickWork. In the container
 // it offers the desktop app; in the desktop app it offers a server install.
 
-import { APPLE_SVG, DOCKER_SVG, LINUX_SVG, UNRAID_SVG, WINDOWS_SVG, ZIP_SVG } from './design/appMarks'
+import { APPLE_SVG, DOCKER_SVG, FLATPAK_SVG, LINUX_SVG, UNRAID_SVG, WINDOWS_SVG, ZIP_SVG } from './design/appMarks'
 import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
@@ -92,6 +92,10 @@ export function mountAppPanel(container: HTMLElement): void {
         buttonUnit('linux', [
           linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`),
           linkPart({ name: 'ARM64', sub: t('apps.linux') }, `${RELEASE}/trickwork-linux-arm64`, true),
+        ]),
+        buttonUnit('flatpak', [
+          linkPart({ name: 'Flatpak', sub: 'x64', mark: FLATPAK_SVG, tint: 'glim-flatpak-mark' }, `${RELEASE}/trickwork-linux-amd64.flatpak`),
+          linkPart({ name: 'ARM64', sub: 'Flatpak' }, `${RELEASE}/trickwork-linux-arm64.flatpak`, true),
         ]),
       )
     }

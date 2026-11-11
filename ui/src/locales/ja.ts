@@ -218,6 +218,7 @@ const dict: Translations = {
   'update.title': 'アップデート',
   'update.auto': '自動でアップデート',
   'update.autoHint': 'TrickWork は 1 日に 1 回新しいバージョンを探し、バックグラウンドでダウンロードします。新しいバージョンは次に TrickWork を開いたときに起動するので、作業中は何も変わりません。',
+  'update.flatpakHint': 'Flatpak 版はソフトウェアセンターか flatpak update で更新されます。',
   'update.ready': 'バージョン {version} をダウンロードしました。次に TrickWork を開いたときに起動します。',
   'update.saveFailed': 'この設定を保存できませんでした。',
 

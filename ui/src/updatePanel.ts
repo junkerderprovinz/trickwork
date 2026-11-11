@@ -1,6 +1,7 @@
 // The Updates card in the desktop build's App tab, and the toast that says a
 // downloaded version waits for the next start. The setting itself lives on the
-// Go side, which reads it before this page has loaded.
+// Go side, which reads it before this page has loaded. A Flatpak cannot replace
+// itself, so there the switch stays off and says why.
 
 import { switchRow } from './controlWidgets'
 import { infoIcon } from './design/tooltip'
@@ -19,6 +20,7 @@ export function mountUpdatePanel(container: HTMLElement): void {
   container.append(heading, wrap)
 
   let on = true
+  let flatpak = false
 
   // The switch moves at once; a refused save puts it back, shakes it and says
   // why in a toast.
@@ -35,13 +37,16 @@ export function mountUpdatePanel(container: HTMLElement): void {
 
   function render(): void {
     heading.textContent = t('update.title')
-    wrap.replaceChildren(switchRow(t('update.auto'), on, (checked) => void save(checked), infoIcon(t('update.autoHint'))))
+    const row = switchRow(t('update.auto'), on, (checked) => void save(checked), infoIcon(t(flatpak ? 'update.flatpakHint' : 'update.autoHint')))
+    row.querySelector<HTMLButtonElement>('.toggle-switch')!.disabled = flatpak
+    wrap.replaceChildren(row)
   }
 
   render()
   subscribeLocale(render)
-  void callApp<boolean>('AutoUpdate').then((value) => {
+  void Promise.all([callApp<boolean>('AutoUpdate'), callApp<boolean>('Flatpak')]).then(([value, sandboxed]) => {
     on = value
+    flatpak = sandboxed
     render()
   })
 }

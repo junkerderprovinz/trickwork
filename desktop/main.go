@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/junkerderprovinz/trickwork/desktop/flatpak"
 	"github.com/junkerderprovinz/trickwork/webembed"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -20,6 +21,12 @@ func main() {
 		return
 	}
 
+	// Wails turns WebKit's DMA-BUF renderer off on NVIDIA itself, but cannot
+	// see the driver from inside a Flatpak.
+	if flatpak.ID() != "" && os.Getenv("WEBKIT_DISABLE_DMABUF_RENDERER") == "" && flatpak.NVIDIARenders("/sys", os.Getenv) {
+		os.Setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+	}
+
 	svc := NewApp()
 	opts := application.Options{
 		Name:        "TrickWork",
@@ -27,7 +34,8 @@ func main() {
 		Services:    []application.Service{application.NewService(svc)},
 		Assets:      application.AssetOptions{Handler: application.AssetFileServerFS(webembed.Dist)},
 		// One window, and closing it ends the program on macOS as well.
-		Mac: application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
+		Mac:   application.MacOptions{ApplicationShouldTerminateAfterLastWindowClosed: true},
+		Linux: linuxOptions(),
 	}
 	if ownWebview {
 		if dir, err := configDir(); err == nil {
@@ -49,4 +57,12 @@ func main() {
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// linuxOptions names the program to GTK inside a Flatpak after the app's ID,
+// the only name the sandbox lets it own on the bus and the one the desktop
+// matches a window to the app's launcher by.
+func linuxOptions() application.LinuxOptions {
+	id := flatpak.ID()
+	return application.LinuxOptions{ApplicationID: id, ProgramName: id}
 }

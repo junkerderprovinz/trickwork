@@ -218,6 +218,7 @@ const dict: Translations = {
   'update.title': 'עדכונים',
   'update.auto': 'עדכון אוטומטי',
   'update.autoHint': 'פעם ביום TrickWork מחפש גרסה חדשה ומוריד אותה ברקע. הגרסה החדשה תופעל בפעם הבאה שתפתח את TrickWork, כך ששום דבר לא משתנה בזמן העבודה.',
+  'update.flatpakHint': 'ה־Flatpak מקבל את העדכונים שלו ממרכז התוכנה או עם flatpak update.',
   'update.ready': 'גרסה {version} הורדה ותופעל בפעם הבאה שתפתח את TrickWork.',
   'update.saveFailed': 'TrickWork לא הצליח לשמור את ההגדרה.',
 

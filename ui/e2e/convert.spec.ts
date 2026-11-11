@@ -643,12 +643,14 @@ test('the App card in the browser offers the desktop downloads of the running ve
   const version = await page.locator('.version-number').first().textContent()
   await settingsTab(page, 'App').click()
   const buttons = page.locator('.app-rows a.glim-readme-btn')
-  await expect(buttons).toHaveCount(6)
+  await expect(buttons).toHaveCount(8)
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
   await expect(page.getByRole('link', { name: 'ARM64 Windows' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
   await expect(page.getByRole('link', { name: 'ARM64 Linux' })).toHaveAttribute('href', /linux-arm64$/)
+  await expect(page.getByRole('link', { name: 'Flatpak x64' })).toHaveAttribute('href', /linux-amd64\.flatpak$/)
+  await expect(page.getByRole('link', { name: 'ARM64 Flatpak' })).toHaveAttribute('href', /linux-arm64\.flatpak$/)
 })
 
 test('an App card button shows its second line only under the pointer, over the whole unit', async ({ page }) => {
@@ -761,7 +763,7 @@ test('the browser draws no window bar, since the browser has its own frame', asy
 })
 
 // Stands in for the desktop build: the page comes from Wails' own origin, and
-// /wails/runtime.js answers the two bound setting methods and keeps the event
+// /wails/runtime.js answers the bound setting methods and keeps the event
 // listeners where a test can reach them.
 const DESKTOP = 'http://wails.localhost/'
 
@@ -770,6 +772,7 @@ const w = window
 export const Call = {
   ByName: async (name, ...args) => {
     if (name === 'main.App.AutoUpdate') return w.__stored
+    if (name === 'main.App.Flatpak') return w.__flatpak
     if (name === 'main.App.SetAutoUpdate') {
       w.__calls.push(args[0])
       if (w.__refuse) throw new Error('read-only')
@@ -802,19 +805,20 @@ export const Window = {
 export const System = { invoke: (message) => w.__window.push(message) }
 `
 
-async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false) {
+async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false, flatpak = false) {
   await page.addInitScript(
-    ([initial, refused]) => {
+    ([initial, refused, sandboxed]) => {
       const w = window as unknown as Record<string, unknown>
       w.__stored = initial
       w.__refuse = refused
+      w.__flatpak = sandboxed
       w.__calls = []
       w.__saves = []
       w.__listeners = {}
       w.__window = []
       w.__maximised = false
     },
-    [stored, refuse],
+    [stored, refuse, flatpak],
   )
   await page.route(`${DESKTOP}**`, async (route) => {
     const url = new URL(route.request().url())
@@ -837,6 +841,19 @@ test('the desktop General tab shows the stored update setting and saves a change
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-checked', 'true')
   expect(await page.evaluate(() => (window as unknown as { __calls: boolean[] }).__calls)).toEqual([true])
+})
+
+test('a Flatpak keeps the update switch off and leaves the updates to the software centre', async ({ page }) => {
+  await fakeDesktop(page, false, false, true)
+  await page.goto(DESKTOP)
+  await settingsButton(page).click()
+  await settingsTab(page, 'General').click()
+  const toggle = page.getByRole('switch', { name: 'Update automatically' })
+  await expect(toggle).toBeDisabled()
+  await expect(toggle).toHaveAttribute('aria-checked', 'false')
+  await expect(page.getByLabel('The Flatpak gets its updates from your software centre or from flatpak update.')).toBeVisible()
+  await toggle.click({ force: true })
+  expect(await page.evaluate(() => (window as unknown as { __calls: boolean[] }).__calls)).toEqual([])
 })
 
 test('a refused save puts the switch back and says so in a toast', async ({ page }) => {

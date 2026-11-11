@@ -7,6 +7,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	"github.com/junkerderprovinz/trickwork/desktop/flatpak"
 	"github.com/junkerderprovinz/trickwork/desktop/update"
 )
 
@@ -25,6 +26,11 @@ type App struct {
 }
 
 func NewApp() *App {
+	// A Flatpak leaves its updates to the software centre, which owns its
+	// files, so it needs neither the switch nor the updater.
+	if flatpak.ID() != "" {
+		return &App{}
+	}
 	if isInstalled() {
 		return &App{installed: true, settings: loadUpdateSettings(machineSettingsPath())}
 	}
@@ -38,7 +44,7 @@ func NewApp() *App {
 
 // ServiceStartup gets the application's context, which ends when it quits.
 func (a *App) ServiceStartup(ctx context.Context, _ application.ServiceOptions) error {
-	if version == "" {
+	if version == "" || a.Flatpak() {
 		return nil
 	}
 	if a.installed {
@@ -48,6 +54,12 @@ func (a *App) ServiceStartup(ctx context.Context, _ application.ServiceOptions) 
 	a.updater.Cleanup()
 	go a.keepUpdated(ctx)
 	return nil
+}
+
+// Flatpak tells the window that the software centre updates this copy, so the
+// switch stays off and says so.
+func (a *App) Flatpak() bool {
+	return flatpak.ID() != ""
 }
 
 // InstallLanguage is the language the installer's welcome page chose, such as

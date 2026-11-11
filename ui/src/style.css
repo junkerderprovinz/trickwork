@@ -1353,6 +1353,10 @@ button:active:not(:disabled) {
 .toggle-switch--on:hover {
   background-color: var(--accent);
 }
+.toggle-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 /* The knob takes the page's ground, dark on the dark theme, and sits at the
    logical start, so it mirrors under a right-to-left language. */
 .toggle-switch-knob {
@@ -1859,4 +1863,11 @@ button:active:not(:disabled) {
 [data-labels-buttons='text'] .donate-coin svg,
 [data-labels-buttons='glyph'] .donate-coin span {
   display: none;
+}
+
+/* Flatpak's blue, for a brand GlimStone has no tile for. White on it is 3.3:1. */
+.glim-tile-flatpak { --tile: #4a90d9; --tile-ink: #ffffff; }
+.glim-flatpak-mark { color: var(--brand-flatpak, #4a90d9); }
+@media (hover: hover) {
+  .group:hover > .glim-brand-tile { --brand-flatpak: var(--tile-ink); }
 }

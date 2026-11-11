@@ -225,6 +225,7 @@ export const en = {
   'update.title': 'Updates',
   'update.auto': 'Update automatically',
   'update.autoHint': 'Once a day TrickWork looks for a new version and downloads it in the background. The new version starts the next time you open TrickWork, so nothing changes while you work.',
+  'update.flatpakHint': 'The Flatpak gets its updates from your software centre or from flatpak update.',
   'update.ready': 'Version {version} has been downloaded and starts the next time you open TrickWork.',
   'update.saveFailed': 'TrickWork could not save this setting.',
 
@@ -507,6 +508,7 @@ export const de: Translations = {
   'update.title': 'Updates',
   'update.auto': 'Automatisch aktualisieren',
   'update.autoHint': 'Einmal am Tag sucht TrickWork nach einer neuen Version und lädt sie im Hintergrund herunter. Sie startet beim nächsten Öffnen von TrickWork, während der Arbeit ändert sich also nichts.',
+  'update.flatpakHint': 'Das Flatpak bekommt seine Updates über dein Software-Center oder mit flatpak update.',
   'update.ready': 'Version {version} ist heruntergeladen und startet beim nächsten Öffnen von TrickWork.',
   'update.saveFailed': 'TrickWork konnte die Einstellung nicht speichern.',
 

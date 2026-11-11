@@ -13,3 +13,10 @@ desktop/*.syso
 webembed/dist/
 test-results/
 playwright-report/
+
+# What flatpak-builder leaves behind when the Flatpak is built from the clone,
+# and the bundle made from it.
+/flatpak/.state/
+/flatpak/.build/
+/flatpak/.repo/
+*.flatpak

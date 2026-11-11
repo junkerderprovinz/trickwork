@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=TrickWork
+GenericName=ASCII Art Generator
+Comment=Turn your pictures into ASCII art that fits any font
+Exec=trickwork
+Icon=io.github.junkerderprovinz.trickwork
+Terminal=false
+Categories=Graphics;2DGraphics;RasterGraphics;
+Keywords=ascii;ascii art;text art;image;picture;font;converter;ascgen;
+StartupNotify=true
+StartupWMClass=io.github.junkerderprovinz.trickwork
+SingleMainWindow=true

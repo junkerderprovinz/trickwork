@@ -219,6 +219,7 @@ const dict: Translations = {
   'update.title': 'Cập nhật',
   'update.auto': 'Tự động cập nhật',
   'update.autoHint': 'Mỗi ngày một lần, TrickWork tìm phiên bản mới và tải về trong nền. Phiên bản mới sẽ chạy vào lần tới bạn mở TrickWork, nên trong lúc làm việc không có gì thay đổi.',
+  'update.flatpakHint': 'Bản Flatpak nhận bản cập nhật từ trung tâm phần mềm hoặc qua flatpak update.',
   'update.ready': 'Phiên bản {version} đã được tải về và sẽ chạy vào lần tới bạn mở TrickWork.',
   'update.saveFailed': 'TrickWork không lưu được cài đặt này.',
 

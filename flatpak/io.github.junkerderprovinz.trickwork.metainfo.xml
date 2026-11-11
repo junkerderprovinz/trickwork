@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.junkerderprovinz.trickwork</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+
+  <name>TrickWork</name>
+  <summary>Turn pictures into ASCII art that fits any font</summary>
+  <developer id="io.github.junkerderprovinz">
+    <name>junkerderprovinz</name>
+  </developer>
+
+  <description>
+    <p>
+      Most ASCII art tools pick characters by brightness and assume every letter
+      is equally wide. TrickWork measures how much ink each character puts on the
+      page in the font you chose, so the picture keeps its shape even in a
+      proportional font. Every slider updates the preview straight away.
+    </p>
+    <p>What it does:</p>
+    <ul>
+      <li>A live preview that follows the font, the character set and every slider</li>
+      <li>Crop, rotate and flip, levels, brightness and contrast, invert, dithering, colour and sharpening</li>
+      <li>A batch queue for many pictures at once, where one broken file never holds up the rest</li>
+      <li>Export to plain text, XHTML, RTF and PNG</li>
+      <li>Presets you can save, share and load again</li>
+    </ul>
+    <p>
+      TrickWork needs no account, collects no analytics and keeps your pictures
+      on your computer. The Flatpak opens pictures from anywhere through
+      your desktop's file picker and saves exports to Pictures, Documents or
+      Downloads. Your software centre brings the updates.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.junkerderprovinz.trickwork.desktop</launchable>
+  <provides>
+    <binary>trickwork</binary>
+  </provides>
+
+  <url type="homepage">https://github.com/junkerderprovinz/trickwork</url>
+  <url type="bugtracker">https://github.com/junkerderprovinz/trickwork/issues</url>
+  <url type="help">https://junkerderprovinz.github.io/trickwork/</url>
+  <url type="vcs-browser">https://github.com/junkerderprovinz/trickwork</url>
+  <url type="contribute">https://github.com/junkerderprovinz/trickwork/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>A knight's helmet as ASCII art, beside the Transform and Filters cards</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/screenshots/desktop.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Shape, theme, animations and rainbow colours in the Look settings</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/screenshots/desktop-settings.png</image>
+    </screenshot>
+  </screenshots>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#a6dceb</color>
+    <color type="primary" scheme_preference="dark">#0a4554</color>
+  </branding>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="1.6.1" date="2026-11-09">
+      <description>
+        <p>Uninstalling on Windows leaves nothing behind, and the Linux installer shows TrickWork's icon.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.6.1</url>
+    </release>
+    <release version="1.6.0" date="2026-10-30">
+      <description>
+        <p>A title bar in TrickWork's own colours, new installers for Windows and Linux, and an installed app that starts in your system's language.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.6.0</url>
+    </release>
+    <release version="1.5.0" date="2026-10-15">
+      <description>
+        <p>An Info tab in Settings with the version, a check for updates, the manual and a bug report you can attach to an issue.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.5.0</url>
+    </release>
+  </releases>
+</component>

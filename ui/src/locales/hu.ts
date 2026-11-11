@@ -219,6 +219,7 @@ const dict: Translations = {
   'update.title': 'Frissítések',
   'update.auto': 'Automatikus frissítés',
   'update.autoHint': 'A TrickWork naponta egyszer új verziót keres, és a háttérben letölti. Az új verzió a program következő megnyitásakor indul, így munka közben semmi sem változik.',
+  'update.flatpakHint': 'A Flatpak a szoftverközpontból vagy a flatpak update paranccsal kapja a frissítéseit.',
   'update.ready': 'Az új verzió ({version}) letöltődött, és a TrickWork következő megnyitásakor indul.',
   'update.saveFailed': 'A TrickWork nem tudta menteni ezt a beállítást.',
 

@@ -219,6 +219,7 @@ const dict: Translations = {
   'update.title': 'Oppdateringer',
   'update.auto': 'Oppdater automatisk',
   'update.autoHint': 'Én gang om dagen ser TrickWork etter en ny versjon og laster den ned i bakgrunnen. Den starter neste gang du åpner TrickWork, så ingenting endrer seg mens du jobber.',
+  'update.flatpakHint': 'Flatpak-en får oppdateringene sine fra programvaresenteret eller med flatpak update.',
   'update.ready': 'Versjon {version} er lastet ned og starter neste gang du åpner TrickWork.',
   'update.saveFailed': 'TrickWork kunne ikke lagre innstillingen.',
 

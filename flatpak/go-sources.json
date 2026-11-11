@@ -1,0 +1,30 @@
+[
+    {
+        "type": "file",
+        "url": "https://proxy.golang.org/github.com/godbus/dbus/v5/@v/v5.2.2.mod",
+        "sha256": "d008ac84f404c6fbc7a1f378099dd21794843d10d6cdc129cfc403d39656f5a6",
+        "dest": "gomod/github.com/godbus/dbus/v5/@v",
+        "dest-filename": "v5.2.2.mod"
+    },
+    {
+        "type": "file",
+        "url": "https://proxy.golang.org/github.com/godbus/dbus/v5/@v/v5.2.2.zip",
+        "sha256": "5c6f37c725a481fb0f1e7866ae273429525d8cc6a6cace87da28e53370f5596a",
+        "dest": "gomod/github.com/godbus/dbus/v5/@v",
+        "dest-filename": "v5.2.2.zip"
+    },
+    {
+        "type": "file",
+        "url": "https://proxy.golang.org/github.com/wailsapp/wails/v3/@v/v3.1.0.mod",
+        "sha256": "823c389ae2206de10ac54eff9815f27f6cca3b46d949899580fead3977f3d78e",
+        "dest": "gomod/github.com/wailsapp/wails/v3/@v",
+        "dest-filename": "v3.1.0.mod"
+    },
+    {
+        "type": "file",
+        "url": "https://proxy.golang.org/github.com/wailsapp/wails/v3/@v/v3.1.0.zip",
+        "sha256": "1b2217b78cc2288fe0feb0269857e27ba85599caee0bddd205ec33a51f492707",
+        "dest": "gomod/github.com/wailsapp/wails/v3/@v",
+        "dest-filename": "v3.1.0.zip"
+    }
+]
