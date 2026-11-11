@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
+import pkg from '../package.json'
 import { isNewer, releaseNotes } from './releases'
 import { APP_VERSION } from './version'
+
+describe('APP_VERSION', () => {
+  it('is the version the package is released as', () => {
+    expect(APP_VERSION).toBe(pkg.version)
+  })
+})
 
 describe('isNewer', () => {
   it('finds a higher patch, minor or major', () => {

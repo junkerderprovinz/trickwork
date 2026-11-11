@@ -2,7 +2,7 @@
 
 All notable changes to TrickWork are documented here.
 
-## Unreleased
+## 1.6.2 - 2026-11-12
 
 ### ✨ Added
 
@@ -19,6 +19,10 @@ All notable changes to TrickWork are documented here.
 - Check for updates wears two circling arrows.
 - The ARM, Portable and Flatpak ARM parts of the download buttons on the App card show one word and no second line.
 - A grey button takes a touch of the accent when you point at it or reach it with the keyboard, and under rainbow every button lights up in a colour of its own.
+
+### 🐛 Fixed
+
+- 1.6.1 still called itself 1.6.0 inside the app. The Version card showed 1.6.0, Check for updates kept offering 1.6.1, and the download buttons on the App card fetched the files of 1.6.0. The app now carries the version it is released as, and a test makes sure it stays that way.
 
 ## 1.6.1 - 2026-11-09
 
