@@ -199,3 +199,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "$GITHUB_REF_NAME" dist/* --clobber --repo "$GITHUB_REPOSITORY"
+
+      # The Flatpak repository republishes the bundles of each app's newest
+      # release, so it rebuilds once these are attached.
+      - name: Rebuild the Flatpak repository
+        env:
+          GH_TOKEN: ${{ secrets.FLATPAK_DISPATCH_TOKEN }}
+        run: gh api repos/junkerderprovinz/flatpak/dispatches -f event_type=release
