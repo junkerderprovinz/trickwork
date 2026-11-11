@@ -1292,6 +1292,13 @@ button:active:not(:disabled) {
   border-color: var(--carbon-text);
 }
 
+/* The system colour wears the wand in the ink that holds on it. */
+.accent-swatch--system {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* The editable rainbow palette, one swatch per position, styled like the
    accent swatches. */
 .palette-swatch-row {
@@ -1327,6 +1334,27 @@ button:active:not(:disabled) {
 .toggle-switch:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+/* A refused switch keeps its focus ring whole, so only its fill dims. */
+.toggle-switch[aria-disabled='true'] {
+  background-color: color-mix(in srgb, var(--carbon-surface3) 50%, transparent);
+}
+.toggle-switch[aria-disabled='true'].toggle-switch--on {
+  background-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.toggle-refusal {
+  display: none;
+}
+@media (hover: none) {
+  .switch-row:has(> .toggle-refusal) {
+    flex-wrap: wrap;
+  }
+  .toggle-refusal {
+    display: block;
+    flex-basis: 100%;
+    font-size: var(--text-meta);
+    color: var(--carbon-text-sub);
+  }
 }
 /* The knob takes the page's ground, dark on the dark theme, and sits at the
    logical start, so it mirrors under a right-to-left language. */

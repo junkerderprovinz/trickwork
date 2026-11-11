@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const USED = [
+  'IconAccentSystem',
   'IconBack',
   'IconClearSelection',
   'IconClose',

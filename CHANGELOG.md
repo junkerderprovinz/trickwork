@@ -7,6 +7,8 @@ All notable changes to TrickWork are documented here.
 ### ✨ Added
 
 - TrickWork comes as a Flatpak for Linux too, for x64 and ARM64. It brings its own WebKitGTK and opens and saves files through your desktop's own dialogs, so it sees only the folders you pick there. Flatpak looks after its updates, so **Update automatically** stays off there and says why, and Check for updates points you to your software centre. The README, the docs and the App card in the container all offer the download.
+- An OLED switch under Theme puts the dark theme on true black for OLED and AMOLED screens. It belongs to the screen you use, so it stays on this device. With Light chosen it can't be flipped and says why.
+- The first swatch under Accent can take your system's colour: the accent of Windows, macOS or Linux in the desktop app, and in Firefox or Safari the colour your system gives the browser. A wand marks it, and TrickWork follows when you change the colour in your system's settings.
 
 ### 🎨 Design
 

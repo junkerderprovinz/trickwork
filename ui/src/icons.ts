@@ -4,6 +4,7 @@
 // the name.
 
 import {
+  IconAccentSystem,
   IconBack,
   IconClearSelection,
   IconClose,
@@ -231,6 +232,11 @@ export const LABEL_GLYPHS = {
   textGlyph: IconLabelTextGlyph,
   glyph: IconLabelGlyph,
   reactive: IconLabelReactive,
+}
+
+/** The wand on the system colour's swatch. */
+export function iconAccentSystem(): string {
+  return glyphSvg(IconAccentSystem, 16)
 }
 
 export function segmentGlyph(glyph: Glyph): string {

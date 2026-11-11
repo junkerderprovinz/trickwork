@@ -774,6 +774,47 @@ test('a strip keeps its one row on a phone and shows its glyphs alone where the 
   await expect(strip.getByRole('tab', { name: 'Symbol', exact: true })).toBeVisible()
 })
 
+test('the OLED switch puts the dark theme on true black and stays on after a reload', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  await page.getByRole('tablist', { name: 'Theme' }).getByRole('tab', { name: 'Dark' }).click()
+  const oled = page.getByRole('switch', { name: 'OLED' })
+  await expect(oled).toHaveAttribute('aria-checked', 'false')
+  await oled.click()
+  await expect(oled).toHaveAttribute('aria-checked', 'true')
+  await expect(page.locator('html')).toHaveAttribute('data-oled', '')
+
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-oled', '')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  await expect(page.getByRole('switch', { name: 'OLED' })).toHaveAttribute('aria-checked', 'true')
+})
+
+test('under Light the OLED switch refuses, shakes and says why', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  await page.getByRole('tablist', { name: 'Theme' }).getByRole('tab', { name: 'Light' }).click()
+  const oled = page.getByRole('switch', { name: 'OLED' })
+  await expect(oled).toHaveAttribute('aria-disabled', 'true')
+  await expect(oled).toHaveAttribute('data-tip', 'Only with Dark or System. Light is chosen above.')
+  // Playwright waits for an aria-disabled control to enable, and a person
+  // can still press this one.
+  await oled.click({ force: true })
+  await expect(oled).toHaveAttribute('aria-checked', 'false')
+  await expect(oled).toHaveClass(/glim-shake/)
+  await expect(page.locator('html')).not.toHaveAttribute('data-oled')
+})
+
+test('a browser without a system colour shows no system swatch', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  await expect(page.locator('.accent-row > button').first()).toHaveAccessibleName('Sunflower')
+})
+
 test('the browser draws no window bar, since the browser has its own frame', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('.glim-window-bar')).toHaveCount(0)
@@ -792,6 +833,7 @@ export const Call = {
   ByName: async (name, ...args) => {
     if (name === 'main.App.AutoUpdate') return w.__stored
     if (name === 'main.App.Flatpak') return w.__flatpak
+    if (name === 'main.App.SystemAccent') return w.__accent
     if (name === 'main.App.SetAutoUpdate') {
       w.__calls.push(args[0])
       if (w.__refuse) throw new Error('read-only')
@@ -824,20 +866,21 @@ export const Window = {
 export const System = { invoke: (message) => w.__window.push(message) }
 `
 
-async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false, flatpak = false) {
+async function fakeDesktop(page: import('@playwright/test').Page, stored: boolean, refuse = false, flatpak = false, accent = '') {
   await page.addInitScript(
-    ([initial, refused, sandboxed]) => {
+    ([initial, refused, sandboxed, colour]) => {
       const w = window as unknown as Record<string, unknown>
       w.__stored = initial
       w.__refuse = refused
       w.__flatpak = sandboxed
+      w.__accent = colour
       w.__calls = []
       w.__saves = []
       w.__listeners = {}
       w.__window = []
       w.__maximised = false
     },
-    [stored, refuse, flatpak],
+    [stored, refuse, flatpak, accent] as const,
   )
   await page.route(`${DESKTOP}**`, async (route) => {
     const url = new URL(route.request().url())
@@ -895,6 +938,19 @@ test('a Flatpak says its software centre brings a newer release', async ({ page 
   await fakeDesktop(page, false, false, true)
   await findNewerRelease(page)
   await expect(page.getByRole('status')).toContainText('TrickWork 99.0.0 is out. Your software centre or flatpak update brings it.')
+})
+
+test('the desktop offers its system colour first among the accents and keeps it as the system choice', async ({ page }) => {
+  await fakeDesktop(page, true, false, false, '#3366CC')
+  await page.goto(DESKTOP)
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  const system = page.locator('.accent-row > button').first()
+  await expect(system).toHaveAccessibleName('System colour')
+  await system.click()
+  await expect(system).toHaveAttribute('aria-pressed', 'true')
+  expect(await page.evaluate(() => document.documentElement.style.getPropertyValue('--accent').toLowerCase())).toBe('#3366cc')
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('glim-appearance') ?? '{}').accent)).toBe('system')
 })
 
 test('a refused save puts the switch back and says so in a toast', async ({ page }) => {

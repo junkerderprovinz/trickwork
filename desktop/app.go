@@ -7,6 +7,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	"github.com/junkerderprovinz/trickwork/desktop/accent"
 	"github.com/junkerderprovinz/trickwork/desktop/flatpak"
 	"github.com/junkerderprovinz/trickwork/desktop/update"
 )
@@ -60,6 +61,12 @@ func (a *App) ServiceStartup(ctx context.Context, _ application.ServiceOptions) 
 // switch stays off and says so.
 func (a *App) Flatpak() bool {
 	return flatpak.ID() != ""
+}
+
+// SystemAccent is the accent colour the desktop is set to, such as "#0078D7",
+// or "" where it names none. The window offers it beside the presets.
+func (a *App) SystemAccent() string {
+	return accent.Read()
 }
 
 // InstallLanguage is the language the installer's welcome page chose, such as

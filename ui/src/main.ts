@@ -27,6 +27,7 @@ import { mountPresetsPanel } from './presetsPanel'
 import { mountHistoryPanel } from './historyPanel'
 import { listenForUpdates, mountUpdatePanel } from './updatePanel'
 import { drawsOwnFrame, isDesktop } from './wails'
+import { watchSystemAccent } from './systemAccent'
 import { mountWindowBar } from './windowBar'
 import { makeReorderable } from './cardReorder'
 import { brandLogo } from './brandLogo'
@@ -40,6 +41,7 @@ if (!app) {
 }
 
 applyCachedAppearance()
+watchSystemAccent()
 applyCachedTheme()
 applyMotion(storedMotion())
 applyStoredLabelModes()

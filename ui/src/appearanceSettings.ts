@@ -10,23 +10,28 @@ import {
   applyAccent,
   applyRainbow,
   cacheAppearance,
+  contrastOn,
   leafTap,
   stormTap,
   rainbowState,
   subscribeRainbow,
+  subscribeSystemAccent,
+  systemAccent,
+  SYSTEM_ACCENT,
   type Motion,
   type Shape,
 } from './design/appearance'
 import { applyDisco, discoTap } from './design/disco'
 import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './theme'
+import { applyOled, darkShowing, oledRefusal, storedOled, watchDarkShowing } from './design/theme'
 import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
 import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { motionMs } from './motion'
-import { iconReset, LABEL_GLYPHS, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
+import { iconAccentSystem, iconReset, LABEL_GLYPHS, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
 import { currentLocale, LOCALES, setLocale, subscribeLocale, t, type TranslationKey } from './i18n'
 
 const APPEARANCE_CACHE_KEY = 'glim-appearance'
@@ -155,8 +160,8 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
   const cached = readCachedAppearance()
   let shape: Shape = SHAPES_STORED.includes(cached.shape as Shape) ? (cached.shape as Shape) : DEFAULT_SHAPE
   // '' means no custom accent: cacheAppearance needs a string, and applying ''
-  // clears the override.
-  let accent = cached.accent && HEX_RE.test(cached.accent) ? cached.accent : ''
+  // clears the override. SYSTEM_ACCENT follows the system's colour.
+  let accent = cached.accent && (HEX_RE.test(cached.accent) || cached.accent === SYSTEM_ACCENT) ? cached.accent : ''
   let theme: ThemePref = cachedThemePref()
   let motion: Motion = storedMotion()
   let labelMode: LabelMode = getLabelMode('buttons')
@@ -225,8 +230,10 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
         theme = value
         applyTheme(theme)
         persist()
+        oledSlot.replaceChildren(oledRow())
       },
     })
+    oledSlot.replaceChildren(oledRow())
 
     const motions = motion === 'storm' || stormFound ? [...MOTION_LEVELS, 'storm' as const] : MOTION_LEVELS
     const motionRow = segmentedRow({
@@ -263,8 +270,32 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
     })
 
-    panel.append(languageBlock(), shapeRow, themeRow, motionRow, labelsRow, colourBlock())
+    panel.append(languageBlock(), shapeRow, themeRow, oledSlot, motionRow, labelsRow, colourBlock())
   }
+
+  // OLED belongs to this screen rather than to the person, so it stays on the
+  // device. It counts only while the dark theme shows, and rests meanwhile
+  // without letting go. Under Light it refuses, since there is no dark theme
+  // to put on black.
+  const oledSlot = document.createElement('div')
+  oledSlot.className = 'control-slider'
+  function oledRow(): HTMLElement {
+    const row = switchRow(
+      t('appearance.oled'),
+      storedOled(),
+      (on) => applyOled(on),
+      infoIcon(t('appearance.oledHint')),
+      oledRefusal(theme, {
+        sentence: t('appearance.oledLight'),
+        dark: t('appearance.dark'),
+        system: t('appearance.system'),
+        light: t('appearance.light'),
+      }),
+    )
+    if (!darkShowing()) row.querySelector('.control-slider-label-row')?.classList.add('is-dimmed')
+    return row
+  }
+  watchDarkShowing(() => oledSlot.replaceChildren(oledRow()))
 
   // The accent row and the rainbow block. The accent row stays, dimmed, while
   // the rainbow owns the colours, since its value still paints what takes no
@@ -287,8 +318,30 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
 
     const accentRow = document.createElement('div')
     accentRow.className = 'accent-row'
-    const live = accent || DEFAULT_ACCENT
-    const selected = nearestPreset(live)
+    const system = systemAccent()
+    if (system) {
+      const chosen = accent === SYSTEM_ACCENT
+      const sw = document.createElement('button')
+      sw.type = 'button'
+      sw.className = 'accent-swatch accent-swatch--system' + (chosen ? ' accent-swatch--active' : '')
+      sw.style.backgroundColor = system
+      sw.style.color = contrastOn(system)
+      sw.innerHTML = iconAccentSystem()
+      sw.setAttribute('data-tip', t('appearance.accentSystem'))
+      sw.setAttribute('aria-label', t('appearance.accentSystem'))
+      sw.setAttribute('aria-pressed', String(chosen))
+      sw.addEventListener('click', () => {
+        accent = SYSTEM_ACCENT
+        applyAccent(accent)
+        persist()
+        build()
+      })
+      accentRow.appendChild(sw)
+    }
+    // The system mode belongs to no preset, even where the device has no
+    // colour and the default shows.
+    const live = accent && accent !== SYSTEM_ACCENT ? accent : DEFAULT_ACCENT
+    const selected = accent === SYSTEM_ACCENT ? -1 : nearestPreset(live)
     ACCENTS.forEach((preset, i) => {
       const isSelected = i === selected
       // The selected slot wears the live colour, which the picker may have
@@ -474,6 +527,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
   build()
   subscribeLocale(build)
   subscribeRainbow(build)
+  subscribeSystemAccent(build)
 
   return () => {
     leafFound = shape === 'leaf'

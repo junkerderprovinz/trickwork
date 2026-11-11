@@ -5,6 +5,7 @@ import { hueVars, rainbowState } from './design/appearance'
 import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from './design/controls'
 import { segmentFit } from './design/segmentLayout'
 import { enableWheelStep, stepIndex } from './design/selectScroll'
+import { replay } from './motion'
 
 /**
  * Sets the --item-hue* properties that give an element its rainbow position.
@@ -271,12 +272,23 @@ export function iconToggleButton(
  * A sliding switch (`role="switch"`). Track and knob read --radius-pill, so the
  * switch follows the shape engine.
  */
-export function toggleSwitch(label: string, initial: boolean, onChange: (checked: boolean) => void): HTMLButtonElement {
+export function toggleSwitch(
+  label: string,
+  initial: boolean,
+  onChange: (checked: boolean) => void,
+  refused?: string,
+): HTMLButtonElement {
   const btn = document.createElement('button')
   btn.type = 'button'
   btn.className = 'toggle-switch'
   btn.setAttribute('role', 'switch')
   btn.setAttribute('aria-label', label)
+  // A switch that cannot be flipped right now keeps its state and its place
+  // in the tab order, and a press shakes it instead.
+  if (refused) {
+    btn.setAttribute('aria-disabled', 'true')
+    btn.setAttribute('data-tip', refused)
+  }
 
   const knob = document.createElement('span')
   knob.className = 'toggle-switch-knob'
@@ -290,6 +302,10 @@ export function toggleSwitch(label: string, initial: boolean, onChange: (checked
   applyState()
 
   btn.addEventListener('click', () => {
+    if (refused) {
+      replay(btn, 'glim-shake')
+      return
+    }
     checked = !checked
     applyState()
     onChange(checked)
@@ -299,7 +315,13 @@ export function toggleSwitch(label: string, initial: boolean, onChange: (checked
 }
 
 /** A label with a switch at the end of its row, as the rainbow and disco rows use. */
-export function switchRow(label: string, initial: boolean, onChange: (checked: boolean) => void, extra?: HTMLElement): HTMLElement {
+export function switchRow(
+  label: string,
+  initial: boolean,
+  onChange: (checked: boolean) => void,
+  extra?: HTMLElement,
+  refused?: string,
+): HTMLElement {
   const row = document.createElement('div')
   row.className = 'control-slider-row switch-row'
   const labelRow = document.createElement('span')
@@ -308,7 +330,14 @@ export function switchRow(label: string, initial: boolean, onChange: (checked: b
   text.textContent = label
   labelRow.appendChild(text)
   if (extra) labelRow.appendChild(extra)
-  row.append(labelRow, toggleSwitch(label, initial, onChange))
+  row.append(labelRow, toggleSwitch(label, initial, onChange, refused))
+  // A touch screen has no bubble, so the reason stands under the row there.
+  if (refused) {
+    const reason = document.createElement('span')
+    reason.className = 'toggle-refusal'
+    reason.textContent = refused
+    row.appendChild(reason)
+  }
   return row
 }
 
