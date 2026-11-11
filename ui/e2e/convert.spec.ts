@@ -642,10 +642,20 @@ test('the App card in the browser offers the desktop downloads of the running ve
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
-  await expect(page.getByRole('link', { name: 'ARM64 Windows' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
-  await expect(page.getByRole('link', { name: 'ARM64 Linux' })).toHaveAttribute('href', /linux-arm64$/)
+  await expect(page.getByRole('link', { name: 'Windows ARM64' })).toHaveAttribute('href', /windows-arm64-installer\.exe$/)
+  await expect(page.getByRole('link', { name: 'Linux ARM64' })).toHaveAttribute('href', /linux-arm64$/)
   await expect(page.getByRole('link', { name: 'Flatpak x64' })).toHaveAttribute('href', /linux-amd64\.flatpak$/)
-  await expect(page.getByRole('link', { name: 'ARM64 Flatpak' })).toHaveAttribute('href', /linux-arm64\.flatpak$/)
+  await expect(page.getByRole('link', { name: 'Flatpak ARM64' })).toHaveAttribute('href', /linux-arm64\.flatpak$/)
+})
+
+test('a segment of an App card button shows one word and no second line', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'App').click()
+  const segments = page.locator('.app-rows .glim-readme-btn-seg')
+  await expect(segments).toHaveCount(4)
+  await expect(segments.locator('.glim-readme-btn-sub')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Windows ARM64' })).toContainText('ARM64')
 })
 
 test('an App card button shows its second line only under the pointer, over the whole unit', async ({ page }) => {
@@ -654,11 +664,11 @@ test('an App card button shows its second line only under the pointer, over the 
   await settingsTab(page, 'App').click()
   const windows = page.locator('.app-rows .glim-readme-btn-unit').first()
   const lines = windows.locator('.glim-readme-btn-sub')
-  await expect(lines).toHaveCount(3)
+  await expect(lines).toHaveCount(1)
   for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0')
 
-  // The pointer on a segment brings in the lines of the button it hangs on too.
-  await page.getByRole('link', { name: 'Portable Windows' }).hover()
+  // The pointer on a segment brings in the line of the button it hangs on too.
+  await page.getByRole('link', { name: 'Windows Portable' }).hover()
   for (const line of await lines.all()) await expect(line).toHaveCSS('opacity', '0.9')
   await expect(windows.locator('.glim-readme-btn').first()).toHaveCSS('background-color', 'rgb(0, 120, 212)')
   await expect(page.locator('.app-rows .glim-readme-btn-unit').nth(1).locator('.glim-readme-btn-sub')).toHaveCSS('opacity', '0')

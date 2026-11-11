@@ -22,7 +22,8 @@ function followExternal(event: MouseEvent, href: string): void {
   void desktopRuntime().then((runtime) => runtime.Browser.OpenURL(href))
 }
 
-// A segment names what differs from the button it hangs on and has no mark.
+// A segment names in one word what differs from the button it hangs on, has
+// no mark and no second line, and its label says the whole build.
 function linkPart(face: ButtonFace, href: string, segment = false): HTMLAnchorElement {
   const a = document.createElement('a')
   a.href = href
@@ -85,17 +86,17 @@ export function mountAppPanel(container: HTMLElement): void {
       rows.replaceChildren(
         buttonUnit('windows', [
           linkPart({ name: windows, sub: 'x64', mark: WINDOWS_SVG, tint: 'glim-windows-mark' }, `${RELEASE}/trickwork-windows-amd64-installer.exe`),
-          linkPart({ name: 'ARM64', sub: windows }, `${RELEASE}/trickwork-windows-arm64-installer.exe`, true),
-          linkPart({ name: t('apps.portable'), sub: windows }, `${RELEASE}/trickwork-windows-amd64-portable.exe`, true),
+          linkPart({ name: 'ARM64', label: `${windows} ARM64` }, `${RELEASE}/trickwork-windows-arm64-installer.exe`, true),
+          linkPart({ name: t('apps.portable'), label: `${windows} ${t('apps.portable')}` }, `${RELEASE}/trickwork-windows-amd64-portable.exe`, true),
         ]),
         buttonUnit('apple', [linkPart({ name: t('apps.macos'), sub: 'Universal', mark: APPLE_SVG }, `${RELEASE}/trickwork-macos-universal.dmg`)]),
         buttonUnit('linux', [
           linkPart({ name: t('apps.linux'), sub: 'x64', mark: LINUX_SVG }, `${RELEASE}/trickwork-linux-amd64`),
-          linkPart({ name: 'ARM64', sub: t('apps.linux') }, `${RELEASE}/trickwork-linux-arm64`, true),
+          linkPart({ name: 'ARM64', label: `${t('apps.linux')} ARM64` }, `${RELEASE}/trickwork-linux-arm64`, true),
         ]),
         buttonUnit('flatpak', [
           linkPart({ name: 'Flatpak', sub: 'x64', mark: FLATPAK_SVG, tint: 'glim-flatpak-mark' }, `${RELEASE}/trickwork-linux-amd64.flatpak`),
-          linkPart({ name: 'ARM64', sub: 'Flatpak' }, `${RELEASE}/trickwork-linux-arm64.flatpak`, true),
+          linkPart({ name: 'ARM64', label: 'Flatpak ARM64' }, `${RELEASE}/trickwork-linux-arm64.flatpak`, true),
         ]),
       )
     }

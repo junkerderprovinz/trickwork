@@ -14,6 +14,7 @@ All notable changes to TrickWork are documented here.
 - A row of choices stays on one line at every width. Where its words don't fit, as on a phone, it shows its symbols alone and names each one in its bubble. The Settings tabs and the Labels choices do this on a narrow screen.
 - While you drag a card, the other cards tremble and the one in your hand holds still under the pointer.
 - Check for updates wears two circling arrows.
+- The ARM, Portable and Flatpak ARM parts of the download buttons on the App card show one word and no second line.
 - A grey button takes a touch of the accent when you point at it or reach it with the keyboard, and under rainbow every button lights up in a colour of its own.
 
 ## 1.6.1 - 2026-11-09

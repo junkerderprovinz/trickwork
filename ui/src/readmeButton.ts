@@ -6,6 +6,8 @@ export interface ButtonFace {
   name: string
   /** The second line under the pointer. Without one the name stays in the middle. */
   sub?: string
+  /** The accessible name where the words alone would not say which build it is. */
+  label?: string
   mark?: string
   /** A class that paints the mark at rest. */
   tint?: string
@@ -17,7 +19,7 @@ export interface ButtonFace {
 export function buttonFace(el: HTMLElement, face: ButtonFace, segment = false): HTMLSpanElement | undefined {
   el.classList.add('glim-readme-btn', 'glim-brand-tile')
   if (segment) el.classList.add('glim-readme-btn-seg')
-  el.setAttribute('aria-label', face.sub ? `${face.name} ${face.sub}` : face.name)
+  el.setAttribute('aria-label', face.label ?? (face.sub ? `${face.name} ${face.sub}` : face.name))
   if (face.art) {
     const art = document.createElement('span')
     art.className = 'glim-readme-btn-art'
