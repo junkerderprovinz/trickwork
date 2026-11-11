@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Verificarea a eșuat',
   'info.available': 'A apărut TrickWork {version}. Actualizează containerul ca să-l ai.',
   'info.availableDesktop': 'A apărut TrickWork {version}. Cu „Actualizează automat” pornit, vine singur.',
+  'info.availableFlatpak': 'A apărut TrickWork {version}. Îl aduce centrul de software sau flatpak update.',
   'info.checkUnreachable': 'GitHub nu a putut fi accesat, așa că TrickWork nu a putut căuta actualizări.',
   'info.help': 'Ajutor',
   'info.helpHint': 'Raportul de eroare e un fișier pe care îl atașezi la o problemă. Conține versiunea, platforma, limba și setările tale, dar nicio imagine și niciun nume de fișier.',

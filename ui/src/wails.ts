@@ -46,3 +46,11 @@ export async function callApp<T>(method: string, ...args: unknown[]): Promise<T>
   const { Call } = await desktopRuntime()
   return (await Call.ByName(`main.App.${method}`, ...args)) as T
 }
+
+let flatpak: Promise<boolean> | undefined
+
+/** Whether the desktop app runs as a Flatpak, which Flatpak keeps current instead of the app itself. */
+export function isFlatpak(): Promise<boolean> {
+  flatpak ??= isDesktop() ? callApp<boolean>('Flatpak') : Promise.resolve(false)
+  return flatpak
+}

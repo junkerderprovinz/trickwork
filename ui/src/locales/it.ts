@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Controllo non riuscito',
   'info.available': 'È uscito TrickWork {version}. Aggiorna il container per averlo.',
   'info.availableDesktop': 'È uscito TrickWork {version}. Con «Aggiorna automaticamente» arriva da solo.',
+  'info.availableFlatpak': 'È uscito TrickWork {version}. Arriva dal centro software o con flatpak update.',
   'info.checkUnreachable': 'GitHub non era raggiungibile, quindi TrickWork non ha potuto cercare aggiornamenti.',
   'info.help': 'Aiuto',
   'info.helpHint': 'La segnalazione di errore è un file da allegare a una segnalazione su GitHub. Contiene la versione, la piattaforma, la lingua e le tue impostazioni, ma nessuna immagine e nessun nome di file.',

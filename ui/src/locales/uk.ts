@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Перевірка не вдалася',
   'info.available': 'Вийшов TrickWork {version}. Онови контейнер, щоб його отримати.',
   'info.availableDesktop': 'Вийшов TrickWork {version}. З увімкненим «Оновлювати автоматично» він прийде сам.',
+  'info.availableFlatpak': 'Вийшов TrickWork {version}. Його принесе центр програм або flatpak update.',
   'info.checkUnreachable': 'GitHub недоступний, тому TrickWork не зміг перевірити оновлення.',
   'info.help': 'Допомога',
   'info.helpHint': 'Звіт про помилку — це файл, який можна додати до задачі. У ньому версія, платформа, мова й твої налаштування, але немає зображень і назв файлів.',

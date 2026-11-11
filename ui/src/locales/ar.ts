@@ -261,6 +261,7 @@ const dict: Translations = {
   'info.checkFailed': 'فشل الفحص',
   'info.available': 'صدر TrickWork {version}. حدّث الحاوية لتحصل عليه.',
   'info.availableDesktop': 'صدر TrickWork {version}. مع تفعيل «التحديث تلقائيًا» يصل من تلقاء نفسه.',
+  'info.availableFlatpak': 'صدر TrickWork {version}. يصلك عبر مركز البرمجيات أو flatpak update.',
   'info.checkUnreachable': 'تعذّر الوصول إلى GitHub، لذلك لم يتمكن TrickWork من البحث عن تحديثات.',
   'info.help': 'مساعدة',
   'info.helpHint': 'تقرير الخطأ ملف ترفقه بمسألة على GitHub. يحتوي على النسخة والمنصة واللغة وإعداداتك، لكن لا صور ولا أسماء ملفات.',

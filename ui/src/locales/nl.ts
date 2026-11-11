@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Controle mislukt',
   'info.available': 'TrickWork {version} is uit. Werk de container bij om het te krijgen.',
   'info.availableDesktop': 'TrickWork {version} is uit. Met ‘Automatisch bijwerken’ komt het vanzelf.',
+  'info.availableFlatpak': 'TrickWork {version} is uit. Het softwarecentrum of flatpak update brengt het.',
   'info.checkUnreachable': 'GitHub was niet bereikbaar, dus TrickWork kon niet naar updates zoeken.',
   'info.help': 'Hulp',
   'info.helpHint': 'Het foutrapport is een bestand om bij een issue te voegen. Het bevat de versie, het platform, de taal en je instellingen, maar geen afbeeldingen en geen bestandsnamen.',

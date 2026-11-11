@@ -260,6 +260,7 @@ const dict: Translations = {
   'info.checkFailed': '检查失败',
   'info.available': 'TrickWork {version} 已发布。更新容器即可获得。',
   'info.availableDesktop': 'TrickWork {version} 已发布。开启「自动更新」后会自动到来。',
+  'info.availableFlatpak': 'TrickWork {version} 已发布。可通过软件中心或 flatpak update 获取。',
   'info.checkUnreachable': '无法连接 GitHub，所以 TrickWork 没能检查更新。',
   'info.help': '帮助',
   'info.helpHint': '错误报告是一个可以附加到 issue 的文件。里面有版本、平台、语言和你的设置，但没有图片，也没有文件名。',

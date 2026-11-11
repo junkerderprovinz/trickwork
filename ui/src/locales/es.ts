@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'La comprobación falló',
   'info.available': 'Ya está TrickWork {version}. Actualiza el contenedor para tenerlo.',
   'info.availableDesktop': 'Ya está TrickWork {version}. Con «Actualizar automáticamente» llega solo.',
+  'info.availableFlatpak': 'Ya está TrickWork {version}. Te lo trae el centro de software o flatpak update.',
   'info.checkUnreachable': 'No se pudo contactar con GitHub, así que TrickWork no pudo buscar actualizaciones.',
   'info.help': 'Ayuda',
   'info.helpHint': 'El informe de errores es un archivo para adjuntar a una incidencia. Contiene la versión, la plataforma, el idioma y tus ajustes, pero ninguna imagen ni nombre de archivo.',

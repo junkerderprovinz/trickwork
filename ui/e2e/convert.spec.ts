@@ -856,6 +856,28 @@ test('a Flatpak keeps the update switch off and leaves the updates to the softwa
   expect(await page.evaluate(() => (window as unknown as { __calls: boolean[] }).__calls)).toEqual([])
 })
 
+async function findNewerRelease(page: import('@playwright/test').Page) {
+  await page.route('https://api.github.com/**', (route) =>
+    route.fulfill({ contentType: 'application/json', body: JSON.stringify({ tag_name: 'v99.0.0' }) }),
+  )
+  await page.goto(DESKTOP)
+  await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+  await page.getByRole('button', { name: 'Check for updates' }).click()
+}
+
+test('the desktop app says a newer release arrives with Update automatically', async ({ page }) => {
+  await fakeDesktop(page, true)
+  await findNewerRelease(page)
+  await expect(page.getByRole('status')).toContainText('TrickWork 99.0.0 is out. With Update automatically on, it arrives by itself.')
+})
+
+test('a Flatpak says its software centre brings a newer release', async ({ page }) => {
+  await fakeDesktop(page, false, false, true)
+  await findNewerRelease(page)
+  await expect(page.getByRole('status')).toContainText('TrickWork 99.0.0 is out. Your software centre or flatpak update brings it.')
+})
+
 test('a refused save puts the switch back and says so in a toast', async ({ page }) => {
   await fakeDesktop(page, true, true)
   await page.goto(DESKTOP)

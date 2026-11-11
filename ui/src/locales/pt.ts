@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'A verificação falhou',
   'info.available': 'Já saiu o TrickWork {version}. Atualiza o contentor para o teres.',
   'info.availableDesktop': 'Já saiu o TrickWork {version}. Com «Atualizar automaticamente», chega sozinho.',
+  'info.availableFlatpak': 'Já saiu o TrickWork {version}. Chega pelo centro de software ou com flatpak update.',
   'info.checkUnreachable': 'Não foi possível chegar ao GitHub, por isso o TrickWork não conseguiu procurar atualizações.',
   'info.help': 'Ajuda',
   'info.helpHint': 'O relatório de erros é um ficheiro para anexar a uma questão. Tem a versão, a plataforma, o idioma e as tuas definições, mas nenhuma imagem nem nome de ficheiro.',

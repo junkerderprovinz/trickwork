@@ -261,6 +261,7 @@ const dict: Translations = {
   'info.checkFailed': '確認できませんでした',
   'info.available': 'TrickWork {version} が出ました。コンテナーを更新すると使えます。',
   'info.availableDesktop': 'TrickWork {version} が出ました。「自動でアップデート」がオンなら自動で届きます。',
+  'info.availableFlatpak': 'TrickWork {version} が出ました。ソフトウェアセンターか flatpak update で届きます。',
   'info.checkUnreachable': 'GitHub に接続できなかったため、TrickWork はアップデートを確認できませんでした。',
   'info.help': 'ヘルプ',
   'info.helpHint': 'バグレポートは issue に添付するためのファイルです。バージョン、プラットフォーム、言語、設定が入っていますが、画像やファイル名は含まれません。',

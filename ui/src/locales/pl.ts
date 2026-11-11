@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Sprawdzanie nie powiodło się',
   'info.available': 'Wyszedł TrickWork {version}. Zaktualizuj kontener, żeby go mieć.',
   'info.availableDesktop': 'Wyszedł TrickWork {version}. Z włączonym „Aktualizuj automatycznie” przyjdzie sam.',
+  'info.availableFlatpak': 'Wyszedł TrickWork {version}. Przyniesie go centrum oprogramowania albo flatpak update.',
   'info.checkUnreachable': 'Nie udało się połączyć z GitHubem, więc TrickWork nie mógł sprawdzić aktualizacji.',
   'info.help': 'Pomoc',
   'info.helpHint': 'Raport błędu to plik do dołączenia do zgłoszenia. Zawiera wersję, platformę, język i twoje ustawienia, ale żadnych obrazów ani nazw plików.',

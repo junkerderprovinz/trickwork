@@ -261,6 +261,7 @@ const dict: Translations = {
   'info.checkFailed': 'הבדיקה נכשלה',
   'info.available': 'TrickWork {version} יצא. עדכן את הקונטיינר כדי לקבל אותו.',
   'info.availableDesktop': 'TrickWork {version} יצא. כש„עדכון אוטומטי” פועל, הוא מגיע לבד.',
+  'info.availableFlatpak': 'TrickWork {version} יצא. מרכז התוכנה או flatpak update יביאו אותו.',
   'info.checkUnreachable': 'לא ניתן היה להגיע ל-GitHub, ולכן TrickWork לא הצליח לחפש עדכונים.',
   'info.help': 'עזרה',
   'info.helpHint': 'דוח התקלה הוא קובץ שמצרפים לנושא ב-GitHub. יש בו את הגרסה, הפלטפורמה, השפה וההגדרות שלך, אבל לא תמונות ולא שמות קבצים.',

@@ -261,6 +261,7 @@ const dict: Translations = {
   'info.checkFailed': '확인 실패',
   'info.available': 'TrickWork {version}이 나왔습니다. 컨테이너를 업데이트하면 받을 수 있습니다.',
   'info.availableDesktop': "TrickWork {version}이 나왔습니다. '자동으로 업데이트'가 켜져 있으면 저절로 받아집니다.",
+  'info.availableFlatpak': 'TrickWork {version}이 나왔습니다. 소프트웨어 센터나 flatpak update로 받을 수 있습니다.',
   'info.checkUnreachable': 'GitHub에 연결할 수 없어서 TrickWork가 업데이트를 확인하지 못했습니다.',
   'info.help': '도움말',
   'info.helpHint': '버그 리포트는 이슈에 첨부할 파일입니다. 버전, 플랫폼, 언어, 설정이 들어 있지만 이미지나 파일 이름은 들어 있지 않습니다.',

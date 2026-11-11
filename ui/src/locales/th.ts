@@ -261,6 +261,7 @@ const dict: Translations = {
   'info.checkFailed': 'ตรวจไม่สำเร็จ',
   'info.available': 'TrickWork {version} ออกแล้ว อัปเดตคอนเทนเนอร์เพื่อรับรุ่นนี้',
   'info.availableDesktop': 'TrickWork {version} ออกแล้ว ถ้าเปิด "อัปเดตอัตโนมัติ" ไว้ ก็จะมาเอง',
+  'info.availableFlatpak': 'TrickWork {version} ออกแล้ว รับได้จากศูนย์ซอฟต์แวร์หรือด้วย flatpak update',
   'info.checkUnreachable': 'เชื่อมต่อ GitHub ไม่ได้ TrickWork จึงตรวจหาอัปเดตไม่ได้',
   'info.help': 'ความช่วยเหลือ',
   'info.helpHint': 'รายงานข้อผิดพลาดคือไฟล์สำหรับแนบกับ issue มีเวอร์ชัน แพลตฟอร์ม ภาษา และการตั้งค่าของคุณ แต่ไม่มีรูปภาพและไม่มีชื่อไฟล์',

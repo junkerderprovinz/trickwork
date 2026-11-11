@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Tarkistus epäonnistui',
   'info.available': 'TrickWork {version} on julkaistu. Päivitä kontti, niin saat sen.',
   'info.availableDesktop': 'TrickWork {version} on julkaistu. Kun ”Päivitä automaattisesti” on päällä, se tulee itsestään.',
+  'info.availableFlatpak': 'TrickWork {version} on julkaistu. Saat sen ohjelmistokeskuksesta tai flatpak update -komennolla.',
   'info.checkUnreachable': 'GitHubiin ei saatu yhteyttä, joten TrickWork ei voinut etsiä päivityksiä.',
   'info.help': 'Ohje',
   'info.helpHint': 'Virheraportti on tiedosto, jonka voit liittää issueen. Siinä ovat versio, alusta, kieli ja asetuksesi, mutta ei kuvia eikä tiedostonimiä.',

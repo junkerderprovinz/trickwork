@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Kontrola selhala',
   'info.available': 'Vyšel TrickWork {version}. Aktualizuj kontejner, ať ho máš.',
   'info.availableDesktop': 'Vyšel TrickWork {version}. Se zapnutým „Aktualizovat automaticky“ dorazí sám.',
+  'info.availableFlatpak': 'Vyšel TrickWork {version}. Přinese ho softwarové centrum nebo flatpak update.',
   'info.checkUnreachable': 'GitHub nebyl dostupný, takže TrickWork nemohl hledat aktualizace.',
   'info.help': 'Nápověda',
   'info.helpHint': 'Hlášení chyby je soubor, který přiložíš k issue. Obsahuje verzi, platformu, jazyk a tvoje nastavení, ale žádné obrázky ani názvy souborů.',

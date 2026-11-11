@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Kontrollen mislyktes',
   'info.available': 'TrickWork {version} er ute. Oppdater containeren for å få den.',
   'info.availableDesktop': 'TrickWork {version} er ute. Med «Oppdater automatisk» kommer den av seg selv.',
+  'info.availableFlatpak': 'TrickWork {version} er ute. Programvaresenteret eller flatpak update henter den.',
   'info.checkUnreachable': 'GitHub kunne ikke nås, så TrickWork kunne ikke se etter oppdateringer.',
   'info.help': 'Hjelp',
   'info.helpHint': 'Feilrapporten er en fil du kan legge ved en sak. Den inneholder versjon, plattform, språk og innstillingene dine, men ingen bilder og ingen filnavn.',

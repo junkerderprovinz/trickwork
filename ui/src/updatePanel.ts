@@ -8,7 +8,7 @@ import { infoIcon } from './design/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { replay } from './motion'
 import { showToast } from './toast'
-import { callApp, desktopRuntime } from './wails'
+import { callApp, desktopRuntime, isFlatpak } from './wails'
 
 const READY_EVENT = 'update:ready'
 
@@ -44,7 +44,7 @@ export function mountUpdatePanel(container: HTMLElement): void {
 
   render()
   subscribeLocale(render)
-  void Promise.all([callApp<boolean>('AutoUpdate'), callApp<boolean>('Flatpak')]).then(([value, sandboxed]) => {
+  void Promise.all([callApp<boolean>('AutoUpdate'), isFlatpak()]).then(([value, sandboxed]) => {
     on = value
     flatpak = sandboxed
     render()

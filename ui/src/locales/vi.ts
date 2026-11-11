@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Kiểm tra thất bại',
   'info.available': 'TrickWork {version} đã ra. Cập nhật container để có bản này.',
   'info.availableDesktop': 'TrickWork {version} đã ra. Khi bật “Tự động cập nhật”, bản này tự đến.',
+  'info.availableFlatpak': 'TrickWork {version} đã ra. Bản này đến qua trung tâm phần mềm hoặc flatpak update.',
   'info.checkUnreachable': 'Không kết nối được GitHub nên TrickWork không thể kiểm tra cập nhật.',
   'info.help': 'Trợ giúp',
   'info.helpHint': 'Báo cáo lỗi là một tệp để đính kèm vào issue. Trong đó có phiên bản, nền tảng, ngôn ngữ và cài đặt của bạn, nhưng không có ảnh và không có tên tệp.',

@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Échec de la vérification',
   'info.available': "TrickWork {version} est sorti. Mets le conteneur à jour pour l'avoir.",
   'info.availableDesktop': 'TrickWork {version} est sorti. Avec « Mettre à jour automatiquement », il arrive tout seul.',
+  'info.availableFlatpak': "TrickWork {version} est sorti. La logithèque ou flatpak update vous l'apporte.",
   'info.checkUnreachable': "GitHub est injoignable, TrickWork n'a donc pas pu chercher de mises à jour.",
   'info.help': 'Aide',
   'info.helpHint': 'Le rapport de bug est un fichier à joindre à un ticket. Il contient la version, la plateforme, la langue et tes réglages, mais aucune image et aucun nom de fichier.',

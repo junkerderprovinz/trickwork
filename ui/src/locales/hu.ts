@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Az ellenőrzés nem sikerült',
   'info.available': 'Megjelent a TrickWork {version}. Frissítsd a konténert, hogy megkapd.',
   'info.availableDesktop': 'Megjelent a TrickWork {version}. Bekapcsolt „Automatikus frissítés” mellett magától megérkezik.',
+  'info.availableFlatpak': 'Megjelent a TrickWork {version}. A szoftverközpont vagy a flatpak update hozza el.',
   'info.checkUnreachable': 'A GitHub nem volt elérhető, ezért a TrickWork nem tudott frissítéseket keresni.',
   'info.help': 'Súgó',
   'info.helpHint': 'A hibajelentés egy fájl, amit egy hibajegyhez csatolhatsz. Benne van a verzió, a platform, a nyelv és a beállításaid, de se kép, se fájlnév.',

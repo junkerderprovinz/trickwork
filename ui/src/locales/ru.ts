@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Проверка не удалась',
   'info.available': 'Вышел TrickWork {version}. Обнови контейнер, чтобы его получить.',
   'info.availableDesktop': 'Вышел TrickWork {version}. С включённым «Обновлять автоматически» он придёт сам.',
+  'info.availableFlatpak': 'Вышел TrickWork {version}. Его принесёт центр приложений или flatpak update.',
   'info.checkUnreachable': 'GitHub недоступен, поэтому TrickWork не смог проверить обновления.',
   'info.help': 'Помощь',
   'info.helpHint': 'Отчёт об ошибке — это файл, который можно приложить к задаче. В нём версия, платформа, язык и твои настройки, но нет изображений и имён файлов.',

@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Ο έλεγχος απέτυχε',
   'info.available': 'Κυκλοφόρησε το TrickWork {version}. Ενημέρωσε το container για να το πάρεις.',
   'info.availableDesktop': 'Κυκλοφόρησε το TrickWork {version}. Με την «Αυτόματη ενημέρωση» έρχεται μόνο του.',
+  'info.availableFlatpak': 'Κυκλοφόρησε το TrickWork {version}. Το φέρνει το κέντρο λογισμικού ή το flatpak update.',
   'info.checkUnreachable': 'Το GitHub δεν ήταν προσβάσιμο, οπότε το TrickWork δεν μπόρεσε να ψάξει για ενημερώσεις.',
   'info.help': 'Βοήθεια',
   'info.helpHint': 'Η αναφορά σφάλματος είναι ένα αρχείο για να το επισυνάψεις σε ένα ζήτημα. Περιέχει την έκδοση, την πλατφόρμα, τη γλώσσα και τις ρυθμίσεις σου, αλλά καμία εικόνα και κανένα όνομα αρχείου.',

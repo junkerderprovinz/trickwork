@@ -20,7 +20,7 @@ import { isNewer } from './releases'
 import type { Store } from './state'
 import { showToast } from './toast'
 import { APP_VERSION } from './version'
-import { isDesktop } from './wails'
+import { isDesktop, isFlatpak } from './wails'
 
 const MANUAL = 'https://junkerderprovinz.github.io/trickwork/'
 const LATEST = 'https://api.github.com/repos/junkerderprovinz/trickwork/releases/latest'
@@ -129,7 +129,8 @@ function updateCheckButton(): HTMLButtonElement {
         if (!tag) throw new Error('no tag')
         if (isNewer(tag, APP_VERSION)) {
           verdict = 'found'
-          showToast(t(isDesktop() ? 'info.availableDesktop' : 'info.available', { version: tag.replace(/^v/, '') }))
+          const notice = !isDesktop() ? 'info.available' : (await isFlatpak()) ? 'info.availableFlatpak' : 'info.availableDesktop'
+          showToast(t(notice, { version: tag.replace(/^v/, '') }))
         } else {
           verdict = 'current'
         }

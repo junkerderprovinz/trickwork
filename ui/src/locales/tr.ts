@@ -262,6 +262,7 @@ const dict: Translations = {
   'info.checkFailed': 'Denetim başarısız',
   'info.available': 'TrickWork {version} çıktı. Almak için kapsayıcıyı güncelle.',
   'info.availableDesktop': 'TrickWork {version} çıktı. “Otomatik güncelle” açıksa kendiliğinden gelir.',
+  'info.availableFlatpak': 'TrickWork {version} çıktı. Yazılım merkezi ya da flatpak update ile gelir.',
   'info.checkUnreachable': "GitHub'a ulaşılamadı, bu yüzden TrickWork güncellemeleri denetleyemedi.",
   'info.help': 'Yardım',
   'info.helpHint': 'Hata raporu, bir konuya ekleyebileceğin bir dosyadır. Sürümü, platformu, dili ve ayarlarını içerir, ama hiçbir görsel ya da dosya adı içermez.',
