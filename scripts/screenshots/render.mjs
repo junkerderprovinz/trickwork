@@ -1,10 +1,11 @@
 // Builds the README's pictures in .github/assets/screenshots: the web
 // interface in a browser window for the container and in an app window for
 // the desktop build, each on the dark relief background beside a caption, in
-// the house style of the store pictures.
+// the house style of the store pictures. It also takes the plain screenshots
+// in docs/assets, one per theme.
 //
 // The interface is the real build in ui/dist, loaded into a headless browser
-// with the helmet beside this file as its only image. Every request is
+// with the pictures beside this file as its only images. Every request is
 // answered from ui/dist inside the browser, so nothing listens on a port. The
 // desktop pictures load the page from the address the Wails window uses, with
 // a stand-in for the Wails runtime.
@@ -29,7 +30,14 @@ const here = dirname(fileURLToPath(import.meta.url))
 const root = dirname(dirname(here))
 const dist = join(root, 'ui', 'dist')
 const out = join(root, '.github', 'assets', 'screenshots')
-const helmet = join(here, 'helmet.png')
+const docs = join(root, 'docs', 'assets')
+
+// Hartmann von Aue from the Codex Manesse. The conversion takes a copy cut
+// free of the painted frame, whose ruled lines would cross the ASCII, while
+// the Crop card shows the page as it is.
+const knight = join(here, 'knight.jpg')
+const knightPage = join(here, 'knight-page.jpg')
+const lion = join(here, 'lion.png')
 
 if (!existsSync(join(dist, 'index.html'))) throw new Error('ui/dist is missing, run npm run build first')
 
@@ -38,7 +46,13 @@ if (!existsSync(join(dist, 'index.html'))) throw new Error('ui/dist is missing, 
 const VIEW = { width: 1600, height: 1000 }
 
 // The preview shows at most 60% of the viewport's height, so the columns and
-// the zoom are picked to fit the whole helmet into it.
+// the zoom are picked to fit the whole picture into it. The manuscript's
+// parchment needs more contrast than the lion's black and white.
+const showKnight = async (page, zoomOut) => {
+  await convert(page, { image: knight, columns: 120, contrast: 0.7, zoomOut })
+  await showSource(page, knightPage)
+}
+
 const PICTURES = [
   {
     name: 'container',
@@ -46,7 +60,11 @@ const PICTURES = [
     caption: 'Any picture as ASCII art, <em>right in your browser</em>',
     sub: 'TrickWork in Docker, on Unraid or any other host',
     setup: async (page) => {
-      await convert(page, { columns: 100, zoomOut: 5 })
+      await showKnight(page, 5)
+      // The window is shorter than the page, so the Crop card goes to the top
+      // to keep the painted page and its ASCII in one picture.
+      const box = await page.locator('canvas.crop-source-canvas').boundingBox()
+      await page.evaluate((y) => window.scrollTo(0, y), box.y - 64)
     },
   },
   {
@@ -55,7 +73,7 @@ const PICTURES = [
     caption: 'No command line. <em>Just sliders.</em>',
     sub: 'TrickWork for Windows, macOS and Linux',
     setup: async (page) => {
-      await convert(page, { columns: 85, zoomOut: 3 })
+      await convert(page, { image: lion, columns: 85, contrast: 0.3, zoomOut: 3 })
       const box = await page.locator('canvas.preview-canvas').boundingBox()
       await page.evaluate((y) => window.scrollTo(0, y), box.y - 96)
     },
@@ -72,6 +90,13 @@ const PICTURES = [
     },
   },
 ]
+
+// The docs show the page itself, once in each theme.
+const DOCS = [
+  { scheme: 'dark', setup: (page) => showKnight(page, 3) },
+  { scheme: 'light', setup: (page) => convert(page, { image: lion, columns: 85, contrast: 0.3, zoomOut: 1 }) },
+]
+const DOCS_VIEW = { width: 1600, height: 1100 }
 
 const ORIGIN = { browser: 'http://nas.local:3210', window: 'http://wails.localhost' }
 
@@ -95,19 +120,30 @@ export const Events = { On: () => () => {} }
 export const Browser = { OpenURL: async () => {} }
 `
 
-/** Loads the helmet and converts it, with a little more contrast than the default for the metal's grey. */
-async function convert(page, { columns, zoomOut }) {
-  await page.locator('input[type="file"][accept="image/*"]').setInputFiles(helmet)
+/** Loads `image` and converts it at `columns` with `contrast`. */
+async function convert(page, { image, columns, contrast, zoomOut }) {
+  await page.locator('input[type="file"][accept="image/*"]').setInputFiles(image)
   await page.locator('canvas.preview-canvas').waitFor()
   await page.getByLabel('Width (columns)').fill(String(columns))
-  await page.getByRole('slider', { name: /^Contrast/ }).fill('0.3')
+  await page.getByRole('slider', { name: /^Contrast/ }).fill(String(contrast))
   for (let i = 0; i < zoomOut; i++) await page.getByRole('button', { name: 'Zoom out' }).click()
 }
 
-/** The interface after `setup`, as a PNG at twice the viewport's pixels. */
-async function capture(browser, frame, setup) {
+/** Paints `file`, as large as the loaded picture, over the Crop card's copy of it. */
+async function showSource(page, file) {
+  const src = `data:image/jpeg;base64,${readFileSync(file).toString('base64')}`
+  await page.locator('canvas.crop-source-canvas').evaluate(async (canvas, src) => {
+    const img = new Image()
+    img.src = src
+    await img.decode()
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+  }, src)
+}
+
+/** The interface after `setup`, as a PNG at `scale` times the viewport's pixels. */
+async function capture(browser, frame, setup, { view = VIEW, scale = 2, scheme = 'dark' } = {}) {
   const origin = ORIGIN[frame]
-  const context = await browser.newContext({ viewport: VIEW, deviceScaleFactor: 2, colorScheme: 'dark', locale: 'en-US' })
+  const context = await browser.newContext({ viewport: view, deviceScaleFactor: scale, colorScheme: scheme, locale: 'en-US' })
   await context.route(`${origin}/**`, (route) => {
     const path = new URL(route.request().url()).pathname
     if (path === '/wails/runtime.js') return route.fulfill({ contentType: 'text/javascript', body: RUNTIME })
@@ -224,6 +260,11 @@ try {
     const shot = dataUrl(await capture(browser, frame, setup), 'image/png')
     await render(browser, wideShot(shot, frame, caption, sub), join(out, `${name}.png`))
     console.log(`wrote .github/assets/screenshots/${name}.png`)
+  }
+  for (const { scheme, setup } of DOCS) {
+    const shot = await capture(browser, 'browser', setup, { view: DOCS_VIEW, scale: 1, scheme })
+    writeFileSync(join(docs, `screenshot-${scheme}.png`), shot)
+    console.log(`wrote docs/assets/screenshot-${scheme}.png`)
   }
 } finally {
   await browser.close()

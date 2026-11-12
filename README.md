@@ -114,14 +114,14 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 <p><a id="3-what-it-looks-like" href="#3-what-it-looks-like"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/3-what-it-looks-like-dark.svg"><img src=".github/assets/sections/3-what-it-looks-like.svg" alt="3. What it looks like" width="100%"></picture></a></p>
 
 <p align="center">
-  <img src=".github/assets/screenshots/container.png" alt="TrickWork in a browser window at nas.local:3210, turning a knight's helmet into ASCII art" width="100%">
+  <img src=".github/assets/screenshots/container.png" alt="TrickWork in a browser window at nas.local:3210, turning a knight on horseback from a medieval manuscript into ASCII art" width="100%">
   <br><em>The container: open it in any browser, drop a picture and the preview follows every slider.</em>
 </p>
 
 <br>
 
 <p align="center">
-  <img src=".github/assets/screenshots/desktop.png" alt="The TrickWork desktop app showing the knight's helmet as ASCII art beside the Transform and Filters cards" width="100%">
+  <img src=".github/assets/screenshots/desktop.png" alt="The TrickWork desktop app turning a heraldic lion into ASCII art beside the Transform and Filters cards" width="100%">
   <br><em>The desktop app for Windows, macOS and Linux is the same tool in a window of its own.</em>
 </p>
 

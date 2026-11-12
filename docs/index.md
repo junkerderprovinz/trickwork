@@ -71,9 +71,11 @@ and none of the code. The look is
 [GlimStone](https://github.com/junkerderprovinz/glimstone), the design language
 every app of this house shares.
 
-The helmet in the README's screenshots is a
-[close helmet by Hans Maystetter](https://commons.wikimedia.org/wiki/File:Close_Helmet_MET_DP-12880-038.jpg)
-from The Metropolitan Museum of Art, which released the photo under CC0.
+The knight in the screenshots is Hartmann von Aue from the
+[Codex Manesse](https://commons.wikimedia.org/wiki/File:Codex_Manesse_Hartmann_von_Aue.jpg),
+painted around 1300 and in the public domain. The lion is a
+[heraldic lion rampant](https://commons.wikimedia.org/wiki/File:Heraldic_Lion_Rampant_-_Sable.svg)
+released under CC0.
 
 Copyright (C) 2026 Junker der Provinz. TrickWork is free software under the
 [GNU Affero General Public License v3.0](https://github.com/junkerderprovinz/trickwork/blob/main/LICENSE).
