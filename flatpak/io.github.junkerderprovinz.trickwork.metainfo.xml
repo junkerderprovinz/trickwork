@@ -73,15 +73,9 @@
   <releases>
     <release version="1.7.0" date="2026-11-12">
       <description>
-        <p>TrickWork comes as a Flatpak, wears a new shield logo, and the Version card names the right version again.</p>
+        <p>TrickWork comes as a Flatpak, wears a new shield logo and leaves nothing behind when you uninstall it on Windows.</p>
       </description>
       <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.7.0</url>
-    </release>
-    <release version="1.6.1" date="2026-11-09">
-      <description>
-        <p>Uninstalling on Windows leaves nothing behind, and the Linux installer shows TrickWork's icon.</p>
-      </description>
-      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.6.1</url>
     </release>
     <release version="1.6.0" date="2026-10-30">
       <description>
