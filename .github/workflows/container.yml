@@ -15,7 +15,15 @@ permissions:
   packages: write
 
 jobs:
+  # Only a release tag has to carry the newest GlimStone. Main and a manual run
+  # build what is already there.
+  glimstone:
+    if: github.ref_type == 'tag'
+    uses: junkerderprovinz/junkerderprovinz/.github/workflows/glimstone-current.yml@main
+
   build:
+    needs: glimstone
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
