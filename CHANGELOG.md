@@ -2,7 +2,7 @@
 
 All notable changes to TrickWork are documented here.
 
-## 1.6.2 - 2026-11-12
+## 1.7.0 - 2026-11-12
 
 ### ✨ Added
 
