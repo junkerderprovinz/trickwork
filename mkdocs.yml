@@ -12,6 +12,7 @@ copyright: Copyright (C) 2026 Junker der Provinz. Licensed AGPL-3.0.
 theme:
   name: material
   language: en
+  custom_dir: docs-theme/overrides
   # The ribbon reads on both palettes, so one file serves both headers.
   logo: assets/logo.svg
   favicon: assets/favicon.png
@@ -35,9 +36,22 @@ theme:
         name: Switch to dark mode
   features:
     - navigation.instant
+    - navigation.sections
     - navigation.top
     - content.code.copy
     - toc.follow
+
+extra:
+  docs_theme:
+    accent: "#FCC419"
+    hero:
+      claim: Turn pictures into ASCII art
+      accent: that fits any font.
+      text: Proportional-font-aware ASCII art with a live preview and TXT, XHTML, RTF and PNG export, as a desktop app for Windows, macOS and Linux or a self-hosted Docker container.
+      buttons:
+        - { text: Get started, link: installing/, primary: true }
+        - { text: How it works, link: development/ }
+        - { text: Source code, link: "https://github.com/junkerderprovinz/trickwork" }
 
 markdown_extensions:
   - admonition
