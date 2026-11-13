@@ -5,7 +5,7 @@ go 1.26.0
 toolchain go1.27.4
 
 require (
-	github.com/godbus/dbus/v5 v5.2.2
+	github.com/godbus/dbus/v5 v5.2.4
 	github.com/junkerderprovinz/trickwork v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v3 v3.1.0
 	golang.org/x/sys v0.50.0
