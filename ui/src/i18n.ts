@@ -542,7 +542,7 @@ export const de: Translations = {
   'about.paypalLoading': 'PayPal wird geladen…',
   'about.paypalThanks': 'Danke, deine Spende ist angekommen.',
   'about.paypalFailed': 'PayPal ist gerade nicht erreichbar. Versuch es später noch einmal oder nimm einen anderen Weg.',
-  'about.report': 'Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf oder schau auf Discord vorbei.',
+  'about.report': 'Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schau auf Discord vorbei.',
   'about.repo': 'GitHub',
   'about.discord': 'Discord',
   'about.version': 'Version',

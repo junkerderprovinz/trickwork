@@ -249,7 +249,7 @@ const dict: Translations = {
   'about.paypalLoading': 'Ładowanie PayPal…',
   'about.paypalThanks': 'Dzięki, twoja darowizna dotarła.',
   'about.paypalFailed': 'PayPal jest teraz niedostępny. Spróbuj później albo wybierz inny sposób wsparcia.',
-  'about.report': 'Problemy, życzenia albo propozycje? Śmiało zgłoś to na GitHubie albo wpadnij się przywitać na Discordzie.',
+  'about.report': 'Problemy, życzenia albo pomysły? Śmiało otwórz zgłoszenie na GitHub albo wpadnij się przywitać na Discordzie.',
   'about.repo': 'GitHub',
   'about.discord': 'Discord',
   'about.version': 'Wersja',

@@ -248,7 +248,7 @@ const dict: Translations = {
   'about.paypalLoading': 'טוען את PayPal…',
   'about.paypalThanks': 'תודה, התרומה שלך התקבלה.',
   'about.paypalFailed': 'אי אפשר להגיע ל-PayPal כרגע. נסה שוב מאוחר יותר או בחר דרך אחרת לתרום.',
-  'about.report': 'בעיות, בקשות או הצעות? אתה מוזמן לפתוח נושא ב-GitHub או לקפוץ להגיד שלום ב-Discord.',
+  'about.report': 'בעיות, משאלות או הצעות? אתם מוזמנים לפתוח issue ב-GitHub, או לקפוץ להגיד שלום ב-Discord.',
   'about.repo': 'GitHub',
   'about.discord': 'Discord',
   'about.version': 'גרסה',

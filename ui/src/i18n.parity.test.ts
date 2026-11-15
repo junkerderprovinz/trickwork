@@ -68,6 +68,11 @@ describe('i18n locale parity', () => {
     expect(Object.keys(de).sort()).toEqual(enKeys)
   })
 
+  it("the Help sentence is GlimStone's own", () => {
+    expect(en['about.report']).toBe("Problems, wishes or suggestions? You're welcome to open an issue on GitHub, or come say hi on Discord.")
+    expect(de['about.report']).toBe('Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schau auf Discord vorbei.')
+  })
+
   it('every language names Discord in the Help sentence, since the card offers it', () => {
     for (const [code, dict] of Object.entries({ en, de, ...LAZY_DICTS })) {
       expect(dict['about.report'], code).toContain('Discord')

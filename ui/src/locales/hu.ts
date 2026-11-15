@@ -249,7 +249,7 @@ const dict: Translations = {
   'about.paypalLoading': 'PayPal betöltése…',
   'about.paypalThanks': 'Köszönöm, az adományod megérkezett.',
   'about.paypalFailed': 'A PayPal most nem érhető el. Próbáld újra később, vagy válassz más módot a támogatásra.',
-  'about.report': 'Probléma, kívánság vagy javaslat? Nyugodtan nyiss egy hibajegyet a GitHubon, vagy köszönj be a Discordon.',
+  'about.report': 'Problémád, kívánságod vagy ötleted van? Nyiss nyugodtan egy issue-t a GitHubon, vagy ugorj be köszönni a Discordon.',
   'about.repo': 'GitHub',
   'about.discord': 'Discord',
   'about.version': 'Verzió',
