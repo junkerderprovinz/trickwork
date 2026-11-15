@@ -1,7 +1,9 @@
 /// <reference types="node" />
-// The motion engine's two promises, read from the stylesheets themselves: every
-// level declares every dial, so a quiet level never inherits a lively number,
-// and no rule names a lively level, so a level added above still gets it.
+// The motion engine's promises, read from the stylesheets themselves. The bare
+// :root carries subtle and declares every dial. Off and storm declare every dial
+// too, so neither inherits subtle's numbers, while wild may lean on the calm
+// root where the two agree. No rule keys off subtle, since a page without the
+// attribute would miss it.
 
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
@@ -9,7 +11,8 @@ import { describe, expect, it } from 'vitest'
 const tokens = readFileSync(new URL('./design/tokens.css', import.meta.url), 'utf8')
 const style = readFileSync(new URL('./style.css', import.meta.url), 'utf8')
 
-const LEVELS = ['subtle', 'off', 'storm'] as const
+const LEVELS = ['wild', 'off', 'storm'] as const
+const SELF_CONTAINED = ['off', 'storm'] as const
 const DIAL = /(--(?:motion|drag)-[a-z-]+)\s*:/g
 
 /** The dials declared in every rule whose selector is exactly `selector`. */
@@ -25,28 +28,28 @@ function declared(css: string, selector: string): Set<string> {
 
 describe('motion levels', () => {
   const byLevel = Object.fromEntries(LEVELS.map((l) => [l, declared(tokens, `:root[data-motion='${l}']`)]))
-  // A dial is whatever some level sets; the lively default is the bare :root.
+  // A dial is whatever some level sets; the calm default is the bare :root.
   const dials = new Set(LEVELS.flatMap((l) => [...(byLevel[l] ?? [])]))
 
   it('finds the dials at all', () => {
     expect(dials.size).toBeGreaterThanOrEqual(15)
   })
 
-  for (const level of LEVELS) {
+  for (const level of SELF_CONTAINED) {
     it(`${level} declares every dial`, () => {
       const missing = [...dials].filter((d) => !byLevel[level]?.has(d))
       expect(missing).toEqual([])
     })
   }
 
-  it('the lively default declares every dial', () => {
+  it('the calm default declares every dial', () => {
     const root = declared(tokens, ':root')
     expect([...dials].filter((d) => !root.has(d))).toEqual([])
   })
 
-  it('no rule names the lively level', () => {
+  it('no rule keys off the subtle level', () => {
     for (const css of [tokens, style]) {
-      expect(css).not.toMatch(/data-motion=['"]wild['"]/)
+      expect(css).not.toMatch(/data-motion=['"]subtle['"]/)
     }
   })
 })

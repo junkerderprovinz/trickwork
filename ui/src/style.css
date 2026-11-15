@@ -31,6 +31,12 @@ body {
   box-sizing: border-box;
 }
 
+/* GlimStone 4.5.2 sets the bar's height inside its components layer, where its
+   own unlayered zero on :root outranks it, so the bar would collapse. */
+:root:has(.glim-window-bar) {
+  --window-bar: 2.5rem;
+}
+
 /* Under the window bar the page scrolls inside #app, so its scrollbar starts
    at the bar's bottom edge instead of running up behind the bar. */
 :root:has(.glim-window-bar),
@@ -944,28 +950,31 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 /* Everything somebody presses reads --radius-pill, so it is a true pill in
-   the round shape. A filled control hovers one step up the surface ramp. */
-button {
-  appearance: none;
-  border: none;
-  cursor: pointer;
-  font: inherit;
-  /* A button label does not stack by the dozen, so it takes --text-body. */
-  font-size: var(--text-body);
-  color: var(--carbon-text);
-  background-color: var(--carbon-surface2);
-  border-radius: var(--radius-pill);
-  padding: 0.5rem 0.8rem;
-  transition: background-color var(--motion-control-dur, 120ms) ease;
-}
+   the round shape. A filled control hovers one step up the surface ramp. The
+   reset sits in GlimStone's base layer, so its components keep their own look. */
+@layer base {
+  button {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    /* A button label does not stack by the dozen, so it takes --text-body. */
+    font-size: var(--text-body);
+    color: var(--carbon-text);
+    background-color: var(--carbon-surface2);
+    border-radius: var(--radius-pill);
+    padding: 0.5rem 0.8rem;
+    transition: background-color var(--motion-control-dur, 120ms) ease, scale var(--motion-control-dur, 120ms) ease;
+  }
 
-button:hover {
-  background-color: var(--carbon-surface3);
-}
+  button:hover {
+    background-color: var(--carbon-surface3);
+  }
 
-button:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  button:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
 }
 
 /* The engine's button sets its own height, so the base padding keeps only its
@@ -1015,9 +1024,6 @@ button:focus-visible {
 
 /* Every button gives way on press. The give row and its windows keep the
    plain press they always had. */
-button {
-  transition: background-color var(--motion-control-dur, 120ms) ease, scale var(--motion-control-dur, 120ms) ease;
-}
 button:active:not(:disabled) {
   scale: 0.97;
 }
