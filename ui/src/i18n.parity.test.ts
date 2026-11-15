@@ -68,6 +68,12 @@ describe('i18n locale parity', () => {
     expect(Object.keys(de).sort()).toEqual(enKeys)
   })
 
+  it('every language names Discord in the Help sentence, since the card offers it', () => {
+    for (const [code, dict] of Object.entries({ en, de, ...LAZY_DICTS })) {
+      expect(dict['about.report'], code).toContain('Discord')
+    }
+  })
+
   for (const locale of LOCALES) {
     if (locale.code === 'en' || locale.code === 'de') continue
     const dict = LAZY_DICTS[locale.code]

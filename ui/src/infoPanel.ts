@@ -7,7 +7,7 @@ import { groupStage } from './design/controls'
 import { infoIcon } from './design/tooltip'
 import { GLIMSTONE_VERSION } from './design/version'
 import { glimButton, updateButton, type ButtonTone } from './controlWidgets'
-import { GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
+import { DISCORD, GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
 import { openExternal } from './donateWindows'
 import { downloadBlob } from './download'
 import { currentLocale, subscribeLocale, t } from './i18n'
@@ -231,6 +231,7 @@ export function mountHelpCard(container: HTMLElement, store: Store): void {
     const mailto = `mailto:${MAIL}?subject=${encodeURIComponent(`TrickWork ${t('about.mailSubject')}`)}`
     buttons.replaceChildren(
       actionUnit('github', { name: t('about.repo'), mark: GLYPHS.github, tint: 'glim-github-mark' }, () => openExternal(REPO)),
+      actionUnit('discord', { name: t('about.discord'), mark: GLYPHS.discord, tint: 'glim-discord-mark' }, () => openExternal(DISCORD)),
       actionUnit('house', { name: t('about.mail'), mark: MAIL_SVG, tint: 'glim-house-mark' }, () => openExternal(mailto)),
       // The README's docs button, its book and its yellow.
       actionUnit('docs', { name: t('info.manual'), sub: t('info.open'), mark: MANUAL_SVG, tint: 'glim-docs-mark' }, () => openExternal(MANUAL)),

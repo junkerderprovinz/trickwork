@@ -724,6 +724,29 @@ test('the About card opens the crypto window, which shows the picked coin and cl
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
+test('the Help card offers Discord right after GitHub and opens the server invite', async ({ page }) => {
+  await page.addInitScript(() => {
+    const opened: string[] = []
+    Object.assign(window, { opened })
+    window.open = (url) => {
+      opened.push(String(url))
+      return null
+    }
+  })
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+  const help = page.locator('.settings-card:visible').filter({ has: page.locator('.glim-eyebrow', { hasText: /^Help$/ }) })
+  await expect(help.locator('.about-text')).toContainText('Discord')
+  await expect(help.locator('.glim-readme-btn-name')).toHaveText(['GitHub', 'Discord', 'Email', 'Manual', 'Bug report'])
+
+  const discord = help.getByRole('button', { name: 'Discord', exact: true })
+  await discord.hover()
+  await expect(discord).toHaveCSS('background-color', 'rgb(88, 101, 242)')
+  await discord.click()
+  expect(await page.evaluate(() => (window as unknown as { opened: string[] }).opened)).toEqual(['https://discord.gg/sZCnbuY2CH'])
+})
+
 test('the Info tab holds Version, Help and About, and Release notes opens the running version', async ({ page }) => {
   await page.goto('/')
   await settingsButton(page).click()
