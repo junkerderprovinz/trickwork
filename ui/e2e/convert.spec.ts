@@ -755,7 +755,9 @@ test('the Info tab holds Version, Help and About, and Release notes opens the ru
   await expect(titles).toHaveText(['Version', 'Help', 'About TrickWork'])
   const numbers = page.locator('.version-number')
   await expect(numbers).toHaveCount(2)
-  await expect(numbers.nth(1)).toHaveAttribute('href', /glimstone\/releases\/tag\/v\d+\.\d+\.\d+$/)
+  await expect(numbers.first()).toHaveAttribute('href', /trickwork\/releases\/tag\/v\d+\.\d+\.\d+$/)
+  // GlimStone folds its patch tags away, so its number opens the newest release.
+  await expect(numbers.nth(1)).toHaveAttribute('href', 'https://github.com/junkerderprovinz/glimstone/releases/latest')
 
   const version = await numbers.first().textContent()
   await page.getByRole('button', { name: 'Release notes' }).click()

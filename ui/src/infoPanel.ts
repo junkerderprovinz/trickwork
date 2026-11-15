@@ -5,9 +5,9 @@
 import { MANUAL_SVG } from './design/appMarks'
 import { groupStage } from './design/controls'
 import { infoIcon } from './design/tooltip'
-import { GLIMSTONE_VERSION } from './design/version'
+import { GLIMSTONE_RELEASE_URL, GLIMSTONE_VERSION } from './design/version'
 import { glimButton, updateButton, type ButtonTone } from './controlWidgets'
-import { DISCORD, GLIMSTONE_REPO, GLYPHS, REPO } from './donate'
+import { DISCORD, GLYPHS, REPO } from './donate'
 import { openExternal } from './donateWindows'
 import { downloadBlob } from './download'
 import { currentLocale, subscribeLocale, t } from './i18n'
@@ -43,7 +43,7 @@ function eyebrowRow(): { row: HTMLElement; fill: (title: string, hint: string) =
 }
 
 // Only the number is a link: the name in front of it is not a destination.
-function versionRow(name: string, version: string, repo: string, sub?: string): HTMLLIElement {
+function versionRow(name: string, version: string, href: string, sub?: string): HTMLLIElement {
   const li = document.createElement('li')
   li.className = 'version-row'
   const names = document.createElement('span')
@@ -60,7 +60,7 @@ function versionRow(name: string, version: string, repo: string, sub?: string): 
   }
   const a = document.createElement('a')
   a.className = 'version-number glim-num'
-  a.href = `${repo}/releases/tag/v${version}`
+  a.href = href
   a.target = '_blank'
   a.rel = 'noreferrer noopener'
   a.textContent = version
@@ -160,8 +160,9 @@ export function mountVersionCard(container: HTMLElement): void {
   function render(): void {
     heading.fill(t('about.version'), t('info.versionHint'))
     rows.replaceChildren(
-      versionRow('TrickWork', APP_VERSION, REPO),
-      versionRow('GlimStone', GLIMSTONE_VERSION, GLIMSTONE_REPO, t('info.glimstoneSub')),
+      versionRow('TrickWork', APP_VERSION, `${REPO}/releases/tag/v${APP_VERSION}`),
+      // GlimStone folds its patch tags into the next minor, so its number opens the newest release.
+      versionRow('GlimStone', GLIMSTONE_VERSION, GLIMSTONE_RELEASE_URL, t('info.glimstoneSub')),
     )
     updateButton(notes, { label: t('info.releaseNotes') })
   }

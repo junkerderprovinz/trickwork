@@ -20,7 +20,6 @@ export const PAYPAL_GIVING = {
 }
 
 export const REPO = 'https://github.com/junkerderprovinz/trickwork'
-export const GLIMSTONE_REPO = 'https://github.com/junkerderprovinz/glimstone'
 /** The invite to TrickWork's forum on the house Discord server. */
 export const DISCORD = 'https://discord.gg/sZCnbuY2CH'
 
