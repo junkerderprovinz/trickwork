@@ -2,12 +2,12 @@
 // GlimStone's Info tile: every version TrickWork is made of with the release
 // notes and the update check, then the ways to report something.
 
-import { MAIL_SVG, MANUAL_SVG } from './design/appMarks'
+import { MANUAL_SVG } from './design/appMarks'
 import { groupStage } from './design/controls'
 import { infoIcon } from './design/tooltip'
 import { GLIMSTONE_VERSION } from './design/version'
 import { glimButton, updateButton, type ButtonTone } from './controlWidgets'
-import { DISCORD, GLIMSTONE_REPO, GLYPHS, MAIL, REPO } from './donate'
+import { DISCORD, GLIMSTONE_REPO, GLYPHS, REPO } from './donate'
 import { openExternal } from './donateWindows'
 import { downloadBlob } from './download'
 import { currentLocale, subscribeLocale, t } from './i18n'
@@ -227,12 +227,9 @@ export function mountHelpCard(container: HTMLElement, store: Store): void {
   function render(): void {
     heading.fill(t('info.help'), t('info.helpHint'))
     report.textContent = t('about.report')
-    // Subject only: a prefilled body reads as a form to fill in.
-    const mailto = `mailto:${MAIL}?subject=${encodeURIComponent(`TrickWork ${t('about.mailSubject')}`)}`
     buttons.replaceChildren(
       actionUnit('github', { name: t('about.repo'), mark: GLYPHS.github, tint: 'glim-github-mark' }, () => openExternal(REPO)),
       actionUnit('discord', { name: t('about.discord'), mark: GLYPHS.discord, tint: 'glim-discord-mark' }, () => openExternal(DISCORD)),
-      actionUnit('house', { name: t('about.mail'), mark: MAIL_SVG, tint: 'glim-house-mark' }, () => openExternal(mailto)),
       // The README's docs button, its book and its yellow.
       actionUnit('docs', { name: t('info.manual'), sub: t('info.open'), mark: MANUAL_SVG, tint: 'glim-docs-mark' }, () => openExternal(MANUAL)),
       // The file goes with an issue on GitHub, so it lights up beside it.

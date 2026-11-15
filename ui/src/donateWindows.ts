@@ -15,7 +15,6 @@ import { desktopRuntime, isDesktop } from './wails'
 /** Opens a link outside the app: through the shell in the desktop build, in a new tab elsewhere. */
 export function openExternal(url: string): void {
   if (isDesktop()) void desktopRuntime().then((runtime) => runtime.Browser.OpenURL(url))
-  else if (url.startsWith('mailto:')) window.location.href = url
   else window.open(url, '_blank', 'noopener,noreferrer')
 }
 

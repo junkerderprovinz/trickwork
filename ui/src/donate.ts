@@ -21,8 +21,6 @@ export const PAYPAL_GIVING = {
 
 export const REPO = 'https://github.com/junkerderprovinz/trickwork'
 export const GLIMSTONE_REPO = 'https://github.com/junkerderprovinz/glimstone'
-/** Shared by every tool; the subject line names the product. */
-export const MAIL = 'hello@halleluja.design'
 /** The invite to TrickWork's forum on the house Discord server. */
 export const DISCORD = 'https://discord.gg/sZCnbuY2CH'
 

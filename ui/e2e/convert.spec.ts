@@ -692,7 +692,7 @@ test('the About card gives with the README buttons, the coffee one in its own ar
   const coffee = page.getByRole('button', { name: 'Buy me a coffee', exact: true })
   await expect(coffee).toHaveClass(/glim-readme-btn/)
   await expect(coffee.locator('.glim-readme-btn-art svg path')).toHaveCount(7)
-  for (const name of ['PayPal', 'Crypto', 'GitHub', 'Email']) {
+  for (const name of ['PayPal', 'Crypto', 'GitHub', 'Discord']) {
     const btn = page.getByRole('button', { name, exact: true })
     await expect(btn).toHaveClass(/glim-readme-btn/)
     // One line each, so the name stays in the middle.
@@ -701,13 +701,13 @@ test('the About card gives with the README buttons, the coffee one in its own ar
   await coffee.hover()
   await expect(coffee).toHaveCSS('background-color', 'rgb(255, 221, 0)')
 
-  // The envelope opens under the pointer.
-  const mail = page.getByRole('button', { name: 'Email', exact: true })
-  await expect(mail.locator('.glim-mark-rest')).toBeVisible()
-  await expect(mail.locator('.glim-mark-hover')).toBeHidden()
-  await mail.hover()
-  await expect(mail.locator('.glim-mark-hover')).toBeVisible()
-  await expect(mail.locator('.glim-mark-rest')).toBeHidden()
+  // The manual's book opens under the pointer.
+  const manual = page.getByRole('button', { name: 'Manual Open', exact: true })
+  await expect(manual.locator('.glim-mark-rest')).toBeVisible()
+  await expect(manual.locator('.glim-mark-hover')).toBeHidden()
+  await manual.hover()
+  await expect(manual.locator('.glim-mark-hover')).toBeVisible()
+  await expect(manual.locator('.glim-mark-rest')).toBeHidden()
 })
 
 test('the About card opens the crypto window, which shows the picked coin and closes with Escape', async ({ page }) => {
@@ -724,7 +724,7 @@ test('the About card opens the crypto window, which shows the picked coin and cl
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
-test('the Help card offers Discord right after GitHub and opens the server invite', async ({ page }) => {
+test('the Help card sends people to GitHub or Discord and opens the server invite', async ({ page }) => {
   await page.addInitScript(() => {
     const opened: string[] = []
     Object.assign(window, { opened })
@@ -737,8 +737,8 @@ test('the Help card offers Discord right after GitHub and opens the server invit
   await settingsButton(page).click()
   await settingsTab(page, 'Info').click()
   const help = page.locator('.settings-card:visible').filter({ has: page.locator('.glim-eyebrow', { hasText: /^Help$/ }) })
-  await expect(help.locator('.about-text')).toContainText('Discord')
-  await expect(help.locator('.glim-readme-btn-name')).toHaveText(['GitHub', 'Discord', 'Email', 'Manual', 'Bug report'])
+  await expect(help.locator('.about-text')).toHaveText("Problems, wishes or suggestions? You're welcome to open an issue on GitHub, or come say hi on Discord.")
+  await expect(help.locator('.glim-readme-btn-name')).toHaveText(['GitHub', 'Discord', 'Manual', 'Bug report'])
 
   const discord = help.getByRole('button', { name: 'Discord', exact: true })
   await discord.hover()
