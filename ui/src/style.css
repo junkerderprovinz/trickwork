@@ -509,7 +509,7 @@ canvas.preview-canvas[width="0"] {
 }
 .preview-zoom-label:hover {
   color: var(--carbon-text);
-  background-color: var(--carbon-hover);
+  background-color: var(--hover);
 }
 
 .control-slider {
@@ -828,7 +828,7 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 .icon-toggle-button:hover {
-  background-color: var(--carbon-surface3);
+  background-color: var(--hover);
   color: var(--carbon-text);
 }
 
@@ -877,7 +877,7 @@ input.levels-handle-input::-moz-range-thumb {
 
 .queue-item--converted:hover,
 .queue-item--exported:hover {
-  background-color: var(--carbon-surface3);
+  background-color: var(--hover);
 }
 
 .queue-item--active {
@@ -944,7 +944,7 @@ input.levels-handle-input::-moz-range-thumb {
 }
 
 /* Everything somebody presses reads --radius-pill, so it is a true pill in
-   the round shape. A filled control hovers one step up the surface ramp. The
+   the round shape. A filled control hovers to --hover (rule 21). The
    reset sits in GlimStone's base layer, so its components keep their own look. */
 @layer base {
   button {
@@ -962,7 +962,7 @@ input.levels-handle-input::-moz-range-thumb {
   }
 
   button:hover {
-    background-color: var(--carbon-surface3);
+    background-color: var(--hover);
   }
 
   button:focus-visible {
@@ -1130,7 +1130,7 @@ button:active:not(:disabled) {
 }
 
 .segmented-button:hover {
-  background-color: var(--carbon-surface3);
+  background-color: var(--hover);
   color: var(--carbon-text);
 }
 
@@ -1191,7 +1191,7 @@ button:active:not(:disabled) {
 }
 
 .segmented-row--chip .segmented-button:hover {
-  background-color: var(--carbon-surface3);
+  background-color: var(--hover);
 }
 
 .segmented-row--chip .segmented-button--active,
@@ -1396,7 +1396,7 @@ button:active:not(:disabled) {
   padding: 0 0.75rem;
 }
 .dropdown-trigger:hover {
-  background-color: var(--carbon-surface3);
+  background-color: var(--hover);
 }
 
 .dropdown-listbox {
@@ -1433,7 +1433,7 @@ button:active:not(:disabled) {
   font-family: 'Noto Color Emoji Flags', var(--font-sans);
 }
 .dropdown-option:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--hover);
   color: var(--carbon-text);
 }
 .dropdown-option--active {
@@ -1507,7 +1507,7 @@ button:active:not(:disabled) {
   border-radius: var(--radius-pill);
 }
 .toast-close:hover {
-  background-color: var(--carbon-hover);
+  background-color: var(--hover);
   color: var(--carbon-text);
 }
 .toast-close svg {
@@ -1566,7 +1566,7 @@ button:active:not(:disabled) {
 }
 
 .version-number:hover {
-  color: var(--carbon-text);
+  color: var(--accent-ink);
 }
 
 .version-actions {
@@ -1822,7 +1822,7 @@ button:active:not(:disabled) {
 }
 
 .donate-chain:hover {
-  background-color: var(--carbon-hover-raised);
+  background-color: var(--hover);
   color: var(--carbon-text);
 }
 
