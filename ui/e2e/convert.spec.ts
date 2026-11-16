@@ -1074,12 +1074,16 @@ test('under the window bar the page scrolls in a region that starts at the bar',
   expect((await bar.boundingBox())!.y).toBe(0)
 })
 
-test('a neutral and a subtle button light to the hover colour under the pointer', async ({ page }) => {
+test('a neutral, a subtle and a zoom button light to the hover colour under the pointer', async ({ page }) => {
   await page.goto('/')
   await page.locator('input[type="file"][accept="image/*"]').setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
   await expect(page.locator('canvas.preview-canvas')).toBeVisible()
 
-  for (const button of [settingsButton(page), page.getByRole('button', { name: 'Zoom in' })]) {
+  for (const button of [
+    settingsButton(page),
+    page.getByRole('button', { name: 'Export active image as TXT' }),
+    page.getByRole('button', { name: 'Zoom in' }),
+  ]) {
     // The probe sits beside the button, so a rainbow position's hue reaches it too.
     const hover = await button.evaluate((el) => {
       const probe = document.createElement('span')
