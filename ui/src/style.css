@@ -31,12 +31,6 @@ body {
   box-sizing: border-box;
 }
 
-/* GlimStone 4.5.2 sets the bar's height inside its components layer, where its
-   own unlayered zero on :root outranks it, so the bar would collapse. */
-:root:has(.glim-window-bar) {
-  --window-bar: 2.5rem;
-}
-
 /* Under the window bar the page scrolls inside #app, so its scrollbar starts
    at the bar's bottom edge instead of running up behind the bar. */
 :root:has(.glim-window-bar),
