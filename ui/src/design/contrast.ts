@@ -13,8 +13,9 @@ const WHITE = '#FFFFFF';
 const BLACK = '#000000';
 
 // The card surface of each ramp in tokens.css, where accent text mostly sits.
-// The presets were measured against these, and OLED's darker card only adds
-// to the dark figure, so the dark ink holds there as well.
+// OLED's darker card only adds to the dark figure, so the dark ink holds there
+// as well. On light the step itself is set on surface2 and clears it for any
+// colour, so the card and the wash are the grounds left to check.
 const LIGHT_CARD = '#FFFFFF';
 const DARK_CARD = '#262626';
 // The share of the accent in --accent-soft, which applyAccent writes.

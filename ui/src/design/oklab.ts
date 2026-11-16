@@ -15,7 +15,7 @@ export type Oklab = [number, number, number];
  * or below, the dark ramp's at this one or above. The contrast step
  * (prefers-contrast: more) takes the second pair.
  */
-export const INK_LIGHTNESS = { light: 0.52, dark: 0.74, lightMore: 0.4, darkMore: 0.84 } as const;
+export const INK_LIGHTNESS = { light: 0.5, dark: 0.74, lightMore: 0.4, darkMore: 0.84 } as const;
 
 const linear = (v: number) => {
   const s = v / 255;
