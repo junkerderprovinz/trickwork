@@ -18,6 +18,7 @@ export const en = {
   'settings.section': 'Settings section',
   'settings.general': 'General',
   'settings.look': 'Look',
+  'settings.colours': 'Colours',
   'settings.app': 'App',
   'settings.info': 'Info',
 
@@ -305,6 +306,7 @@ export const de: Translations = {
   'settings.section': 'Einstellungsbereich',
   'settings.general': 'Allgemein',
   'settings.look': 'Aussehen',
+  'settings.colours': 'Farben',
   'settings.app': 'App',
   'settings.info': 'Info',
 

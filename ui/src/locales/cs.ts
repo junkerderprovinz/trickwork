@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Oddíl nastavení',
   'settings.general': 'Obecné',
   'settings.look': 'Vzhled',
+  'settings.colours': 'Barvy',
   'settings.app': 'Aplikace',
   'settings.info': 'Info',
 

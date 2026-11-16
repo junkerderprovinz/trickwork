@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': '設定の区分',
   'settings.general': '一般',
   'settings.look': '外観',
+  'settings.colours': 'カラー',
   'settings.app': 'アプリ',
   'settings.info': '情報',
 

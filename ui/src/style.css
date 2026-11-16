@@ -525,9 +525,8 @@ canvas.preview-canvas[width="0"] {
   color: var(--carbon-text-sub);
 }
 
-/* A dropdown, a one-line field or a selector beside its name (rule 35): the
-   name at the row's start, the control at its end. Where the row is too
-   narrow for both, the control moves under the name and keeps the end. */
+/* A select beside its name in the Controls card, whose labels keep the
+   sliders' type: the name at the row's start, the select at its end. */
 .setting-row,
 .control-slider.setting-row {
   display: flex;
@@ -538,17 +537,19 @@ canvas.preview-canvas[width="0"] {
   gap: 0.5rem 1rem;
 }
 
+/* A dropdown beside its name keeps a width its longest option reads at. */
 .setting-row > select,
-.setting-row > .dropdown-wrap {
+.glim-field-row > .dropdown-wrap {
   flex: 1 1 10rem;
   min-width: 9rem;
   max-width: 14rem;
+}
+.setting-row > select {
   margin-inline-start: auto;
 }
 
-.setting-row > .segmented-row {
+.glim-field-row > .segmented-row {
   width: auto;
-  margin-inline-start: auto;
 }
 
 .control-slider .control-slider-row {
@@ -1080,8 +1081,7 @@ button:active:not(:disabled) {
   gap: 0.5rem;
 }
 
-.appearance-settings,
-.appearance-colours {
+.appearance-settings {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -1125,8 +1125,8 @@ button:active:not(:disabled) {
   min-width: 0;
 }
 /* A strip across its card gives way inside its box instead of widening the
-   card around it. One beside its name in a setting row hugs its segments. */
-.control-slider:not(.setting-row) > .segmented-row {
+   card around it. One beside its name in a field row hugs its segments. */
+.control-slider > .segmented-row {
   contain: inline-size;
 }
 .segmented-row--squeezed .segmented-button-label {
@@ -1245,7 +1245,6 @@ button:active:not(:disabled) {
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-inline-start: auto;
 }
 
 /* The reset at the end of a colour row has a swatch's box and border and never
@@ -1357,9 +1356,6 @@ button:active:not(:disabled) {
   display: none;
 }
 @media (hover: none) {
-  .switch-row:has(> .toggle-refusal) {
-    flex-wrap: wrap;
-  }
   .toggle-refusal {
     display: block;
     flex-basis: 100%;
@@ -1452,14 +1448,6 @@ button:active:not(:disabled) {
   color: var(--carbon-text);
 }
 
-
-.switch-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  color: var(--carbon-text-sub);
-}
 
 /* Toasts (toast.ts). The stack lets clicks through and only the cards take
    them. The inset is padding rather than an offset, because the overflow that

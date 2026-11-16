@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Phần cài đặt',
   'settings.general': 'Chung',
   'settings.look': 'Giao diện',
+  'settings.colours': 'Màu sắc',
   'settings.app': 'Ứng dụng',
   'settings.info': 'Thông tin',
 

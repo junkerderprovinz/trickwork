@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Asetusosio',
   'settings.general': 'Yleiset',
   'settings.look': 'Ulkoasu',
+  'settings.colours': 'Värit',
   'settings.app': 'Sovellus',
   'settings.info': 'Tiedot',
 

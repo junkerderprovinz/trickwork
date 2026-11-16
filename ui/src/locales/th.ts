@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'ส่วนของการตั้งค่า',
   'settings.general': 'ทั่วไป',
   'settings.look': 'รูปลักษณ์',
+  'settings.colours': 'สี',
   'settings.app': 'แอป',
   'settings.info': 'ข้อมูล',
 

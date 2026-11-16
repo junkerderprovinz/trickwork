@@ -141,6 +141,7 @@ const presetsCard = section(0, 'settings-card')
 const updateCard = section(1, 'settings-card')
 const generalCards = desktop ? [presetsCard, updateCard] : [presetsCard]
 const lookCard = section(0, 'settings-card')
+const coloursCard = section(1, 'settings-card')
 const appCard = section(0, 'settings-card')
 // The Info tab is GlimStone's Info tile, last in Settings: Version, Help and
 // About, in that order.
@@ -150,11 +151,11 @@ const aboutCard = section(2, 'settings-card')
 const infoCards = [versionCard, helpCard, aboutCard]
 const tabCards: Record<SettingsTab, HTMLElement[]> = {
   general: generalCards,
-  look: [lookCard],
+  look: [lookCard, coloursCard],
   app: [appCard],
   info: infoCards,
 }
-settingsCards.append(...generalCards, lookCard, appCard, ...infoCards)
+settingsCards.append(...generalCards, lookCard, coloursCard, appCard, ...infoCards)
 settingsView.append(tabSlot, settingsCards)
 main.append(primary, settingsView)
 body.append(brandBar, main, secondary)
@@ -277,7 +278,7 @@ mountPresetsPanel(presetsCard, store)
 mountVersionCard(versionCard)
 mountHelpCard(helpCard, store)
 mountAboutPanel(aboutCard)
-leaveLook = mountAppearanceSettings(lookCard)
+leaveLook = mountAppearanceSettings(lookCard, coloursCard)
 mountAppPanel(appCard)
 if (desktop) {
   mountUpdatePanel(updateCard)

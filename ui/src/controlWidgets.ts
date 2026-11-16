@@ -65,6 +65,24 @@ export interface SegmentedRowOptions<T extends string> {
 }
 
 /**
+ * GlimStone's FieldRow: the name, with an optional info icon, at the row's
+ * start and whatever the caller appends at its end.
+ */
+export function fieldRow(label: string, extra?: HTMLElement): HTMLDivElement {
+  const row = document.createElement('div')
+  row.className = 'glim-field-row'
+  const name = document.createElement('span')
+  name.className = 'glim-field-row-name'
+  const text = document.createElement('span')
+  text.className = 'glim-field-row-label'
+  text.textContent = label
+  name.appendChild(text)
+  if (extra) name.appendChild(extra)
+  row.appendChild(name)
+  return row
+}
+
+/**
  * GlimStone's horizontal selector: one groove with only the chosen segment
  * filled, or as tabs, a row of badges.
  */
@@ -73,17 +91,21 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   const inRow = opts.layout === 'row'
   const scale = inRow ? 'small' : (opts.scale ?? 'small')
   const chip = variant === 'chip'
-  const wrap = document.createElement('div')
-  wrap.className = inRow ? 'control-slider setting-row' : 'control-slider'
-
-  if (opts.label) {
-    const labelRow = document.createElement('div')
-    labelRow.className = 'control-slider-label-row'
-    const labelEl = document.createElement('span')
-    labelEl.textContent = opts.label
-    labelRow.appendChild(labelEl)
-    if (opts.labelExtra) labelRow.appendChild(opts.labelExtra)
-    wrap.appendChild(labelRow)
+  let wrap: HTMLElement
+  if (inRow && opts.label) {
+    wrap = fieldRow(opts.label, opts.labelExtra)
+  } else {
+    wrap = document.createElement('div')
+    wrap.className = 'control-slider'
+    if (opts.label) {
+      const labelRow = document.createElement('div')
+      labelRow.className = 'control-slider-label-row'
+      const labelEl = document.createElement('span')
+      labelEl.textContent = opts.label
+      labelRow.appendChild(labelEl)
+      if (opts.labelExtra) labelRow.appendChild(opts.labelExtra)
+      wrap.appendChild(labelRow)
+    }
   }
 
   const row = document.createElement('div')
@@ -322,15 +344,8 @@ export function switchRow(
   extra?: HTMLElement,
   refused?: string,
 ): HTMLElement {
-  const row = document.createElement('div')
-  row.className = 'control-slider-row switch-row'
-  const labelRow = document.createElement('span')
-  labelRow.className = 'control-slider-label-row'
-  const text = document.createElement('span')
-  text.textContent = label
-  labelRow.appendChild(text)
-  if (extra) labelRow.appendChild(extra)
-  row.append(labelRow, toggleSwitch(label, initial, onChange, refused))
+  const row = fieldRow(label, extra)
+  row.appendChild(toggleSwitch(label, initial, onChange, refused))
   // A touch screen has no bubble, so the reason stands under the row there.
   if (refused) {
     const reason = document.createElement('span')

@@ -28,7 +28,7 @@ import { applyOled, darkShowing, oledRefusal, storedOled, watchDarkShowing } fro
 import { flagEmoji } from './design/flagEmoji'
 import { openColorPickerPopover } from './design/colorPicker'
 import { infoIcon } from './design/tooltip'
-import { customDropdown, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
+import { customDropdown, fieldRow, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { motionMs } from './motion'
 import { iconAccentSystem, iconReset, LABEL_GLYPHS, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
@@ -144,18 +144,24 @@ function wipeColours(): void {
 
 // The page's palette positions in the order things stand: the four settings
 // tabs first, then one colour for each selector of the Look card.
-export const HUE_OFFSET = { tabs: 0, shape: 4, theme: 5, motion: 6, labels: 7 }
+export const HUE_OFFSET = { tabs: 0, theme: 4, shape: 5, motion: 6, labels: 7 }
 
 /**
- * Mounts the appearance card. The returned function is for leaving it, to
- * another tab or out of Settings: an egg found here is offered only until then.
+ * Mounts the Look and Colours cards. The returned function is for leaving them,
+ * to another tab or out of Settings: an egg found here is offered only until
+ * then.
  */
-export function mountAppearanceSettings(container: HTMLElement): () => void {
+export function mountAppearanceSettings(lookCard: HTMLElement, coloursCard: HTMLElement): () => void {
   const heading = document.createElement('div')
   heading.className = 'glim-eyebrow'
   const panel = document.createElement('div')
   panel.className = 'appearance-settings'
-  container.append(heading, panel)
+  lookCard.append(heading, panel)
+  const coloursHeading = document.createElement('div')
+  coloursHeading.className = 'glim-eyebrow'
+  const coloursPanel = document.createElement('div')
+  coloursPanel.className = 'appearance-settings'
+  coloursCard.append(coloursHeading, coloursPanel)
 
   const cached = readCachedAppearance()
   let shape: Shape = SHAPES_STORED.includes(cached.shape as Shape) ? (cached.shape as Shape) : DEFAULT_SHAPE
@@ -196,6 +202,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
   function build(): void {
     if (pickerOpen) return
     heading.textContent = t('settings.look')
+    coloursHeading.textContent = t('settings.colours')
     panel.innerHTML = ''
 
     const shapes = shape === 'leaf' || leafFound ? [...SHAPES, 'leaf' as const] : SHAPES
@@ -270,7 +277,8 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       },
     })
 
-    panel.append(languageBlock(), shapeRow, themeRow, oledSlot, motionRow, labelsRow, colourBlock())
+    panel.append(languageBlock(), themeRow, oledSlot, shapeRow, motionRow, labelsRow)
+    coloursPanel.replaceChildren(...colourRows())
   }
 
   // OLED belongs to this screen rather than to the person, so it stays on the
@@ -278,7 +286,6 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
   // without letting go. Under Light it refuses, since there is no dark theme
   // to put on black.
   const oledSlot = document.createElement('div')
-  oledSlot.className = 'control-slider'
   function oledRow(): HTMLElement {
     const row = switchRow(
       t('appearance.oled'),
@@ -292,29 +299,21 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
         light: t('appearance.light'),
       }),
     )
-    if (!darkShowing()) row.querySelector('.control-slider-label-row')?.classList.add('is-dimmed')
+    if (!darkShowing()) row.querySelector('.glim-field-row-name')?.classList.add('is-dimmed')
     return row
   }
   watchDarkShowing(() => oledSlot.replaceChildren(oledRow()))
 
-  // The accent row and the rainbow block. The accent row stays, dimmed, while
+  // The accent row and the rainbow rows. The accent row stays, dimmed, while
   // the rainbow owns the colours, since its value still paints what takes no
   // hue.
-  function colourBlock(): HTMLElement {
-    const block = document.createElement('div')
-    block.className = 'appearance-colours'
+  function colourRows(): HTMLElement[] {
     const rainbowOn = rainbowState().on
 
-    const accentWrap = document.createElement('div')
-    accentWrap.className = 'control-slider setting-row'
-    const accentLabelRow = document.createElement('div')
-    accentLabelRow.className = 'control-slider-label-row'
-    const accentLabel = document.createElement('span')
-    accentLabel.textContent = t('appearance.accent')
-    accentLabelRow.appendChild(accentLabel)
     // The bubble explains a temporary state, so it stands only while that
     // state holds, and outside the dimmed parts so it stays readable.
-    if (rainbowOn) accentLabelRow.appendChild(infoIcon(t('appearance.accentRainbowHint')))
+    const accentWrap = fieldRow(t('appearance.accent'), rainbowOn ? infoIcon(t('appearance.accentRainbowHint')) : undefined)
+    const accentLabel = accentWrap.querySelector('.glim-field-row-label')!
 
     const accentRow = document.createElement('div')
     accentRow.className = 'accent-row'
@@ -393,10 +392,8 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       accentLabel.classList.add('is-dimmed')
       accentRow.classList.add('is-dimmed')
     }
-    accentWrap.append(accentLabelRow, accentRow)
+    accentWrap.appendChild(accentRow)
 
-    const rainbowWrap = document.createElement('div')
-    rainbowWrap.className = 'control-slider'
     const rainbowRow = switchRow(t('appearance.rainbow'), rainbowOn, (checked) => {
       // Counted before the rainbow's rebuild, so the disco row is in it.
       if (discoTap(discoState, checked, { now: performance.now() })) {
@@ -411,11 +408,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       applyDisco(discoOn)
     })
 
-    const paletteField = document.createElement('div')
-    paletteField.className = 'setting-row'
-    const paletteLabel = document.createElement('div')
-    paletteLabel.className = 'control-slider-label-row'
-    paletteLabel.textContent = t('appearance.rainbowPalette')
+    const paletteField = fieldRow(t('appearance.rainbowPalette'))
     const paletteRow = document.createElement('div')
     paletteRow.className = 'palette-swatch-row'
     paletteRow.setAttribute('role', 'group')
@@ -484,15 +477,11 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     )
     // What hangs off the rainbow is absent while it is off, since none of it
     // would answer; its own switch stays.
-    rainbowWrap.append(rainbowRow)
-    if (!rainbowOn) {
-      block.append(accentWrap, rainbowWrap)
-      return block
-    }
-    rainbowWrap.append(reactiveRow, rotateRow)
+    if (!rainbowOn) return [accentWrap, rainbowRow]
+    const rows = [accentWrap, rainbowRow, reactiveRow, rotateRow]
 
     if (discoFound || discoOn) {
-      rainbowWrap.appendChild(
+      rows.push(
         switchRow(
           t('appearance.disco'),
           discoOn,
@@ -506,18 +495,13 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       )
     }
     // The palette comes after every switch that shapes how it is used.
-    paletteField.append(paletteLabel, paletteRow)
-    rainbowWrap.appendChild(paletteField)
-
-    block.append(accentWrap, rainbowWrap)
-    return block
+    paletteField.appendChild(paletteRow)
+    rows.push(paletteField)
+    return rows
   }
 
   function languageBlock(): HTMLElement {
-    const languageWrap = document.createElement('div')
-    languageWrap.className = 'control-slider setting-row'
-    const languageLabel = document.createElement('span')
-    languageLabel.textContent = t('appearance.language')
+    const languageWrap = fieldRow(t('appearance.language'))
     const languageOptions = LOCALES.map((locale) => ({
       value: locale.code,
       label: locale.label,
@@ -526,7 +510,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     const languageDropdown = customDropdown(languageOptions, currentLocale(), (value) => {
       void setLocale(value)
     }, t('appearance.language'))
-    languageWrap.append(languageLabel, languageDropdown)
+    languageWrap.appendChild(languageDropdown)
     return languageWrap
   }
 

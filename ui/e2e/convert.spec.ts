@@ -1108,7 +1108,7 @@ test('the accent and palette swatches sit at the end of their named row, the res
     ['Accent', page.locator('.accent-row > .accent-swatch')],
     ['Rainbow palette', page.getByRole('group', { name: 'Rainbow palette' }).locator('.palette-swatch')],
   ] as const) {
-    const label = page.locator('.setting-row > .control-slider-label-row', { hasText: name })
+    const label = page.locator('.glim-field-row > .glim-field-row-name', { hasText: name })
     await expect(label).toBeVisible()
     const labelBox = (await label.boundingBox())!
     const first = (await swatches.first().boundingBox())!
@@ -1119,4 +1119,20 @@ test('the accent and palette swatches sit at the end of their named row, the res
     expect(first.x).toBeGreaterThan(labelBox.x + labelBox.width)
     expect(reset.x - (last.x + last.width)).toBeLessThan(12)
   }
+})
+
+test('the Look tab holds a Look card and a Colours card, every setting in a field row', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+
+  const cards = page.locator('.settings-card:visible')
+  await expect(cards).toHaveCount(2)
+  await expect(cards.nth(0).locator('.glim-eyebrow')).toHaveText('Look')
+  await expect(cards.nth(1).locator('.glim-eyebrow')).toHaveText('Colours')
+
+  const names = (card: number) => cards.nth(card).locator('.glim-field-row > .glim-field-row-name')
+  await expect(names(0)).toHaveText(['Language', 'Theme', 'OLED', 'Shape', 'Animations', 'Labels'])
+  await expect(names(1)).toHaveText(['Accent', 'Rainbow mode'])
+  await expect(page.locator('.settings-view .setting-row, .switch-row')).toHaveCount(0)
 })

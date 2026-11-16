@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Ενότητα ρυθμίσεων',
   'settings.general': 'Γενικά',
   'settings.look': 'Εμφάνιση',
+  'settings.colours': 'Χρώματα',
   'settings.app': 'Εφαρμογή',
   'settings.info': 'Πληροφορίες',
 

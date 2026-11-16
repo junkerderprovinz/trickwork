@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Beállítási szakasz',
   'settings.general': 'Általános',
   'settings.look': 'Megjelenés',
+  'settings.colours': 'Színek',
   'settings.app': 'Alkalmazás',
   'settings.info': 'Infó',
 

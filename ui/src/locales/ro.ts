@@ -14,6 +14,7 @@ const dict: Translations = {
   'settings.section': 'Secțiune setări',
   'settings.general': 'General',
   'settings.look': 'Aspect',
+  'settings.colours': 'Culori',
   'settings.app': 'Aplicație',
   'settings.info': 'Info',
 
