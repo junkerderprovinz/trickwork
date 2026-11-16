@@ -1097,3 +1097,26 @@ test('a neutral, a subtle and a zoom button light to the hover colour under the 
     await expect.poll(() => button.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(hover)
   }
 })
+
+test('the accent and palette swatches sit at the end of their named row, the reset right after them', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+  await page.getByRole('switch', { name: 'Rainbow' }).click()
+
+  for (const [name, swatches] of [
+    ['Accent', page.locator('.accent-row > .accent-swatch')],
+    ['Rainbow palette', page.getByRole('group', { name: 'Rainbow palette' }).locator('.palette-swatch')],
+  ] as const) {
+    const label = page.locator('.setting-row > .control-slider-label-row', { hasText: name })
+    await expect(label).toBeVisible()
+    const labelBox = (await label.boundingBox())!
+    const first = (await swatches.first().boundingBox())!
+    const last = (await swatches.last().boundingBox())!
+    const reset = (await swatches.last().locator('xpath=following-sibling::button[1]').boundingBox())!
+    // One line: the swatches share the label's row and stand at its far end.
+    expect(first.y).toBeLessThan(labelBox.y + labelBox.height)
+    expect(first.x).toBeGreaterThan(labelBox.x + labelBox.width)
+    expect(reset.x - (last.x + last.width)).toBeLessThan(12)
+  }
+})

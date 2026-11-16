@@ -306,7 +306,7 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
     const rainbowOn = rainbowState().on
 
     const accentWrap = document.createElement('div')
-    accentWrap.className = 'control-slider'
+    accentWrap.className = 'control-slider setting-row'
     const accentLabelRow = document.createElement('div')
     accentLabelRow.className = 'control-slider-label-row'
     const accentLabel = document.createElement('span')
@@ -411,6 +411,11 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       applyDisco(discoOn)
     })
 
+    const paletteField = document.createElement('div')
+    paletteField.className = 'setting-row'
+    const paletteLabel = document.createElement('div')
+    paletteLabel.className = 'control-slider-label-row'
+    paletteLabel.textContent = t('appearance.rainbowPalette')
     const paletteRow = document.createElement('div')
     paletteRow.className = 'palette-swatch-row'
     paletteRow.setAttribute('role', 'group')
@@ -501,7 +506,8 @@ export function mountAppearanceSettings(container: HTMLElement): () => void {
       )
     }
     // The palette comes after every switch that shapes how it is used.
-    rainbowWrap.appendChild(paletteRow)
+    paletteField.append(paletteLabel, paletteRow)
+    rainbowWrap.appendChild(paletteField)
 
     block.append(accentWrap, rainbowWrap)
     return block

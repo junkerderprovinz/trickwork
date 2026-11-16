@@ -1236,29 +1236,35 @@ button:active:not(:disabled) {
   height: 0.875rem;
 }
 
-/* The eight accent presets, wrapping on narrow widths, with the reset button
-   pushed to the end. */
-.accent-row {
+/* A colour row's swatches and its reset stand together at the end of the
+   row, as every other setting's control does, and wrap from the end. */
+.accent-row,
+.palette-swatch-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.5rem;
+  margin-inline-start: auto;
 }
 
-/* The reset at the end of a colour row is the swatches' size and never shows
-   words, whatever the label mode says. */
+/* The reset at the end of a colour row has a swatch's box and border and never
+   shows words, whatever the label mode says. Its neutral ground keeps it from
+   reading as one more colour to pick. */
 .swatch-reset {
   width: var(--swatch-size);
   height: var(--swatch-size);
   padding: 0;
   flex-shrink: 0;
-  margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid var(--carbon-border);
+  background-color: var(--carbon-surface3);
   color: var(--carbon-text-sub);
 }
 .swatch-reset:hover {
+  background-color: var(--hover);
   color: var(--accent-glyph);
 }
 /* A glyph alone fills half its box. */
@@ -1311,10 +1317,6 @@ button:active:not(:disabled) {
 /* The editable rainbow palette, one swatch per position, styled like the
    accent swatches. */
 .palette-swatch-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
   transition: opacity var(--motion-control-dur, 150ms) ease;
 }
 
