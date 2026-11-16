@@ -501,7 +501,6 @@ canvas.preview-canvas[width="0"] {
   align-items: center;
   justify-content: center;
   line-height: 1;
-  background-color: var(--carbon-surface2);
   border-radius: var(--radius-pill);
 }
 
@@ -983,43 +982,47 @@ input.levels-handle-input::-moz-range-thumb {
   padding-block: 0;
 }
 
-.glim-tone-subtle {
-  background-color: var(--carbon-surface2);
-  color: var(--carbon-text);
-}
-.glim-tone-neutral {
-  background-color: var(--carbon-surface3);
-  color: var(--carbon-text);
-}
-/* A filled tone hovers one colour step toward the text colour (rule 21), never
-   through opacity, which would let the card show through. */
-.glim-tone-accent {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-.glim-tone-accent:hover:not(:disabled) {
-  background-color: var(--accent-hover);
-}
-.glim-tone-ok {
-  background-color: var(--status-ok-solid);
-  color: var(--carbon-bg);
-}
-.glim-tone-ok:hover:not(:disabled) {
-  background-color: var(--status-ok-hover);
-}
-.glim-tone-warn {
-  background-color: var(--status-warn-solid);
-  color: var(--carbon-bg);
-}
-.glim-tone-warn:hover:not(:disabled) {
-  background-color: var(--status-warn-hover);
-}
-.glim-tone-danger {
-  background-color: var(--status-fail-solid);
-  color: var(--carbon-bg);
-}
-.glim-tone-danger:hover:not(:disabled) {
-  background-color: var(--status-fail-hover);
+/* In GlimStone's components layer, where its hover on the surface tones
+   outranks the grounds set here. */
+@layer components {
+  .glim-tone-subtle {
+    background-color: var(--carbon-surface2);
+    color: var(--carbon-text);
+  }
+  .glim-tone-neutral {
+    background-color: var(--carbon-surface3);
+    color: var(--carbon-text);
+  }
+  /* A filled tone hovers one colour step toward the text colour (rule 21), never
+     through opacity, which would let the card show through. */
+  .glim-tone-accent {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .glim-tone-accent:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+  }
+  .glim-tone-ok {
+    background-color: var(--status-ok-solid);
+    color: var(--carbon-bg);
+  }
+  .glim-tone-ok:hover:not(:disabled) {
+    background-color: var(--status-ok-hover);
+  }
+  .glim-tone-warn {
+    background-color: var(--status-warn-solid);
+    color: var(--carbon-bg);
+  }
+  .glim-tone-warn:hover:not(:disabled) {
+    background-color: var(--status-warn-hover);
+  }
+  .glim-tone-danger {
+    background-color: var(--status-fail-solid);
+    color: var(--carbon-bg);
+  }
+  .glim-tone-danger:hover:not(:disabled) {
+    background-color: var(--status-fail-hover);
+  }
 }
 
 /* Every button gives way on press. The give row and its windows keep the
