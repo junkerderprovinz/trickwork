@@ -300,7 +300,7 @@ body {
 .card-drag-handle:hover,
 .card-drag-handle:focus-visible {
   opacity: 1;
-  color: var(--carbon-text);
+  color: var(--accent-glyph);
   background: none;
 }
 .card-drag-handle:active {
@@ -421,6 +421,12 @@ body {
 
 .dropzone:hover {
   color: var(--carbon-text);
+}
+
+/* Only the glyph takes the accent, as on a GlimStone button, and the words keep
+   the text colour. */
+.dropzone:hover .dropzone-icon {
+  color: var(--accent-glyph);
 }
 
 .dropzone--active {
@@ -829,7 +835,7 @@ input.levels-handle-input::-moz-range-thumb {
 
 .icon-toggle-button:hover {
   background-color: var(--hover);
-  color: var(--carbon-text);
+  color: var(--accent-glyph);
 }
 
 .icon-toggle-button--active {
@@ -1250,7 +1256,7 @@ button:active:not(:disabled) {
   color: var(--carbon-text-sub);
 }
 .swatch-reset:hover {
-  color: var(--carbon-text);
+  color: var(--accent-glyph);
 }
 /* A glyph alone fills half its box. */
 .swatch-reset svg {
@@ -1508,7 +1514,7 @@ button:active:not(:disabled) {
 }
 .toast-close:hover {
   background-color: var(--hover);
-  color: var(--carbon-text);
+  color: var(--accent-glyph);
 }
 .toast-close svg {
   width: 14px;
