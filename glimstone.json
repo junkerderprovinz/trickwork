@@ -1,0 +1,96 @@
+{
+  "targets": [
+    {
+      "name": "ui",
+      "mode": "copy",
+      "version": "4.3.6",
+      "versionFile": "ui/src/design/version.ts",
+      "files": [
+        {
+          "from": "packages/core/src/appMarks.ts",
+          "to": "ui/src/design/appMarks.ts"
+        },
+        {
+          "from": "packages/core/src/appearance.ts",
+          "to": "ui/src/design/appearance.ts"
+        },
+        {
+          "from": "packages/core/src/browserAccent.ts",
+          "to": "ui/src/design/browserAccent.ts"
+        },
+        {
+          "from": "packages/core/src/colorPicker.ts",
+          "to": "ui/src/design/colorPicker.ts"
+        },
+        {
+          "from": "packages/core/src/contrast.ts",
+          "to": "ui/src/design/contrast.ts"
+        },
+        {
+          "from": "packages/core/src/controls.ts",
+          "to": "ui/src/design/controls.ts"
+        },
+        {
+          "from": "packages/core/src/dialog.ts",
+          "to": "ui/src/design/dialog.ts"
+        },
+        {
+          "from": "packages/core/src/disco.ts",
+          "to": "ui/src/design/disco.ts"
+        },
+        {
+          "from": "packages/core/src/discoLoop.ts",
+          "to": "ui/src/design/discoLoop.ts"
+        },
+        {
+          "from": "packages/core/src/flagEmoji.ts",
+          "to": "ui/src/design/flagEmoji.ts"
+        },
+        {
+          "from": "packages/core/glyphs.json",
+          "to": "ui/src/design/glyphs.json"
+        },
+        {
+          "from": "packages/core/src/inputModality.ts",
+          "to": "ui/src/design/inputModality.ts"
+        },
+        {
+          "from": "packages/core/src/menu.ts",
+          "to": "ui/src/design/menu.ts"
+        },
+        {
+          "from": "packages/core/src/paypal.ts",
+          "to": "ui/src/design/paypal.ts"
+        },
+        {
+          "from": "packages/core/src/segmentLayout.ts",
+          "to": "ui/src/design/segmentLayout.ts"
+        },
+        {
+          "from": "packages/core/src/selectScroll.ts",
+          "to": "ui/src/design/selectScroll.ts"
+        },
+        {
+          "from": "packages/core/src/storage.ts",
+          "to": "ui/src/design/storage.ts"
+        },
+        {
+          "from": "packages/core/src/theme.ts",
+          "to": "ui/src/design/theme.ts"
+        },
+        {
+          "from": "packages/core/tokens.css",
+          "to": "ui/src/design/tokens.css"
+        },
+        {
+          "from": "packages/core/src/tooltip.ts",
+          "to": "ui/src/design/tooltip.ts"
+        },
+        {
+          "from": "packages/core/src/version.ts",
+          "to": "ui/src/design/version.ts"
+        }
+      ]
+    }
+  ]
+}
