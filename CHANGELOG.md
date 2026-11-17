@@ -2,6 +2,27 @@
 
 All notable changes to TrickWork are documented here.
 
+## 1.7.1 - 2026-11-17
+
+### 🎨 Design
+
+- The look follows GlimStone 4.5.4. A button, a row or a tab under the pointer lights up in the same soft shade of your accent colour, and a button that shows only a symbol lights the symbol itself. Accent text in the light theme is a little deeper, so it reads clearly on every ground, and the ring that shows where the keyboard is stands out on every background.
+- The Look tab has two cards, Look and Colours. Every setting names itself at the start of its row and keeps its control at the end, the accent swatches and the rainbow palette included, and Theme and the OLED switch come right after the language.
+- The docs have a new look, and the README puts the Documentation button right under the intro and offers every desktop download in its row of buttons.
+
+### ⚡ Improved
+
+- The Help card on the Info tab offers GitHub and TrickWork's Discord server in place of the mail button.
+- The GlimStone version on the Info tab opens GlimStone's newest release, so the number always leads to notes that exist.
+
+### 🐛 Fixed
+
+- Some grey buttons, such as the zoom buttons, stayed grey under the pointer while the rest lit up. They take the accent shade like every other button.
+
+### 🌐 Translations
+
+- The Help sentence uses GlimStone's words in all 26 languages, and the Colours card is named in each of them.
+
 ## 1.7.0 - 2026-11-12
 
 ### ✨ Added
