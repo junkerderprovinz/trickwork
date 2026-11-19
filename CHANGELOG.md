@@ -2,6 +2,16 @@
 
 All notable changes to TrickWork are documented here.
 
+## 1.7.2 - 2026-11-19
+
+### 🎨 Design
+
+- The look follows GlimStone 4.5.8.
+
+### 🐛 Fixed
+
+- A silent install into a folder with spaces lands where you sent it. Deployment tools pass the folder after `/D=` without quotes, and `/D=C:\Program Files\TrickWork` installed into `C:\Program`. The installer follows PommelPorter 1.2.3, which reads the whole path.
+
 ## 1.7.1 - 2026-11-17
 
 ### 🎨 Design
