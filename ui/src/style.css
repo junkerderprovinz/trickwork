@@ -540,10 +540,6 @@ canvas.preview-canvas[width="0"] {
   margin-inline-start: auto;
 }
 
-.glim-field-row > .segmented-row {
-  width: auto;
-}
-
 .control-slider .control-slider-row {
   display: flex;
   align-items: center;
@@ -994,7 +990,7 @@ button:active:not(:disabled) {
   scale: 0.97;
 }
 .glim-about-give button:active,
-.donate-backdrop button:active {
+:is([data-glim='CoffeeDialog'], [data-glim='PaypalDialog'], [data-glim='CryptoDonateDialog']) button:active {
   scale: none;
 }
 
@@ -1053,68 +1049,6 @@ button:active:not(:disabled) {
   gap: 1.5rem;
 }
 
-/* The selector's well: one groove across the whole width of its card, a
-   narrower one reads as a control that stopped short. Idle segments are
-   transparent in it and only the chosen one is filled. Big pickers pin their
-   segments in controlWidgets.ts. */
-.segmented-row {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.2rem;
-  padding: 0.2rem;
-  width: 100%;
-  border-radius: var(--radius-pill);
-}
-
-.segmented-button {
-  min-height: var(--badge-md);
-  padding: 0.35rem 0.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 1.25;
-  background-color: transparent;
-  color: var(--carbon-text-sub);
-}
-
-/* A small strip hugs its labels and grows into the row's leftover room. */
-.segmented-row--small .segmented-button {
-  flex: 1 0 auto;
-  white-space: nowrap;
-}
-
-/* The strip stays on its one row ("A strip that wrapped stays on its row"):
-   where the words do not fit it shows the glyphs alone, and a strip without
-   glyphs cuts its long labels short, each whole in its bubble. */
-.segmented-button {
-  min-width: 0;
-}
-/* A strip across its card gives way inside its box instead of widening the
-   card around it. One beside its name in a field row hugs its segments. */
-.control-slider > .segmented-row {
-  contain: inline-size;
-}
-.segmented-row--squeezed .segmented-button-label {
-  display: none;
-}
-.segmented-row--truncated .segmented-button-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.segmented-button:hover {
-  background-color: var(--hover);
-  color: var(--carbon-text);
-}
-
-.segmented-button--active,
-.segmented-button--active:hover {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-
 /* A free value beside fixed steps. In a narrow card it stands at the end of
    the row under the steps, so they keep the card's width, and it is as tall as
    the toggles it shares that row with. A ring marks it while its value is the
@@ -1150,26 +1084,6 @@ button:active:not(:disabled) {
   translate: 0 -50%;
   color: var(--carbon-text-muted);
   pointer-events: none;
-}
-
-.segmented-button-glyph {
-  display: inline-flex;
-  flex: none;
-}
-
-/* A selector's segment has GlimStone's button height and small type, the same
-   strip as in the sibling apps. The glyph stands beside the words at their
-   size and takes the segment's ink. */
-.segmented-row .segmented-button {
-  min-height: var(--btn-h);
-  height: var(--btn-h);
-  padding: 0 0.75rem;
-  gap: 0.4rem;
-  font-size: var(--text-meta);
-}
-.segmented-row .segmented-button-glyph svg {
-  width: 0.875rem;
-  height: 0.875rem;
 }
 
 /* A colour row's swatches and its reset stand together at the end of the
@@ -1446,30 +1360,6 @@ button:active:not(:disabled) {
   gap: 0.75rem;
 }
 
-/* A window that is not one of the giving windows: the content as wide as the
-   window, and the actions in its foot at the end of the row. */
-.window-backdrop {
-  position: fixed;
-  inset: 0;
-  top: var(--window-bar);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.notes-window {
-  width: 100%;
-  max-width: 48rem;
-  max-height: 85vh;
-  padding: 1.75rem 1.25rem 1.25rem;
-}
-
-.notes-window:focus {
-  outline: none;
-}
-
 .notes-body {
   display: flex;
   flex-direction: column;
@@ -1499,237 +1389,7 @@ button:active:not(:disabled) {
   gap: 0.4rem;
 }
 
-.window-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 1rem;
-}
-
-/* A link out of the app opens the foot. */
-.window-footer > :first-child:not(:last-child) {
-  margin-inline-end: auto;
-}
-
-/* The giving windows. The card reuses the section heading, so its title sits on
-   the window's top edge like every card heading. */
-.donate-backdrop {
-  /* The giving windows keep the type sizes they were made with. */
-  --text-body: 0.9375rem;
-  --text-caption: 0.6875rem;
-  position: fixed;
-  inset: 0;
-  top: var(--window-bar);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background-color: var(--glim-scrim);
-}
-
-.donate-window {
-  width: 100%;
-  max-width: 32rem;
-  max-height: 85vh;
-  padding: 1.75rem 1.25rem 1.25rem;
-}
-
-.donate-window:focus {
-  outline: none;
-}
-
-.donate-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-/* The coffee widget needs the height of the screen, not of its content. */
-.donate-window:has(.donate-body--frame) {
-  height: calc(100vh - 7rem);
-}
-
-.donate-body--frame {
-  flex: 1;
-}
-
-.donate-frame-well {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-  padding: 0.5rem;
-  border-radius: var(--radius-card);
-  background-color: var(--carbon-surface2);
-}
-
-/* White behind the frame, so its first paint is not a dark hole on the dark
-   theme; the widget page is light either way. */
-.donate-frame-well iframe {
-  flex: 1;
-  width: 100%;
-  border: 0;
-  border-radius: var(--radius-control);
-  background-color: #fff;
-}
-
-.donate-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 1rem;
-}
-
-.donate-appeal,
-.donate-intro {
-  margin: 0;
-  font-size: var(--text-body);
-  line-height: 1.5;
-}
-
-.donate-appeal {
-  color: var(--carbon-text);
-}
-
-.donate-intro {
-  color: var(--carbon-text-sub);
-}
-
-.donate-amount-row {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-
-.donate-amount-row .control-slider {
-  align-self: stretch;
-  gap: 0;
-}
-
-/* Filled and borderless like every field (rule 14); a valid amount is marked
-   with the accent, one that is not with the fail colour. */
-.donate-amount-row .donate-other {
-  width: 9rem;
-  box-shadow: inset 0 0 0 2px transparent;
-}
-
-.donate-amount-row .donate-other.is-valid {
-  box-shadow: inset 0 0 0 2px var(--accent);
-}
-
-.donate-amount-row .donate-other.is-invalid {
-  box-shadow: inset 0 0 0 2px var(--status-fail-solid);
-}
-
-.donate-paypal-buttons {
-  margin-top: 0.75rem;
-  min-height: 7rem;
-  color-scheme: light;
-}
-
-.donate-loading {
-  margin: 0;
-  padding: 0.5rem 0;
-  text-align: center;
-  font-size: var(--text-caption);
-  color: var(--carbon-text-muted);
-}
-
-.donate-status {
-  margin: 0;
-  font-size: var(--text-body);
-}
-
-.donate-status.is-ok {
-  color: var(--status-ok-text);
-}
-
-.donate-status.is-fail {
-  color: var(--status-fail-text);
-}
-
-.donate-crypto-well {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  border-radius: var(--radius-card);
-  background-color: var(--carbon-surface2);
-}
-
 .donate-qr svg {
   display: block;
   border-radius: var(--radius-control);
-}
-
-.donate-address {
-  width: 100%;
-  margin: 0;
-  word-break: break-all;
-  text-align: center;
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
-  font-size: var(--text-caption);
-  color: var(--carbon-text);
-}
-
-.donate-chains {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.donate-chain {
-  padding: 0.25rem 0.75rem;
-  font-size: var(--text-dense);
-  font-weight: 500;
-  background-color: var(--carbon-surface3);
-  color: var(--carbon-text-sub);
-}
-
-.donate-chain:hover {
-  background-color: var(--hover);
-  color: var(--carbon-text);
-}
-
-.donate-chain.is-active,
-.donate-coin.is-active {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-
-.donate-note {
-  margin: 0;
-  text-align: center;
-  font-size: var(--text-caption);
-  color: var(--status-warn-text);
-}
-
-.donate-coin-tiles {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-}
-
-.donate-coin {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.75rem 0.5rem;
-  border-radius: var(--radius-control);
-  font-size: var(--text-dense);
-  font-weight: 500;
-  color: var(--carbon-text-sub);
-}
-
-/* A coin tile follows the label engine: its mark alone in glyph mode, its
-   ticker alone in text mode. */
-[data-labels-buttons='text'] .donate-coin svg,
-[data-labels-buttons='glyph'] .donate-coin span {
-  display: none;
 }

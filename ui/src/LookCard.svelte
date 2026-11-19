@@ -6,7 +6,6 @@
   import { applyOled, darkShowing, oledRefusal, storedOled, watchDarkShowing } from '@glimstone/core/theme'
   import LanguagePicker from './LanguagePicker.svelte'
   import { eggs, leafTaps, look, persist, stormTaps } from './appearance.svelte'
-  import { repaintButtons } from './controlWidgets'
   import { svgSnippet, tr } from './live.svelte'
   import { LABEL_GLYPHS, MOTION_GLYPHS, segmentGlyph, SHAPE_GLYPHS, THEME_GLYPHS } from './icons'
   import type { TranslationKey } from './i18n'
@@ -86,7 +85,6 @@
   function pickLabels(mode: LabelMode): void {
     look.labelMode = mode
     setLabelMode('buttons', mode)
-    repaintButtons()
   }
 
   // OLED belongs to this screen rather than to the person, so it stays on the
