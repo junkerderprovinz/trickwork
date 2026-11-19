@@ -3,6 +3,7 @@ import '@fontsource-variable/noto-sans-arabic'
 import '@fontsource-variable/noto-sans-hebrew'
 import '@fontsource-variable/noto-sans-thai'
 import { mount } from 'svelte'
+import { setGlyphResolver } from '@glimstone/svelte'
 import { applyCachedAppearance, applyMotion, takePageHue } from '@glimstone/core/appearance'
 import { applyStoredLabelModes } from '@glimstone/core/controls'
 import { applyDisco } from '@glimstone/core/disco'
@@ -14,6 +15,8 @@ import { createStore } from './state'
 import { storedDisco, storedMotion } from './looks'
 import { drawsOwnFrame } from './wails'
 import { watchSystemAccent } from './systemAccent'
+import { iconClose, iconCopy } from './icons'
+import { svgSnippet } from './live.svelte'
 import App from './App.svelte'
 import DesktopFrame from './DesktopFrame.svelte'
 
@@ -29,6 +32,14 @@ applyMotion(storedMotion())
 applyStoredLabelModes()
 applyDisco(storedDisco())
 void applyCachedLocale()
+// GlimStone's own windows name their buttons by key, and these are the marks
+// TrickWork wears for them.
+const keyGlyphs: Record<string, ReturnType<typeof svgSnippet>> = {
+  'common.close': svgSnippet(iconClose()),
+  'common.cancel': svgSnippet(iconClose()),
+  'common.copy': svgSnippet(iconCopy()),
+}
+setGlyphResolver((key) => keyGlyphs[key])
 // Turns the native `title` of every icon-only button into the styled bubble.
 wireTooltips()
 // Under rainbow each button takes the colour of its place on the page as the

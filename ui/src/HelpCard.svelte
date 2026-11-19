@@ -4,11 +4,11 @@
   import { svgSnippet, tr } from './live.svelte'
   import { bugReport } from './bugReport'
   import { DISCORD, GLYPHS, REPO } from './donate'
-  import { openExternal } from './donateWindows'
   import { downloadBlob } from './download'
   import { iconDiagnostics } from './icons'
   import type { Store } from './state'
   import { showToast } from './toast'
+  import { openExternal } from './windows.svelte'
 
   // The second card of the Info tab: the ways to report something.
   let { store }: { store: Store } = $props()

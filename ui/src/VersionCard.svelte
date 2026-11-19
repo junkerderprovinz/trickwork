@@ -4,13 +4,13 @@
   import { GLIMSTONE_REPO, GLIMSTONE_VERSION } from '@glimstone/core/version'
   import { svgSnippet, tr } from './live.svelte'
   import { REPO } from './donate'
-  import { openExternal } from './donateWindows'
   import { iconInfo, iconUpdate } from './icons'
-  import { openReleaseNotes } from './releaseNotes'
+  import NotesWindow from './NotesWindow.svelte'
   import { isNewer } from './releases'
   import { showToast } from './toast'
   import { APP_VERSION } from './version'
   import { isDesktop, isFlatpak } from './wails'
+  import { openExternal, openWindow } from './windows.svelte'
 
   // The first card of the Info tab: every version TrickWork is made of, the
   // release notes and the update check.
@@ -83,7 +83,7 @@
   {/each}
 </ul>
 <div class="version-actions">
-  <Button label={tr('info.releaseNotes')} labelKey={null} glyph={svgSnippet(iconInfo())} tone="subtle" onClick={openReleaseNotes} />
+  <Button label={tr('info.releaseNotes')} labelKey={null} glyph={svgSnippet(iconInfo())} tone="subtle" onClick={() => openWindow(NotesWindow, {})} />
   {#key shake}
     <Button
       label={face.label}
