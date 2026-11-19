@@ -660,6 +660,10 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await expect(page.getByRole('link', { name: 'Flatpak ARM64' })).toHaveAttribute('href', /linux-arm64\.flatpak$/)
   await expect(page.getByRole('link', { name: 'AppImage x64' })).toHaveAttribute('href', /linux-amd64\.AppImage$/)
   await expect(page.getByRole('link', { name: 'AppImage ARM64' })).toHaveAttribute('href', /linux-arm64\.AppImage$/)
+  const firsts = await page.locator('.app-rows .glim-readme-btn-unit').evaluateAll((units) =>
+    units.map((u) => (u.querySelector('a') as HTMLAnchorElement).href.split('/trickwork-')[1]),
+  )
+  expect(firsts).toEqual(['windows-amd64-installer.exe', 'macos-universal.dmg', 'linux-amd64', 'linux-amd64.AppImage', 'linux-amd64.flatpak'])
 })
 
 test('a segment of an App card button shows one word and no second line', async ({ page }) => {

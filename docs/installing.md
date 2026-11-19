@@ -22,8 +22,8 @@ Download the build for your system from the
 | macOS | `trickwork-macos-universal.dmg` |
 | Linux, installer | `trickwork-linux-amd64-installer`, on ARM `trickwork-linux-arm64-installer` |
 | Linux | `trickwork-linux-amd64`, on ARM `trickwork-linux-arm64` (both need `libwebkit2gtk-4.1-0`) |
-| Linux, Flatpak | `trickwork-linux-amd64.flatpak`, on ARM `trickwork-linux-arm64.flatpak` |
 | Linux, AppImage | `trickwork-linux-amd64.AppImage`, on ARM `trickwork-linux-arm64.AppImage` |
+| Linux, Flatpak | `trickwork-linux-amd64.flatpak`, on ARM `trickwork-linux-arm64.flatpak` |
 
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.
@@ -54,6 +54,24 @@ binary. Make the downloaded file executable first
 (`chmod +x trickwork-linux-amd64-installer`). The installer needs
 `libwebkit2gtk-4.1-0` just like the app.
 
+### As an AppImage
+
+Each release also carries `trickwork-linux-amd64.AppImage` and
+`trickwork-linux-arm64.AppImage`. An AppImage packs the program together with
+GTK and WebKitGTK into one file, so it does not depend on the WebKitGTK your
+distribution ships. It starts on Ubuntu 22.04 and on newer distributions. Make
+it executable and start it:
+
+```sh
+chmod +x trickwork-linux-amd64.AppImage
+./trickwork-linux-amd64.AppImage
+```
+
+It runs from wherever you keep it and updates itself like the bare binary: the
+new version takes the AppImage's place in its folder and starts next time.
+Settings live in `~/.config/TrickWork`, the same as the bare binary's, so you
+can move between the two.
+
 ### As a Flatpak
 
 Each release also carries `trickwork-linux-amd64.flatpak` and
@@ -73,24 +91,6 @@ next release's file the same way. Its settings live in
 TrickWork opens pictures and saves exports through your desktop's own file
 dialogs. It can reach any folder you pick there, and the Flatpak gets no access
 to your files beyond that.
-
-### As an AppImage
-
-Each release also carries `trickwork-linux-amd64.AppImage` and
-`trickwork-linux-arm64.AppImage`. An AppImage packs the program together with
-GTK and WebKitGTK into one file, so it does not depend on the WebKitGTK your
-distribution ships. It starts on Ubuntu 22.04 and on newer distributions. Make
-it executable and start it:
-
-```sh
-chmod +x trickwork-linux-amd64.AppImage
-./trickwork-linux-amd64.AppImage
-```
-
-It runs from wherever you keep it and updates itself like the bare binary: the
-new version takes the AppImage's place in its folder and starts next time.
-Settings live in `~/.config/TrickWork`, the same as the bare binary's, so you
-can move between the two.
 
 ### Updates
 
