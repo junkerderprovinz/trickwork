@@ -3,7 +3,7 @@
     {
       "name": "ui",
       "mode": "copy",
-      "version": "4.5.4",
+      "version": "4.5.8",
       "versionFile": "ui/src/design/version.ts",
       "files": [
         {
