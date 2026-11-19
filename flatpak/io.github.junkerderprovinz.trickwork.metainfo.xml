@@ -71,6 +71,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.7.2" date="2026-11-19">
+      <description>
+        <p>A silent install into a folder with spaces lands where you sent it.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.7.2</url>
+    </release>
     <release version="1.7.1" date="2026-11-17">
       <description>
         <p>Help leads to GitHub and Discord, and whatever the pointer is over lights up in your accent colour.</p>

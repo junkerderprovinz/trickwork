@@ -2,7 +2,7 @@ module github.com/junkerderprovinz/trickwork/desktop/installer
 
 go 1.26.0
 
-require github.com/junkerderprovinz/pommelporter v1.2.2
+require github.com/junkerderprovinz/pommelporter v1.2.3
 
 require (
 	github.com/coder/websocket v1.8.14 // indirect
