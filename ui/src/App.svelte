@@ -11,7 +11,9 @@
   import { iconApp, iconBack, iconGeneral, iconInfoTab, iconLook, iconSettings } from './icons'
   import { makeReorderable } from './cardReorder'
   import { replay } from './motion'
-  import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
+  import { HUE_OFFSET, leaveLook, rotateOnVisit } from './appearance.svelte'
+  import LookCard from './LookCard.svelte'
+  import ColoursCard from './ColoursCard.svelte'
   import HistoryPanel from './HistoryPanel.svelte'
   import ControlsPanel from './ControlsPanel.svelte'
   import TransformPanel from './TransformPanel.svelte'
@@ -37,7 +39,6 @@
 
   let onSettings = $state(false)
   let settingsTab = $state<SettingsTab>('general')
-  let leaveLook = (): void => {}
 
   let root: HTMLDivElement
   let primary: HTMLElement
@@ -109,7 +110,7 @@
       { id: 'queue', el: cards.queue! },
       { id: 'export', el: cards.export! },
     ])
-    leaveLook = mountAppearanceSettings(cards.look!, cards.colours!)
+    rotateOnVisit()
     if (desktop) listenForUpdates()
     // Every card heading is its section badge, and in the reactive rainbow
     // mode it lights up while the pointer is anywhere in its card.
@@ -169,8 +170,8 @@
         {#if desktop}
           <Section hue={1} extra="settings-card" bind:el={cards.update}><UpdatePanel /></Section>
         {/if}
-        <Section hue={0} extra="settings-card" bind:el={cards.look} />
-        <Section hue={1} extra="settings-card" bind:el={cards.colours} />
+        <Section hue={0} extra="settings-card" bind:el={cards.look}><LookCard /></Section>
+        <Section hue={1} extra="settings-card" bind:el={cards.colours}><ColoursCard /></Section>
         <Section hue={0} extra="settings-card" bind:el={cards.app}><AppPanel /></Section>
         <!-- The Info tab is GlimStone's Info tile, last in Settings: Version,
              Help and About, in that order. -->

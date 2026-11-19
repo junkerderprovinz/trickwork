@@ -1,11 +1,9 @@
-// DOM builders shared by the panels and appearanceSettings.ts. They are not
-// i18n-aware; a caller rebuilds its panel when the locale changes.
+// DOM builders for the dialogs that are not Svelte components yet. They are
+// not i18n-aware; a caller rebuilds its content when the locale changes.
 
 import { hueVars, rainbowState } from '@glimstone/core/appearance'
 import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from '@glimstone/core/controls'
 import { segmentFit } from '@glimstone/core/segmentLayout'
-import { enableWheelStep, stepIndex } from '@glimstone/core/selectScroll'
-import { replay } from './motion'
 
 /**
  * Sets the --item-hue* properties that give an element its rainbow position.
@@ -59,7 +57,7 @@ export interface SegmentedRowOptions<T extends string> {
  * GlimStone's FieldRow: the name, with an optional info icon, at the row's
  * start and whatever the caller appends at its end.
  */
-export function fieldRow(label: string, extra?: HTMLElement): HTMLDivElement {
+function fieldRow(label: string, extra?: HTMLElement): HTMLDivElement {
   const row = document.createElement('div')
   row.className = 'glim-field-row'
   const name = document.createElement('span')
@@ -226,189 +224,6 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   void document.fonts?.ready.then(() => layout())
 
   render()
-  return wrap
-}
-
-/**
- * A sliding switch (`role="switch"`). Track and knob read --radius-pill, so the
- * switch follows the shape engine.
- */
-export function toggleSwitch(
-  label: string,
-  initial: boolean,
-  onChange: (checked: boolean) => void,
-  refused?: string,
-): HTMLButtonElement {
-  const btn = document.createElement('button')
-  btn.type = 'button'
-  btn.className = 'toggle-switch'
-  btn.setAttribute('role', 'switch')
-  btn.setAttribute('aria-label', label)
-  // A switch that cannot be flipped right now keeps its state and its place
-  // in the tab order, and a press shakes it instead.
-  if (refused) {
-    btn.setAttribute('aria-disabled', 'true')
-    btn.setAttribute('data-tip', refused)
-  }
-
-  const knob = document.createElement('span')
-  knob.className = 'toggle-switch-knob'
-  btn.appendChild(knob)
-
-  let checked = initial
-  function applyState(): void {
-    btn.classList.toggle('toggle-switch--on', checked)
-    btn.setAttribute('aria-checked', String(checked))
-  }
-  applyState()
-
-  btn.addEventListener('click', () => {
-    if (refused) {
-      replay(btn, 'glim-shake')
-      return
-    }
-    checked = !checked
-    applyState()
-    onChange(checked)
-  })
-
-  return btn
-}
-
-/** A label with a switch at the end of its row, as the rainbow and disco rows use. */
-export function switchRow(
-  label: string,
-  initial: boolean,
-  onChange: (checked: boolean) => void,
-  extra?: HTMLElement,
-  refused?: string,
-): HTMLElement {
-  const row = fieldRow(label, extra)
-  row.appendChild(toggleSwitch(label, initial, onChange, refused))
-  // A touch screen has no bubble, so the reason stands under the row there.
-  if (refused) {
-    const reason = document.createElement('span')
-    reason.className = 'toggle-refusal'
-    reason.textContent = refused
-    row.appendChild(reason)
-  }
-  return row
-}
-
-export interface DropdownOption<T extends string> {
-  value: T
-  label: string
-  /** Its own element, since a space between an emoji and text is too narrow a gap. */
-  flag?: string
-}
-
-/**
- * A button and listbox dropdown after BombVault's language picker, for where a
- * native <select> is too small and its option list cannot be padded. It opens
- * downward, since it sits mid-page.
- */
-export function customDropdown<T extends string>(
-  options: DropdownOption<T>[],
-  initial: T,
-  onChange: (value: T) => void,
-  ariaLabel: string,
-): HTMLElement {
-  const wrap = document.createElement('div')
-  wrap.className = 'dropdown-wrap'
-
-  const trigger = document.createElement('button')
-  trigger.type = 'button'
-  trigger.className = 'dropdown-trigger'
-  trigger.setAttribute('aria-haspopup', 'listbox')
-  trigger.setAttribute('aria-expanded', 'false')
-  // A fixed accessible name, whatever value the trigger shows.
-  trigger.setAttribute('aria-label', ariaLabel)
-
-  const listbox = document.createElement('div')
-  listbox.className = 'dropdown-listbox'
-  listbox.setAttribute('role', 'listbox')
-  listbox.setAttribute('aria-label', ariaLabel)
-  listbox.style.display = 'none'
-
-  let current = initial
-  let isOpen = false
-
-  function currentOption(): DropdownOption<T> | undefined {
-    return options.find((o) => o.value === current)
-  }
-
-  /** Fills `el` with the option's flag and label, or with the label alone. */
-  function fillOptionContent(el: HTMLElement, opt: DropdownOption<T>): void {
-    el.innerHTML = ''
-    if (opt.flag) {
-      const flagSpan = document.createElement('span')
-      flagSpan.className = 'dropdown-option-flag'
-      flagSpan.textContent = opt.flag
-      const labelSpan = document.createElement('span')
-      labelSpan.textContent = opt.label
-      el.append(flagSpan, labelSpan)
-    } else {
-      el.textContent = opt.label
-    }
-  }
-
-  function select(value: T): void {
-    if (value === current) return
-    current = value
-    const selected = currentOption()
-    if (selected) fillOptionContent(trigger, selected)
-    renderOptions()
-    onChange(current)
-  }
-
-  function renderOptions(): void {
-    listbox.innerHTML = ''
-    for (const opt of options) {
-      const row = document.createElement('button')
-      row.type = 'button'
-      row.className = 'dropdown-option' + (opt.value === current ? ' dropdown-option--active' : '')
-      fillOptionContent(row, opt)
-      row.setAttribute('role', 'option')
-      row.setAttribute('aria-selected', String(opt.value === current))
-      row.addEventListener('click', () => {
-        select(opt.value)
-        closeList()
-        // Focus goes back to the trigger, which is what lets the wheel step
-        // the value from here on.
-        trigger.focus()
-      })
-      listbox.appendChild(row)
-    }
-  }
-
-  function openList(): void {
-    isOpen = true
-    listbox.style.display = 'block'
-    trigger.setAttribute('aria-expanded', 'true')
-  }
-  function closeList(): void {
-    isOpen = false
-    listbox.style.display = 'none'
-    trigger.setAttribute('aria-expanded', 'false')
-  }
-
-  trigger.addEventListener('click', () => (isOpen ? closeList() : openList()))
-  document.addEventListener('mousedown', (event) => {
-    if (isOpen && !wrap.contains(event.target as Node)) closeList()
-  })
-  document.addEventListener('keydown', (event) => {
-    if (isOpen && event.key === 'Escape') closeList()
-  })
-  enableWheelStep(trigger, (delta) => {
-    const at = options.findIndex((o) => o.value === current)
-    const next = options[stepIndex(options.length, at, delta)]
-    if (next) select(next.value)
-  })
-
-  const initialOption = currentOption()
-  if (initialOption) fillOptionContent(trigger, initialOption)
-  renderOptions()
-  wrap.append(trigger, listbox)
   return wrap
 }
 

@@ -1255,67 +1255,7 @@ button:active:not(:disabled) {
   transition: opacity var(--motion-control-dur, 150ms) ease;
 }
 
-/* The sliding switch (toggleSwitch in controlWidgets.ts). Track and knob read
-   the raw --radius-pill, which stays a pill on the non-square track (see
-   tokens.css), and follow the Soft and Square shapes. */
-.toggle-switch {
-  position: relative;
-  flex-shrink: 0;
-  width: 2.25rem;
-  height: 1.25rem;
-  padding: 0;
-  background-color: var(--carbon-surface3);
-  border-radius: var(--radius-pill);
-  transition: background-color var(--motion-control-dur, 150ms) ease;
-}
-.toggle-switch:hover {
-  background-color: var(--carbon-surface3);
-}
-.toggle-switch--on {
-  background-color: var(--accent);
-}
-.toggle-switch--on:hover {
-  background-color: var(--accent);
-}
-.toggle-switch:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-/* A refused switch keeps its focus ring whole, so only its fill dims. */
-.toggle-switch[aria-disabled='true'] {
-  background-color: color-mix(in srgb, var(--carbon-surface3) 50%, transparent);
-}
-.toggle-switch[aria-disabled='true'].toggle-switch--on {
-  background-color: color-mix(in srgb, var(--accent) 50%, transparent);
-}
-.toggle-refusal {
-  display: none;
-}
-@media (hover: none) {
-  .toggle-refusal {
-    display: block;
-    flex-basis: 100%;
-    font-size: var(--text-meta);
-    color: var(--carbon-text-sub);
-  }
-}
-/* The knob takes the page's ground, dark on the dark theme, and sits at the
-   logical start, so it mirrors under a right-to-left language. */
-.toggle-switch-knob {
-  position: absolute;
-  top: 3px;
-  inset-inline-start: 3px;
-  width: 0.875rem;
-  height: 0.875rem;
-  background-color: var(--carbon-bg);
-  border-radius: var(--radius-pill);
-  transition: inset-inline-start var(--motion-control-dur, 0s) ease;
-}
-.toggle-switch--on .toggle-switch-knob {
-  inset-inline-start: 18px;
-}
-
-/* The custom dropdown of the language picker (customDropdown). The trigger is a
+/* The language picker's dropdown (LanguagePicker.svelte). The trigger is a
    field, so it has a field's height (rule 19); the list is absolutely
    positioned, so opening it does not push the content below. */
 .dropdown-wrap {

@@ -803,11 +803,11 @@ test('a strip keeps its one row on a phone and shows its glyphs alone where the 
   await settingsTab(page, 'Look').click()
   const strip = page.getByRole('tablist', { name: 'Labels' })
   const tops = async () => strip.getByRole('tab').evaluateAll((tabs) => tabs.map((tab) => Math.round(tab.getBoundingClientRect().top)))
-  await expect(strip.locator('.segmented-button-label').first()).toBeVisible()
+  await expect(strip.locator('.glim-sel-label').first()).toBeVisible()
 
   await page.setViewportSize({ width: 360, height: 760 })
   await expect.poll(async () => new Set(await tops()).size).toBe(1)
-  await expect(strip.locator('.segmented-button-label').first()).toBeHidden()
+  await expect(strip.locator('.glim-sel-label').first()).toBeHidden()
   await expect(strip.getByRole('tab', { name: 'Symbol', exact: true })).toBeVisible()
 })
 
@@ -836,12 +836,13 @@ test('under Light the OLED switch refuses, shakes and says why', async ({ page }
   await page.getByRole('tablist', { name: 'Theme' }).getByRole('tab', { name: 'Light' }).click()
   const oled = page.getByRole('switch', { name: 'OLED' })
   await expect(oled).toHaveAttribute('aria-disabled', 'true')
-  await expect(oled).toHaveAttribute('data-tip', 'Only with Dark or System. Light is chosen above.')
+  // The reason is the switch's description, shown as a bubble on hover and as a line on a touch screen.
+  await expect(page.locator(`#${await oled.getAttribute('aria-describedby')}`)).toHaveText('Only with Dark or System. Light is chosen above.')
   // Playwright waits for an aria-disabled control to enable, and a person
   // can still press this one.
   await oled.click({ force: true })
   await expect(oled).toHaveAttribute('aria-checked', 'false')
-  await expect(oled).toHaveClass(/glim-shake/)
+  await expect(oled.locator('xpath=..')).toHaveClass(/glim-shake/)
   await expect(page.locator('html')).not.toHaveAttribute('data-oled')
 })
 
@@ -1146,8 +1147,8 @@ test('a selector strip in the settings is as tall as a GlimStone button, like in
   const buttonHeight = await page.evaluate(() =>
     parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--btn-h')) *
     parseFloat(getComputedStyle(document.documentElement).fontSize))
-  const segments = page.locator('.settings-view .segmented-row:not(.segmented-row--chip) .segmented-button:visible')
-  expect(await segments.count()).toBeGreaterThan(0)
+  const segments = page.locator('.settings-view .glim-sel--well .glim-sel-seg:visible')
+  await expect(segments.first()).toBeVisible()
   for (const box of await segments.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
     expect(box).toBeCloseTo(buttonHeight, 0)
   }
