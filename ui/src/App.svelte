@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount, untrack } from 'svelte'
-  import { Button } from '@glimstone/svelte'
+  import { onMount } from 'svelte'
+  import { Button, Selector } from '@glimstone/svelte'
   import Section from './Section.svelte'
   import Dropzone from './Dropzone.svelte'
   import CropPanel from './CropPanel.svelte'
@@ -9,7 +9,6 @@
   import type { Store } from './state'
   import { brandLogo } from './brandLogo'
   import { iconApp, iconBack, iconGeneral, iconInfoTab, iconLook, iconSettings } from './icons'
-  import { segmentedRow } from './controlWidgets'
   import { makeReorderable } from './cardReorder'
   import { replay } from './motion'
   import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
@@ -43,7 +42,6 @@
   let secondary: HTMLElement
   let settingsView: HTMLDivElement
   let settingsCards: HTMLDivElement
-  let tabSlot: HTMLDivElement
 
   const cards: Record<string, HTMLDivElement | undefined> = $state({})
 
@@ -87,27 +85,10 @@
     replay(settingsCards, 'glim-tab-slide')
   }
 
-  // The tab strip is the segmented row the other cards use, rebuilt per locale
-  // only, since the row moves its own selection.
-  $effect(() => {
-    const value = untrack(() => settingsTab)
-    tabSlot.replaceChildren(
-      segmentedRow<SettingsTab>({
-        ariaLabel: tr('settings.section'),
-        choices: [
-          { value: 'general', label: tr('settings.general'), glyph: iconGeneral() },
-          { value: 'look', label: tr('settings.look'), glyph: iconLook() },
-          { value: 'app', label: tr('settings.app'), glyph: iconApp() },
-          { value: 'info', label: tr('settings.info'), glyph: iconInfoTab() },
-        ],
-        value,
-        scale: 'big',
-        variant: 'chip',
-        rainbowBaseIndex: HUE_OFFSET.tabs,
-        onChange: selectTab,
-      }),
-    )
-  })
+  const tabGlyphs = { general: svgSnippet(iconGeneral()), look: svgSnippet(iconLook()), app: svgSnippet(iconApp()), info: svgSnippet(iconInfoTab()) }
+  const tabs = $derived(
+    TAB_ORDER.map((id) => ({ id, label: tr(`settings.${id}`), glyph: tabGlyphs[id] })),
+  )
 
   function toggleSettings(): void {
     if (onSettings && settingsTab === 'look') leaveLook()
@@ -172,7 +153,18 @@
          the open one. Each tab's cards count their rainbow positions from the
          start. -->
     <div bind:this={settingsView} class="settings-view" style:display={onSettings ? '' : 'none'}>
-      <div bind:this={tabSlot} class="settings-tabs"></div>
+      <div class="settings-tabs">
+        <Selector
+          items={tabs}
+          label={tr('settings.section')}
+          value={settingsTab}
+          onChange={selectTab}
+          variant="chip"
+          size="lg"
+          equalWidth
+          hueOffset={HUE_OFFSET.tabs}
+        />
+      </div>
       <div bind:this={settingsCards} class="settings-cards">
         <Section hue={0} extra="settings-card" bind:el={cards.presets} mount={(el) => mountPresetsPanel(el, store)} />
         {#if desktop}

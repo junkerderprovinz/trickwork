@@ -37,10 +37,7 @@ export interface SegmentedRowOptions<T extends string> {
   onBeforeChange?: (value: T) => void
   /** Fires on every click, the chosen segment included, for the storm and leaf gestures. */
   onTap?: (value: T) => void
-  /**
-   * The rainbow position: a selector's chosen segment wears it, and a tab
-   * strip counts its tabs from it. Without it the row keeps the single accent.
-   */
+  /** The rainbow position the chosen segment wears. Without it the row keeps the single accent. */
   rainbowBaseIndex?: number
   /**
    * `row` puts the label at the row's start and the selector, hugging its
@@ -54,12 +51,6 @@ export interface SegmentedRowOptions<T extends string> {
    * for a strip inside a narrow card.
    */
   scale?: 'big' | 'small'
-  /**
-   * `well` is one groove holding the segments. `chip` has no groove, so every
-   * segment is a badge of its own and owns a palette position, as the tabs
-   * over a page do.
-   */
-  variant?: 'well' | 'chip'
   /** Content for the label row, such as an info icon. */
   labelExtra?: HTMLElement
 }
@@ -87,10 +78,9 @@ export function fieldRow(label: string, extra?: HTMLElement): HTMLDivElement {
  * filled, or as tabs, a row of badges.
  */
 export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HTMLElement {
-  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex, variant = 'well' } = opts
+  const { choices, onChange, onBeforeChange, onTap, rainbowBaseIndex } = opts
   const inRow = opts.layout === 'row'
   const scale = inRow ? 'small' : (opts.scale ?? 'small')
-  const chip = variant === 'chip'
   let wrap: HTMLElement
   if (inRow && opts.label) {
     wrap = fieldRow(opts.label, opts.labelExtra)
@@ -109,7 +99,7 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
   }
 
   const row = document.createElement('div')
-  row.className = `segmented-row segmented-row--${scale} ${chip ? 'segmented-row--chip' : 'glim-well'}`
+  row.className = `segmented-row segmented-row--${scale} glim-well`
   row.setAttribute('role', 'tablist')
   const name = opts.label ?? opts.ariaLabel
   if (name) row.setAttribute('aria-label', name)
@@ -151,13 +141,7 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
       labelSpan.className = 'segmented-button-label'
       labelSpan.textContent = choice.label
       btn.appendChild(labelSpan)
-      if (chip && rainbowBaseIndex !== undefined) {
-        // A tab keeps its colour at rest on its glyph, so every tab owns its
-        // position whatever the mode; the variables only answer under rainbow.
-        for (const [prop, value] of Object.entries(hueVars(rainbowBaseIndex + index))) btn.style.setProperty(prop, value)
-        btn.classList.add('glim-hue', 'glim-hue-icon')
-        if (isActive) btn.classList.add('glim-active')
-      } else if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex)) {
+      if (isActive && rainbowBaseIndex !== undefined && applyHueVars(btn, rainbowBaseIndex)) {
         // In the well only the chosen segment is coloured, in the selector's
         // own colour; its fill already marks the pick, and washing the rest
         // would be noise.

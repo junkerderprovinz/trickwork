@@ -39,9 +39,6 @@ import {
   IconUndo,
   IconUpToDate,
   IconUpdateAvailable,
-  IconWindowMaximise,
-  IconWindowMinimise,
-  IconWindowRestore,
   type Glyph,
 } from './glyphs'
 
@@ -198,13 +195,6 @@ export const UPDATE_GLYPHS = { check: IconSync, current: IconUpToDate, found: Ic
 
 export function buttonGlyph(glyph: Glyph): string {
   return glyphSvg(glyph, 19)
-}
-
-export const WINDOW_GLYPHS = {
-  minimise: IconWindowMinimise,
-  maximise: IconWindowMaximise,
-  restore: IconWindowRestore,
-  close: IconClose,
 }
 
 // A settings tab's glyph is the rail's size, 20px.

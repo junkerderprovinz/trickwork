@@ -14,8 +14,8 @@ import { createStore } from './state'
 import { storedDisco, storedMotion } from './looks'
 import { drawsOwnFrame } from './wails'
 import { watchSystemAccent } from './systemAccent'
-import { mountWindowBar } from './windowBar'
 import App from './App.svelte'
+import DesktopFrame from './DesktopFrame.svelte'
 
 const app = document.getElementById('app')
 if (!app) {
@@ -43,7 +43,7 @@ for (const type of ['pointerover', 'focusin'] as const) {
 const store = createStore()
 
 mount(App, { target: app, props: { store } })
-if (drawsOwnFrame()) mountWindowBar()
+if (drawsOwnFrame()) mount(DesktopFrame, { target: document.body, anchor: app })
 
 // Two frames after the first paint, so the first radii never animate and every
 // later change of shape does.
