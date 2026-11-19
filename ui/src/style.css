@@ -912,11 +912,10 @@ input.levels-handle-input::-moz-range-thumb {
 
 /* Everything somebody presses reads --radius-pill, so it is a true pill in
    the round shape. A filled control hovers to --hover (rule 21). The
-   reset sits in GlimStone's base layer, so its components keep their own look,
-   and a selector's segments are left to GlimStone's own reset, which keeps
-   the idle ones in the groove transparent. */
+   reset sits in GlimStone's base layer and leaves out the buttons GlimStone
+   resets itself, so its components keep their own look. */
 @layer base {
-  button:not(.glim-sel-seg) {
+  button:not(:is(.glim-btn, .glim-sel-seg, .glim-toggle-track, .glim-icon-btn, .glim-window-button, .glim-readme-btn, .glim-badge, .glim-toast-dismiss, .glim-give-network, .glim-give-coin, .glim-give-amount, .glim-num-field, .glim-menu-item, .glim-checkbox, .glim-secret-eye)) {
     appearance: none;
     border: none;
     cursor: pointer;
@@ -930,7 +929,7 @@ input.levels-handle-input::-moz-range-thumb {
     transition: background-color var(--motion-control-dur, 120ms) ease, scale var(--motion-control-dur, 120ms) ease;
   }
 
-  button:not(.glim-sel-seg):hover {
+  button:not(:is(.glim-btn, .glim-sel-seg, .glim-toggle-track, .glim-icon-btn, .glim-window-button, .glim-readme-btn, .glim-badge, .glim-toast-dismiss, .glim-give-network, .glim-give-coin, .glim-give-amount, .glim-num-field, .glim-menu-item, .glim-checkbox, .glim-secret-eye)):hover {
     background-color: var(--hover);
   }
 
