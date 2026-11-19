@@ -95,6 +95,14 @@
           { name: 'ARM64', label: 'Flatpak ARM64', href: `${RELEASE}/trickwork-linux-arm64.flatpak` },
         ],
       },
+      {
+        brand: 'linux',
+        mark: LINUX_SVG,
+        parts: [
+          { name: 'AppImage', sub: 'x64', href: `${RELEASE}/trickwork-linux-amd64.AppImage` },
+          { name: 'ARM64', label: 'AppImage ARM64', href: `${RELEASE}/trickwork-linux-arm64.AppImage` },
+        ],
+      },
     ]
   })
 </script>
@@ -104,7 +112,7 @@
   <InfoBubble tip={tr(desktop ? 'apps.serverHint' : 'apps.desktopHint')} />
 </div>
 <div class="glim-readme-btn-rows app-rows">
-  {#each units as unit (unit.brand)}
+  {#each units as unit (unit.parts[0].name)}
     <ReadmeButton
       brand={unit.brand}
       parts={unit.parts}

@@ -21,6 +21,8 @@ BUTTONS = {
     "linux-portable-arm": RELEASE + "trickwork-linux-arm64",
     "flatpak": RELEASE + "trickwork-linux-amd64.flatpak",
     "flatpak-arm": RELEASE + "trickwork-linux-arm64.flatpak",
+    "appimage": RELEASE + "trickwork-linux-amd64.AppImage",
+    "appimage-arm": RELEASE + "trickwork-linux-arm64.AppImage",
     "unraid": "https://ca.unraid.net/apps/trickwork-0h072450hg59wx",
     # A browser cannot download an image, so this opens the package page, which
     # carries the pull command and every tag.
