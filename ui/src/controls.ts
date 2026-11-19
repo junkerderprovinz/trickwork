@@ -6,9 +6,9 @@ import {
   type CharsetPresetKey,
 } from 'trickwork-core'
 import { applyHueVars, iconToggleButton } from './controlWidgets'
-import { subscribeRainbow } from './design/appearance'
-import { enableSelectScroll } from './design/selectScroll'
-import { infoIcon } from './design/tooltip'
+import { subscribeRainbow } from '@glimstone/core/appearance'
+import { enableSelectScroll } from '@glimstone/core/selectScroll'
+import { infoIcon } from '@glimstone/core/tooltip'
 import { iconLockClosed, iconLockOpen } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import type { Store } from './state'

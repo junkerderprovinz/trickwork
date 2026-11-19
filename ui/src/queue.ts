@@ -1,4 +1,4 @@
-import { subscribeRainbow } from './design/appearance'
+import { subscribeRainbow } from '@glimstone/core/appearance'
 import { applyHueVars } from './controlWidgets'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import { motionMs } from './motion'

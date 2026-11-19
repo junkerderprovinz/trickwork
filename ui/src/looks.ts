@@ -1,7 +1,7 @@
 // The two looks GlimStone leaves to the app to store: the motion level and the
-// disco switch. The walk itself lives in design/disco.ts.
+// disco switch. The walk itself lives in GlimStone's disco module.
 
-import { applyMotion, DEFAULT_MOTION, MOTION_STORED, type Motion } from './design/appearance'
+import { applyMotion, DEFAULT_MOTION, MOTION_STORED, type Motion } from '@glimstone/core/appearance'
 
 const MOTION_KEY = 'trickwork-motion'
 const DISCO_KEY = 'trickwork-disco'

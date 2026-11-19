@@ -4,7 +4,7 @@
 
 import type { CropSpec } from 'trickwork-core'
 import { glimButton, updateButton } from './controlWidgets'
-import { infoIcon } from './design/tooltip'
+import { infoIcon } from '@glimstone/core/tooltip'
 import { iconClearSelection } from './icons'
 import { subscribeLocale, t } from './i18n'
 import type { Store } from './state'

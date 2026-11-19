@@ -1,7 +1,7 @@
 import type { SharpenMethod } from 'trickwork-core'
 import { iconToggleButton, segmentedRow } from './controlWidgets'
 import { numberSlider } from './controls'
-import { subscribeRainbow } from './design/appearance'
+import { subscribeRainbow } from '@glimstone/core/appearance'
 import { iconColor, iconDither, iconInvert } from './icons'
 import { subscribeLocale, t, type TranslationKey } from './i18n'
 import { mountLevelsPanel } from './levelsPanel'

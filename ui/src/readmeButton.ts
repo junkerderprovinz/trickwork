@@ -1,6 +1,6 @@
 // The button in the shape of the README's, used by the App and About cards. Its
-// look and its answer to the pointer are GlimStone's .glim-readme-btn rules in
-// design/tokens.css.
+// look and its answer to the pointer are the .glim-readme-btn rules in
+// GlimStone's tokens.css.
 
 export interface ButtonFace {
   name: string

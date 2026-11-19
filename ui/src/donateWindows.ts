@@ -3,8 +3,8 @@
 // so a donor never leaves it (GlimStone, "The coffee and PayPal windows" and
 // "The crypto window").
 
-import { hueVars } from './design/appearance'
-import { donationHandlers, loadPaypal, parseAmount, type GiveFrequency } from './design/paypal'
+import { hueVars } from '@glimstone/core/appearance'
+import { donationHandlers, loadPaypal, parseAmount, type GiveFrequency } from '@glimstone/core/paypal'
 import { glimButton, segmentedRow, updateButton } from './controlWidgets'
 import { COFFEE_WIDGET, COIN_MARKS, COIN_TILES, CRYPTO_COINS, PAYPAL_GIVING, PAYPAL_PAGE, markSvg, type CryptoCoin, type CryptoNetwork } from './donate'
 import { iconCheck, iconClose, iconCopy } from './icons'

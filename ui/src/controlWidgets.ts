@@ -1,10 +1,10 @@
 // DOM builders shared by the panels and appearanceSettings.ts. They are not
 // i18n-aware; a caller rebuilds its panel when the locale changes.
 
-import { hueVars, rainbowState } from './design/appearance'
-import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from './design/controls'
-import { segmentFit } from './design/segmentLayout'
-import { enableWheelStep, stepIndex } from './design/selectScroll'
+import { hueVars, rainbowState } from '@glimstone/core/appearance'
+import { hidesLabel, labelWidth, widthStage, type LabelMode, type WidthStage } from '@glimstone/core/controls'
+import { segmentFit } from '@glimstone/core/segmentLayout'
+import { enableWheelStep, stepIndex } from '@glimstone/core/selectScroll'
 import { replay } from './motion'
 
 /**

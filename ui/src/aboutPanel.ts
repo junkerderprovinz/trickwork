@@ -2,7 +2,7 @@
 // its own buttons. The ways to report something and the versions have cards of
 // their own before it (infoPanel.ts).
 
-import { COFFEE_BUTTON_SVG } from './design/appMarks'
+import { COFFEE_BUTTON_SVG } from '@glimstone/core/appMarks'
 import { GLYPHS } from './donate'
 import { openCoffeeWindow, openCryptoWindow, openPaypalWindow } from './donateWindows'
 import { subscribeLocale, t } from './i18n'

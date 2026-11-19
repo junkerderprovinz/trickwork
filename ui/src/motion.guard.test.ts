@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-const tokens = readFileSync(new URL('./design/tokens.css', import.meta.url), 'utf8')
+const tokens = readFileSync(new URL('../../node_modules/@glimstone/core/tokens.css', import.meta.url), 'utf8')
 const style = readFileSync(new URL('./style.css', import.meta.url), 'utf8')
 
 const LEVELS = ['wild', 'off', 'storm'] as const

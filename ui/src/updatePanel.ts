@@ -4,7 +4,7 @@
 // itself, so there the switch stays off and says why.
 
 import { switchRow } from './controlWidgets'
-import { infoIcon } from './design/tooltip'
+import { infoIcon } from '@glimstone/core/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { replay } from './motion'
 import { showToast } from './toast'

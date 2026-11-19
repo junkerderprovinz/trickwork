@@ -1,8 +1,8 @@
 // The App card in Settings: every other way to get TrickWork. In the container
 // it offers the desktop app; in the desktop app it offers a server install.
 
-import { APPLE_SVG, DOCKER_SVG, FLATPAK_SVG, LINUX_SVG, UNRAID_SVG, WINDOWS_SVG, ZIP_SVG } from './design/appMarks'
-import { infoIcon } from './design/tooltip'
+import { APPLE_SVG, DOCKER_SVG, FLATPAK_SVG, LINUX_SVG, UNRAID_SVG, WINDOWS_SVG, ZIP_SVG } from '@glimstone/core/appMarks'
+import { infoIcon } from '@glimstone/core/tooltip'
 import { subscribeLocale, t } from './i18n'
 import { buttonFace, buttonUnit, fitButtonText, keepButtonTextFitted, type ButtonFace } from './readmeButton'
 import { APP_VERSION } from './version'

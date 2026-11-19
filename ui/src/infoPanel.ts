@@ -2,10 +2,10 @@
 // GlimStone's Info tile: every version TrickWork is made of with the release
 // notes and the update check, then the ways to report something.
 
-import { MANUAL_SVG } from './design/appMarks'
-import { groupStage } from './design/controls'
-import { infoIcon } from './design/tooltip'
-import { GLIMSTONE_RELEASE_URL, GLIMSTONE_VERSION } from './design/version'
+import { MANUAL_SVG } from '@glimstone/core/appMarks'
+import { groupStage } from '@glimstone/core/controls'
+import { infoIcon } from '@glimstone/core/tooltip'
+import { GLIMSTONE_RELEASE_URL, GLIMSTONE_VERSION } from '@glimstone/core/version'
 import { glimButton, updateButton, type ButtonTone } from './controlWidgets'
 import { DISCORD, GLYPHS, REPO } from './donate'
 import { openExternal } from './donateWindows'

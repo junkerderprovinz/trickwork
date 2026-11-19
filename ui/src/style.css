@@ -1,4 +1,4 @@
-@import './design/tokens.css';
+@import '@glimstone/core/tokens.css';
 
 /* Flag glyphs from Noto Color Emoji (OFL-1.1, see package.json). Windows'
    emoji font has no flags and shows the regional indicator pairs as two

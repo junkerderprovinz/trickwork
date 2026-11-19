@@ -20,14 +20,14 @@ import {
   SYSTEM_ACCENT,
   type Motion,
   type Shape,
-} from './design/appearance'
-import { applyDisco, discoTap } from './design/disco'
-import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from './design/controls'
+} from '@glimstone/core/appearance'
+import { applyDisco, discoTap } from '@glimstone/core/disco'
+import { LABEL_MODES, getLabelMode, setLabelMode, type LabelMode } from '@glimstone/core/controls'
 import { applyTheme, cacheTheme, cachedThemePref, type ThemePref } from './theme'
-import { applyOled, darkShowing, oledRefusal, storedOled, watchDarkShowing } from './design/theme'
-import { flagEmoji } from './design/flagEmoji'
-import { openColorPickerPopover } from './design/colorPicker'
-import { infoIcon } from './design/tooltip'
+import { applyOled, darkShowing, oledRefusal, storedOled, watchDarkShowing } from '@glimstone/core/theme'
+import { flagEmoji } from '@glimstone/core/flagEmoji'
+import { openColorPickerPopover } from '@glimstone/core/colorPicker'
+import { infoIcon } from '@glimstone/core/tooltip'
 import { customDropdown, fieldRow, repaintButtons, segmentedRow, switchRow } from './controlWidgets'
 import { setMotion, storedDisco, storedMotion, storeDisco } from './looks'
 import { motionMs } from './motion'

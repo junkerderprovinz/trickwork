@@ -3,8 +3,8 @@
 // reads CSS AccentColor, which only Firefox and Safari fill with the system's
 // colour, so in every other browser there is no source and no system swatch.
 
-import { setSystemAccent } from './design/appearance'
-import { watchBrowserAccent } from './design/browserAccent'
+import { setSystemAccent } from '@glimstone/core/appearance'
+import { watchBrowserAccent } from '@glimstone/core/browserAccent'
 import { callApp, isDesktop } from './wails'
 
 /** The colour in the Go side's answer, or undefined where the desktop names none. */
