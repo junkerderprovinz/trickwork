@@ -74,16 +74,16 @@ test('Ctrl+Z undoes a rotate, Ctrl+Y redoes it', async ({ page }) => {
   // "0°" is a substring of "90°", "180°" and "270°".
   const rotate90 = page.getByRole('tab', { name: '90°', exact: true })
   const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
-  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(rotate0).toHaveClass(/glim-active/)
 
   await rotate90.click()
-  await expect(rotate90).toHaveClass(/segmented-button--active/)
+  await expect(rotate90).toHaveClass(/glim-active/)
 
   await page.keyboard.press('Control+z')
-  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(rotate0).toHaveClass(/glim-active/)
 
   await page.keyboard.press('Control+y')
-  await expect(rotate90).toHaveClass(/segmented-button--active/)
+  await expect(rotate90).toHaveClass(/glim-active/)
 })
 
 test('a free angle takes over from the rotate steps, steps with the arrow keys and undoes as one step', async ({
@@ -92,12 +92,12 @@ test('a free angle takes over from the rotate steps, steps with the arrow keys a
   await page.goto('/')
   const field = page.getByLabel('Angle in degrees', { exact: true })
   const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
-  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(rotate0).toHaveClass(/glim-active/)
   await expect(field).toHaveValue('')
 
   await field.fill('30')
   await expect(field).toHaveClass(/is-active/)
-  await expect(rotate0).not.toHaveClass(/segmented-button--active/)
+  await expect(rotate0).not.toHaveClass(/glim-active/)
   await field.press('ArrowUp')
   await expect(field).toHaveValue('31')
   await field.press('Shift+ArrowDown')
@@ -110,7 +110,7 @@ test('a free angle takes over from the rotate steps, steps with the arrow keys a
 
   // The whole visit was one step.
   await page.keyboard.press('Control+z')
-  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(rotate0).toHaveClass(/glim-active/)
   await expect(field).toHaveValue('')
 
   await page.keyboard.press('Control+y')
@@ -342,7 +342,7 @@ test('exporting then importing settings round-trips a change through a real JSON
   const rotate90 = page.getByRole('tab', { name: '90°', exact: true })
   const rotate0 = page.getByRole('tab', { name: '0°', exact: true })
   await rotate90.click()
-  await expect(rotate90).toHaveClass(/segmented-button--active/)
+  await expect(rotate90).toHaveClass(/glim-active/)
 
   await settingsButton(page).click()
   const downloadPromise = page.waitForEvent('download')
@@ -354,14 +354,14 @@ test('exporting then importing settings round-trips a change through a real JSON
   // Change the setting again so the import below has something real to undo.
   await settingsButton(page).click()
   await rotate0.click()
-  await expect(rotate0).toHaveClass(/segmented-button--active/)
+  await expect(rotate0).toHaveClass(/glim-active/)
   await settingsButton(page).click()
 
   await page.locator('input[type="file"][accept*="json"]').setInputFiles(exportedPath as string)
   await expect(page.getByText('Settings imported.')).toBeVisible()
 
   await settingsButton(page).click()
-  await expect(rotate90).toHaveClass(/segmented-button--active/)
+  await expect(rotate90).toHaveClass(/glim-active/)
 })
 
 test('a malformed settings file is rejected with an error, not a silent crash', async ({ page }) => {
@@ -556,9 +556,8 @@ test('height slider follows width while locked, and becomes independent once unl
   const heightSlider = page
     .locator('.control-slider', { hasText: 'Height (rows)' })
     .locator('input[type="range"]')
-  // Found through its wrapper: its name follows the lock state, and the class
-  // alone would also match Flip, Invert, Dither and Color.
-  const lockToggle = page.locator('.control-slider-with-toggle .icon-toggle-button')
+  // Found through its wrapper, since its name follows the lock state.
+  const lockToggle = page.locator('.control-slider-with-toggle .glim-icon-btn')
 
   // Locked by default: a square source at 120 columns gives 60 rows, since
   // CELL_ASPECT_COMPENSATION is 2.

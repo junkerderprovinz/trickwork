@@ -230,51 +230,6 @@ export function segmentedRow<T extends string>(opts: SegmentedRowOptions<T>): HT
 }
 
 /**
- * An icon-only toggle button. `label` is its tooltip and accessible name, and
- * the checked state shows as the accent fill of an active segment.
- */
-export function iconToggleButton(
-  label: string,
-  icon: string,
-  initial: boolean,
-  onChange: (checked: boolean) => void,
-  onBeforeChange?: () => void,
-  // .glim-hue points --accent at this button's rainbow position, which only
-  // the checked fill reads; at rest the badge and its glyph stay neutral.
-  rainbowIndex?: number,
-): HTMLButtonElement {
-  const btn = document.createElement('button')
-  btn.type = 'button'
-  btn.className = 'icon-toggle-button'
-  btn.innerHTML = icon
-  btn.title = label
-  btn.setAttribute('aria-label', label)
-
-  if (rainbowIndex !== undefined && applyHueVars(btn, rainbowIndex)) {
-    btn.classList.add('glim-hue')
-  }
-
-  let checked = initial
-  function applyState(): void {
-    btn.classList.toggle('icon-toggle-button--active', checked)
-    btn.setAttribute('aria-pressed', String(checked))
-    if (rainbowIndex !== undefined) {
-      btn.classList.toggle('glim-active', checked)
-    }
-  }
-  applyState()
-
-  btn.addEventListener('click', () => {
-    onBeforeChange?.()
-    checked = !checked
-    applyState()
-    onChange(checked)
-  })
-
-  return btn
-}
-
-/**
  * A sliding switch (`role="switch"`). Track and knob read --radius-pill, so the
  * switch follows the shape engine.
  */

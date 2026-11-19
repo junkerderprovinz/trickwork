@@ -618,10 +618,6 @@ input[type="range"]:disabled::-moz-range-thumb {
   flex: 1;
   min-width: 0;
 }
-.control-slider-with-toggle .icon-toggle-button {
-  flex-shrink: 0;
-}
-
 /* Form fields: borderless and filled (rule 14), focus is a brightness
    step rather than a ring. */
 select,
@@ -813,33 +809,6 @@ input.levels-handle-input::-moz-range-thumb {
   gap: 0.5rem;
 }
 
-.icon-toggle-button {
-  width: var(--badge-md);
-  height: var(--badge-md);
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--carbon-surface2);
-  color: var(--carbon-text-sub);
-  border-radius: var(--radius-pill);
-}
-
-.icon-toggle-button:hover {
-  background-color: var(--hover);
-  color: var(--accent-glyph);
-}
-
-.icon-toggle-button--active {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-
-.icon-toggle-button--active:hover {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-
 .queue-list {
   list-style: none;
   margin: 0;
@@ -943,9 +912,11 @@ input.levels-handle-input::-moz-range-thumb {
 
 /* Everything somebody presses reads --radius-pill, so it is a true pill in
    the round shape. A filled control hovers to --hover (rule 21). The
-   reset sits in GlimStone's base layer, so its components keep their own look. */
+   reset sits in GlimStone's base layer, so its components keep their own look,
+   and a selector's segments are left to GlimStone's own reset, which keeps
+   the idle ones in the groove transparent. */
 @layer base {
-  button {
+  button:not(.glim-sel-seg) {
     appearance: none;
     border: none;
     cursor: pointer;
@@ -959,7 +930,7 @@ input.levels-handle-input::-moz-range-thumb {
     transition: background-color var(--motion-control-dur, 120ms) ease, scale var(--motion-control-dur, 120ms) ease;
   }
 
-  button:hover {
+  button:not(.glim-sel-seg):hover {
     background-color: var(--hover);
   }
 
