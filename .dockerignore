@@ -8,3 +8,4 @@ dist
 desktop/build
 *.md
 LICENSE
+!.github/release-notes

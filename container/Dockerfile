@@ -12,6 +12,8 @@ COPY ui/package.json ui/
 RUN npm ci
 COPY core ./core
 COPY ui ./ui
+# The UI bundles the release notes at build time for its Release notes window.
+COPY .github/release-notes ./.github/release-notes
 RUN npm run build --workspace core
 RUN npm run build --workspace ui
 
