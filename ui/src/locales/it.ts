@@ -218,6 +218,7 @@ const dict: Translations = {
   'apps.copied': 'Copiato',
   'apps.windows': 'Windows',
   'apps.macos': 'macOS',
+  'apps.macosSub': 'Apple e Intel',
   'apps.linux': 'Linux',
   'apps.unraid': 'Unraid',
   'apps.docker': 'Docker',

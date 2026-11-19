@@ -77,7 +77,14 @@
           { name: portable, label: `${windows} ${portable}`, href: `${RELEASE}/trickwork-windows-amd64-portable.exe` },
         ],
       },
-      { brand: 'apple', mark: APPLE_SVG, parts: [{ name: tr('apps.macos'), sub: 'Universal', href: `${RELEASE}/trickwork-macos-universal.dmg` }] },
+      {
+        brand: 'apple',
+        mark: APPLE_SVG,
+        parts: [
+          { name: tr('apps.macos'), sub: tr('apps.macosSub'), href: `${RELEASE}/trickwork-macos-universal.dmg` },
+          { name: 'Zip', label: `${tr('apps.macos')} Zip`, href: `${RELEASE}/trickwork-macos-universal.zip` },
+        ],
+      },
       {
         brand: 'linux',
         mark: LINUX_SVG,

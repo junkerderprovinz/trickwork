@@ -650,7 +650,7 @@ test('the App card in the browser offers the desktop downloads of the running ve
   const version = await page.locator('.version-number').first().textContent()
   await settingsTab(page, 'App').click()
   const buttons = page.locator('.app-rows a.glim-readme-btn')
-  await expect(buttons).toHaveCount(10)
+  await expect(buttons).toHaveCount(11)
   for (const href of await buttons.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
     expect(href).toContain(`/releases/download/v${version}/trickwork-`)
   }
@@ -660,6 +660,8 @@ test('the App card in the browser offers the desktop downloads of the running ve
   await expect(page.getByRole('link', { name: 'Flatpak ARM64' })).toHaveAttribute('href', /linux-arm64\.flatpak$/)
   await expect(page.getByRole('link', { name: 'AppImage x64' })).toHaveAttribute('href', /linux-amd64\.AppImage$/)
   await expect(page.getByRole('link', { name: 'AppImage ARM64' })).toHaveAttribute('href', /linux-arm64\.AppImage$/)
+  await expect(page.getByRole('link', { name: 'macOS Zip' })).toHaveAttribute('href', /macos-universal\.zip$/)
+  await expect(page.getByRole('link', { name: /^macOS/ }).first()).toContainText('Apple and Intel')
   const firsts = await page.locator('.app-rows .glim-readme-btn-unit').evaluateAll((units) =>
     units.map((u) => (u.querySelector('a') as HTMLAnchorElement).href.split('/trickwork-')[1]),
   )
@@ -671,7 +673,7 @@ test('a segment of an App card button shows one word and no second line', async 
   await settingsButton(page).click()
   await settingsTab(page, 'App').click()
   const segments = page.locator('.app-rows .glim-readme-btn-seg')
-  await expect(segments).toHaveCount(5)
+  await expect(segments).toHaveCount(6)
   await expect(segments.locator('.glim-readme-btn-sub')).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Windows ARM64' })).toContainText('ARM64')
 })
