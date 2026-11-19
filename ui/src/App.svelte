@@ -18,9 +18,10 @@
   import FiltersPanel from './FiltersPanel.svelte'
   import QueuePanel from './QueuePanel.svelte'
   import ExportPanel from './ExportPanel.svelte'
-  import { mountPresetsPanel } from './presetsPanel'
-  import { mountUpdatePanel, listenForUpdates } from './updatePanel'
-  import { mountAppPanel } from './appPanel'
+  import PresetsPanel from './PresetsPanel.svelte'
+  import UpdatePanel from './UpdatePanel.svelte'
+  import { listenForUpdates } from './updates'
+  import AppPanel from './AppPanel.svelte'
   import { mountHelpCard, mountVersionCard } from './infoPanel'
   import { mountAboutPanel } from './aboutPanel'
   import { isDesktop } from './wails'
@@ -108,10 +109,7 @@
       { id: 'export', el: cards.export! },
     ])
     leaveLook = mountAppearanceSettings(cards.look!, cards.colours!)
-    if (desktop) {
-      mountUpdatePanel(cards.update!)
-      listenForUpdates()
-    }
+    if (desktop) listenForUpdates()
     // Every card heading is its section badge, and in the reactive rainbow
     // mode it lights up while the pointer is anywhere in its card.
     for (const heading of root.querySelectorAll('.glim-section > .glim-eyebrow, .glim-section > .eyebrow-row')) {
@@ -166,13 +164,13 @@
         />
       </div>
       <div bind:this={settingsCards} class="settings-cards">
-        <Section hue={0} extra="settings-card" bind:el={cards.presets} mount={(el) => mountPresetsPanel(el, store)} />
+        <Section hue={0} extra="settings-card" bind:el={cards.presets}><PresetsPanel {store} /></Section>
         {#if desktop}
-          <Section hue={1} extra="settings-card" bind:el={cards.update} />
+          <Section hue={1} extra="settings-card" bind:el={cards.update}><UpdatePanel /></Section>
         {/if}
         <Section hue={0} extra="settings-card" bind:el={cards.look} />
         <Section hue={1} extra="settings-card" bind:el={cards.colours} />
-        <Section hue={0} extra="settings-card" bind:el={cards.app} mount={mountAppPanel} />
+        <Section hue={0} extra="settings-card" bind:el={cards.app}><AppPanel /></Section>
         <!-- The Info tab is GlimStone's Info tile, last in Settings: Version,
              Help and About, in that order. -->
         <Section hue={0} extra="settings-card" bind:el={cards.version} mount={mountVersionCard} />

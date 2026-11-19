@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parsePresetFile } from './presetsPanel'
+import { parsePresetFile } from './presets'
 
 const VALID_OPTIONS = {
   columns: 120,
