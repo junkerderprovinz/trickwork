@@ -7,7 +7,7 @@ container always produce the same art from the same image.
 
 - **Container:** any amd64 or arm64 Docker host. No database and no volumes.
 - **Desktop:** Windows 10 or 11 (x64 or ARM), macOS, or Linux with
-  `libwebkit2gtk-4.1-0`. The Flatpak brings everything it needs.
+  `libwebkit2gtk-4.1-0`. The Flatpak and the AppImage bring their own.
 
 ## Desktop app
 
@@ -23,6 +23,7 @@ Download the build for your system from the
 | Linux, installer | `trickwork-linux-amd64-installer`, on ARM `trickwork-linux-arm64-installer` |
 | Linux | `trickwork-linux-amd64`, on ARM `trickwork-linux-arm64` (both need `libwebkit2gtk-4.1-0`) |
 | Linux, Flatpak | `trickwork-linux-amd64.flatpak`, on ARM `trickwork-linux-arm64.flatpak` |
+| Linux, AppImage | `trickwork-linux-amd64.AppImage`, on ARM `trickwork-linux-arm64.AppImage` |
 
 The portable Windows file and the Linux binary run without installing
 anything; on Linux, make the file executable first with `chmod +x`.
@@ -73,6 +74,24 @@ TrickWork opens pictures and saves exports through your desktop's own file
 dialogs. It can reach any folder you pick there, and the Flatpak gets no access
 to your files beyond that.
 
+### As an AppImage
+
+Each release also carries `trickwork-linux-amd64.AppImage` and
+`trickwork-linux-arm64.AppImage`. An AppImage packs the program together with
+GTK and WebKitGTK into one file, so it does not depend on the WebKitGTK your
+distribution ships. It starts on Ubuntu 22.04 and on newer distributions. Make
+it executable and start it:
+
+```sh
+chmod +x trickwork-linux-amd64.AppImage
+./trickwork-linux-amd64.AppImage
+```
+
+It runs from wherever you keep it and updates itself like the bare binary: the
+new version takes the AppImage's place in its folder and starts next time.
+Settings live in `~/.config/TrickWork`, the same as the bare binary's, so you
+can move between the two.
+
 ### Updates
 
 The desktop app updates itself from GitHub. It asks for the newest release,
@@ -100,7 +119,7 @@ beside the new one as `TrickWork.exe.old` until a later run removes it.
 **A portable copy**, such as `trickwork-windows-amd64-portable.exe`, updates
 itself while it runs: a minute after it starts and once a day after that, in
 its own folder, and it stays portable. The app on macOS and Linux does the
-same. A folder it cannot write to, or a macOS app your account cannot change,
+same, and an AppImage replaces its own file. A folder it cannot write to, or a macOS app your account cannot change,
 stays as it is. The reason is in `update.log` next to the setting:
 `%AppData%\TrickWork` on Windows, `~/Library/Application Support/TrickWork` on
 macOS and `~/.config/TrickWork` on Linux.
