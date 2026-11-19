@@ -1,11 +1,12 @@
 // Builds the desktop app for the platform it runs on, the way CI does.
 //
-//     node scripts/desktop.mjs [--version x.y.z] [--arch amd64|arm64] [--installer] [--updatetest]
+//     node scripts/desktop.mjs [--version x.y.z] [--arch amd64|arm64] [--installer] [--appimage] [--updatetest]
 //
 // Windows gets TrickWork.exe, macOS TrickWork.app holding one binary for both
 // architectures, and Linux the bare binary, all in desktop/build/bin. With
 // --installer, Windows and Linux also get their installer in
-// desktop/build/installer.
+// desktop/build/installer. With --appimage, Linux gets an AppImage in
+// desktop/build/bin in place of the bare binary.
 //
 // Only a build given --version knows its version, which the release workflow
 // takes from the tag. Any other build is a dev build that never updates itself.
@@ -37,6 +38,7 @@ const hostArch = process.arch === 'arm64' ? 'arm64' : 'amd64'
 const arch = option('--arch') ?? hostArch
 const version = option('--version') ?? ''
 const installer = args.includes('--installer')
+const appimage = args.includes('--appimage')
 const updatetest = args.includes('--updatetest')
 const tags = (extra = '') => (updatetest ? 'production,updatetest' : 'production') + extra
 
@@ -83,6 +85,38 @@ function buildInstaller(exe, { goos, cgo, tags, ldflags = '' }) {
   } finally {
     rmSync(payload, { recursive: true, force: true })
   }
+}
+
+// buildAppImage packs the program at exe with the GTK and WebKitGTK it links
+// against into desktop/build/bin, through Wails and linuxdeploy, and removes the
+// bare program so the artifact holds the AppImage alone.
+function buildAppImage(exe) {
+  const dir = join(desktop, 'build', 'appimage')
+  rmSync(dir, { recursive: true, force: true })
+  mkdirSync(dir, { recursive: true })
+  const icon = join(dir, 'TrickWork.png')
+  cpSync(join(desktop, 'build', 'appicon.png'), icon)
+  const entry = join(dir, 'TrickWork.desktop')
+  writeFileSync(entry, [
+    '[Desktop Entry]',
+    'Type=Application',
+    'Name=TrickWork',
+    'GenericName=ASCII Art Generator',
+    'Comment=Turn your pictures into ASCII art that fits any font',
+    'Exec=TrickWork',
+    'Icon=TrickWork',
+    'Terminal=false',
+    'Categories=Graphics;2DGraphics;RasterGraphics;',
+    'Keywords=ascii;ascii art;text art;image;picture;font;converter;ascgen;',
+    'StartupNotify=true',
+    '',
+  ].join('\n'))
+  run('wails3', [
+    'generate', 'appimage', '-binary', exe, '-icon', icon, '-desktopfile', entry,
+    '-outputdir', bin, '-builddir', join(dir, 'build'),
+  ])
+  rmSync(exe)
+  rmSync(dir, { recursive: true, force: true })
 }
 
 // Wails writes its own version resource with the strings under the language
@@ -187,6 +221,9 @@ if (process.platform === 'win32') {
   goBuild(join(bin, 'TrickWork'), { goos: 'linux', goarch: arch, cgo: '1', tags: tags(',gtk3') })
   if (installer) {
     buildInstaller(join(bin, 'TrickWork'), { goos: 'linux', cgo: '1', tags: 'gtk3' })
+  }
+  if (appimage) {
+    buildAppImage(join(bin, 'TrickWork'))
   }
 }
 

@@ -33,7 +33,7 @@ const checkEvery = 24 * time.Hour
 const updateReadyEvent = "update:ready"
 
 func newUpdater(logger *log.Logger) *update.Updater {
-	return &update.Updater{
+	u := &update.Updater{
 		Repo:    "junkerderprovinz/trickwork",
 		Version: version,
 		Assets: map[string]string{
@@ -47,6 +47,16 @@ func newUpdater(logger *log.Logger) *update.Updater {
 		API:  updateAPI,
 		Logf: logger.Printf,
 	}
+	// The AppImage runtime starts the program from a read-only mount of the
+	// file it names in APPIMAGE, so an update replaces that file instead.
+	if image := os.Getenv("APPIMAGE"); image != "" {
+		u.Path = image
+		u.Assets = map[string]string{
+			"linux/amd64": "trickwork-linux-amd64.AppImage",
+			"linux/arm64": "trickwork-linux-arm64.AppImage",
+		}
+	}
+	return u
 }
 
 // openUpdateLog appends to the log at path, since a windowed program on

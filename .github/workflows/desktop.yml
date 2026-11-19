@@ -41,6 +41,15 @@ jobs:
           - os: ubuntu-24.04-arm
             slug: linux-arm64
             args: "--arch arm64 --installer"
+          # On the oldest Ubuntu it is meant to start on: the AppImage carries
+          # GTK and WebKitGTK but takes glibc from the system, and a program
+          # linked against a newer glibc does not start on an older one.
+          - os: ubuntu-22.04
+            slug: linux-amd64-appimage
+            args: "--arch amd64 --appimage"
+          - os: ubuntu-22.04-arm
+            slug: linux-arm64-appimage
+            args: "--arch arm64 --appimage"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -83,7 +92,7 @@ jobs:
       # one, which makes it a dev build that never updates itself. The script
       # builds the interface, has Wails write the manifest, icons, version
       # resource and Info.plist, and compiles; on Windows and Linux it also
-      # makes the installer.
+      # makes the installer, or on Linux the AppImage.
       - name: Build
         shell: bash
         run: |
@@ -116,7 +125,7 @@ jobs:
 
       # An artifact of its own, so both keep their files at the top.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: runner.os != 'macOS'
+        if: contains(matrix.args, '--installer')
         with:
           name: trickwork-${{ matrix.slug }}-installer
           path: desktop/build/installer/*
@@ -141,7 +150,7 @@ jobs:
       # One file per platform and option, named for the tag. Windows gets a
       # portable exe and an installer; macOS gets its drag-to-Applications
       # .dmg and the zip the updater takes, and Linux the self-contained binary,
-      # an installer and a Flatpak. checksums.txt lets the desktop app verify an
+      # an installer, a Flatpak and an AppImage. checksums.txt lets the desktop app verify an
       # update before using it.
       - name: Package
         run: |
@@ -170,6 +179,9 @@ jobs:
             chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}-installer"
             cp bundles/trickwork-linux-${arch}-flatpak/trickwork-linux-${arch}.flatpak \
               "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}.flatpak"
+            cp bundles/trickwork-linux-${arch}-appimage/*.AppImage \
+              "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}.AppImage"
+            chmod +x "dist/trickwork-${GITHUB_REF_NAME}-linux-${arch}.AppImage"
           done
           # releases/latest/download only resolves an exact file name, so every
           # bundle also goes up once without the version for the README's links.
