@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Versiune',
   'info.versionHint': 'Fiecare număr deschide pagina de lansare a versiunii sale.',
-  'info.glimstoneSub': 'Limbaj de design',
   'info.releaseNotes': 'Note de lansare',
   'info.notesTitle': 'Nou în {version}',
   'info.notesMissing': 'Acest build nu are note de lansare.',

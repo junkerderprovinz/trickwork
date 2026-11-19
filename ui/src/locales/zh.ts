@@ -253,7 +253,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': '版本',
   'info.versionHint': '点击编号会打开该版本的发布页面。',
-  'info.glimstoneSub': '设计语言',
   'info.releaseNotes': '发行说明',
   'info.notesTitle': '{version} 新内容',
   'info.notesMissing': '此构建没有发行说明。',

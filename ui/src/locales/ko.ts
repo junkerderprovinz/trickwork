@@ -254,7 +254,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': '버전',
   'info.versionHint': '번호를 누르면 그 버전의 릴리스 페이지가 열립니다.',
-  'info.glimstoneSub': '디자인 언어',
   'info.releaseNotes': '릴리스 노트',
   'info.notesTitle': '{version}의 새 기능',
   'info.notesMissing': '이 빌드에는 릴리스 노트가 없습니다.',

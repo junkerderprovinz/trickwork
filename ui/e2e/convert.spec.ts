@@ -1136,3 +1136,27 @@ test('the Look tab holds a Look card and a Colours card, every setting in a fiel
   await expect(names(1)).toHaveText(['Accent', 'Rainbow mode'])
   await expect(page.locator('.settings-view .setting-row, .switch-row')).toHaveCount(0)
 })
+
+test('a selector strip in the settings is as tall as a GlimStone button, like in the sibling apps', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Look').click()
+
+  const buttonHeight = await page.evaluate(() =>
+    parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--btn-h')) *
+    parseFloat(getComputedStyle(document.documentElement).fontSize))
+  const segments = page.locator('.settings-view .segmented-row:not(.segmented-row--chip) .segmented-button:visible')
+  expect(await segments.count()).toBeGreaterThan(0)
+  for (const box of await segments.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
+    expect(box).toBeCloseTo(buttonHeight, 0)
+  }
+})
+
+test('the version list names GlimStone without a subtitle', async ({ page }) => {
+  await page.goto('/')
+  await settingsButton(page).click()
+  await settingsTab(page, 'Info').click()
+
+  await expect(page.locator('.version-row', { hasText: 'GlimStone' })).toBeVisible()
+  await expect(page.locator('.version-row .version-sub')).toHaveCount(0)
+})

@@ -254,7 +254,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'גרסה',
   'info.versionHint': 'כל מספר פותח את דף השחרור של הגרסה שלו.',
-  'info.glimstoneSub': 'שפת עיצוב',
   'info.releaseNotes': 'הערות שחרור',
   'info.notesTitle': 'מה חדש ב-{version}',
   'info.notesMissing': 'לבנייה הזו אין הערות שחרור.',

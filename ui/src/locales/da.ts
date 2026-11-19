@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Version',
   'info.versionHint': 'Hvert nummer åbner udgivelsessiden for sin version.',
-  'info.glimstoneSub': 'Designsprog',
   'info.releaseNotes': 'Udgivelsesnoter',
   'info.notesTitle': 'Nyt i {version}',
   'info.notesMissing': 'Dette build har ingen udgivelsesnoter.',

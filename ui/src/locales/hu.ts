@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Verzió',
   'info.versionHint': 'Minden szám a saját verziójának kiadási oldalát nyitja meg.',
-  'info.glimstoneSub': 'Tervezési nyelv',
   'info.releaseNotes': 'Kiadási megjegyzések',
   'info.notesTitle': 'Újdonságok: {version}',
   'info.notesMissing': 'Ebben a buildben nincsenek kiadási megjegyzések.',

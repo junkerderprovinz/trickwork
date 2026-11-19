@@ -254,7 +254,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'รุ่น',
   'info.versionHint': 'กดหมายเลขเพื่อเปิดหน้ารีลีสของเวอร์ชันนั้น',
-  'info.glimstoneSub': 'ภาษาการออกแบบ',
   'info.releaseNotes': 'บันทึกประจำรุ่น',
   'info.notesTitle': 'มีอะไรใหม่ใน {version}',
   'info.notesMissing': 'บิลด์นี้ไม่มีบันทึกประจำรุ่น',

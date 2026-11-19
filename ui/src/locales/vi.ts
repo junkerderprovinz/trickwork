@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Phiên bản',
   'info.versionHint': 'Mỗi số mở trang phát hành của phiên bản đó.',
-  'info.glimstoneSub': 'Ngôn ngữ thiết kế',
   'info.releaseNotes': 'Ghi chú phát hành',
   'info.notesTitle': 'Có gì mới trong {version}',
   'info.notesMissing': 'Bản dựng này không có ghi chú phát hành.',

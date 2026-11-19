@@ -254,7 +254,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'الإصدار',
   'info.versionHint': 'كل رقم يفتح صفحة إصدار نسخته.',
-  'info.glimstoneSub': 'لغة التصميم',
   'info.releaseNotes': 'ملاحظات الإصدار',
   'info.notesTitle': 'الجديد في {version}',
   'info.notesMissing': 'لا تحتوي هذه النسخة على ملاحظات إصدار.',

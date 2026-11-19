@@ -43,7 +43,7 @@ function eyebrowRow(): { row: HTMLElement; fill: (title: string, hint: string) =
 }
 
 // Only the number is a link: the name in front of it is not a destination.
-function versionRow(name: string, version: string, href: string, sub?: string): HTMLLIElement {
+function versionRow(name: string, version: string, href: string): HTMLLIElement {
   const li = document.createElement('li')
   li.className = 'version-row'
   const names = document.createElement('span')
@@ -52,12 +52,6 @@ function versionRow(name: string, version: string, href: string, sub?: string): 
   title.className = 'version-name'
   title.textContent = name
   names.appendChild(title)
-  if (sub) {
-    const line = document.createElement('span')
-    line.className = 'version-sub'
-    line.textContent = sub
-    names.appendChild(line)
-  }
   const a = document.createElement('a')
   a.className = 'version-number glim-num'
   a.href = href
@@ -162,7 +156,7 @@ export function mountVersionCard(container: HTMLElement): void {
     rows.replaceChildren(
       versionRow('TrickWork', APP_VERSION, `${REPO}/releases/tag/v${APP_VERSION}`),
       // GlimStone folds its patch tags into the next minor, so its number opens the newest release.
-      versionRow('GlimStone', GLIMSTONE_VERSION, GLIMSTONE_RELEASE_URL, t('info.glimstoneSub')),
+      versionRow('GlimStone', GLIMSTONE_VERSION, GLIMSTONE_RELEASE_URL),
     )
     updateButton(notes, { label: t('info.releaseNotes') })
   }

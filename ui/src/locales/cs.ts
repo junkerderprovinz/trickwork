@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Verze',
   'info.versionHint': 'Každé číslo otevře stránku vydání své verze.',
-  'info.glimstoneSub': 'Designový jazyk',
   'info.releaseNotes': 'Poznámky k vydání',
   'info.notesTitle': 'Novinky ve {version}',
   'info.notesMissing': 'Toto sestavení nemá poznámky k vydání.',

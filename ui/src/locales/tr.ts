@@ -255,7 +255,6 @@ const dict: Translations = {
   'about.discord': 'Discord',
   'about.version': 'Sürüm',
   'info.versionHint': 'Her numara kendi sürümünün yayın sayfasını açar.',
-  'info.glimstoneSub': 'Tasarım dili',
   'info.releaseNotes': 'Sürüm notları',
   'info.notesTitle': '{version} sürümünde yeni',
   'info.notesMissing': 'Bu derlemede sürüm notu yok.',
