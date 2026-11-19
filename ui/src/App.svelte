@@ -12,12 +12,12 @@
   import { makeReorderable } from './cardReorder'
   import { replay } from './motion'
   import { HUE_OFFSET, mountAppearanceSettings } from './appearanceSettings'
-  import { mountHistoryPanel } from './historyPanel'
+  import HistoryPanel from './HistoryPanel.svelte'
   import { mountControls } from './controls'
   import { mountTransformPanel } from './transformPanel'
   import { mountFiltersPanel } from './filtersPanel'
-  import { mountQueue } from './queue'
-  import { mountExportPanel } from './exportPanel'
+  import QueuePanel from './QueuePanel.svelte'
+  import ExportPanel from './ExportPanel.svelte'
   import { mountPresetsPanel } from './presetsPanel'
   import { mountUpdatePanel, listenForUpdates } from './updatePanel'
   import { mountAppPanel } from './appPanel'
@@ -186,8 +186,8 @@
     <Section hue={3} bind:el={cards.adjust} mount={(el) => mountControls(el, store)} />
     <Section hue={4} bind:el={cards.transform} mount={(el) => mountTransformPanel(el, store)} />
     <Section hue={5} bind:el={cards.filters} mount={(el) => mountFiltersPanel(el, store)} />
-    <Section hue={6} bind:el={cards.history} mount={(el) => mountHistoryPanel(el, store)} />
-    <Section hue={7} bind:el={cards.queue} mount={(el) => mountQueue(el, store)} />
-    <Section hue={0} bind:el={cards.export} mount={(el) => mountExportPanel(el, store)} />
+    <Section hue={6} bind:el={cards.history}><HistoryPanel {store} /></Section>
+    <Section hue={7} bind:el={cards.queue}><QueuePanel {store} /></Section>
+    <Section hue={0} bind:el={cards.export}><ExportPanel {store} /></Section>
   </section>
 </div>

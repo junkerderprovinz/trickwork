@@ -1039,9 +1039,13 @@ button:active:not(:disabled) {
   scale: none;
 }
 
-/* The format buttons share their row evenly; Copy keeps its own width. */
+/* The format buttons share their row evenly, none narrower than its words;
+   Copy keeps its own width. */
 .export-format-row .glim-btn {
   flex: 1 0 3.5rem;
+}
+.export-format-row .glim-btn[data-format] {
+  min-width: min-content;
 }
 .export-format-row .glim-btn-icon,
 .export-format-row .glim-btn-glyph:only-child {

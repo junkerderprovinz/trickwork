@@ -421,7 +421,9 @@ test('preview zoom: buttons change the displayed canvas size and the label reset
   // Selecting another image resets the zoom. addFiles keeps the active image,
   // so the second copy of the fixture is selected explicitly.
   await fileInput.setInputFiles(path.join(__dirname, 'fixtures', 'small.png'))
-  await page.getByRole('button', { name: 'Preview small.png' }).last().click()
+  const rows = page.getByRole('button', { name: 'Preview small.png' })
+  await expect(rows).toHaveCount(2)
+  await rows.last().click()
   await expect(zoomLabel).toHaveText('100%')
 })
 
