@@ -22,8 +22,9 @@
   import UpdatePanel from './UpdatePanel.svelte'
   import { listenForUpdates } from './updates'
   import AppPanel from './AppPanel.svelte'
-  import { mountHelpCard, mountVersionCard } from './infoPanel'
-  import { mountAboutPanel } from './aboutPanel'
+  import VersionCard from './VersionCard.svelte'
+  import HelpCard from './HelpCard.svelte'
+  import AboutPanel from './AboutPanel.svelte'
   import { isDesktop } from './wails'
 
   let { store }: { store: Store } = $props()
@@ -173,9 +174,9 @@
         <Section hue={0} extra="settings-card" bind:el={cards.app}><AppPanel /></Section>
         <!-- The Info tab is GlimStone's Info tile, last in Settings: Version,
              Help and About, in that order. -->
-        <Section hue={0} extra="settings-card" bind:el={cards.version} mount={mountVersionCard} />
-        <Section hue={1} extra="settings-card" bind:el={cards.help} mount={(el) => mountHelpCard(el, store)} />
-        <Section hue={2} extra="settings-card" bind:el={cards.about} mount={mountAboutPanel} />
+        <Section hue={0} extra="settings-card" bind:el={cards.version}><VersionCard /></Section>
+        <Section hue={1} extra="settings-card" bind:el={cards.help}><HelpCard {store} /></Section>
+        <Section hue={2} extra="settings-card" bind:el={cards.about}><AboutPanel /></Section>
       </div>
     </div>
   </div>

@@ -782,11 +782,11 @@ test('Check for updates turns green when GitHub knows no newer release, and red 
 
   const check = page.getByRole('button', { name: 'Check for updates' })
   await check.click()
-  await expect(page.getByRole('button', { name: 'Up to date' })).toHaveClass(/glim-tone-ok/)
+  await expect(page.getByRole('button', { name: 'Up to date' })).toHaveClass(/glim-btn--ok/)
 
   reachable = false
   await page.getByRole('button', { name: 'Up to date' }).click()
-  await expect(page.getByRole('button', { name: 'Check failed' })).toHaveClass(/glim-tone-danger/)
+  await expect(page.getByRole('button', { name: 'Check failed' })).toHaveClass(/glim-btn--danger/)
   await expect(page.getByRole('alert')).toContainText('GitHub could not be reached')
 })
 
@@ -968,13 +968,13 @@ async function findNewerRelease(page: import('@playwright/test').Page) {
 test('the desktop app says a newer release arrives with Update automatically', async ({ page }) => {
   await fakeDesktop(page, true)
   await findNewerRelease(page)
-  await expect(page.getByRole('status')).toContainText('TrickWork 99.0.0 is out. With Update automatically on, it arrives by itself.')
+  await expect(page.getByRole('status').filter({ hasText: 'TrickWork 99.0.0' })).toContainText('TrickWork 99.0.0 is out. With Update automatically on, it arrives by itself.')
 })
 
 test('a Flatpak says its software centre brings a newer release', async ({ page }) => {
   await fakeDesktop(page, false, false, true)
   await findNewerRelease(page)
-  await expect(page.getByRole('status')).toContainText('TrickWork 99.0.0 is out. Your software centre or flatpak update brings it.')
+  await expect(page.getByRole('status').filter({ hasText: 'TrickWork 99.0.0' })).toContainText('TrickWork 99.0.0 is out. Your software centre or flatpak update brings it.')
 })
 
 test('the desktop offers its system colour first among the accents and keeps it as the system choice', async ({ page }) => {

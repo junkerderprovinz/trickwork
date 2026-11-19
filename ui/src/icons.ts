@@ -31,14 +31,14 @@ import {
   IconMotionWild,
   IconRefresh,
   IconSun,
-  IconSync,
   IconTabApp,
   IconTabGeneral,
+  IconSync,
+  IconUpToDate,
+  IconUpdateAvailable,
   IconTabLook,
   IconThemeSystem,
   IconUndo,
-  IconUpToDate,
-  IconUpdateAvailable,
   type Glyph,
 } from './glyphs'
 
@@ -187,14 +187,16 @@ export function iconExternalLink(): string {
   return glyphSvg(IconExternalLink, 19)
 }
 
-export function iconDiagnostics(): string {
-  return glyphSvg(IconDiagnostics, 19)
+// What the update check shows on itself. A failed check keeps the check's own
+// glyph, since pressing it again is the way on.
+const UPDATE_GLYPHS = { idle: IconSync, busy: IconSync, current: IconUpToDate, found: IconUpdateAvailable, failed: IconSync }
+
+export function iconUpdate(verdict: keyof typeof UPDATE_GLYPHS): string {
+  return glyphSvg(UPDATE_GLYPHS[verdict], 19)
 }
 
-export const UPDATE_GLYPHS = { check: IconSync, current: IconUpToDate, found: IconUpdateAvailable }
-
-export function buttonGlyph(glyph: Glyph): string {
-  return glyphSvg(glyph, 19)
+export function iconDiagnostics(): string {
+  return glyphSvg(IconDiagnostics, 19)
 }
 
 // A settings tab's glyph is the rail's size, 20px.
