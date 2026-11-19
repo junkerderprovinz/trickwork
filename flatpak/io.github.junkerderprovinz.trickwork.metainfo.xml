@@ -73,21 +73,9 @@
   <releases>
     <release version="1.8.0" date="2026-11-19">
       <description>
-        <p>TrickWork comes as an AppImage too, and its whole window is built from GlimStone's Svelte components.</p>
+        <p>TrickWork comes as an AppImage too, its whole window is built from GlimStone's Svelte components, and Help leads to GitHub and Discord.</p>
       </description>
       <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.8.0</url>
-    </release>
-    <release version="1.7.2" date="2026-11-19">
-      <description>
-        <p>A silent install into a folder with spaces lands where you sent it.</p>
-      </description>
-      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.7.2</url>
-    </release>
-    <release version="1.7.1" date="2026-11-17">
-      <description>
-        <p>Help leads to GitHub and Discord, and whatever the pointer is over lights up in your accent colour.</p>
-      </description>
-      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.7.1</url>
     </release>
     <release version="1.7.0" date="2026-11-12">
       <description>

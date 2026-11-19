@@ -4,7 +4,7 @@ All notable changes to TrickWork are documented here.
 
 ## 1.8.0 - 2026-11-19
 
-TrickWork comes as an AppImage for Linux, and its whole window is built from GlimStone's Svelte components.
+TrickWork comes as an AppImage for Linux, its whole window is built from GlimStone's Svelte components, and Help on the Info tab leads to GitHub and Discord.
 
 ### ✨ Added
 
@@ -12,33 +12,11 @@ TrickWork comes as an AppImage for Linux, and its whole window is built from Gli
 
 ### 🎨 Design
 
-- The look follows GlimStone 4.6.0.
+- The look follows GlimStone 4.6.0. A button, a row or a tab under the pointer lights up in the same soft shade of your accent colour, and a button that shows only a symbol lights the symbol itself. Accent text in the light theme is a little deeper, so it reads clearly on every ground, and the ring that shows where the keyboard is stands out on every background.
 - Every part of the window, from the tabs and cards to the donation windows and the Release notes window, comes from GlimStone's Svelte components, the same ones the sibling apps use.
-- The choice strips in Settings are as tall as a button, as in the other apps, and the GlimStone row under Version stands on one line.
-- The download buttons in the README name their architecture under the name, and the AppImage comes right after Linux, before the Flatpak, in the README and on the App card.
-
-### 🐛 Fixed
-
-- The Release notes window in the container shows the notes. The image left them out, so the window said "This build has no release notes".
-
-## 1.7.2 - 2026-11-19
-
-### 🎨 Design
-
-- The look follows GlimStone 4.5.8.
-
-### 🐛 Fixed
-
-- A silent install into a folder with spaces lands where you sent it. Deployment tools pass the folder after `/D=` without quotes, and `/D=C:\Program Files\TrickWork` installed into `C:\Program`. The installer follows PommelPorter 1.2.3, which reads the whole path.
-
-## 1.7.1 - 2026-11-17
-
-### 🎨 Design
-
-- The look follows GlimStone 4.5.4. A button, a row or a tab under the pointer lights up in the same soft shade of your accent colour, and a button that shows only a symbol lights the symbol itself. Accent text in the light theme is a little deeper, so it reads clearly on every ground, and the ring that shows where the keyboard is stands out on every background.
 - The Look tab has two cards, Look and Colours. Every setting names itself at the start of its row and keeps its control at the end, the accent swatches and the rainbow palette included, and Theme and the OLED switch come right after the language.
-- The docs have a new look, and the README puts the Documentation button right under the intro and offers every desktop download in its row of buttons.
-- The installer follows PommelPorter 1.2.2.
+- The choice strips in Settings are as tall as a button, as in the other apps, and the GlimStone row under Version stands on one line.
+- The docs have a new look, and the README puts the Documentation button right under the intro. Its download buttons offer every desktop download and name their architecture under the name, with the AppImage right after Linux and the Flatpak last, the same order as on the App card.
 
 ### ⚡ Improved
 
@@ -47,7 +25,9 @@ TrickWork comes as an AppImage for Linux, and its whole window is built from Gli
 
 ### 🐛 Fixed
 
+- A silent install into a folder with spaces lands where you sent it. Deployment tools pass the folder after `/D=` without quotes, and `/D=C:\Program Files\TrickWork` installed into `C:\Program`. The installer follows PommelPorter 1.2.3, which reads the whole path.
 - Some grey buttons, such as the zoom buttons, stayed grey under the pointer while the rest lit up. They take the accent shade like every other button.
+- The Release notes window in the container shows the notes. The image left them out, so the window said "This build has no release notes".
 
 ### 🌐 Translations
 
