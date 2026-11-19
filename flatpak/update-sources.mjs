@@ -91,9 +91,17 @@ console.log(`go-sources.json: ${go.length} files`)
 
 const nodeSources = join(here, 'node-sources.json')
 run('flatpak-node-generator', ['npm', join(root, 'package-lock.json'), '-o', nodeSources])
+// The generator joins paths with the separator of the system it runs on, and
+// the Flatpak builds on Linux.
+const posix = (path) => path.replaceAll('\\', '/')
 // Playwright's browsers serve the end-to-end tests alone, and the build
 // installs with --ignore-scripts, so nothing would ever unpack them.
 const node = JSON.parse(readFileSync(nodeSources, 'utf8'))
+  .map((source) => ({
+    ...source,
+    ...(source.dest && { dest: posix(source.dest) }),
+    ...(source.commands && { commands: source.commands.map(posix) }),
+  }))
   .filter((source) => !source.dest?.startsWith('flatpak-node/cache/ms-playwright'))
 writeFileSync(nodeSources, JSON.stringify(node, null, 4) + '\n')
 console.log(`node-sources.json: ${node.length} sources`)
