@@ -32,29 +32,36 @@ const checkEvery = 24 * time.Hour
 // updateReadyEvent carries the version that waits for the next start.
 const updateReadyEvent = "update:ready"
 
+// releaseAssets names the file each platform updates from, as desktop.yml
+// attaches it to the release.
+var releaseAssets = map[string]string{
+	"windows/amd64": "trickwork-windows-amd64-portable.exe",
+	"windows/arm64": "trickwork-windows-arm64-portable.exe",
+	"darwin/amd64":  "trickwork-macos-universal.zip",
+	"darwin/arm64":  "trickwork-macos-universal.zip",
+	"linux/amd64":   "trickwork-linux-amd64",
+	"linux/arm64":   "trickwork-linux-arm64",
+}
+
+// appImageAssets names the AppImage a copy started from one updates from.
+var appImageAssets = map[string]string{
+	"linux/amd64": "trickwork-linux-amd64.AppImage",
+	"linux/arm64": "trickwork-linux-arm64.AppImage",
+}
+
 func newUpdater(logger *log.Logger) *update.Updater {
 	u := &update.Updater{
 		Repo:    "junkerderprovinz/trickwork",
 		Version: version,
-		Assets: map[string]string{
-			"windows/amd64": "trickwork-windows-amd64-portable.exe",
-			"windows/arm64": "trickwork-windows-arm64-portable.exe",
-			"darwin/amd64":  "trickwork-macos-universal.zip",
-			"darwin/arm64":  "trickwork-macos-universal.zip",
-			"linux/amd64":   "trickwork-linux-amd64",
-			"linux/arm64":   "trickwork-linux-arm64",
-		},
-		API:  updateAPI,
-		Logf: logger.Printf,
+		Assets:  releaseAssets,
+		API:     updateAPI,
+		Logf:    logger.Printf,
 	}
 	// The AppImage runtime starts the program from a read-only mount of the
 	// file it names in APPIMAGE, so an update replaces that file instead.
 	if image := os.Getenv("APPIMAGE"); image != "" {
 		u.Path = image
-		u.Assets = map[string]string{
-			"linux/amd64": "trickwork-linux-amd64.AppImage",
-			"linux/arm64": "trickwork-linux-arm64.AppImage",
-		}
+		u.Assets = appImageAssets
 	}
 	return u
 }

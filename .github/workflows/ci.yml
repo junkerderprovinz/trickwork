@@ -68,6 +68,18 @@ jobs:
           go vet ./update/ ./flatpak/ ./portal/ ./accent/
           go test ./update/ ./flatpak/ ./portal/ ./accent/ -count=1
 
+      # The program links the webview, which builds without cgo on Windows only,
+      # and embeds the interface, for which a placeholder page stands in.
+      - name: Test the program
+        if: runner.os == 'Windows'
+        working-directory: desktop
+        shell: bash
+        run: |
+          mkdir -p ../webembed/dist
+          echo '<!doctype html>' > ../webembed/dist/index.html
+          go vet .
+          go test . -count=1
+
   e2e:
     name: E2E (ui, Playwright)
     runs-on: ubuntu-latest
