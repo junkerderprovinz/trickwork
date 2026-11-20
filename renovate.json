@@ -1,20 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "helpers:pinGitHubActionDigests",
-    "docker:pinDigests",
-    ":dependencyDashboard"
+    "local>junkerderprovinz/junkerderprovinz//renovate/base",
+    "local>junkerderprovinz/junkerderprovinz//renovate/components"
   ],
   "packageRules": [
-    {
-      "description": "Node stays on 24 until 26 is tested. The node image, node-version in ci.yml and desktop.yml (looked up as actions/node-versions) and @types/node keep the same major, so neither the typechecker nor the image build can rely on what the runtime does not have.",
-      "matchPackageNames": [
-        "@types/node",
-        "node",
-        "actions/node-versions"
-      ],
-      "allowedVersions": "<25"
-    },
     {
       "description": "Docker: auto-merge digest pins and digest refreshes (same tag, new build). Major/minor stay open for review.",
       "matchManagers": [
@@ -26,8 +16,6 @@
         "digest"
       ],
       "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
       "commitMessagePrefix": "ci:",
       "labels": [
         "docker"
@@ -35,8 +23,12 @@
     },
     {
       "description": "The compose file is for people to copy, so it follows the app's own latest tag instead of a digest that goes stale every build",
-      "matchManagers": ["docker-compose"],
-      "matchPackageNames": ["ghcr.io/junkerderprovinz/trickwork"],
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/junkerderprovinz/trickwork"
+      ],
       "enabled": false
     }
   ]
