@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   glimstone:
-    uses: junkerderprovinz/junkerderprovinz/.github/workflows/glimstone-current.yml@b7a5006e947cce048494e8430ee389bec897c082 # main
+    uses: junkerderprovinz/junkerderprovinz/.github/workflows/glimstone-current.yml@f74be41e79778bc4528eb7a9b6f9541c6a9ce952 # main
 
   release:
     needs: glimstone
