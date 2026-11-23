@@ -14,13 +14,14 @@
  * x=165 and its centre on the middle line, the layout of the other apps' banners.
  *
  * Text is converted to SVG paths (opentype.js) so the SVG needs no font and renders
- * the same in resvg and a browser. Bree Serif (name) and Lato (claim) are the brand
- * fonts the other apps' banners use.
+ * the same in resvg and a browser. Bree Serif Light (name) and Bree Light (claim) are
+ * the house fonts the other apps' banners use.
  *
- * Deps (global): opentype.js, @resvg/resvg-js. Fonts are fetched to the OS temp dir.
+ * Deps (global): opentype.js, @resvg/resvg-js, and the house fonts as TTF in
+ * HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts).
  * Run: node .github/assets/gen-banner.mjs
  */
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
@@ -42,17 +43,10 @@ const nameSize = 132, claimSize = 44, gap = 70, lineGap = 8;
 const LIGHT = { bg: "#ffffff", name: "#1f2328", claim: "#5a5d5e" };
 const DARK = { bg: "#0d1117", name: "#e6edf3", claim: "#9aa4ad" };
 
-async function loadFont(file, url) {
-  const path = join(tmpdir(), file);
-  if (!existsSync(path)) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`font fetch ${res.status}: ${url}`);
-    writeFileSync(path, Buffer.from(await res.arrayBuffer()));
-  }
-  return opentype.parse(readFileSync(path));
-}
-const font = await loadFont("TrickWork-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
-const claimFont = await loadFont("TrickWork-Lato-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf");
+// The house typeface is licensed, so it is read from a local folder and never committed.
+const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
+const font = opentype.parse(readFileSync(join(fonts, "bree-serif-light.ttf")).buffer);
+const claimFont = opentype.parse(readFileSync(join(fonts, "bree-light.ttf")).buffer);
 
 const master = readFileSync(join(__dir, "logo.svg"), "utf8").replace(/<\?xml[^>]*\?>\s*/, "");
 const vb = master.match(/viewBox="([^"]+)"/)[1];
