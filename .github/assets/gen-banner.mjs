@@ -14,7 +14,7 @@
  * x=165 and its centre on the middle line, the layout of the other apps' banners.
  *
  * Text is converted to SVG paths (opentype.js) so the SVG needs no font and renders
- * the same in resvg and a browser. Bree Serif Light (name) and Bree Light (claim) are
+ * the same in resvg and a browser. Bree Serif Regular (name) and Bree Light (claim) are
  * the house fonts the other apps' banners use.
  *
  * Deps (global): opentype.js, @resvg/resvg-js, and the house fonts as TTF in
@@ -45,7 +45,7 @@ const DARK = { bg: "#0d1117", name: "#e6edf3", claim: "#9aa4ad" };
 
 // The house typeface is licensed, so it is read from a local folder and never committed.
 const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
-const font = opentype.parse(readFileSync(join(fonts, "bree-serif-light.ttf")).buffer);
+const font = opentype.parse(readFileSync(join(fonts, "bree-serif-regular.ttf")).buffer);
 const claimFont = opentype.parse(readFileSync(join(fonts, "bree-light.ttf")).buffer);
 
 const master = readFileSync(join(__dir, "logo.svg"), "utf8").replace(/<\?xml[^>]*\?>\s*/, "");

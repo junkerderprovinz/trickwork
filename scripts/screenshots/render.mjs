@@ -13,7 +13,7 @@
 // Every picture is rendered at twice the size and scaled down in a second
 // page, which keeps the text sharp through the window's tilt.
 //
-// The heading is set in Bree Serif Light and the line below in Bree Light.
+// The heading is set in Bree Serif Regular and the line below in Bree Light.
 // Both are licensed and never committed, so HOUSE_FONTS (default
 // %LOCALAPPDATA%\halleluja-fonts) must hold them as TTF. The browser bar
 // keeps Lato, fetched once from Google Fonts.
@@ -185,7 +185,7 @@ const lato = dataUrl(await cached('Lato-Regular.ttf', 'https://github.com/google
 const logo = dataUrl(readFileSync(join(root, '.github', 'assets', 'logo.svg')), 'image/svg+xml')
 
 const STYLE = `
-@font-face { font-family: "Bree Serif"; src: url(${font('bree-serif-light.ttf')}); font-weight: 300; }
+@font-face { font-family: "Bree Serif"; src: url(${font('bree-serif-regular.ttf')}); font-weight: 400; }
 @font-face { font-family: Bree; src: url(${font('bree-light.ttf')}); font-weight: 300; }
 @font-face { font-family: Lato; src: url(${lato}); }
 * { box-sizing: border-box; margin: 0; }
@@ -198,7 +198,7 @@ body { position: relative; overflow: hidden; width: 1920px; height: 1000px; font
 .vignette { inset: 0; box-shadow: inset 0 0 200px rgba(0,0,0,.6); }
 .copy { position: absolute; left: 84px; top: 0; bottom: 0; width: 470px; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
 .copy > img { width: 250px; }
-h1 { font: 300 64px/1.12 "Bree Serif", serif; color: #f4f4f4; text-wrap: balance; }
+h1 { font: 400 64px/1.12 "Bree Serif", serif; color: #f4f4f4; text-wrap: balance; }
 h1 em { font-style: normal; color: #FCC419; }
 .sub { font-size: 28px; line-height: 1.35; color: #9d9481; }
 
@@ -250,7 +250,7 @@ ${windowed(capture, frame, { x: 620, y: Math.round((1000 - h) / 2), w })}
 async function render(browser, html, file) {
   const page = await browser.newPage({ viewport: { width: 1920, height: 1000 }, deviceScaleFactor: 2 })
   await page.setContent(html)
-  await page.evaluate(() => Promise.all(['300 1em "Bree Serif"', '300 1em Bree', '1em Lato'].map((f) => document.fonts.load(f))))
+  await page.evaluate(() => Promise.all(['400 1em "Bree Serif"', '300 1em Bree', '1em Lato'].map((f) => document.fonts.load(f))))
   const big = await page.screenshot()
   await page.close()
 
