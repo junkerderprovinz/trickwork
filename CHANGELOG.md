@@ -2,6 +2,19 @@
 
 All notable changes to TrickWork are documented here.
 
+## 1.8.1 - 2026-11-24
+
+TrickWork follows GlimStone 4.9.1, and its installer and uninstaller come from PommelPorter 1.2.7.
+
+### 🎨 Design
+
+- The look follows GlimStone 4.9.1.
+- The README's banner, pictures and titles use the house typeface.
+
+### 🐛 Fixed
+
+- A silent uninstall ends a copy of TrickWork it can't reach. When a deployment tool uninstalled as the system account, or someone ran the uninstaller over SSH, the app kept running with its files open. The uninstaller from PommelPorter 1.2.7 ends it, and a copy in its own session is still asked to quit first.
+
 ## 1.8.0 - 2026-11-19
 
 TrickWork comes as an AppImage for Linux, its whole window is built from GlimStone's Svelte components, and Help on the Info tab leads to GitHub and Discord.

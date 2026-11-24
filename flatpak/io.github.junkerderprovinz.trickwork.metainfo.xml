@@ -71,6 +71,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.8.1" date="2026-11-24">
+      <description>
+        <p>TrickWork follows GlimStone 4.9.1, and a silent uninstall ends a copy of TrickWork it can't reach.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/trickwork/releases/tag/v1.8.1</url>
+    </release>
     <release version="1.8.0" date="2026-11-19">
       <description>
         <p>TrickWork comes as an AppImage too, its whole window is built from GlimStone's Svelte components, and Help leads to GitHub and Discord.</p>
