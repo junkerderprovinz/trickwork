@@ -33,7 +33,7 @@ database, no accounts, nothing to configure beyond the port.
 
 <!-- docs-button: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://junkerderprovinz.github.io/trickwork/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(0,0,1010.28,245.3))" alt="Read the documentation" width="192" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/trickwork/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(0,0,1010.28,245.3))" alt="Read the documentation" width="192" height="46.618"></a>
 </p>
 <!-- /docs-button -->
 
@@ -59,39 +59,41 @@ database, no accounts, nothing to configure beyond the port.
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://ca.unraid.net/apps/trickwork-0h072450hg59wx"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(1035,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
+  <a href="https://ca.unraid.net/apps/trickwork-0h072450hg59wx"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(1035,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://mos-official.net/apps.html?search=TrickWork"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(1901,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
+  <a href="https://mos-official.net/apps.html?search=TrickWork"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(1901,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/zimaos-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(2767,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/zimaos-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(2767,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(3633,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(3633,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(4499,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(4499,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(5365,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="#proxmox-ve"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(5365,0,841.9,245.3))" alt="Run it on Proxmox VE" width="160" height="46.618"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(6231,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(6231,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(7097,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(7097,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(7963,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(7579,0,841.9,245.3))" alt="Download the portable Windows app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(8445,0,457.783,245.3))" alt="Download the portable Windows app for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-amd64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(8445,0,841.9,245.3))" alt="Download the portable Windows app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-windows-arm64-portable.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(9311,0,457.783,245.3))" alt="Download the portable Windows app for ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(8927,0,841.9,245.3))" alt="Download for macOS on Apple silicon or Intel" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(9793,0,457.783,245.3))" alt="Download the macOS app as a zip" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.dmg"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(9793,0,841.9,245.3))" alt="Download for macOS on Apple silicon or Intel" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(10659,0,457.783,245.3))" alt="Download the macOS app as a zip" width="87" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(10275,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(11141,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(11141,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(12007,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(11623,0,841.9,245.3))" alt="Download the portable Linux app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(12489,0,457.783,245.3))" alt="Download the portable Linux app for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(12489,0,841.9,245.3))" alt="Download the portable Linux app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(13355,0,457.783,245.3))" alt="Download the portable Linux app for ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64.AppImage"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(12971,0,841.9,245.3))" alt="Download the AppImage" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64.AppImage"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(13837,0,457.783,245.3))" alt="Download the AppImage for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64.AppImage"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(13837,0,841.9,245.3))" alt="Download the AppImage" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64.AppImage"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(14703,0,457.783,245.3))" alt="Download the AppImage for ARM" width="87" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(14319,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(15185,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(15185,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/trickwork/releases/latest/download/trickwork-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(16051,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -111,11 +113,11 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(15667,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(16533,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(16533,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(17399,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=5ff5ba65b71d#svgView(viewBox(17399,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/trickwork/main/.github/assets/download-buttons/buttons.svg?v=ba3e8d389be6#svgView(viewBox(18265,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -188,10 +190,36 @@ Updates, the requirements and the Unraid template by hand are on the [installing
 [compose.yaml](compose.yaml) runs TrickWork on any Linux server with Docker. Put it in a folder of its own and start it with `docker compose up -d`.
 
 - **Synology:** in Container Manager, create a project from the file (DSM 7.2 or newer).
-- **Proxmox:** run it in a VM or an LXC container that has Docker.
+- **Proxmox:** see [Proxmox VE](#proxmox-ve) below.
 - **MOS:** install TrickWork from the [MOS Hub](https://mos-official.net/apps.html?search=TrickWork).
 - **ZimaOS and CasaOS:** add the [community store](https://github.com/junkerderprovinz/zimaos-apps#install) and install TrickWork from it.
 - **umbrelOS:** add the [community app store](https://github.com/junkerderprovinz/umbrel-apps#install) and install TrickWork from it.
+
+### Proxmox VE
+
+TrickWork runs on Proxmox VE 9.2 in three ways, all tested there. The lightest is a script that installs TrickWork right in a Debian container. Without the Docker layer it needs less memory and disk, and Proxmox backs it up together with its container. Run it in the shell of the Proxmox host:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/junkerderprovinz/proxmox-apps/main/ct/trickwork.sh)"
+```
+
+To update later, run `update` in the container's console.
+
+From the image, Proxmox 9.1 and newer turn the container image into a container of its own. Without the Docker layer, TrickWork needs less memory and disk, and Proxmox backs it up together with its container. Its data stays in folders under `/srv/trickwork` on the host. Proxmox still calls this a technology preview.
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/junkerderprovinz/proxmox-apps/main/image.sh) install trickwork
+```
+
+To update, run the same line with `update` in place of `install`. It replaces the container and keeps the folders and the address.
+
+Docker works just as well, nothing is wrong with it. Create a container with Docker using the Community Scripts and start the compose file in it, as under [Other Docker hosts](#other-docker-hosts):
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/docker.sh)"
+```
+
+For a virtual machine instead, take `vm/docker-vm.sh` from the same place.
 
 <br>
 
