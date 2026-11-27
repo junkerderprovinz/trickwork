@@ -7,13 +7,13 @@ widths to one optical size.
 ## Source and licence
 
 **Font Awesome Free 6.7.2**, from <https://fontawesome.com>, for every mark but
-Unraid's and Flatpak's. Windows, Apple, Linux and Docker come from the `brands`
+Unraid's, Flatpak's and TrueNAS's. Windows, Apple, Linux and Docker come from the `brands`
 set; `zip.txt` is `file-zipper` and `book.txt` is `book`, both from the `solid`
 set and nobody's mark. The icons are **CC BY 4.0**, which asks for attribution and
 nothing else. Copyright 2024 Fonticons, Inc.
 
-**Simple Icons** (<https://simpleicons.org>) for `flatpak.txt`. The path is
-**CC0 1.0**, and Flatpak's mark itself is **CC BY 3.0**
+**Simple Icons** (<https://simpleicons.org>) for `flatpak.txt` and `truenas.txt`.
+The paths are **CC0 1.0**, and Flatpak's mark itself is **CC BY 3.0**
 (<https://flatpak.org/press>).
 
 **Dashboard Icons** (`homarr-labs/dashboard-icons`, <https://dashboardicons.com>)
@@ -29,4 +29,4 @@ Every brand mark here is a trademark of its owner. It is drawn in the button's
 one ink and otherwise unchanged, and used only to name the platform a button
 leads to, with no claim of endorsement
 by or affiliation with Microsoft, Apple, the Linux Foundation, the Flatpak
-project, Docker or Lime Technology.
+project, Docker, Lime Technology or iXsystems.
