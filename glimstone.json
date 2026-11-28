@@ -3,7 +3,7 @@
     {
       "name": "ui",
       "mode": "npm",
-      "version": "4.9.1",
+      "version": "4.9.2",
       "package": "ui/package.json"
     }
   ]
